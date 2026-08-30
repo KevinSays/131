@@ -74,7 +74,7 @@
   #cardProgress{ font-family:var(--mono); font-size:.95rem; color:var(--muted); }
 
   .card-grid{ display:grid; gap:16px; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); }
-  .flashcard{ perspective:1200px; height:150px; cursor:pointer; border:none; background:none; padding:0; font-family:inherit; text-align:left; width:100%; }
+  .flashcard{ perspective:1200px; height:200px; cursor:pointer; border:none; background:none; padding:0; font-family:inherit; text-align:left; width:100%; }
   .flashcard-inner{ position:relative; width:100%; height:100%; transition:transform .5s cubic-bezier(.4,.2,.2,1); transform-style:preserve-3d; -webkit-transform-style:preserve-3d; will-change:transform; }
   .flashcard.flipped .flashcard-inner{ transform:rotateY(180deg); -webkit-transform:rotateY(180deg); }
   .flashcard-face{ position:absolute; inset:0; backface-visibility:hidden; -webkit-backface-visibility:hidden; -moz-backface-visibility:hidden; border:1px solid var(--border); box-shadow:var(--shadow); padding:16px; display:flex; flex-direction:column; justify-content:center; }
@@ -123,7 +123,7 @@
   footer{ padding:32px 0 60px; }
   footer p{ color:var(--muted); font-size:.9rem; font-family:var(--mono); letter-spacing:.02em; }
 
-  .card-grid .flashcard{ height:170px; }
+  .card-grid .flashcard{ height:220px; }
 
   @media(max-width:600px){
     .card-grid{ grid-template-columns:1fr; }
