@@ -1,0 +1,893 @@
+<title>IT131 Session 2 – Switch Config &amp; Network Models</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --bg:#D9D2C3; --surface:#EDE8DD; --surface-2:#F3E7E2;
+    --text:#1F2421; --muted:#4F4A42; --border:#1F2421;
+    --accent:#2F4858; --accent-soft:rgba(47,72,88,.08);
+    --accent-2:#664526; --accent-2-soft:rgba(176,133,84,.14);
+    --danger:#A23A2E; --danger-soft:rgba(162,58,46,.08);
+    --correct:#2F4858; --correct-soft:rgba(47,72,88,.08);
+    --shadow: 5px 5px 0 rgba(31,36,33,.16);
+        --mono:'IBM Plex Mono', monospace;
+    --display:'Special Elite', 'Courier New', monospace;
+    --sans:'IBM Plex Sans', system-ui, sans-serif;
+    --terminal-bg:#F3E7E2; --terminal-text:#1F2421; --terminal-prompt:#2F4858;
+    --terminal-cmd:#1F2421; --terminal-comment:#664526;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth; font-size:125%;} /* projector pass: scale all rem-based type up ~25% */
+  body{ margin:0; background:var(--bg); color:var(--text); font-family:var(--sans); line-height:1.55; -webkit-font-smoothing:antialiased;
+    background-image:radial-gradient(rgba(31,36,33,.06) 1px, transparent 1px); background-size:16px 16px; }
+  a{ color:var(--accent); }
+  ::selection{ background:var(--accent-soft); }
+  .wrap{ max-width:1080px; margin:0 auto; padding:0 24px; }
+  header.hero{
+    border-bottom:2px solid var(--border);
+    padding:56px 0 40px;
+  }
+  .eyebrow{ font-family:var(--mono); font-weight:600; font-size:.95rem; letter-spacing:.14em; text-transform:uppercase; color:var(--accent); }
+  h1{ font-family:var(--display); font-weight:700; font-size:clamp(2.3rem,4.6vw,3.4rem); line-height:1.02; margin:.25em 0 .3em; text-wrap:balance; letter-spacing:-.01em; }
+  .hero p.lede{ max-width:62ch; font-size:1.1rem; color:var(--muted); margin:0 0 1.6em; }
+  .factrow{ display:flex; flex-wrap:wrap; gap:10px; }
+  .fact{ font-family:var(--mono); font-size:.9rem; letter-spacing:.02em; background:var(--surface); border:1px solid var(--border); padding:.4em .8em; display:flex; gap:.5em; }
+  .fact b{ color:var(--muted); font-weight:600; text-transform:uppercase; letter-spacing:.06em; font-size:.78rem; }
+  nav.index{ position:sticky; top:0; z-index:20; background:color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter:blur(8px); border-bottom:1px solid var(--border); }
+  nav.index .wrap{ display:flex; gap:4px; overflow-x:auto; padding:10px 24px; scrollbar-width:none; }
+  nav.index .wrap::-webkit-scrollbar{ display:none; }
+  nav.index a{ font-family:var(--mono); font-weight:600; letter-spacing:.04em; font-size:1rem; text-decoration:none; color:var(--muted); padding:.4em .9em; white-space:nowrap; border:1px solid transparent; text-transform:uppercase; }
+  nav.index a:hover{ color:var(--text); border-color:var(--border); background:var(--surface); }
+  section{ padding:52px 0; border-bottom:1px solid var(--border); }
+  section:last-of-type{ border-bottom:none; }
+  .section-head{ margin-bottom:28px; max-width:70ch; }
+  .kicker{ font-family:var(--mono); font-weight:600; font-size:.9rem; letter-spacing:.14em; text-transform:uppercase; color:var(--accent-2); margin:0 0 .3em; }
+  h2{ font-family:var(--display); font-weight:700; font-size:clamp(1.6rem,2.8vw,2.2rem); margin:0 0 .2em; text-wrap:balance; letter-spacing:-.005em; }
+  .section-head p{ color:var(--muted); margin:.4em 0 0; }
+  .obj-list{ display:grid; gap:12px; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); list-style:none; margin:0; padding:0; }
+  .obj-list li{ background:var(--surface); border:1px solid var(--border); padding:16px 18px; box-shadow:var(--shadow); font-size:.95rem; }
+  .obj-list li::before{ content:"▹"; color:var(--accent); margin-right:.6em; font-weight:700; }
+  figure{ margin:36px 0 0; }
+  figure svg{ width:100%; height:auto; display:block; background:var(--surface); border:1px solid var(--border); }
+  figcaption{ font-size:.85rem; color:var(--muted); margin-top:.6em; }
+  .diagram-grid{ display:grid; gap:32px; grid-template-columns:1fr; }
+  @media(min-width:860px){ .diagram-grid{ grid-template-columns:1fr 1fr; } }
+
+  /* Terminal blocks */
+  .terminal{ background:var(--terminal-bg); color:var(--terminal-text); border:1px solid var(--border); margin:20px 0; overflow:hidden; box-shadow:var(--shadow); }
+  .terminal-header{ background:color-mix(in srgb, var(--terminal-bg) 80%, #fff); padding:8px 14px; border-bottom:1px solid rgba(31,36,33,.15); display:flex; align-items:center; gap:6px; }
+  .terminal-dot{ width:10px; height:10px; border-radius:50%; }
+  .terminal-dot.r{ background:#A23A2E; }
+  .terminal-dot.y{ background:#664526; }
+  .terminal-dot.g{ background:#2F4858; }
+  .terminal-title{ font-family:var(--mono); font-size:.8rem; color:var(--terminal-comment); margin-left:8px; letter-spacing:.04em; }
+  .terminal-body{ padding:14px 18px; font-family:'Courier New', Courier, monospace; font-size:.88rem; line-height:1.7; overflow-x:auto; white-space:pre-wrap; word-wrap:break-word; }
+  .terminal-body .prompt{ color:#63c7e8; }
+  .terminal-body .cmd{ color:#eaf2fb; }
+  .terminal-body .comment{ color:#7a95a8; font-style:italic; }
+  .terminal-body .hl{ color:#A23A2E; font-weight:600; }
+
+  /* Model comparison table */
+  .model-table{ width:100%; border-collapse:collapse; margin:20px 0; font-size:.92rem; }
+  .model-table th{ font-family:var(--mono); font-weight:700; text-transform:uppercase; letter-spacing:.06em; font-size:.82rem; color:var(--muted); text-align:left; padding:10px 12px; border-bottom:2px solid var(--border); }
+  .model-table td{ padding:10px 12px; border-bottom:1px solid var(--border); vertical-align:top; }
+  .model-table tr:last-child td{ border-bottom:none; }
+
+  .toolbar{ display:flex; gap:10px; align-items:center; margin-bottom:20px; flex-wrap:wrap; }
+  button.btn{ font-family:var(--mono); font-weight:600; letter-spacing:.03em; text-transform:uppercase; font-size:.85rem; background:var(--surface); color:var(--text); border:1px solid var(--border); padding:.6em 1.1em; cursor:pointer; }
+  button.btn:hover{ border-color:var(--accent); color:var(--accent); }
+  button.btn:focus-visible, a:focus-visible, .flashcard:focus-visible, input:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
+  #cardProgress{ font-family:var(--mono); font-size:.95rem; color:var(--muted); }
+  .card-grid{ display:grid; gap:16px; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); }
+  .flashcard{ perspective:1200px; height:170px; cursor:pointer; border:none; background:none; padding:0; font-family:inherit; text-align:left; width:100%; }
+  .flashcard-inner{ position:relative; width:100%; height:100%; transition:transform .5s cubic-bezier(.4,.2,.2,1); transform-style:preserve-3d; }
+  .flashcard.flipped .flashcard-inner{ transform:rotateY(180deg); }
+  .flashcard-face{ position:absolute; inset:0; backface-visibility:hidden; border:1px solid var(--border); box-shadow:var(--shadow); padding:16px; display:flex; flex-direction:column; justify-content:center; }
+  .flashcard-face.front{ background:var(--surface); }
+  .flashcard-face.back{ background:var(--accent-soft); transform:rotateY(180deg); overflow-y:auto; }
+  .flashcard-face .lbl{ font-family:var(--mono); font-weight:600; letter-spacing:.1em; text-transform:uppercase; font-size:.8rem; color:var(--accent-2); margin-bottom:.4em; }
+  .flashcard-face.front .term{ font-family:var(--mono); font-weight:700; font-size:1.15rem; letter-spacing:.01em; }
+  .flashcard-face.back .def{ font-size:.86rem; }
+  .flashcard.known .flashcard-face.front{ border-color:var(--correct); }
+
+  .quiz-q{ background:var(--surface); border:1px solid var(--border); padding:20px 22px; margin-bottom:18px; box-shadow:var(--shadow); }
+  .quiz-q .qtext{ font-weight:700; margin:0 0 14px; }
+  .quiz-q .qnum{ font-family:var(--mono); font-weight:700; color:var(--accent); margin-right:.5em; }
+  .choices{ display:grid; gap:8px; }
+  .choice{ text-align:left; font-family:var(--sans); font-size:.95rem; background:var(--surface-2); border:1px solid var(--border); padding:.7em .9em; cursor:pointer; color:var(--text); }
+  .choice:hover{ border-color:var(--accent); }
+  .choice.correct{ background:var(--correct-soft); border-color:var(--correct); }
+  .choice.incorrect{ background:var(--danger-soft); border-color:var(--danger); }
+  .choice[disabled]{ cursor:default; }
+  .explain{ margin-top:12px; font-size:.88rem; color:var(--muted); border-left:3px solid var(--accent-2); padding-left:12px; display:none; }
+  .explain.show{ display:block; }
+  #quizScore{ font-family:var(--mono); font-size:1rem; color:var(--muted); margin-bottom:16px; }
+
+  .example{ background:var(--surface); border:1px solid var(--border); padding:20px 22px; margin-bottom:16px; box-shadow:var(--shadow); }
+  .example h3{ font-family:var(--mono); font-weight:700; font-size:1.25rem; margin:0 0 8px; }
+  .example .tag{ display:inline-block; font-family:var(--mono); font-weight:600; font-size:.8rem; text-transform:uppercase; letter-spacing:.08em; color:var(--accent-2); background:var(--accent-2-soft); padding:.25em .6em; margin-bottom:10px; }
+  details.solution{ margin-top:12px; }
+  details.solution summary{ cursor:pointer; font-family:var(--mono); font-weight:600; letter-spacing:.03em; text-transform:uppercase; font-size:.85rem; color:var(--accent); list-style:none; display:inline-flex; align-items:center; gap:.4em; }
+  details.solution summary::-webkit-details-marker{ display:none; }
+  details.solution summary::before{ content:"▸"; transition:transform .15s; }
+  details.solution[open] summary::before{ transform:rotate(90deg); }
+  details.solution .solbody{ margin-top:10px; padding:14px 16px; background:var(--surface-2); font-size:.92rem; }
+
+  #glossarySearch{ width:100%; max-width:420px; font-family:var(--sans); font-size:.95rem; padding:.7em .9em; border:1px solid var(--border); background:var(--surface); color:var(--text); margin-bottom:16px; }
+  .alpha-nav{ display:flex; flex-wrap:wrap; gap:4px; margin-bottom:24px; }
+  .alpha-nav a{ font-family:var(--mono); font-weight:600; font-size:.9rem; width:1.9em; height:1.9em; display:flex; align-items:center; justify-content:center; border:1px solid var(--border); text-decoration:none; color:var(--muted); }
+  .alpha-nav a.has{ color:var(--text); }
+  .alpha-nav a.has:hover{ border-color:var(--accent); color:var(--accent); }
+  .glossary-letter{ font-family:var(--mono); font-weight:700; color:var(--accent); font-size:1.3rem; margin:22px 0 8px; }
+  dl.glossary{ margin:0; }
+  dl.glossary .gitem{ border-top:1px solid var(--border); padding:12px 0; }
+  dl.glossary dt{ font-family:var(--mono); font-weight:700; font-size:1.05rem; }
+  dl.glossary dd{ margin:.3em 0 0; color:var(--muted); font-size:.92rem; }
+  .gitem.hidden{ display:none; }
+  footer{ padding:32px 0 60px; }
+  footer p{ color:var(--muted); font-size:.9rem; font-family:var(--mono); letter-spacing:.02em; }
+</style>
+
+<header class="hero">
+  <div class="wrap">
+    <p class="eyebrow">IT131 · Session 2</p>
+    <h1>Switch Config &amp; Network Models</h1>
+    <p class="lede">From plugging in a switch to understanding the models that make it all interoperate.</p>
+    <div class="factrow">
+      <span class="fact"><b>Covers</b> Modules 2 &amp; 3</span>
+    </div>
+  </div>
+</header>
+
+<nav class="index" aria-label="Section index">
+  <div class="wrap">
+    <a href="#overview">Overview</a>
+    <a href="#bootup">Bootup</a>
+    <a href="#cli">IOS CLI</a>
+    <a href="#config">Configuration</a>
+    <a href="#models">Models</a>
+    <a href="#encapsulation">Encapsulation</a>
+    <a href="#flashcards">Flashcards</a>
+    <a href="#quiz">Quiz</a>
+    <a href="#examples">Examples</a>
+    <a href="#glossary">Glossary</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+  <!-- OVERVIEW -->
+  <section id="overview">
+    <div class="section-head">
+      <p class="kicker">Overview</p>
+      <h2>What Session 2 covers</h2>
+      <p>Module 2 teaches you how to configure a switch from scratch. Module 3 explains <em>why</em> all those settings exist — the protocol suites and layered models that make devices from different manufacturers talk to each other.</p>
+    </div>
+    <ul class="obj-list">
+      <li>Describe the switch bootup process (POST → IOS load → config load)</li>
+      <li>Navigate IOS CLI modes: user EXEC, privileged EXEC, global config, interface config</li>
+      <li>Configure hostname, passwords, banners, management IP, SSH, and port settings</li>
+      <li>Save and verify configurations with <code>show</code> commands</li>
+      <li>Compare the OSI model (7 layers) and TCP/IP model (4 layers)</li>
+      <li>Explain encapsulation and decapsulation, and name the PDU at each layer</li>
+    </ul>
+  </section>
+
+  <!-- BOOTUP -->
+  <section id="bootup">
+    <div class="section-head">
+      <p class="kicker">Module 2</p>
+      <h2>Switch bootup process</h2>
+      <p>Before you can configure anything, the switch has to boot. Understanding the boot sequence tells you where the config lives and what happens if something goes wrong.</p>
+    </div>
+    <div class="diagram-grid">
+      <figure>
+        <svg viewBox="0 0 520 260" role="img" aria-label="Switch boot sequence: POST, IOS load, config load.">
+          <g font-family="IBM Plex Mono" font-weight="600" font-size="14" fill="currentColor">
+            <!-- Step 1: POST -->
+            <rect x="20" y="30" width="140" height="80" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.5"/>
+            <text x="90" y="58" text-anchor="middle" fill="var(--accent)">1. POST</text>
+            <text x="90" y="78" text-anchor="middle" font-family="IBM Plex Sans" font-size="11" fill="var(--muted)">Power-On Self-Test</text>
+            <text x="90" y="95" text-anchor="middle" font-family="IBM Plex Sans" font-size="10" fill="var(--muted)">Hardware check (CPU, RAM, ports)</text>
+            <!-- Arrow -->
+            <line x1="160" y1="70" x2="200" y2="70" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#arr)"/>
+            <!-- Step 2: Load IOS -->
+            <rect x="200" y="30" width="150" height="80" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.5"/>
+            <text x="275" y="58" text-anchor="middle" fill="var(--accent)">2. Load IOS</text>
+            <text x="275" y="78" text-anchor="middle" font-family="IBM Plex Sans" font-size="11" fill="var(--muted)">From flash memory</text>
+            <text x="275" y="95" text-anchor="middle" font-family="IBM Plex Sans" font-size="10" fill="var(--muted)">IOS = the operating system</text>
+            <!-- Arrow -->
+            <line x1="350" y1="70" x2="390" y2="70" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#arr)"/>
+            <!-- Step 3: Load Config -->
+            <rect x="390" y="30" width="110" height="80" fill="var(--correct-soft)" stroke="var(--correct)" stroke-width="1.5"/>
+            <text x="445" y="58" text-anchor="middle" fill="var(--correct)">3. Config</text>
+            <text x="445" y="78" text-anchor="middle" font-family="IBM Plex Sans" font-size="11" fill="var(--muted)">startup-config</text>
+            <text x="445" y="95" text-anchor="middle" font-family="IBM Plex Sans" font-size="10" fill="var(--muted)">From NVRAM → RAM</text>
+
+            <!-- Memory types -->
+            <text x="260" y="150" text-anchor="middle" font-size="13" fill="var(--accent-2)">Where configs live</text>
+            <rect x="30" y="170" width="130" height="70" fill="var(--surface-2)" stroke="var(--border)"/>
+            <text x="95" y="192" text-anchor="middle" font-size="12" fill="var(--accent-2)">Flash</text>
+            <text x="95" y="210" text-anchor="middle" font-family="IBM Plex Sans" font-size="10" fill="var(--muted)">IOS image file</text>
+            <text x="95" y="225" text-anchor="middle" font-family="IBM Plex Sans" font-size="10" fill="var(--muted)">Persistent (survives reboot)</text>
+            <rect x="195" y="170" width="130" height="70" fill="var(--surface-2)" stroke="var(--border)"/>
+            <text x="260" y="192" text-anchor="middle" font-size="12" fill="var(--accent-2)">NVRAM</text>
+            <text x="260" y="210" text-anchor="middle" font-family="IBM Plex Sans" font-size="10" fill="var(--muted)">startup-config</text>
+            <text x="260" y="225" text-anchor="middle" font-family="IBM Plex Sans" font-size="10" fill="var(--muted)">Persistent (survives reboot)</text>
+            <rect x="360" y="170" width="130" height="70" fill="var(--surface-2)" stroke="var(--border)"/>
+            <text x="425" y="192" text-anchor="middle" font-size="12" fill="var(--accent-2)">RAM</text>
+            <text x="425" y="210" text-anchor="middle" font-family="IBM Plex Sans" font-size="10" fill="var(--muted)">running-config</text>
+            <text x="425" y="225" text-anchor="middle" font-family="IBM Plex Sans" font-size="10" fill="var(--muted)">Volatile (lost on reboot)</text>
+          </g>
+          <defs><marker id="arr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="var(--accent)"/></marker></defs>
+        </svg>
+        <figcaption>The switch boots by testing hardware (POST), loading the IOS from flash, then loading the saved config from NVRAM into RAM. If no saved config exists, it enters setup mode.</figcaption>
+      </figure>
+
+      <div>
+        <h3 style="font-family:var(--mono);font-size:1.1rem;margin:0 0 12px;">Key memory types</h3>
+        <div class="terminal">
+          <div class="terminal-header">
+            <span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span>
+            <span class="terminal-title">running-config vs. startup-config</span>
+          </div>
+          <div class="terminal-body">
+<span class="comment">! running-config = what the switch is using RIGHT NOW (in RAM)</span>
+<span class="comment">! startup-config = what the switch WILL use on next boot (in NVRAM)</span>
+<span class="comment">!</span>
+<span class="comment">! If you make changes but don't save, they vanish on reboot.</span>
+<span class="prompt">Switch#</span> <span class="cmd">show running-config</span>    <span class="comment">! current active config</span>
+<span class="prompt">Switch#</span> <span class="cmd">show startup-config</span>  <span class="comment">! saved config (what boots next time)</span>
+<span class="prompt">Switch#</span> <span class="hl">copy running-config startup-config</span>  <span class="comment">! SAVE IT</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- IOS CLI -->
+  <section id="cli">
+    <div class="section-head">
+      <p class="kicker">Module 2</p>
+      <h2>IOS CLI access &amp; modes</h2>
+      <p>Cisco IOS uses a hierarchical mode structure. You must be in the right mode to run a given command — this trips up every beginner.</p>
+    </div>
+
+    <div class="diagram-grid">
+      <figure>
+        <svg viewBox="0 0 520 300" role="img" aria-label="IOS CLI mode hierarchy diagram.">
+          <g font-family="IBM Plex Mono" font-weight="600" font-size="13" fill="currentColor">
+            <text x="260" y="22" text-anchor="middle" fill="var(--accent)" font-size="14">IOS Mode Hierarchy</text>
+            <!-- User EXEC -->
+            <rect x="180" y="38" width="160" height="40" fill="var(--surface-2)" stroke="var(--border)" stroke-width="1.5"/>
+            <text x="260" y="63" text-anchor="middle">User EXEC mode</text>
+            <text x="260" y="95" text-anchor="middle" font-family="IBM Plex Sans" font-size="10" fill="var(--muted)">Prompt: Switch&gt;</text>
+            <text x="260" y="110" text-anchor="middle" font-family="IBM Plex Sans" font-size="10" fill="var(--muted)">Limited commands (view only)</text>
+            <!-- Arrow -->
+            <line x1="260" y1="78" x2="260" y2="120" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#arr2)"/>
+            <!-- Privileged EXEC -->
+            <rect x="160" y="120" width="200" height="40" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.5"/>
+            <text x="260" y="145" text-anchor="middle" fill="var(--accent)">Privileged EXEC mode</text>
+            <text x="260" y="177" text-anchor="middle" font-family="IBM Plex Sans" font-size="10" fill="var(--muted)">Prompt: Switch#</text>
+            <text x="260" y="192" text-anchor="middle" font-family="IBM Plex Sans" font-size="10" fill="var(--muted)">All show commands, debug, save</text>
+            <!-- Arrow -->
+            <line x1="260" y1="160" x2="260" y2="200" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#arr2)"/>
+            <!-- Global Config -->
+            <rect x="140" y="200" width="240" height="40" fill="var(--accent-2-soft)" stroke="var(--accent-2)" stroke-width="1.5"/>
+            <text x="260" y="225" text-anchor="middle" fill="var(--accent-2)">Global Configuration mode</text>
+            <text x="260" y="257" text-anchor="middle" font-family="IBM Plex Sans" font-size="10" fill="var(--muted)">Prompt: Switch(config)#</text>
+            <text x="260" y="272" text-anchor="middle" font-family="IBM Plex Sans" font-size="10" fill="var(--muted)">Hostname, passwords, banners, etc.</text>
+            <!-- Sub-modes -->
+            <line x1="140" y1="240" x2="80" y2="270" stroke="var(--border)" stroke-width="1" stroke-dasharray="3 2"/>
+            <line x1="380" y1="240" x2="440" y2="270" stroke="var(--border)" stroke-width="1" stroke-dasharray="3 2"/>
+            <rect x="20" y="270" width="120" height="26" fill="var(--surface)" stroke="var(--border)"/>
+            <text x="80" y="288" text-anchor="middle" font-size="11">(config-if)#</text>
+            <rect x="380" y="270" width="120" height="26" fill="var(--surface)" stroke="var(--border)"/>
+            <text x="440" y="288" text-anchor="middle" font-size="11">(config-line)#</text>
+          </g>
+          <defs><marker id="arr2" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="var(--accent)"/></marker></defs>
+        </svg>
+        <figcaption>You move down the hierarchy with <code>enable</code> → <code>configure terminal</code>, and back with <code>exit</code>. Each mode has its own set of available commands.</figcaption>
+      </figure>
+
+      <div>
+        <h3 style="font-family:var(--mono);font-size:1.1rem;margin:0 0 12px;">Access methods</h3>
+        <div class="terminal">
+          <div class="terminal-header">
+            <span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span>
+            <span class="terminal-title">Three ways to reach the CLI</span>
+          </div>
+          <div class="terminal-body">
+<span class="hl">Console</span> <span class="comment">— physical cable, direct access</span>
+  Always works. No network needed. The "break glass" method.
+
+<span class="hl">SSH</span> <span class="comment">— encrypted remote access over the network</span>
+  Requires: management IP + enable secret + line vty config.
+  Preferred for day-to-day management.
+
+<span class="hl">Telnet</span> <span class="comment">— unencrypted remote access</span>
+  Mentioned only to say "don't use it."
+  Exists in the curriculum to contrast with SSH.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONFIGURATION -->
+  <section id="config">
+    <div class="section-head">
+      <p class="kicker">Module 2</p>
+      <h2>Basic switch configuration</h2>
+      <p>A complete initial switch configuration — hostname, security, management IP, SSH. This is the sequence you'll follow every time you touch a new switch.</p>
+    </div>
+
+    <div class="terminal">
+      <div class="terminal-header">
+        <span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span>
+        <span class="terminal-title">Switch Initial Configuration (full walkthrough)</span>
+      </div>
+      <div class="terminal-body">
+<span class="comment">! === Step 1: Enter privileged EXEC mode ===</span>
+<span class="prompt">Switch&gt;</span> <span class="cmd">enable</span>
+<span class="prompt">Switch#</span>
+
+<span class="comment">! === Step 2: Enter global config mode ===</span>
+<span class="prompt">Switch#</span> <span class="cmd">configure terminal</span>
+<span class="prompt">Switch(config)#</span>
+
+<span class="comment">! === Step 3: Set hostname ===</span>
+<span class="prompt">Switch(config)#</span> <span class="cmd">hostname Floor1-SW</span>
+<span class="prompt">Floor1-SW(config)#</span> <span class="comment">! prompt changes immediately</span>
+
+<span class="comment">! === Step 4: Secure privileged EXEC mode ===</span>
+<span class="prompt">Floor1-SW(config)#</span> <span class="hl">enable secret Cisco123</span>
+<span class="comment">! NEVER use "enable password" — it stores in plaintext</span>
+
+<span class="comment">! === Step 5: Secure console port ===</span>
+<span class="prompt">Floor1-SW(config)#</span> <span class="cmd">line console 0</span>
+<span class="prompt">Floor1-SW(config-line)#</span> <span class="cmd">password ConP@ss</span>
+<span class="prompt">Floor1-SW(config-line)#</span> <span class="cmd">login</span>
+<span class="prompt">Floor1-SW(config-line)#</span> <span class="cmd">exit</span>
+
+<span class="comment">! === Step 6: Secure remote access (SSH) ===</span>
+<span class="prompt">Floor1-SW(config)#</span> <span class="cmd">line vty 0 4</span>
+<span class="prompt">Floor1-SW(config-line)#</span> <span class="cmd">password VtYp@ss</span>
+<span class="prompt">Floor1-SW(config-line)#</span> <span class="cmd">login</span>
+<span class="prompt">Floor1-SW(config-line)#</span> <span class="hl">transport input ssh</span>
+<span class="prompt">Floor1-SW(config-line)#</span> <span class="cmd">exit</span>
+
+<span class="comment">! === Step 7: Set a legal warning banner ===</span>
+<span class="prompt">Floor1-SW(config)#</span> <span class="cmd">banner motd #</span>
+<span class="cmd">Enter TEXT message.  End with the character '#'</span>
+<span class="cmd">Authorized access only. All activity is monitored.#</span>
+
+<span class="comment">! === Step 8: Configure management IP on VLAN 1 ===</span>
+<span class="prompt">Floor1-SW(config)#</span> <span class="cmd">interface vlan 1</span>
+<span class="prompt">Floor1-SW(config-if)#</span> <span class="cmd">ip address 192.168.1.10 255.255.255.0</span>
+<span class="prompt">Floor1-SW(config-if)#</span> <span class="hl">no shutdown</span>
+<span class="comment">! VLAN 1 is up by default for data, but the SVI needs "no shutdown"</span>
+
+<span class="comment">! === Step 9: Set default gateway (so switch is reachable from other subnets) ===</span>
+<span class="prompt">Floor1-SW(config)#</span> <span class="cmd">ip default-gateway 192.168.1.1</span>
+
+<span class="comment">! === Step 10: SAVE the config ===</span>
+<span class="prompt">Floor1-SW(config)#</span> <span class="cmd">end</span>
+<span class="prompt">Floor1-SW#</span> <span class="hl">copy running-config startup-config</span>
+<span class="comment">! Without this step, everything above is lost on reboot!</span>
+      </div>
+    </div>
+
+    <div class="terminal" style="margin-top:20px;">
+      <div class="terminal-header">
+        <span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span>
+        <span class="terminal-title">Verification commands</span>
+      </div>
+      <div class="terminal-body">
+<span class="prompt">Floor1-SW#</span> <span class="cmd">show running-config</span>         <span class="comment">! full current config</span>
+<span class="prompt">Floor1-SW#</span> <span class="cmd">show ip interface brief</span>    <span class="comment">! IP addresses on all interfaces</span>
+<span class="prompt">Floor1-SW#</span> <span class="cmd">show mac address-table</span>     <span class="comment">! MAC-to-port mapping</span>
+<span class="prompt">Floor1-SW#</span> <span class="cmd">show interfaces</span>            <span class="comment">! detailed interface status</span>
+<span class="prompt">Floor1-SW#</span> <span class="cmd">show version</span>               <span class="comment">! IOS version, uptime, config register</span>
+<span class="prompt">Floor1-SW#</span> <span class="cmd">show ip ssh</span>                <span class="comment">! SSH status and version</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- NETWORK MODELS -->
+  <section id="models">
+    <div class="section-head">
+      <p class="kicker">Module 3</p>
+      <h2>OSI vs. TCP/IP models</h2>
+      <p>Two models describe how networking works in layers. The OSI model is the reference vocabulary; the TCP/IP model is what the internet actually runs on.</p>
+    </div>
+
+    <div class="diagram-grid">
+      <figure>
+        <svg viewBox="0 0 520 400" role="img" aria-label="OSI model (7 layers) side by side with TCP/IP model (4 layers).">
+          <g font-family="IBM Plex Mono" font-weight="600" font-size="13" fill="currentColor">
+            <text x="130" y="22" text-anchor="middle" fill="var(--accent)" font-size="14">OSI Model (7 layers)</text>
+            <text x="390" y="22" text-anchor="middle" fill="var(--accent-2)" font-size="14">TCP/IP Model (4 layers)</text>
+            <!-- OSI layers -->
+            <rect x="20" y="38" width="220" height="36" fill="var(--surface-2)" stroke="var(--border)"/>
+            <text x="130" y="61" text-anchor="middle">7. Application</text>
+            <rect x="20" y="80" width="220" height="36" fill="var(--surface-2)" stroke="var(--border)"/>
+            <text x="130" y="103" text-anchor="middle">6. Presentation</text>
+            <rect x="20" y="122" width="220" height="36" fill="var(--surface-2)" stroke="var(--border)"/>
+            <text x="130" y="145" text-anchor="middle">5. Session</text>
+            <rect x="20" y="174" width="220" height="36" fill="var(--accent-soft)" stroke="var(--accent)"/>
+            <text x="130" y="197" text-anchor="middle" fill="var(--accent)">4. Transport</text>
+            <rect x="20" y="216" width="220" height="36" fill="var(--accent-soft)" stroke="var(--accent)"/>
+            <text x="130" y="239" text-anchor="middle" fill="var(--accent)">3. Network</text>
+            <rect x="20" y="268" width="220" height="36" fill="var(--accent-2-soft)" stroke="var(--accent-2)"/>
+            <text x="130" y="291" text-anchor="middle" fill="var(--accent-2)">2. Data Link</text>
+            <rect x="20" y="310" width="220" height="36" fill="var(--accent-2-soft)" stroke="var(--accent-2)"/>
+            <text x="130" y="333" text-anchor="middle" fill="var(--accent-2)">1. Physical</text>
+
+            <!-- TCP/IP layers -->
+            <rect x="280" y="38" width="220" height="108" fill="var(--surface-2)" stroke="var(--border)"/>
+            <text x="390" y="95" text-anchor="middle">Application</text>
+            <text x="390" y="112" text-anchor="middle" font-family="IBM Plex Sans" font-size="10" fill="var(--muted)">(combines OSI 7, 6, 5)</text>
+            <rect x="280" y="152" width="220" height="36" fill="var(--accent-soft)" stroke="var(--accent)"/>
+            <text x="390" y="175" text-anchor="middle" fill="var(--accent)">Transport</text>
+            <rect x="280" y="194" width="220" height="36" fill="var(--accent-soft)" stroke="var(--accent)"/>
+            <text x="390" y="217" text-anchor="middle" fill="var(--accent)">Internet</text>
+            <rect x="280" y="268" width="220" height="78" fill="var(--accent-2-soft)" stroke="var(--accent-2)"/>
+            <text x="390" y="302" text-anchor="middle" fill="var(--accent-2)">Network Access</text>
+            <text x="390" y="320" text-anchor="middle" font-family="IBM Plex Sans" font-size="10" fill="var(--muted)">(combines OSI 2, 1)</text>
+
+            <!-- Mapping arrows -->
+            <line x1="240" y1="56" x2="280" y2="80" stroke="var(--muted)" stroke-width="1" stroke-dasharray="3 2"/>
+            <line x1="240" y1="140" x2="280" y2="170" stroke="var(--muted)" stroke-width="1" stroke-dasharray="3 2"/>
+            <line x1="240" y1="234" x2="280" y2="210" stroke="var(--muted)" stroke-width="1" stroke-dasharray="3 2"/>
+            <line x1="240" y1="286" x2="280" y2="300" stroke="var(--muted)" stroke-width="1" stroke-dasharray="3 2"/>
+
+            <!-- PDU labels -->
+            <text x="40" y="370" font-family="IBM Plex Sans" font-size="11" fill="var(--muted)">PDU names (top → bottom):</text>
+            <text x="40" y="388" font-family="IBM Plex Sans" font-size="11" fill="var(--text)"><tspan font-weight="700">Data → Segment → Packet → Frame → Bits</tspan></text>
+          </g>
+        </svg>
+        <figcaption>The OSI model has 7 layers (reference vocabulary); the TCP/IP model has 4 layers (what the internet actually uses). Both describe the same process — they just group layers differently.</figcaption>
+      </figure>
+
+      <div>
+        <h3 style="font-family:var(--mono);font-size:1.1rem;margin:0 0 12px;">Layer-by-layer reference</h3>
+        <table class="model-table">
+          <thead><tr><th>Layer</th><th>Job</th><th>PDU</th><th>Examples</th></tr></thead>
+          <tbody>
+            <tr><td style="font-weight:700;">7 Application</td><td>Network services to apps</td><td>Data</td><td>HTTP, DNS, SMTP, DHCP</td></tr>
+            <tr><td style="font-weight:700;">6 Presentation</td><td>Encoding, encryption</td><td>Data</td><td>JPEG, ASCII, SSL/TLS</td></tr>
+            <tr><td style="font-weight:700;">5 Session</td><td>Manage dialogues</td><td>Data</td><td>NetBIOS, RPC</td></tr>
+            <tr><td style="font-weight:700;">4 Transport</td><td>End-to-end delivery</td><td>Segment</td><td>TCP, UDP</td></tr>
+            <tr><td style="font-weight:700;">3 Network</td><td>Routing across networks</td><td>Packet</td><td>IP, ICMP, OSPF</td></tr>
+            <tr><td style="font-weight:700;">2 Data Link</td><td>MAC addressing, error detection</td><td>Frame</td><td>Ethernet 802.3, Wi-Fi 802.11</td></tr>
+            <tr><td style="font-weight:700;">1 Physical</td><td>Bits on the wire</td><td>Bits</td><td>Cables, connectors, signaling</td></tr>
+          </tbody>
+        </table>
+        <p style="font-family:var(--mono);font-size:.88rem;color:var(--muted);margin-top:8px;"><strong>Memory aid:</strong> "All People Seem To Need Data Processing" (bottom → top)</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ENCAPSULATION -->
+  <section id="encapsulation">
+    <div class="section-head">
+      <p class="kicker">Module 3</p>
+      <h2>Encapsulation &amp; decapsulation</h2>
+      <p>As data moves down the protocol stack, each layer wraps it with its own header (and sometimes a trailer). This wrapping is <strong>encapsulation</strong>. At the receiving end, each layer strips its header — <strong>decapsulation</strong>.</p>
+    </div>
+
+    <figure>
+      <svg viewBox="0 0 700 340" role="img" aria-label="Encapsulation flow: data moves down the OSI stack, each layer adds a header.">
+        <g font-family="IBM Plex Mono" font-weight="600" font-size="13" fill="currentColor">
+          <text x="350" y="22" text-anchor="middle" fill="var(--accent)" font-size="14">Encapsulation (sending) → Decapsulation (receiving)</text>
+
+          <!-- Sending side -->
+          <text x="175" y="50" text-anchor="middle" font-size="12" fill="var(--accent-2)">Sending host</text>
+          <!-- Application data -->
+          <rect x="60" y="62" width="230" height="30" fill="var(--surface-2)" stroke="var(--border)"/>
+          <text x="175" y="82" text-anchor="middle">Data (HTTP request)</text>
+          <!-- Transport adds header -->
+          <rect x="50" y="102" width="250" height="30" fill="var(--accent-soft)" stroke="var(--accent)"/>
+          <rect x="50" y="102" width="50" height="30" fill="var(--accent)" stroke="var(--accent)"/>
+          <text x="75" y="122" text-anchor="middle" fill="#fff" font-size="11">TCP</text>
+          <text x="175" y="122" text-anchor="middle">Data</text>
+          <text x="310" y="122" font-family="IBM Plex Sans" font-size="10" fill="var(--muted)">Segment</text>
+          <!-- Network adds header -->
+          <rect x="40" y="142" width="270" height="30" fill="var(--accent-soft)" stroke="var(--accent)"/>
+          <rect x="40" y="142" width="50" height="30" fill="var(--accent)" stroke="var(--accent)"/>
+          <text x="65" y="162" text-anchor="middle" fill="#fff" font-size="11">IP</text>
+          <rect x="90" y="142" width="50" height="30" fill="var(--accent)" stroke="var(--accent)"/>
+          <text x="115" y="162" text-anchor="middle" fill="#fff" font-size="11">TCP</text>
+          <text x="205" y="162" text-anchor="middle">Data</text>
+          <text x="320" y="162" font-family="IBM Plex Sans" font-size="10" fill="var(--muted)">Packet</text>
+          <!-- Data Link adds header + trailer -->
+          <rect x="30" y="182" width="290" height="30" fill="var(--accent-2-soft)" stroke="var(--accent-2)"/>
+          <rect x="30" y="182" width="50" height="30" fill="var(--accent-2)" stroke="var(--accent-2)"/>
+          <text x="55" y="202" text-anchor="middle" fill="#fff" font-size="11">MAC</text>
+          <rect x="80" y="182" width="40" height="30" fill="var(--accent)" stroke="var(--accent)"/>
+          <text x="100" y="202" text-anchor="middle" fill="#fff" font-size="10">IP</text>
+          <rect x="120" y="182" width="40" height="30" fill="var(--accent)" stroke="var(--accent)"/>
+          <text x="140" y="202" text-anchor="middle" fill="#fff" font-size="10">TCP</text>
+          <text x="210" y="202" text-anchor="middle">Data</text>
+          <rect x="270" y="182" width="50" height="30" fill="var(--accent-2)" stroke="var(--accent-2)"/>
+          <text x="295" y="202" text-anchor="middle" fill="#fff" font-size="11">FCS</text>
+          <text x="340" y="202" font-family="IBM Plex Sans" font-size="10" fill="var(--muted)">Frame</text>
+          <!-- Physical -->
+          <rect x="20" y="222" width="310" height="26" fill="var(--surface)" stroke="var(--border)"/>
+          <text x="175" y="240" text-anchor="middle" font-family="Courier New" font-size="10">01101001 11010010 01110101 ...</text>
+          <text x="345" y="240" font-family="IBM Plex Sans" font-size="10" fill="var(--muted)">Bits</text>
+
+          <!-- Arrow across -->
+          <line x1="380" y1="150" x2="460" y2="150" stroke="var(--accent)" stroke-width="2" marker-end="url(#arr3)"/>
+          <text x="420" y="142" text-anchor="middle" font-family="IBM Plex Sans" font-size="10" fill="var(--accent)">network</text>
+
+          <!-- Receiving side -->
+          <text x="570" y="50" text-anchor="middle" font-size="12" fill="var(--correct)">Receiving host</text>
+          <rect x="430" y="222" width="280" height="26" fill="var(--surface)" stroke="var(--border)"/>
+          <text x="570" y="240" text-anchor="middle" font-family="Courier New" font-size="10">01101001 11010010 01110101 ...</text>
+          <text x="430" y="240" font-family="IBM Plex Sans" font-size="10" fill="var(--muted)" text-anchor="end" dx="-5">Bits</text>
+
+          <rect x="450" y="182" width="240" height="30" fill="var(--accent-2-soft)" stroke="var(--accent-2)"/>
+          <text x="570" y="202" text-anchor="middle">Frame → strip MAC + FCS → Packet</text>
+          <rect x="460" y="142" width="220" height="30" fill="var(--accent-soft)" stroke="var(--accent)"/>
+          <text x="570" y="162" text-anchor="middle">Packet → strip IP → Segment</text>
+          <rect x="470" y="102" width="200" height="30" fill="var(--accent-soft)" stroke="var(--accent)"/>
+          <text x="570" y="122" text-anchor="middle">Segment → strip TCP → Data</text>
+          <rect x="480" y="62" width="180" height="30" fill="var(--surface-2)" stroke="var(--border)"/>
+          <text x="570" y="82" text-anchor="middle">Data delivered to app</text>
+
+          <!-- Decapsulation arrows -->
+          <line x1="570" y1="248" x2="570" y2="212" stroke="var(--correct)" stroke-width="1" marker-end="url(#arr4)"/>
+          <line x1="570" y1="212" x2="570" y2="172" stroke="var(--correct)" stroke-width="1" marker-end="url(#arr4)"/>
+          <line x1="570" y1="172" x2="570" y2="132" stroke="var(--correct)" stroke-width="1" marker-end="url(#arr4)"/>
+          <line x1="570" y1="132" x2="570" y2="92" stroke="var(--correct)" stroke-width="1" marker-end="url(#arr4)"/>
+        </g>
+        <defs>
+          <marker id="arr3" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="var(--accent)"/></marker>
+          <marker id="arr4" markerWidth="6" markerHeight="6" refX="3" refY="6" orient="auto"><path d="M0,6 L3,0 L6,6" fill="var(--correct)"/></marker>
+        </defs>
+      </svg>
+      <figcaption>Sending (left): each layer adds its header as data moves down. Receiving (right): each layer strips its header as data moves up. The PDU name changes at each layer.</figcaption>
+    </figure>
+  </section>
+
+  <!-- FLASHCARDS -->
+  <section id="flashcards">
+    <div class="section-head">
+      <p class="kicker">Study</p>
+      <h2>Flashcards</h2>
+      <p>Click to flip. Double-click to mark as known.</p>
+    </div>
+    <div class="toolbar">
+      <button class="btn" id="shuffleBtn">Shuffle</button>
+      <button class="btn" id="resetKnownBtn">Reset progress</button>
+      <span id="cardProgress"></span>
+    </div>
+    <div class="card-grid" id="cardGrid"></div>
+  </section>
+
+  <!-- QUIZ -->
+  <section id="quiz">
+    <div class="section-head">
+      <p class="kicker">Check yourself</p>
+      <h2>Sample questions</h2>
+      <p>Pick an answer to see if you're right — same style as the checkpoint exams.</p>
+    </div>
+    <div id="quizScore"></div>
+    <div id="quizList"></div>
+    <button class="btn" id="resetQuizBtn">Reset quiz</button>
+  </section>
+
+  <!-- EXAMPLES -->
+  <section id="examples">
+    <div class="section-head">
+      <p class="kicker">Applied</p>
+      <h2>Worked examples</h2>
+      <p>Think it through before you expand the answer.</p>
+    </div>
+
+    <div class="example">
+      <span class="tag">IOS Modes</span>
+      <h3>Which mode am I in?</h3>
+      <p>You type <code>configure terminal</code> and the prompt changes to <code>Switch(config)#</code>. You then type <code>interface fastethernet 0/1</code> and the prompt changes again. What mode are you in now, and what does the prompt tell you?</p>
+      <details class="solution">
+        <summary>Show answer</summary>
+        <div class="solbody">
+          <p><strong>Answer:</strong> You're in <strong>interface configuration mode</strong> — <code>(config-if)#</code>. The prompt encodes your position in the hierarchy: <code>(config)</code> means global config, <code>(config-if)</code> means you're inside a specific interface's config. You can only configure that interface's settings (speed, duplex, description) while in this mode.</p>
+        </div>
+      </details>
+    </div>
+
+    <div class="example">
+      <span class="tag">Config save</span>
+      <h3>The reboot surprise</h3>
+      <p>You spend 20 minutes configuring a switch — hostname, passwords, management IP, SSH. You can ping the switch from a PC. The next morning, the switch reboots overnight and all your config is gone. What happened?</p>
+      <details class="solution">
+        <summary>Show answer</summary>
+        <div class="solbody">
+          <p><strong>Answer:</strong> You forgot to save. The changes you made were in <strong>running-config</strong> (RAM, volatile). When the switch rebooted, it loaded <strong>startup-config</strong> (NVRAM), which was never updated. The fix: always run <code>copy running-config startup-config</code> (or <code>write memory</code>) after finishing configuration.</p>
+        </div>
+      </details>
+    </div>
+
+    <div class="example">
+      <span class="tag">SSH vs Telnet</span>
+      <h3>Why SSH?</h3>
+      <p>A student asks: "If both SSH and Telnet let me configure a switch remotely, why does it matter which one I use?"</p>
+      <details class="solution">
+        <summary>Show answer</summary>
+        <div class="solbody">
+          <p><strong>Answer:</strong> Telnet sends everything — including passwords — in <strong>plaintext</strong>. Anyone sniffing the network can read your credentials. SSH <strong>encrypts</strong> the entire session. On any production network, SSH is the only acceptable choice for remote management. Telnet exists in the curriculum so you understand why SSH replaced it.</p>
+        </div>
+      </details>
+    </div>
+
+    <div class="example">
+      <span class="tag">OSI mapping</span>
+      <h3>Which layer is it?</h3>
+      <p>A switch forwards traffic using MAC addresses. A router forwards traffic using IP addresses. A firewall inspects traffic based on security rules. At which OSI layer does each device primarily operate?</p>
+      <details class="solution">
+        <summary>Show answer</summary>
+        <div class="solbody">
+          <p><strong>Switch → Layer 2 (Data Link)</strong> — it uses MAC addresses to make forwarding decisions.</p>
+          <p><strong>Router → Layer 3 (Network)</strong> — it uses IP addresses to route packets between networks.</p>
+          <p><strong>Firewall → Layers 3–7</strong> — it can filter based on IP addresses (L3), port numbers (L4), or application content (L7), depending on its capabilities.</p>
+        </div>
+      </details>
+    </div>
+
+    <div class="example">
+      <span class="tag">Encapsulation</span>
+      <h3>What's the PDU?</h3>
+      <p>A web browser sends an HTTP request to a server on another network. Starting from the application layer, what is the PDU called at each layer as the data moves down the stack?</p>
+      <details class="solution">
+        <summary>Show answer</summary>
+        <div class="solbody">
+          <p><strong>Layer 7 (Application):</strong> <em>Data</em> — the HTTP request itself.</p>
+          <p><strong>Layer 4 (Transport):</strong> <em>Segment</em> — TCP wraps the data with source and destination port numbers (e.g., port 443 for HTTPS).</p>
+          <p><strong>Layer 3 (Network):</strong> <em>Packet</em> — IP wraps the segment with source and destination IP addresses.</p>
+          <p><strong>Layer 2 (Data Link):</strong> <em>Frame</em> — Ethernet wraps the packet with source and destination MAC addresses plus an error-check trailer (FCS).</p>
+          <p><strong>Layer 1 (Physical):</strong> <em>Bits</em> — the frame is converted to electrical/optical signals on the wire.</p>
+        </div>
+      </details>
+    </div>
+
+    <div class="example">
+      <span class="tag">Management IP</span>
+      <h3>Why VLAN 1?</h3>
+      <p>Why do we configure the switch's management IP on <code>interface vlan 1</code> instead of on a physical port like <code>fastethernet 0/1</code>?</p>
+      <details class="solution">
+        <summary>Show answer</summary>
+        <div class="solbody">
+          <p><strong>Answer:</strong> A physical port (like Fa0/1) is a Layer 2 port — it forwards frames, not packets. It doesn't have (or need) an IP address. The management IP needs to sit on a Layer 3 interface so the switch can be reached via IP for remote management. <code>interface vlan 1</code> is a <strong>Switch Virtual Interface (SVI)</strong> — a virtual Layer 3 interface associated with VLAN 1. By default, all access ports are in VLAN 1, so any port on the switch can reach this management IP.</p>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <!-- GLOSSARY -->
+  <section id="glossary">
+    <div class="section-head">
+      <p class="kicker">Reference</p>
+      <h2>Glossary &amp; index</h2>
+      <p>Every term from this session, searchable and indexed A–Z.</p>
+    </div>
+    <input type="text" id="glossarySearch" placeholder="Search terms…" aria-label="Search glossary">
+    <div class="alpha-nav" id="alphaNav"></div>
+    <dl class="glossary" id="glossaryList"></dl>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>IT131 · CCNA: Introduction to Networks · Session 2 reference — more sessions added as the course progresses.</p>
+  </div>
+</footer>
+<script>
+  const TERMS = [
+    {t:"Banner MOTD", d:"Message of the Day — a legal warning displayed to anyone who connects to the switch. Configured with 'banner motd #message#'. Required on production devices."},
+    {t:"CLI (Command-Line Interface)", d:"The text-based interface for configuring Cisco IOS devices. You type commands at a prompt rather than clicking through a GUI."},
+    {t:"Console", d:"A physical serial cable connection to a device — works regardless of network state. The only guaranteed access method on a freshly unconfigured switch."},
+    {t:"Data Link layer (Layer 2)", d:"The OSI layer responsible for MAC addressing and error detection on a local link. Switches operate here. PDU: frame."},
+    {t:"Default gateway", d:"The router interface IP on the same subnet — without it, a device can talk locally but not across networks. Configured on end devices, not switches."},
+    {t:"DNS (Domain Name System)", d:"Translates human-readable domain names (google.com) into IP addresses. An Application layer (Layer 7) protocol."},
+    {t:"DHCP", d:"Dynamic Host Configuration Protocol — automatically assigns IP addresses, subnet masks, default gateways, and DNS servers to devices. Application layer (Layer 7)."},
+    {t:"Encapsulation", d:"The process of wrapping data with protocol headers as it moves down the OSI stack. Each layer adds its own header (and sometimes a trailer)."},
+    {t:"Enable secret", d:"An encrypted password for privileged EXEC mode. Always use 'enable secret' — never 'enable password', which stores the password in plaintext."},
+    {t:"FCS (Frame Check Sequence)", d:"An error-detection trailer added to Ethernet frames at Layer 2. The receiver recalculates it; if it doesn't match, the frame is discarded."},
+    {t:"Flash memory", d:"Non-volatile storage in a Cisco device that holds the IOS image file. Survives reboots."},
+    {t:"Global configuration mode", d:"The IOS mode where you make system-wide changes (hostname, passwords, banners). Entered with 'configure terminal' from privileged EXEC."},
+    {t:"HTTP/HTTPS", d:"Hypertext Transfer Protocol (Secure) — the protocol for web traffic. HTTP = port 80, HTTPS = port 443. Application layer (Layer 7)."},
+    {t:"Internet layer", d:"The TCP/IP model layer that handles logical addressing and routing — maps to OSI Layer 3 (Network). Uses IP."},
+    {t:"IOS (Internetwork Operating System)", d:"The operating system that runs on Cisco switches and routers. Provides the CLI interface and all networking functions."},
+    {t:"IP address", d:"A logical 32-bit (IPv4) or 128-bit (IPv6) address that identifies a host on a network. Used at Layer 3 for routing between networks."},
+    {t:"MAC address", d:"A 48-bit hardware address burned into a NIC. Used at Layer 2 to identify devices on the same local link. Written as 6 hex pairs (e.g., AA:BB:CC:DD:EE:FF)."},
+    {t:"NVRAM", d:"Non-Volatile RAM — stores the startup-config. Survives reboots. Contrast with RAM (running-config, volatile)."},
+    {t:"OSI model", d:"Open Systems Interconnection — a 7-layer reference model describing how network communication works. The universal vocabulary for discussing layers."},
+    {t:"Physical layer (Layer 1)", d:"The OSI layer that transmits raw bits over a physical medium — cables, connectors, signaling. PDU: bits."},
+    {t:"Presentation layer (Layer 6)", d:"The OSI layer responsible for data encoding, encryption, and compression. PDU: data."},
+    {t:"Privileged EXEC mode", d:"The IOS mode with full access to show commands, debug, and config. Entered with 'enable'. Prompt ends in #. Protect with enable secret."},
+    {t:"Protocol", d:"A set of rules governing how devices communicate — message format, ordering, speed, error handling. Without protocols, devices can't interoperate."},
+    {t:"Protocol suite", d:"A group of protocols working together at different layers. The two major suites: OSI (7 layers) and TCP/IP (4 layers)."},
+    {t:"Running-config", d:"The currently active configuration in RAM. Changes take effect immediately but are lost on reboot unless saved to startup-config."},
+    {t:"Session layer (Layer 5)", d:"The OSI layer that manages dialogues between applications — opening, maintaining, and closing sessions. PDU: data."},
+    {t:"SSH (Secure Shell)", d:"Encrypted remote access protocol. Preferred over Telnet for managing switches/routers remotely. Requires a management IP and enable secret."},
+    {t:"Startup-config", d:"The saved configuration stored in NVRAM. Loaded into RAM (as running-config) every time the device boots."},
+    {t:"SVI (Switch Virtual Interface)", d:"A virtual Layer 3 interface on a switch associated with a VLAN. Used for management IP addressing — e.g., 'interface vlan 1'."},
+    {t:"Telnet", d:"An unencrypted remote access protocol. Mentioned only to contrast with SSH — never use it in production. Text sent in plaintext, including passwords."},
+    {t:"Transport layer (Layer 4)", d:"The OSI layer responsible for end-to-end delivery — TCP (reliable) and UDP (fast). PDU: segment. Uses port numbers to identify applications."},
+    {t:"User EXEC mode", d:"The initial IOS mode after connecting. Limited commands — mostly 'show' and basic diagnostics. Prompt ends in >. Enter with 'enable' to go deeper."},
+    {t:"VLAN", d:"Virtual Local Area Network — logically segments a switch into separate broadcast domains. Ports on different VLANs can't communicate without a router."},
+    {t:"VTY (Virtual Teletype)", d:"Lines 0–4 on a Cisco device that accept remote connections (SSH/Telnet). Configured under 'line vty 0 4'."},
+  ];
+
+  const QUIZ = [
+    {
+      q:"What happens during the POST phase of a switch boot?",
+      choices:["IOS is loaded from flash","The startup-config is loaded from NVRAM","Hardware components are tested (CPU, RAM, ports)","An IP address is assigned to VLAN 1"],
+      correct:2,
+      explain:"POST (Power-On Self-Test) checks hardware — CPU, RAM, port health — before anything else loads."
+    },
+    {
+      q:"Where is the running-config stored?",
+      choices:["Flash","NVRAM","RAM","A TFTP server"],
+      correct:2,
+      explain:"Running-config lives in RAM (volatile). It's lost on reboot. Startup-config is in NVRAM (persistent)."
+    },
+    {
+      q:"Which command saves the running-config to startup-config?",
+      choices:["save config","write","copy running-config startup-config","startup-config save"],
+      correct:2,
+      explain:"'copy running-config startup-config' copies the active config to NVRAM so it survives a reboot."
+    },
+    {
+      q:"What is the prompt for global configuration mode?",
+      choices:["Switch>","Switch#","Switch(config)#","Switch(config-if)#"],
+      correct:2,
+      explain:"(config)# indicates global configuration mode — entered via 'configure terminal' from privileged EXEC."
+    },
+    {
+      q:"At which OSI layer does a switch primarily operate?",
+      choices:["Layer 1 – Physical","Layer 2 – Data Link","Layer 3 – Network","Layer 4 – Transport"],
+      correct:1,
+      explain:"Switches forward frames using MAC addresses — that's Layer 2 (Data Link)."
+    },
+    {
+      q:"What is the PDU called at Layer 3 (Network)?",
+      choices:["Segment","Packet","Frame","Bits"],
+      correct:1,
+      explain:"Layer 3 PDUs are packets. Layer 4 = segments, Layer 2 = frames, Layer 1 = bits."
+    },
+    {
+      q:"Which OSI layers are combined into the TCP/IP 'Application' layer?",
+      choices:["Layers 1 and 2","Layers 3 and 4","Layers 5, 6, and 7","Layers 2 and 3"],
+      correct:2,
+      explain:"The TCP/IP Application layer maps to OSI layers 5 (Session), 6 (Presentation), and 7 (Application)."
+    },
+    {
+      q:"What is the purpose of encapsulation?",
+      choices:["To encrypt all data on the network","To add headers (and sometimes trailers) at each layer as data moves down the stack","To convert analog signals to digital","To assign IP addresses to devices"],
+      correct:1,
+      explain:"Encapsulation wraps data with layer-specific headers as it descends the protocol stack. Each header tells the corresponding layer at the receiver how to process the data."
+    },
+    {
+      q:"Why should you use 'enable secret' instead of 'enable password'?",
+      choices:["enable secret is shorter","enable secret encrypts the password; enable password stores it in plaintext","enable secret is only for SSH","enable password doesn't work on switches"],
+      correct:1,
+      explain:"'enable password' stores the password in plaintext in the config — anyone who can view the config can read it. 'enable secret' hashes it."
+    },
+    {
+      q:"What port number does HTTPS use?",
+      choices:["80","22","443","23"],
+      correct:2,
+      explain:"HTTPS = port 443. HTTP = 80, SSH = 22, Telnet = 23."
+    },
+  ];
+
+  const grid = document.getElementById('cardGrid');
+  TERMS.forEach((item, i) => {
+    const card = document.createElement('button');
+    card.className = 'flashcard';
+    card.setAttribute('aria-label', 'Flashcard: ' + item.t + '. Press to flip.');
+    card.dataset.i = i;
+    card.innerHTML = `
+      <div class="flashcard-inner">
+        <div class="flashcard-face front"><div class="lbl">Term</div><div class="term">${item.t}</div></div>
+        <div class="flashcard-face back"><div class="lbl">Definition</div><div class="def">${item.d}</div></div>
+      </div>`;
+    card.addEventListener('click', () => card.classList.toggle('flipped'));
+    card.addEventListener('dblclick', () => { card.classList.toggle('known'); updateProgress(); });
+    grid.appendChild(card);
+  });
+  function updateProgress(){
+    const known = document.querySelectorAll('.flashcard.known').length;
+    document.getElementById('cardProgress').textContent = `${known} / ${TERMS.length} marked known (double-click a card to mark it)`;
+  }
+  updateProgress();
+  document.getElementById('shuffleBtn').addEventListener('click', () => {
+    const cards = Array.from(grid.children);
+    cards.sort(() => Math.random() - 0.5);
+    cards.forEach(c => { c.classList.remove('flipped'); grid.appendChild(c); });
+  });
+  document.getElementById('resetKnownBtn').addEventListener('click', () => {
+    document.querySelectorAll('.flashcard.known').forEach(c => c.classList.remove('known'));
+    updateProgress();
+  });
+
+  const quizList = document.getElementById('quizList');
+  let score = 0, answered = 0;
+  function renderQuiz(){
+    quizList.innerHTML = ''; score = 0; answered = 0;
+    QUIZ.forEach((item, qi) => {
+      const box = document.createElement('div');
+      box.className = 'quiz-q';
+      box.innerHTML = `<p class="qtext"><span class="qnum">Q${qi+1}.</span>${item.q}</p><div class="choices"></div><p class="explain"></p>`;
+      const choicesEl = box.querySelector('.choices');
+      item.choices.forEach((c, ci) => {
+        const b = document.createElement('button');
+        b.className = 'choice'; b.textContent = c;
+        b.addEventListener('click', () => {
+          if (box.dataset.done) return;
+          box.dataset.done = '1'; answered++;
+          if (ci === item.correct) score++;
+          Array.from(choicesEl.children).forEach((el, ei) => {
+            el.disabled = true;
+            if (ei === item.correct) el.classList.add('correct');
+            else if (ei === ci) el.classList.add('incorrect');
+          });
+          box.querySelector('.explain').textContent = item.explain;
+          box.querySelector('.explain').classList.add('show');
+          updateScore();
+        });
+        choicesEl.appendChild(b);
+      });
+      quizList.appendChild(box);
+    });
+    updateScore();
+  }
+  function updateScore(){
+    document.getElementById('quizScore').textContent =
+      answered === 0 ? `${QUIZ.length} questions — click an answer to check yourself` : `Score: ${score} / ${answered} answered`;
+  }
+  renderQuiz();
+  document.getElementById('resetQuizBtn').addEventListener('click', renderQuiz);
+
+  const glossaryList = document.getElementById('glossaryList');
+  const alphaNav = document.getElementById('alphaNav');
+  const letters = [...new Set(TERMS.map(t => t.t[0].toUpperCase()))];
+  'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').forEach(L => {
+    const a = document.createElement('a');
+    a.textContent = L;
+    if (letters.includes(L)) { a.href = '#g-' + L; a.className = 'has'; }
+    else { a.href = 'javascript:void(0)'; }
+    alphaNav.appendChild(a);
+  });
+  let currentLetter = '';
+  TERMS.forEach(item => {
+    const L = item.t[0].toUpperCase();
+    if (L !== currentLetter) {
+      currentLetter = L;
+      const h = document.createElement('div');
+      h.className = 'glossary-letter'; h.id = 'g-' + L; h.textContent = L;
+      glossaryList.appendChild(h);
+    }
+    const wrap = document.createElement('div');
+    wrap.className = 'gitem';
+    wrap.innerHTML = `<dt>${item.t}</dt><dd>${item.d}</dd>`;
+    wrap.dataset.search = (item.t + ' ' + item.d).toLowerCase();
+    glossaryList.appendChild(wrap);
+  });
+  document.getElementById('glossarySearch').addEventListener('input', (e) => {
+    const q = e.target.value.toLowerCase().trim();
+    document.querySelectorAll('.gitem').forEach(el => {
+      el.classList.toggle('hidden', q && !el.dataset.search.includes(q));
+    });
+  });
+</script>
+</body>
+</html>

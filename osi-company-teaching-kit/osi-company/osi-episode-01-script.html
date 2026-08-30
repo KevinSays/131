@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OSI Company — Episode 01 Shooting Script</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EDE8DD;
+    --canvas:#D9D2C3;
+    --ink:#1F2421;
+    --kraft:#B08554;
+    --blue:#2F4858;
+    --red:#A23A2E;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--canvas);
+    background-image: radial-gradient(rgba(31,36,33,0.05) 1px, transparent 1px);
+    background-size:16px 16px;
+    color:var(--ink);
+    font-family:'IBM Plex Sans', system-ui, sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:760px;margin:0 auto;padding:32px 18px 64px;}
+
+  header.masthead{margin-bottom:30px;}
+  .eyebrow{
+    display:inline-block;
+    font-family:'Special Elite','Courier New',monospace;
+    font-size:0.68rem;letter-spacing:0.12em;
+    border:2px solid var(--blue);color:var(--blue);
+    padding:4px 10px;transform:rotate(-2deg);background:var(--paper);
+  }
+  h1{
+    font-family:'Special Elite','Courier New',monospace;
+    font-weight:400;font-size:clamp(1.55rem,5vw,2.3rem);
+    margin:14px 0 8px;line-height:1.18;
+  }
+  .subtitle{font-size:0.92rem;line-height:1.5;opacity:0.8;max-width:60ch;margin:0;}
+
+  .cold-open{
+    background:var(--paper);border:1.5px solid var(--ink);
+    box-shadow:5px 5px 0 rgba(31,36,33,0.16);
+    padding:20px 22px;margin:28px 0 6px;
+  }
+  .cold-open .tag{
+    font-family:'IBM Plex Mono',monospace;font-size:0.68rem;
+    letter-spacing:0.1em;color:var(--red);margin:0 0 8px;
+  }
+  .cold-open p{margin:0;font-size:0.92rem;line-height:1.6;font-style:italic;}
+
+  h2.act-title{
+    font-family:'Special Elite','Courier New',monospace;
+    font-weight:400;font-size:1.15rem;letter-spacing:0.03em;
+    margin:44px 0 6px;padding-bottom:8px;
+    border-bottom:2px solid var(--ink);
+  }
+  .act-sub{font-size:0.82rem;opacity:0.7;margin:0 0 20px;}
+
+  .scene{
+    background:var(--paper);border-left:4px solid var(--kraft);
+    padding:18px 20px;margin:20px 0;
+  }
+  .scene-head{
+    font-family:'IBM Plex Mono',monospace;font-size:0.74rem;
+    letter-spacing:0.08em;text-transform:uppercase;color:var(--blue);
+    margin:0 0 12px;
+  }
+  .narrator{font-style:italic;opacity:0.85;font-size:0.88rem;line-height:1.55;margin:0 0 12px;}
+  .narrator b{font-style:normal;}
+  .line{margin:10px 0 10px 18px;}
+  .line .who{
+    font-family:'Special Elite','Courier New',monospace;
+    font-size:0.85rem;display:block;margin-bottom:3px;
+  }
+  .line .say{margin:0;font-size:0.89rem;line-height:1.5;}
+  .stage{font-style:italic;opacity:0.6;font-size:0.8rem;margin:6px 0 6px 18px;}
+
+  .teach-note{
+    margin-top:14px;padding:10px 12px;
+    border:1.5px dashed var(--blue);
+    background:rgba(47,72,88,0.06);
+    font-family:'IBM Plex Mono',monospace;font-size:0.75rem;line-height:1.55;
+  }
+  .teach-note .label{color:var(--blue);font-weight:600;letter-spacing:0.04em;}
+
+  .wire-break{
+    text-align:center;margin:34px 0;padding:16px 10px;
+    border-top:3px dashed var(--ink);border-bottom:3px dashed var(--ink);
+  }
+  .wire-break .tag{
+    font-family:'IBM Plex Mono',monospace;font-size:0.7rem;
+    letter-spacing:0.2em;color:var(--red);margin:0 0 6px;
+  }
+  .wire-break p{margin:0;font-size:0.88rem;font-style:italic;opacity:0.85;}
+
+  .st-block{
+    background:var(--paper);border:1.5px solid var(--ink);
+    box-shadow:5px 5px 0 rgba(31,36,33,0.16);
+    padding:18px 20px;margin:18px 0;
+  }
+  .st-block h3{
+    font-family:'Special Elite','Courier New',monospace;font-weight:400;
+    font-size:0.95rem;margin:0 0 12px;
+  }
+  ol.steps{margin:0;padding-left:20px;font-size:0.87rem;line-height:1.6;}
+  ol.steps li{margin-bottom:8px;}
+  code{
+    font-family:'IBM Plex Mono',monospace;background:rgba(31,36,33,0.08);
+    padding:1px 5px;border-radius:2px;font-size:0.85em;
+  }
+  table.filters{width:100%;border-collapse:collapse;font-size:0.82rem;margin-top:6px;}
+  table.filters th, table.filters td{
+    text-align:left;padding:6px 8px;border-bottom:1px dashed rgba(31,36,33,0.3);
+    vertical-align:top;
+  }
+  table.filters th{
+    font-family:'IBM Plex Mono',monospace;font-size:0.68rem;
+    text-transform:uppercase;letter-spacing:0.05em;color:var(--kraft);
+  }
+  ul.debrief{margin:8px 0 0;padding-left:20px;font-size:0.87rem;line-height:1.6;}
+
+  .next-time{
+    margin-top:40px;padding:20px;background:var(--ink);color:var(--paper);
+    text-align:center;
+  }
+  .next-time .tag{
+    font-family:'IBM Plex Mono',monospace;font-size:0.68rem;
+    letter-spacing:0.25em;opacity:0.7;margin:0 0 10px;
+  }
+  .next-time p{margin:0 0 10px;font-size:0.92rem;line-height:1.55;font-style:italic;}
+  .next-time .ep-title{
+    font-family:'Special Elite','Courier New',monospace;
+    font-size:1.05rem;letter-spacing:0.04em;
+  }
+
+  footer{margin-top:36px;padding-top:16px;border-top:2px dashed rgba(31,36,33,0.35);
+    font-size:0.75rem;opacity:0.6;}
+
+  @media print{
+    body{background:#fff;}
+    .scene, .cold-open, .st-block{box-shadow:none;}
+    .next-time{background:#fff;color:var(--ink);border:2px solid var(--ink);}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <span class="eyebrow">EPISODE 01 — SHOOTING SCRIPT</span>
+    <h1>ONE REQUEST, SEVEN DESKS</h1>
+    <p class="subtitle">A single browser request leaves the building, visits seven departments, crosses the wire, and comes back as a webpage. Read aloud, or assign one department per student.</p>
+  </header>
+
+  <div class="cold-open">
+    <p class="tag">COLD OPEN</p>
+    <p>Somewhere on this floor, the exact same process happens ten thousand times a day — and ten thousand times a day, nobody upstairs has any idea it's happening at all. Let's follow one request from the moment it opens its eyes at Front Desk to the moment it comes back as a page on screen.</p>
+  </div>
+
+  <h2 class="act-title">ACT ONE — THE DOWN TRIP</h2>
+  <p class="act-sub">Every department adds exactly one thing, then hands it to the next desk without looking back.</p>
+
+  <div class="scene">
+    <p class="scene-head">Front Desk — Layer 7 — Down</p>
+    <p class="narrator">A student opens a browser tab and types a URL. That's the entire ask.</p>
+    <div class="line"><span class="who">FRONT DESK</span><p class="say">One request — GET /schedule.html — standard delivery.</p></div>
+    <p class="stage">[Writes the request in plain language and passes it on without sealing anything.]</p>
+    <p class="narrator">Front Desk's whole job is "take the request." It doesn't encrypt it, doesn't address it, doesn't even know which building it's headed to. That's three floors down.</p>
+    <div class="teach-note"><span class="label">TEACHING NOTE —</span> Layer 7, Application. PDU is just called <b>Data</b>. Real protocols: HTTP, DNS, SMTP, FTP.</div>
+  </div>
+
+  <div class="scene">
+    <p class="scene-head">Translation &amp; Wardrobe — Layer 6 — Down</p>
+    <div class="line"><span class="who">TRANSLATION &amp; WARDROBE</span><p class="say">Plain text, standard character set — nothing to translate today. If this were going out encrypted, I'd lock it in a case nobody downstream could open without the key. Not today though — it's traveling in the open.</p></div>
+    <p class="narrator">This is the department everyone forgets exists — until they open a capture and can't read anything. That's not the data vanishing. That's this desk doing its job a little too well.</p>
+    <div class="teach-note"><span class="label">TEACHING NOTE —</span> Layer 6, Presentation. Handles encryption (TLS/SSL), compression, and encoding (ASCII/Unicode, JPEG). Still just <b>Data</b>.</div>
+  </div>
+
+  <div class="scene">
+    <p class="scene-head">Scheduling — Layer 5 — Down</p>
+    <div class="line"><span class="who">SCHEDULING</span><p class="say">Booking the line now. I'll hold this conversation open until Front Desk on the other end says we're done talking.</p></div>
+    <p class="stage">[Doesn't touch the contents — just makes sure there's a live conversation for the request to travel inside of.]</p>
+    <div class="teach-note"><span class="label">TEACHING NOTE —</span> Layer 5, Session. Establishes, maintains, and tears down the dialogue between hosts. Rarely shows up as its own visible header in a modern capture — wait for the twist in the Show and Tell.</div>
+  </div>
+
+  <div class="scene">
+    <p class="scene-head">Shipping &amp; Receiving — Layer 4 — Down</p>
+    <div class="line"><span class="who">SHIPPING &amp; RECEIVING</span><p class="say">Web traffic — that's a Certified Mail job. I want a signature at the other end, and I want these pieces back in order if I have to split them up.</p></div>
+    <p class="stage">[Stamps a segment header: source port, destination port 80, sequence number.]</p>
+    <p class="narrator">If this had been a video call instead, this desk calls in the Bike Courier — no signature required, no waiting on confirmations. Different job, different clerk.</p>
+    <div class="teach-note"><span class="label">TEACHING NOTE —</span> Layer 4, Transport. PDU becomes a <b>Segment</b> (TCP) or <b>Datagram</b> (UDP). Port numbers get added here.</div>
+  </div>
+
+  <div class="scene">
+    <p class="scene-head">Logistics — Layer 3 — Down</p>
+    <div class="line"><span class="who">LOGISTICS</span><p class="say">Source: this building. Destination: the server three networks over. Here's the route.</p></div>
+    <p class="stage">[Wraps the segment in a packet, stamps source and destination IP.]</p>
+    <p class="narrator">Logistics doesn't know or care what's inside the box. Just where it's going and which router takes it next.</p>
+    <div class="teach-note"><span class="label">TEACHING NOTE —</span> Layer 3, Network. PDU becomes a <b>Packet</b>. IP addressing and routing happen here.</div>
+  </div>
+
+  <div class="scene">
+    <p class="scene-head">Local Dispatch — Layer 2 — Down</p>
+    <div class="line"><span class="who">LOCAL DISPATCH</span><p class="say">I don't know any address that isn't on this block. All I know is which truck goes to the router next door.</p></div>
+    <p class="stage">[Wraps the packet in a frame, stamps the MAC address of the next hop — not the final destination.]</p>
+    <p class="narrator">This is where freshmen usually get it backwards on the first try: Local Dispatch's label is never the final destination. It's just "who's next."</p>
+    <div class="teach-note"><span class="label">TEACHING NOTE —</span> Layer 2, Data Link. PDU becomes a <b>Frame</b>. MAC addressing, always hop-to-hop, never end-to-end.</div>
+  </div>
+
+  <div class="scene">
+    <p class="scene-head">Infrastructure Crew — Layer 1 — Down</p>
+    <div class="line"><span class="who">INFRASTRUCTURE CREW</span><p class="say">Not reading any of this. Just turning it into volts.</p></div>
+    <p class="stage">[The frame becomes a stream of bits — electricity down copper, light down fiber, or radio through air.]</p>
+    <p class="narrator">Seven departments, six headers stacked like a letter wearing six envelopes — and not one department read anyone else's envelope. That's the whole point of the model: everybody minds their own business.</p>
+    <div class="teach-note"><span class="label">TEACHING NOTE —</span> Layer 1, Physical. PDU is just <b>Bits</b>. No addressing, no logic — just transmission.</div>
+  </div>
+
+  <div class="wire-break">
+    <p class="tag">ACT TWO — THE WIRE</p>
+    <p>For a few milliseconds, none of this looks like an office anymore. It's a signal — on a cable, through a switch, maybe across a few routers — until it lands at a server that has its own version of this exact same building.</p>
+  </div>
+
+  <h2 class="act-title">ACT THREE — THE UP TRIP</h2>
+  <p class="act-sub">Same seven desks, same order, running backward. Each one only opens the envelope it wrote.</p>
+
+  <div class="scene">
+    <p class="scene-head">Infrastructure Crew (Receiving) — Layer 1 — Up</p>
+    <div class="line"><span class="who">INFRASTRUCTURE CREW</span><p class="say">Got a signal. Turning it back into a frame. Not my problem past this point.</p></div>
+  </div>
+
+  <div class="scene">
+    <p class="scene-head">Local Dispatch (Receiving) — Layer 2 — Up</p>
+    <div class="line"><span class="who">LOCAL DISPATCH</span><p class="say">This frame's mine — MAC checks out. Stripping the envelope, handing up the packet.</p></div>
+  </div>
+
+  <div class="scene">
+    <p class="scene-head">Logistics (Receiving) — Layer 3 — Up</p>
+    <div class="line"><span class="who">LOGISTICS</span><p class="say">Destination IP is this building. Stripping the address, handing up the segment.</p></div>
+  </div>
+
+  <div class="scene">
+    <p class="scene-head">Shipping &amp; Receiving (Receiving) — Layer 4 — Up</p>
+    <div class="line"><span class="who">SHIPPING &amp; RECEIVING</span><p class="say">Port 80, sequence checks out, nothing missing. Reassembling and handing it up whole.</p></div>
+  </div>
+
+  <div class="scene">
+    <p class="scene-head">Scheduling (Receiving) — Layer 5 — Up</p>
+    <div class="line"><span class="who">SCHEDULING</span><p class="say">Conversation's still open on my end too. Keeping the line live.</p></div>
+  </div>
+
+  <div class="scene">
+    <p class="scene-head">Translation &amp; Wardrobe (Receiving) — Layer 6 — Up</p>
+    <div class="line"><span class="who">TRANSLATION &amp; WARDROBE</span><p class="say">Plain text, nothing to decrypt today. Handing it up exactly as written.</p></div>
+  </div>
+
+  <div class="scene">
+    <p class="scene-head">Front Desk (Receiving) — Layer 7 — Up</p>
+    <div class="line"><span class="who">FRONT DESK</span><p class="say">GET /schedule.html — got it. Pulling the file, sending a response.</p></div>
+    <p class="narrator">And thirty milliseconds later, this whole thing happens again in reverse — Front Desk becomes the one replying, and back at the first building, an Infrastructure Crew is about to turn light back into a picture of a schedule.</p>
+  </div>
+
+  <h2 class="act-title">SHOW AND TELL — LIVE CAPTURE</h2>
+  <p class="act-sub">Same story, now on screen. Run this right after the read-through while it's still fresh.</p>
+
+  <div class="st-block">
+    <h3>Walkthrough</h3>
+    <ol class="steps">
+      <li>Start a capture on the range, then generate one plain-HTTP request — a lab-hosted page is best, since most public sites now force HTTPS and won't show the readable version.</li>
+      <li>Stop the capture, select the GET packet, and expand the packet-details pane from the bottom up: <code>Frame</code> → <code>Ethernet II</code> → <code>Internet Protocol</code> → <code>TCP</code> → <code>Hypertext Transfer Protocol</code>.</li>
+      <li>Call out each section by department name as you expand it — this is the Up Trip playing out for real, in the exact order it was just performed.</li>
+      <li>Now repeat the request against an HTTPS site and expand the same pane. This is the twist: <code>Ethernet</code>, <code>IP</code>, and <code>TCP</code> still show plainly, but everything from <code>TLS</code> up is opaque. Translation &amp; Wardrobe closed the curtain — and the TLS handshake itself is Scheduling's session-opening ritual, hiding in plain sight where the model says Layer 5 shouldn't have its own visible line.</li>
+    </ol>
+    <table class="filters">
+      <tr><th>Layer</th><th>Wireshark section</th><th>Department</th></tr>
+      <tr><td>2</td><td><code>Ethernet II</code></td><td>Local Dispatch</td></tr>
+      <tr><td>3</td><td><code>Internet Protocol</code></td><td>Logistics</td></tr>
+      <tr><td>4</td><td><code>TCP</code> / <code>UDP</code></td><td>Shipping &amp; Receiving</td></tr>
+      <tr><td>5–6</td><td><code>TLS</code> (when present)</td><td>Scheduling &amp; Translation/Wardrobe</td></tr>
+      <tr><td>7</td><td><code>HTTP</code> / <code>DNS</code> / etc.</td><td>Front Desk</td></tr>
+    </table>
+  </div>
+
+  <div class="st-block">
+    <h3>Debrief questions</h3>
+    <ul class="debrief">
+      <li>Local Dispatch's MAC address was never the final destination — whose address was it, and how many times does it change on the way there?</li>
+      <li>What disappeared from the packet details when we switched to HTTPS, and which department is responsible for it disappearing?</li>
+      <li>If you only had this one capture and no context, which department's work would be hardest to prove even happened?</li>
+    </ul>
+  </div>
+
+  <div class="next-time">
+    <p class="tag">NEXT TIME ON OSI COMPANY</p>
+    <p>Someone on the second floor has been handing out address labels that aren't theirs. Local Dispatch's address book doesn't lie — except when it's been told to.</p>
+    <p class="ep-title">EPISODE 02: THE IMPERSONATOR</p>
+  </div>
+
+  <footer>Read aloud, assign per-student, or project alongside the Wireshark walkthrough. Photocopy freely for classroom use.</footer>
+
+</div>
+</body>
+</html>

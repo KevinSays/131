@@ -1,0 +1,295 @@
+<title>IT131 – Table of Contents</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --paper:#EDE8DD; --canvas:#D9D2C3; --ink:#1F2421; --kraft:#B08554; --kraft-dark:#664526;
+    --blue:#2F4858; --red:#A23A2E; --ticket:#F3E7E2;
+    --blue-soft:rgba(47,72,88,.08); --red-soft:rgba(162,58,46,.08);
+    --kraft-soft:rgba(176,133,84,.14); --ink-soft:rgba(31,36,33,.06);
+    --shadow:5px 5px 0 rgba(31,36,33,.16);
+    --display:'Special Elite','Courier New',monospace;
+    --sans:'IBM Plex Sans', system-ui, sans-serif;
+    --mono:'IBM Plex Mono', monospace;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth; font-size:125%;}
+  body{
+    margin:0; background:var(--canvas); color:var(--ink); font-family:var(--sans);
+    line-height:1.55; -webkit-font-smoothing:antialiased;
+    background-image:radial-gradient(rgba(31,36,33,.06) 1px, transparent 1px);
+    background-size:16px 16px;
+  }
+  ::selection{ background:var(--kraft-soft); }
+  a{ color:var(--blue); }
+  .wrap{ max-width:980px; margin:0 auto; padding:0 20px; }
+  code{ font-family:var(--mono); background:var(--ink-soft); padding:1px 6px; border-radius:2px; font-size:.9em; }
+
+  header.masthead{ padding:48px 0 30px; }
+  .eyebrow{ display:inline-block; font-family:var(--mono); font-size:.86rem; letter-spacing:.12em;
+    border:2px solid var(--blue); color:var(--blue); padding:4px 10px; transform:rotate(-2deg); background:var(--paper); }
+  h1{ font-family:var(--display); font-weight:400; font-size:clamp(2.1rem,5.5vw,3.2rem); letter-spacing:.01em;
+    margin:16px 0 10px; line-height:1.15; }
+  .lede{ max-width:66ch; font-size:1.02rem; line-height:1.6; opacity:.85; margin:0 0 18px; }
+  .factrow{ display:flex; flex-wrap:wrap; gap:10px; }
+  .fact{ font-family:var(--mono); font-size:.82rem; letter-spacing:.02em; background:var(--paper);
+    border:1.5px solid var(--ink); padding:.4em .8em; display:flex; gap:.5em; box-shadow:3px 3px 0 rgba(31,36,33,.14); }
+  .fact b{ color:var(--kraft-dark); font-weight:600; text-transform:uppercase; letter-spacing:.06em; font-size:.88rem; }
+
+  nav.index{ position:sticky; top:0; z-index:20; background:color-mix(in srgb, var(--canvas) 92%, transparent);
+    backdrop-filter:blur(6px); border-top:2px solid var(--ink); border-bottom:2px solid var(--ink); }
+  nav.index .wrap{ display:flex; gap:2px; overflow-x:auto; padding:8px 20px; scrollbar-width:none; }
+  nav.index .wrap::-webkit-scrollbar{ display:none; }
+  nav.index a{ font-family:var(--mono); font-weight:600; letter-spacing:.03em; font-size:.82rem; text-decoration:none;
+    color:var(--ink); opacity:.85; padding:.5em .8em; white-space:nowrap; text-transform:uppercase; border:1px solid transparent; }
+  nav.index a:hover{ opacity:1; border-color:var(--ink); background:var(--paper); }
+
+  section{ padding:44px 0; border-bottom:2px dashed rgba(31,36,33,.3); }
+  section:last-of-type{ border-bottom:none; }
+  .section-head{ margin-bottom:26px; max-width:70ch; }
+  .kicker{ font-family:var(--mono); font-weight:600; font-size:.9rem; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--red); margin:0 0 .4em; }
+  h2{ font-family:var(--display); font-weight:400; font-size:clamp(1.4rem,2.8vw,1.9rem); margin:0 0 .25em; letter-spacing:.005em; }
+  .section-head p{ opacity:.82; margin:.5em 0 0; }
+
+  .cold-open{ background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow); padding:18px 20px; margin:24px 0; }
+  .cold-open .tag{ font-family:var(--mono); font-size:.84rem; letter-spacing:.1em; color:var(--red); margin:0 0 8px; text-transform:uppercase; }
+  .cold-open p{ margin:0; font-size:.95rem; line-height:1.6; font-style:italic; }
+
+  /* SESSION LOG TABLE */
+  table.log{ width:100%; border-collapse:collapse; margin:18px 0; font-size:.9rem; }
+  table.log th{ font-family:var(--mono); font-weight:600; text-transform:uppercase; letter-spacing:.05em; font-size:.78rem;
+    color:var(--kraft-dark); text-align:left; padding:9px 10px; border-bottom:2px solid var(--ink); }
+  table.log td{ padding:12px 10px; border-bottom:1px dashed rgba(31,36,33,.3); vertical-align:top; }
+  table.log tr:last-child td{ border-bottom:none; }
+  table.log tr.filed{ background:var(--blue-soft); }
+  table.log tr.off td{ opacity:.55; font-style:italic; }
+  td.num{ font-family:var(--display); color:var(--kraft-dark); white-space:nowrap; }
+  td.date{ font-family:var(--mono); white-space:nowrap; }
+  .status{ font-family:var(--mono); font-weight:600; font-size:.8rem; letter-spacing:.04em; text-transform:uppercase; white-space:nowrap; }
+  .status.filed{ color:var(--blue); }
+  .status.pending{ color:var(--kraft-dark); opacity:.75; }
+  .status.off{ color:var(--ink); opacity:.5; }
+  a.open-link{ display:inline-flex; align-items:center; gap:.3em; font-family:var(--mono); font-weight:600; font-size:.85rem;
+    text-decoration:none; color:var(--blue); border-bottom:1.5px solid var(--blue); padding-bottom:1px; }
+  a.open-link:hover{ background:var(--blue-soft); }
+
+  /* KIT CARDS */
+  .kit-grid{ display:grid; gap:20px; grid-template-columns:1fr; margin-top:8px; }
+  @media (min-width:720px){ .kit-grid{ grid-template-columns:1fr 1fr; } }
+  .kit-card{ position:relative; margin-top:16px; background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow);
+    display:flex; flex-direction:column; }
+  .kit-tab{ position:absolute; top:-15px; left:16px; background:var(--kraft); color:var(--ink); font-family:var(--mono);
+    font-weight:600; font-size:.78rem; letter-spacing:.05em; padding:4px 9px; border:1.5px solid var(--ink); border-bottom:none; }
+  .kit-inner{ padding:24px 20px 20px; flex:1; display:flex; flex-direction:column; }
+  .kit-inner h3{ font-family:var(--display); font-weight:400; font-size:1.15rem; margin:0 0 8px; }
+  .kit-inner p{ margin:0 0 16px; font-size:.88rem; line-height:1.5; opacity:.85; flex:1; }
+  .kit-inner a.open-link{ align-self:flex-start; }
+
+  footer{ padding:30px 0 60px; }
+  footer p{ opacity:.65; font-size:.82rem; font-family:var(--mono); letter-spacing:.02em; }
+
+  @media print{
+    body{ background:#fff; }
+    nav.index{ display:none; }
+    .kit-card{ box-shadow:none; }
+  }
+</style>
+
+<header class="masthead">
+  <div class="wrap">
+    <p class="eyebrow">IT131 · CCNA: INTRODUCTION TO NETWORKS · FALL 2026</p>
+    <h1>Table of Contents</h1>
+    <p class="lede">Every session review, flashcard deck, and case file for this course, filed in one place. Sessions are added here as they're built — bookmark this page and start each class from it.</p>
+    <div class="factrow">
+      <span class="fact"><b>Term</b> Aug 24 – Oct 16, 2026</span>
+      <span class="fact"><b>Meets</b> Mon &amp; Wed, 4:00–7:30 PM, Room 250</span>
+      <span class="fact"><b>Filed</b> 3 of 13 sessions</span>
+    </div>
+  </div>
+</header>
+
+<nav class="index" aria-label="Section index">
+  <div class="wrap">
+    <a href="#sessions">Session Log</a>
+    <a href="#kit">OSI Company Kit</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+  <!-- SESSION LOG -->
+  <section id="sessions">
+    <div class="section-head">
+      <p class="kicker">Case Log</p>
+      <h2>Session-by-session index</h2>
+      <p>Every scheduled meeting for the term, in order. Filed sessions open a review page with a full lecture recap, flashcards, a sample quiz, worked examples, and a glossary.</p>
+    </div>
+
+    <div class="cold-open">
+      <p class="tag">Note</p>
+      <p>Ten sessions are still unfiled — that's not missing work, it's the semester not having happened yet. Each one gets built out the week of, or the week before, its class date.</p>
+    </div>
+
+    <table class="log">
+      <thead>
+        <tr><th>#</th><th>Date</th><th>Content</th><th>Status</th></tr>
+      </thead>
+      <tbody>
+        <tr class="filed">
+          <td class="num">1</td>
+          <td class="date">Mon, Aug 24</td>
+          <td>Module 1 – Networking Today</td>
+          <td class="status filed"><a class="open-link" href="IT131_Session01.html">Open →</a></td>
+        </tr>
+        <tr class="filed">
+          <td class="num">2</td>
+          <td class="date">Wed, Aug 26</td>
+          <td>Module 2 – Basic Switch and End Device Configuration; Module 3 – Protocols and Models</td>
+          <td class="status filed"><a class="open-link" href="IT131_Session02.html">Open →</a></td>
+        </tr>
+        <tr class="filed">
+          <td class="num">3</td>
+          <td class="date">Mon, Aug 31</td>
+          <td>Checkpoint Exam: Basic Network Connectivity and Communications; Module 4 – Physical Layer</td>
+          <td class="status filed"><a class="open-link" href="IT131_Session03.html">Open →</a></td>
+        </tr>
+        <tr>
+          <td class="num">4</td>
+          <td class="date">Wed, Sep 2</td>
+          <td>Module 5 – Number Systems; Module 6 – Data Link Layer</td>
+          <td class="status pending">Pending</td>
+        </tr>
+        <tr class="off">
+          <td class="num">—</td>
+          <td class="date">Mon, Sep 7</td>
+          <td>Labor Day — no class</td>
+          <td class="status off">No class</td>
+        </tr>
+        <tr>
+          <td class="num">5</td>
+          <td class="date">Wed, Sep 9</td>
+          <td>Module 7 – Ethernet Switching; Checkpoint Exam: Ethernet Switching</td>
+          <td class="status pending">Pending</td>
+        </tr>
+        <tr>
+          <td class="num">6</td>
+          <td class="date">Mon, Sep 14</td>
+          <td>Module 8 – Network Layer; Module 9 – Address Resolution</td>
+          <td class="status pending">Pending</td>
+        </tr>
+        <tr>
+          <td class="num">7</td>
+          <td class="date">Wed, Sep 16</td>
+          <td>Module 10 – Basic Router Configuration; Checkpoint Exam: Communicating Between Networks; Midterm Review</td>
+          <td class="status pending">Pending</td>
+        </tr>
+        <tr class="off">
+          <td class="num">—</td>
+          <td class="date">Mon, Sep 21</td>
+          <td>Break — no class</td>
+          <td class="status off">No class</td>
+        </tr>
+        <tr class="off">
+          <td class="num">—</td>
+          <td class="date">Wed, Sep 23</td>
+          <td>Break — no class</td>
+          <td class="status off">No class</td>
+        </tr>
+        <tr>
+          <td class="num">8</td>
+          <td class="date">Mon, Sep 28</td>
+          <td><strong>Midterm Exam</strong> (Modules 1–10); Module 11 – IPv4 Addressing</td>
+          <td class="status pending">Pending</td>
+        </tr>
+        <tr>
+          <td class="num">9</td>
+          <td class="date">Wed, Sep 30</td>
+          <td>Module 12 – IPv6 Addressing; Module 13 – ICMP; Checkpoint Exam: IP Addressing</td>
+          <td class="status pending">Pending</td>
+        </tr>
+        <tr>
+          <td class="num">10</td>
+          <td class="date">Mon, Oct 5</td>
+          <td>Module 14 – Transport Layer; Module 15 – Application Layer</td>
+          <td class="status pending">Pending</td>
+        </tr>
+        <tr>
+          <td class="num">11</td>
+          <td class="date">Wed, Oct 7</td>
+          <td>Checkpoint Exam: Network Application Communications; Module 16 – Network Security Fundamentals; Module 17 – Build a Small Network</td>
+          <td class="status pending">Pending</td>
+        </tr>
+        <tr>
+          <td class="num">12</td>
+          <td class="date">Mon, Oct 12</td>
+          <td>Checkpoint Exam: Building and Securing a Small Network; ITN Practice Packet Tracer / Skills Review</td>
+          <td class="status pending">Pending</td>
+        </tr>
+        <tr>
+          <td class="num">13</td>
+          <td class="date">Wed, Oct 14</td>
+          <td><strong>Final Exam</strong> — ITN Final Packet Tracer Exam; ITN Final Skills Exam (Equipment); End of Course Survey</td>
+          <td class="status pending">Pending</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- OSI COMPANY KIT -->
+  <section id="kit">
+    <div class="section-head">
+      <p class="kicker">Reference</p>
+      <h2>The OSI Company teaching kit</h2>
+      <p>The recurring "OSI Company" material used across sessions — every layer is a department, every attack is a villain-of-the-week. Referenced first in Session 2 (encapsulation) and Session 3 (the physical layer), and again whenever a new layer or attack comes up.</p>
+    </div>
+
+    <div class="kit-grid">
+      <div class="kit-card">
+        <span class="kit-tab">DIRECTORY</span>
+        <div class="kit-inner">
+          <h3>Personnel Directory</h3>
+          <p>One case file per OSI layer, L7 → L1 — department name, duty, PDU, signature protocols, real gear tie-in, and an incident-report stub previewing that layer's villain.</p>
+          <a class="open-link" href="osi-company-teaching-kit/osi-company/osi-company-directory.html">Open →</a>
+        </div>
+      </div>
+
+      <div class="kit-card">
+        <span class="kit-tab">BULLETIN</span>
+        <div class="kit-inner">
+          <h3>Security Bulletin</h3>
+          <p>The wanted-poster board — one bulletin per villain: MO, tools of the trade, countermeasure, threat level, and a cross-reference back to its department's incident report.</p>
+          <a class="open-link" href="osi-company-teaching-kit/osi-company/osi-security-bulletin.html">Open →</a>
+        </div>
+      </div>
+
+      <div class="kit-card">
+        <span class="kit-tab">EPISODE 01</span>
+        <div class="kit-inner">
+          <h3>One Request, Seven Desks</h3>
+          <p>Shooting script narrating encapsulation (down the stack) and decapsulation (up the stack), with a Wireshark show-and-tell — including the HTTPS/TLS twist.</p>
+          <a class="open-link" href="osi-company-teaching-kit/osi-company/osi-episode-01-script.html">Open →</a>
+        </div>
+      </div>
+
+      <div class="kit-card">
+        <span class="kit-tab">EPISODE 02</span>
+        <div class="kit-inner">
+          <h3>The Impersonator</h3>
+          <p>First villain episode — ARP spoofing. Mechanism, damage report, detection and defense, and a repair checklist. Introduces the recurring NOC character.</p>
+          <a class="open-link" href="osi-company-teaching-kit/osi-company/osi-episode-02-script.html">Open →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>IT131 · CCNA: Introduction to Networks · Table of contents — updated as sessions are filed.</p>
+  </div>
+</footer>

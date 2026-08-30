@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OSI Company — Episode 02 Shooting Script</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EDE8DD;
+    --canvas:#D9D2C3;
+    --ink:#1F2421;
+    --kraft:#B08554;
+    --blue:#2F4858;
+    --red:#A23A2E;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--canvas);
+    background-image: radial-gradient(rgba(31,36,33,0.05) 1px, transparent 1px);
+    background-size:16px 16px;
+    color:var(--ink);
+    font-family:'IBM Plex Sans', system-ui, sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:760px;margin:0 auto;padding:32px 18px 64px;}
+
+  header.masthead{margin-bottom:30px;}
+  .eyebrow{
+    display:inline-block;
+    font-family:'Special Elite','Courier New',monospace;
+    font-size:0.68rem;letter-spacing:0.12em;
+    border:2px solid var(--red);color:var(--red);
+    padding:4px 10px;transform:rotate(-2deg);background:var(--paper);
+  }
+  h1{
+    font-family:'Special Elite','Courier New',monospace;
+    font-weight:400;font-size:clamp(1.55rem,5vw,2.3rem);
+    margin:14px 0 8px;line-height:1.18;
+  }
+  .subtitle{font-size:0.92rem;line-height:1.5;opacity:0.8;max-width:60ch;margin:0;}
+
+  .cold-open{
+    background:var(--paper);border:1.5px solid var(--ink);
+    box-shadow:5px 5px 0 rgba(31,36,33,0.16);
+    padding:20px 22px;margin:28px 0 6px;
+  }
+  .cold-open .tag{
+    font-family:'IBM Plex Mono',monospace;font-size:0.68rem;
+    letter-spacing:0.1em;color:var(--red);margin:0 0 8px;
+  }
+  .cold-open p{margin:0;font-size:0.92rem;line-height:1.6;font-style:italic;}
+
+  h2.act-title{
+    font-family:'Special Elite','Courier New',monospace;
+    font-weight:400;font-size:1.15rem;letter-spacing:0.03em;
+    margin:44px 0 6px;padding-bottom:8px;
+    border-bottom:2px solid var(--ink);
+  }
+  .act-sub{font-size:0.82rem;opacity:0.7;margin:0 0 20px;}
+
+  .scene{
+    background:var(--paper);border-left:4px solid var(--kraft);
+    padding:18px 20px;margin:20px 0;
+  }
+  .scene.villain{border-left:4px solid var(--red);}
+  .scene.noc{border-left:4px solid var(--blue);}
+  .scene-head{
+    font-family:'IBM Plex Mono',monospace;font-size:0.74rem;
+    letter-spacing:0.08em;text-transform:uppercase;color:var(--blue);
+    margin:0 0 12px;
+  }
+  .scene.villain .scene-head{color:var(--red);}
+  .narrator{font-style:italic;opacity:0.85;font-size:0.88rem;line-height:1.55;margin:0 0 12px;}
+  .line{margin:10px 0 10px 18px;}
+  .line .who{
+    font-family:'Special Elite','Courier New',monospace;
+    font-size:0.85rem;display:block;margin-bottom:3px;
+  }
+  .line .say{margin:0;font-size:0.89rem;line-height:1.5;}
+  .stage{font-style:italic;opacity:0.6;font-size:0.8rem;margin:6px 0 6px 18px;}
+
+  .teach-note{
+    margin-top:14px;padding:10px 12px;
+    border:1.5px dashed var(--blue);
+    background:rgba(47,72,88,0.06);
+    font-family:'IBM Plex Mono',monospace;font-size:0.75rem;line-height:1.55;
+  }
+  .teach-note .label{color:var(--blue);font-weight:600;letter-spacing:0.04em;}
+
+  .interstitial{
+    text-align:center;margin:34px 0;padding:16px 10px;
+    border-top:3px dashed var(--ink);border-bottom:3px dashed var(--ink);
+  }
+  .interstitial .tag{
+    font-family:'IBM Plex Mono',monospace;font-size:0.7rem;
+    letter-spacing:0.2em;color:var(--red);margin:0 0 6px;
+  }
+  .interstitial p{margin:0;font-size:0.88rem;font-style:italic;opacity:0.85;}
+
+  .insert{
+    background:var(--paper);border:1.5px solid var(--ink);
+    box-shadow:5px 5px 0 rgba(31,36,33,0.16);
+    padding:18px 20px;margin:18px 0;
+  }
+  .insert h3{
+    font-family:'Special Elite','Courier New',monospace;font-weight:400;
+    font-size:0.95rem;margin:0 0 4px;
+  }
+  .insert .stamp-mini{
+    display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:0.66rem;
+    letter-spacing:0.08em;color:var(--red);border:1.5px solid var(--red);
+    padding:2px 7px;margin-bottom:12px;
+  }
+  ul.marks, ol.steps{margin:0;padding-left:20px;font-size:0.87rem;line-height:1.65;}
+  ul.marks li, ol.steps li{margin-bottom:7px;}
+
+  .next-time{
+    margin-top:40px;padding:20px;background:var(--ink);color:var(--paper);
+    text-align:center;
+  }
+  .next-time .tag{
+    font-family:'IBM Plex Mono',monospace;font-size:0.68rem;
+    letter-spacing:0.25em;opacity:0.7;margin:0 0 10px;
+  }
+  .next-time p{margin:0 0 10px;font-size:0.92rem;line-height:1.55;font-style:italic;}
+
+  footer{margin-top:36px;padding-top:16px;border-top:2px dashed rgba(31,36,33,0.35);
+    font-size:0.75rem;opacity:0.6;}
+
+  @media print{
+    body{background:#fff;}
+    .scene, .cold-open, .insert{box-shadow:none;}
+    .next-time{background:#fff;color:var(--ink);border:2px solid var(--ink);}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <span class="eyebrow">EPISODE 02 — SHOOTING SCRIPT</span>
+    <h1>THE IMPERSONATOR</h1>
+    <p class="subtitle">Local Dispatch's address book doesn't lie — except when it's been told to. First appearance, first takedown.</p>
+  </header>
+
+  <div class="cold-open">
+    <p class="tag">COLD OPEN</p>
+    <p>A normal Tuesday. A workstation wants to talk to the gateway; the gateway wants to talk back. It's the most boring conversation in the building, and it succeeds several thousand times a minute, by design, without anyone checking anyone's ID.</p>
+  </div>
+
+  <h2 class="act-title">ACT ONE — A NORMAL DAY</h2>
+  <p class="act-sub">Establishing the healthy process before it gets abused.</p>
+
+  <div class="scene">
+    <p class="scene-head">Local Dispatch — Layer 2</p>
+    <p class="narrator">Every device on this floor keeps a small notebook — the ARP table — mapping addresses to trucks. Filling it out is usually the least interesting part of anyone's day.</p>
+    <div class="line"><span class="who">LOCAL DISPATCH</span><p class="say">Who has 10.0.0.1? Tell 10.0.0.42.</p></div>
+    <div class="line"><span class="who">GATEWAY</span><p class="say">10.0.0.1 is at AA:BB:CC:00:00:01.</p></div>
+    <div class="line"><span class="who">LOCAL DISPATCH</span><p class="say">Noted. Filed. Moving on.</p></div>
+    <div class="teach-note"><span class="label">TEACHING NOTE —</span> A normal ARP request/reply. Layer 2, unencrypted and unauthenticated by design — any device on the segment can answer, and nothing checks whether the answer is true.</div>
+  </div>
+
+  <div class="scene">
+    <p class="scene-head">Local Dispatch — Something's Off</p>
+    <p class="narrator">Then, without being asked—</p>
+    <div class="line"><span class="who">UNKNOWN (O.S.)</span><p class="say">10.0.0.1 is at 11:22:33:44:55:66.</p></div>
+    <div class="line"><span class="who">LOCAL DISPATCH</span><p class="say">...Nobody asked. Filing it anyway — last answer wins.</p></div>
+    <div class="teach-note"><span class="label">TEACHING NOTE —</span> A gratuitous ARP reply: an unsolicited announcement. ARP has no built-in way to verify a claim, so a device updates its table with whatever it hears last.</div>
+  </div>
+
+  <h2 class="act-title">ACT TWO — THE IMPERSONATOR STRIKES</h2>
+  <p class="act-sub">How they operate.</p>
+
+  <div class="scene villain">
+    <p class="scene-head">Reveal</p>
+    <div class="line"><span class="who">THE IMPERSONATOR</span><p class="say">Two lies, told to two different desks, and suddenly I'm not an outsider anymore — I'm the middleman nobody hired. Tell the workstation I'm the gateway. Tell the gateway I'm the workstation. Now every letter this floor sends walks past my desk first. I don't even have to open the envelopes. I can just hold them up to the light.</p></div>
+    <p class="narrator">Two forged replies, sent to two different targets, each claiming to be the other. Neither victim sees anything wrong — their screens still work fine. That's what makes it work.</p>
+    <div class="teach-note"><span class="label">TEACHING NOTE —</span> This is the attack: poisoning both the victim's and the gateway's ARP caches so traffic between them routes through the attacker — a man-in-the-middle position, achieved without touching a single cable.</div>
+  </div>
+
+  <div class="interstitial">
+    <p class="tag">MEANWHILE</p>
+    <p>Nothing on anyone's screen looks any different. That's the whole point.</p>
+  </div>
+
+  <h2 class="act-title">ACT THREE — DAMAGE REPORT</h2>
+  <p class="act-sub">What damage they can do.</p>
+
+  <div class="insert">
+    <span class="stamp-mini">FILED UNDER IR-02</span>
+    <h3>Damage Assessment</h3>
+    <ul class="marks">
+      <li>Every packet between the workstation and the gateway now detours through an extra desk.</li>
+      <li>If Translation &amp; Wardrobe wasn't already encrypting the traffic, the Eavesdropper reads all of it in the clear.</li>
+      <li>If a session token crosses that detour unprotected, the Impostor doesn't need to guess anything — it's just sitting there.</li>
+      <li>Nothing on the workstation's screen looks any different the entire time.</li>
+    </ul>
+    <div class="teach-note"><span class="label">TEACHING NOTE —</span> ARP spoofing is usually step one, not the whole attack — it's a positioning move that enables sniffing and session hijacking downstream. That's why it shows up first: everything else on the board gets easier once someone's in the middle.</div>
+  </div>
+
+  <h2 class="act-title">ACT FOUR — THE NOC RESPONDS</h2>
+  <p class="act-sub">What can defend against them. First appearance: the desk that never leaves.</p>
+
+  <div class="scene noc">
+    <p class="scene-head">The NOC — Introduction</p>
+    <p class="narrator">Every floor has one desk that never leaves, never sleeps, and reads every ARP table in the building at once — comparing notes nobody else bothers to compare.</p>
+    <div class="line"><span class="who">THE NOC</span><p class="say">Two different MAC addresses claiming the same IP inside of four minutes. That's not a coincidence. That's a duplicate-IP alarm.</p></div>
+    <p class="stage">[Cross-references the switch port against the DHCP snooping binding table. The port claiming to be the gateway isn't the gateway's actual port.]</p>
+    <div class="line"><span class="who">THE NOC</span><p class="say">Got you. Dynamic ARP Inspection goes on every access port tonight. If a reply doesn't match what DHCP snooping already knows to be true, the switch drops it before it ever reaches a table. Gateway and file servers get static entries — you can't impersonate an address nobody has to ask about.</p></div>
+    <div class="teach-note"><span class="label">TEACHING NOTE —</span> Dynamic ARP Inspection (DAI) validates ARP packets against a trusted DHCP snooping binding table and discards mismatches. Static ARP entries remove the trust-on-first-answer weakness for critical hosts, at the cost of manual upkeep.</div>
+  </div>
+
+  <h2 class="act-title">ACT FIVE — REPAIR</h2>
+  <p class="act-sub">How to repair the damage. Catching it is half the job.</p>
+
+  <div class="insert">
+    <h3>The NOC's Checklist</h3>
+    <ol class="steps">
+      <li>Isolate the offending switch port.</li>
+      <li>Flush the poisoned ARP cache on every affected host — the lie doesn't leave on its own.</li>
+      <li>Re-verify the gateway and DNS entries point where they should, not just that the table looks full again.</li>
+      <li>Pull the logs for the window the Impersonator was active, and check whether the Eavesdropper or the Impostor made use of it.</li>
+      <li>Rotate anything that crossed that detour unencrypted — credentials, session tokens, all of it.</li>
+      <li>File the incident report. Turn DAI on everywhere it isn't already.</li>
+    </ol>
+  </div>
+
+  <div class="scene">
+    <p class="scene-head">Front Desk — Closing Beat</p>
+    <div class="line"><span class="who">FRONT DESK</span><p class="say">Business as usual by 9am. Nobody upstairs ever found out there was an incident at all.</p></div>
+    <p class="narrator">And that's the job. Nobody claps for the desk that never gets impersonated.</p>
+  </div>
+
+  <div class="next-time">
+    <p class="tag">END OF EPISODE 02</p>
+    <p>Case file IR-02 closed. Six more incident reports still open on the board.</p>
+  </div>
+
+  <footer>Read aloud, assign per-student, or pair with a live ARP-spoofing demo and Dynamic ARP Inspection lab on the range. Photocopy freely for classroom use.</footer>
+
+</div>
+</body>
+</html>

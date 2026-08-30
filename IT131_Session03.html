@@ -1,0 +1,789 @@
+<title>IT131 Session 3 – Physical Layer &amp; Checkpoint Review</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --paper:#EDE8DD; --canvas:#D9D2C3; --ink:#1F2421; --kraft:#B08554; --kraft-dark:#664526;
+    --blue:#2F4858; --red:#A23A2E; --ticket:#F3E7E2;
+    --blue-soft:rgba(47,72,88,.08); --red-soft:rgba(162,58,46,.08);
+    --kraft-soft:rgba(176,133,84,.14); --ink-soft:rgba(31,36,33,.06);
+    --shadow:5px 5px 0 rgba(31,36,33,.16);
+    --display:'Special Elite','Courier New',monospace;
+    --sans:'IBM Plex Sans', system-ui, sans-serif;
+    --mono:'IBM Plex Mono', monospace;
+  }
+  /* Projector pass: --kraft-dark replaces --kraft anywhere it's used as
+     TEXT (kraft-on-paper is ~2.7:1 contrast — fine as a decorative tab/
+     border fill, unreadable as small foreground text from the back of a room). */
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth; font-size:125%;}
+  body{
+    margin:0; background:var(--canvas); color:var(--ink); font-family:var(--sans);
+    line-height:1.55; -webkit-font-smoothing:antialiased;
+    background-image:radial-gradient(rgba(31,36,33,.06) 1px, transparent 1px);
+    background-size:16px 16px;
+  }
+  ::selection{ background:var(--kraft-soft); }
+  .wrap{ max-width:940px; margin:0 auto; padding:0 20px; }
+  code{ font-family:var(--mono); background:var(--ink-soft); padding:1px 6px; border-radius:2px; font-size:.9em; }
+
+  /* MASTHEAD */
+  header.masthead{ padding:48px 0 30px; }
+  .eyebrow{ display:inline-block; font-family:var(--mono); font-size:.86rem; letter-spacing:.12em;
+    border:2px solid var(--blue); color:var(--blue); padding:4px 10px; transform:rotate(-2deg); background:var(--paper); }
+  h1{ font-family:var(--display); font-weight:400; font-size:clamp(1.9rem,5vw,2.9rem); letter-spacing:.01em;
+    margin:16px 0 10px; line-height:1.15; }
+  .lede{ max-width:64ch; font-size:1.02rem; line-height:1.6; opacity:.85; margin:0 0 18px; }
+  .factrow{ display:flex; flex-wrap:wrap; gap:10px; }
+  .fact{ font-family:var(--mono); font-size:.82rem; letter-spacing:.02em; background:var(--paper);
+    border:1.5px solid var(--ink); padding:.4em .8em; display:flex; gap:.5em; box-shadow:3px 3px 0 rgba(31,36,33,.14); }
+  .fact b{ color:var(--kraft-dark); font-weight:600; text-transform:uppercase; letter-spacing:.06em; font-size:.88rem; }
+
+  /* NAV */
+  nav.index{ position:sticky; top:0; z-index:20; background:color-mix(in srgb, var(--canvas) 92%, transparent);
+    backdrop-filter:blur(6px); border-top:2px solid var(--ink); border-bottom:2px solid var(--ink); }
+  nav.index .wrap{ display:flex; gap:2px; overflow-x:auto; padding:8px 20px; scrollbar-width:none; }
+  nav.index .wrap::-webkit-scrollbar{ display:none; }
+  nav.index a{ font-family:var(--mono); font-weight:600; letter-spacing:.03em; font-size:.82rem; text-decoration:none;
+    color:var(--ink); opacity:.85; padding:.5em .8em; white-space:nowrap; text-transform:uppercase; border:1px solid transparent; }
+  nav.index a:hover{ opacity:1; border-color:var(--ink); background:var(--paper); }
+
+  section{ padding:44px 0; border-bottom:2px dashed rgba(31,36,33,.3); }
+  section:last-of-type{ border-bottom:none; }
+  .section-head{ margin-bottom:26px; max-width:70ch; }
+  .kicker{ font-family:var(--mono); font-weight:600; font-size:.9rem; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--red); margin:0 0 .4em; }
+  h2{ font-family:var(--display); font-weight:400; font-size:clamp(1.4rem,2.8vw,1.9rem); margin:0 0 .25em; letter-spacing:.005em; }
+  .section-head p{ opacity:.82; margin:.5em 0 0; }
+
+  .obj-list{ display:grid; gap:10px; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); list-style:none; margin:0; padding:0; }
+  .obj-list li{ background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow); padding:14px 16px; font-size:.92rem; }
+  .obj-list li::before{ content:"▸"; color:var(--red); margin-right:.5em; font-weight:700; }
+
+  /* CALLOUT / TEACH NOTE */
+  .teach-note{ margin:18px 0; padding:12px 14px; border:1.5px dashed var(--blue); background:var(--blue-soft);
+    font-family:var(--mono); font-size:.82rem; line-height:1.6; }
+  .teach-note .label{ color:var(--blue); font-weight:600; letter-spacing:.05em; text-transform:uppercase; font-size:.88rem; display:block; margin-bottom:.4em; }
+
+  /* COLD OPEN */
+  .cold-open{ background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow); padding:18px 20px; margin:24px 0; }
+  .cold-open .tag{ font-family:var(--mono); font-size:.84rem; letter-spacing:.1em; color:var(--red); margin:0 0 8px; text-transform:uppercase; }
+  .cold-open p{ margin:0; font-size:.95rem; line-height:1.6; font-style:italic; }
+
+  /* CASE-FILE / DEPARTMENT CARDS */
+  .card-row{ display:grid; gap:28px 20px; grid-template-columns:1fr; margin-top:8px; }
+  @media (min-width:760px){ .card-row{ grid-template-columns:1fr 1fr 1fr; } }
+  .case-file{ position:relative; margin-top:16px; background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow); }
+  .case-file.featured{ margin-top:20px; }
+  .tab{ position:absolute; top:-15px; left:16px; background:var(--kraft); color:var(--ink); font-family:var(--mono);
+    font-weight:600; font-size:.82rem; letter-spacing:.06em; padding:4px 9px; border:1.5px solid var(--ink); border-bottom:none; }
+  .card-inner{ padding:22px 18px 18px; }
+  .card-head{ position:relative; display:flex; align-items:flex-start; gap:11px; margin-bottom:12px; padding-right:110px; }
+  .icon{ flex-shrink:0; margin-top:2px; }
+  .icon svg{ width:26px; height:26px; stroke:var(--ink); fill:none; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; }
+  .card-head h3{ font-family:var(--display); font-weight:400; font-size:1.02rem; margin:0 0 4px; line-height:1.25; }
+  .duty{ margin:0; font-size:.82rem; line-height:1.4; opacity:.85; }
+  .stamp{ position:absolute; top:-2px; right:0; border:2px solid var(--blue); color:var(--blue); font-family:var(--display);
+    font-size:.78rem; letter-spacing:.06em; padding:4px 6px; transform:rotate(-6deg); white-space:nowrap; }
+  dl.stats{ margin:12px 0 0; padding-top:10px; border-top:1px dashed rgba(31,36,33,.35); }
+  dl.stats > div{ display:flex; gap:8px; margin-bottom:7px; align-items:baseline; }
+  dl.stats dt{ font-family:var(--mono); font-size:.8rem; font-weight:600; letter-spacing:.05em; text-transform:uppercase;
+    color:var(--kraft-dark); min-width:96px; flex-shrink:0; }
+  dl.stats dd{ margin:0; font-size:.8rem; line-height:1.42; }
+  .incident-ticket{ margin-top:14px; padding-top:12px; border-top:2px dashed var(--ink); background:var(--ticket);
+    margin-left:-18px; margin-right:-18px; margin-bottom:-18px; padding-left:18px; padding-right:18px; padding-bottom:15px; }
+  .ticket-head{ display:flex; justify-content:space-between; align-items:baseline; font-family:var(--display); color:var(--red);
+    font-size:.84rem; letter-spacing:.08em; margin-bottom:6px; }
+  .ticket-head span.id{ font-family:var(--mono); color:var(--ink); opacity:.75; letter-spacing:.02em; }
+  .incident-ticket p{ margin:0 0 6px; font-size:.82rem; line-height:1.45; }
+  .incident-ticket p strong{ color:var(--red); }
+  .detect{ font-family:var(--mono); font-size:.88rem; opacity:.8; margin-bottom:0 !important; }
+
+  /* WANTED POSTER (Saboteur) */
+  .wanted{ background:var(--paper); border:2px solid var(--ink); box-shadow:var(--shadow); padding:24px 24px 20px; margin:22px 0; position:relative; }
+  .wanted .eyebrow{ margin-bottom:14px; }
+  .wanted h3{ font-family:var(--display); font-weight:400; font-size:1.5rem; margin:0 0 6px; }
+  .wanted .mo{ font-size:.95rem; line-height:1.6; margin:0 0 14px; }
+  .wanted .threat{ position:absolute; top:20px; right:24px; border:2px solid var(--red); color:var(--red); font-family:var(--display);
+    font-size:.84rem; letter-spacing:.07em; padding:5px 8px; transform:rotate(5deg); }
+  .wanted .tell{ font-family:var(--mono); font-size:.8rem; border-top:2px dashed var(--ink); padding-top:12px; margin-top:12px; }
+  .wanted .xref{ font-family:var(--mono); font-size:.88rem; opacity:.75; margin-top:10px; }
+
+  /* TABLES */
+  table.spec{ width:100%; border-collapse:collapse; margin:18px 0; font-size:.86rem; }
+  table.spec th{ font-family:var(--mono); font-weight:600; text-transform:uppercase; letter-spacing:.05em; font-size:.86rem;
+    color:var(--kraft-dark); text-align:left; padding:8px 10px; border-bottom:2px solid var(--ink); }
+  table.spec td{ padding:9px 10px; border-bottom:1px dashed rgba(31,36,33,.3); vertical-align:top; }
+  table.spec tr:last-child td{ border-bottom:none; }
+
+  /* SVG DIAGRAM CONTAINER */
+  figure{ margin:28px 0 0; }
+  figure svg{ width:100%; height:auto; display:block; background:var(--paper); border:1.5px solid var(--ink); }
+  figcaption{ font-size:.82rem; opacity:.75; margin-top:.6em; font-style:italic; }
+
+  /* FLASHCARDS */
+  .toolbar{ display:flex; gap:10px; align-items:center; margin-bottom:20px; flex-wrap:wrap; }
+  button.btn{ font-family:var(--mono); font-weight:600; letter-spacing:.03em; text-transform:uppercase; font-size:.9rem;
+    background:var(--paper); color:var(--ink); border:1.5px solid var(--ink); padding:.55em 1em; cursor:pointer; box-shadow:3px 3px 0 rgba(31,36,33,.14); }
+  button.btn:hover{ background:var(--kraft-soft); }
+  button.btn:focus-visible, a:focus-visible, .flashcard:focus-visible, input:focus-visible{ outline:2px solid var(--blue); outline-offset:2px; }
+  #cardProgress{ font-family:var(--mono); font-size:.85rem; opacity:.75; }
+  .card-grid{ display:grid; gap:16px; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); }
+  .flashcard{ perspective:1200px; height:160px; cursor:pointer; border:none; background:none; padding:0; font-family:inherit; text-align:left; width:100%; }
+  .flashcard-inner{ position:relative; width:100%; height:100%; transition:transform .5s cubic-bezier(.4,.2,.2,1); transform-style:preserve-3d; }
+  .flashcard.flipped .flashcard-inner{ transform:rotateY(180deg); }
+  .flashcard-face{ position:absolute; inset:0; backface-visibility:hidden; border:1.5px solid var(--ink); box-shadow:var(--shadow);
+    padding:15px; display:flex; flex-direction:column; justify-content:center; }
+  .flashcard-face.front{ background:var(--paper); }
+  .flashcard-face.back{ background:var(--ticket); transform:rotateY(180deg); overflow-y:auto; }
+  .flashcard-face .lbl{ font-family:var(--mono); font-weight:600; letter-spacing:.1em; text-transform:uppercase; font-size:.82rem; color:var(--kraft-dark); margin-bottom:.5em; }
+  .flashcard-face.front .term{ font-family:var(--display); font-weight:400; font-size:1.05rem; letter-spacing:.01em; }
+  .flashcard-face.back .def{ font-size:.82rem; }
+  .flashcard.known .flashcard-face.front{ border-color:var(--blue); border-width:2px; }
+
+  /* QUIZ */
+  .quiz-q{ background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow); padding:18px 20px; margin-bottom:18px; }
+  .quiz-q .qtext{ font-weight:600; margin:0 0 13px; }
+  .quiz-q .qnum{ font-family:var(--display); color:var(--red); margin-right:.5em; }
+  .choices{ display:grid; gap:8px; }
+  .choice{ text-align:left; font-family:var(--sans); font-size:.9rem; background:var(--ticket); border:1.5px solid var(--ink);
+    padding:.65em .85em; cursor:pointer; color:var(--ink); }
+  .choice:hover{ border-color:var(--blue); }
+  .choice.correct{ background:var(--blue-soft); border-color:var(--blue); border-width:2px; }
+  .choice.incorrect{ background:var(--red-soft); border-color:var(--red); border-width:2px; }
+  .choice[disabled]{ cursor:default; }
+  .explain{ margin-top:12px; font-size:.84rem; opacity:.85; border-left:3px solid var(--kraft); padding-left:12px; display:none; font-family:var(--mono); }
+  .explain.show{ display:block; }
+  #quizScore{ font-family:var(--mono); font-size:.9rem; opacity:.75; margin-bottom:16px; }
+
+  /* EXAMPLES */
+  .example{ background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow); padding:20px 22px; margin-bottom:16px; }
+  .example h3{ font-family:var(--display); font-weight:400; font-size:1.15rem; margin:0 0 8px; }
+  .example .tag{ display:inline-block; font-family:var(--mono); font-weight:600; font-size:.86rem; text-transform:uppercase; letter-spacing:.07em;
+    color:var(--blue); background:var(--blue-soft); border:1px solid var(--blue); padding:.25em .6em; margin-bottom:10px; }
+  details.solution{ margin-top:12px; }
+  details.solution summary{ cursor:pointer; font-family:var(--mono); font-weight:600; letter-spacing:.03em; text-transform:uppercase;
+    font-size:.9rem; color:var(--blue); list-style:none; display:inline-flex; align-items:center; gap:.4em; }
+  details.solution summary::-webkit-details-marker{ display:none; }
+  details.solution summary::before{ content:"▸"; transition:transform .15s; }
+  details.solution[open] summary::before{ transform:rotate(90deg); }
+  details.solution .solbody{ margin-top:10px; padding:13px 15px; background:var(--ticket); font-size:.88rem; }
+
+  /* GLOSSARY */
+  #glossarySearch{ width:100%; max-width:400px; font-family:var(--sans); font-size:.9rem; padding:.65em .85em;
+    border:1.5px solid var(--ink); background:var(--paper); color:var(--ink); margin-bottom:16px; }
+  .alpha-nav{ display:flex; flex-wrap:wrap; gap:4px; margin-bottom:22px; }
+  .alpha-nav a{ font-family:var(--mono); font-weight:600; font-size:.82rem; width:1.8em; height:1.8em; display:flex;
+    align-items:center; justify-content:center; border:1px solid var(--ink); text-decoration:none; color:var(--ink); opacity:.35; }
+  .alpha-nav a.has{ opacity:1; background:var(--paper); }
+  .alpha-nav a.has:hover{ border-color:var(--blue); color:var(--blue); }
+  .glossary-letter{ font-family:var(--display); font-weight:400; color:var(--red); font-size:1.1rem; margin:20px 0 6px; }
+  dl.glossary{ margin:0; }
+  dl.glossary .gitem{ border-top:1px dashed rgba(31,36,33,.35); padding:11px 0; }
+  dl.glossary dt{ font-family:var(--mono); font-weight:600; font-size:.98rem; }
+  dl.glossary dd{ margin:.3em 0 0; opacity:.8; font-size:.86rem; }
+  .gitem.hidden{ display:none; }
+
+  footer{ padding:30px 0 60px; }
+  footer p{ opacity:.65; font-size:.82rem; font-family:var(--mono); letter-spacing:.02em; }
+
+  @media print{
+    body{ background:#fff; }
+    nav.index{ display:none; }
+    .case-file, .wanted, .quiz-q, .example, .flashcard-face{ box-shadow:none; }
+  }
+</style>
+
+<header class="masthead">
+  <div class="wrap">
+    <p class="eyebrow">IT131 · SESSION 03 · FIELD NOTES</p>
+    <h1>Physical Layer &amp; Checkpoint Review</h1>
+    <p class="lede">The checkpoint covers everything above this line. Today we go all the way down — past every department that reads, decides, and stamps something — to the one that doesn't. Layer 1 doesn't read the envelope. It <em>is</em> the road.</p>
+    <div class="factrow">
+      <span class="fact"><b>Checkpoint</b> Modules 1–3</span>
+      <span class="fact"><b>New material</b> Module 4 — Physical Layer</span>
+    </div>
+  </div>
+</header>
+
+<nav class="index" aria-label="Section index">
+  <div class="wrap">
+    <a href="#overview">Overview</a>
+    <a href="#crew">Infrastructure Crew</a>
+    <a href="#characteristics">Bandwidth &amp; Signal</a>
+    <a href="#copper">Copper</a>
+    <a href="#cables">Cable Types</a>
+    <a href="#fiber-wireless">Fiber &amp; Wireless</a>
+    <a href="#saboteur">Case File: IR-01</a>
+    <a href="#flashcards">Flashcards</a>
+    <a href="#quiz">Quiz</a>
+    <a href="#examples">Examples</a>
+    <a href="#glossary">Glossary</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+  <!-- OVERVIEW -->
+  <section id="overview">
+    <div class="section-head">
+      <p class="kicker">Overview</p>
+      <h2>What Session 3 covers</h2>
+      <p>First, the checkpoint: Modules 1–3, everything from Front Desk down to Logistics — the layers that read, translate, schedule, and route. Then Module 4 hands the request to the one department that does none of that: it just turns whatever it's given into volts, light, or radio, and puts it on the wire.</p>
+    </div>
+    <ul class="obj-list">
+      <li>Explain the purpose of the physical layer and the three forms of network media</li>
+      <li>Define bandwidth, throughput, and goodput — and rank them correctly</li>
+      <li>Compare UTP, STP, and coax; identify EMI, RFI, and crosstalk as the problems twisting solves</li>
+      <li>Identify straight-through, crossover, and rollover cabling and when each is used</li>
+      <li>Compare single-mode and multimode fiber; recognize ST/SC/LC connectors</li>
+      <li>Explain why a physical-layer failure is invisible to a packet capture</li>
+    </ul>
+    <div class="teach-note">
+      <span class="label">Checkpoint review</span>
+      Need to review Modules 1–3 before the exam? The OSI/TCP-IP model, encapsulation, and switch config material live in <code>IT131_Session01.html</code> and <code>IT131_Session02.html</code> — same flashcard/quiz/glossary format as this page.
+    </div>
+  </section>
+
+  <!-- INFRASTRUCTURE CREW HOOK -->
+  <section id="crew">
+    <div class="section-head">
+      <p class="kicker">Case File</p>
+      <h2>Meet the Infrastructure Crew</h2>
+      <p>Every layer above this one makes a decision. Front Desk decides what to ask for. Logistics decides the route. Local Dispatch decides the next hop. Layer 1 decides nothing — it's pulled straight from the OSI Company personnel directory.</p>
+    </div>
+
+    <div class="cold-open">
+      <p class="tag">Cold open</p>
+      <p>Seven departments, six headers stacked like a letter wearing six envelopes — and not one department read anyone else's envelope. That's the whole point of the model: everybody minds their own business. Then it gets to the last desk, and even that stops being true. Nobody here reads anything at all.</p>
+    </div>
+
+    <div class="case-file featured">
+      <span class="tab">LAYER 01</span>
+      <div class="card-inner">
+        <div class="card-head">
+          <span class="icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><rect x="5" y="6" width="14" height="9" rx="1"/><line x1="8" y1="15" x2="8" y2="19"/><line x1="12" y1="15" x2="12" y2="19"/><line x1="16" y1="15" x2="16" y2="19"/></svg>
+          </span>
+          <div>
+            <h3>Infrastructure Crew</h3>
+            <p class="duty">Doesn't read anything. Is the road everything else drives on.</p>
+          </div>
+        </div>
+        <span class="stamp">OPERATIVE</span>
+        <dl class="stats">
+          <div><dt>PDU</dt><dd>Bits</dd></div>
+          <div><dt>Signature</dt><dd>Ethernet cabling, fiber, radio, NICs, hubs</dd></div>
+          <div><dt>On the range</dt><dd>Every blinking link light on the rack, every patch cable re-seated at 2am</dd></div>
+        </dl>
+        <div class="incident-ticket">
+          <div class="ticket-head"><span>INCIDENT REPORT</span><span class="id">IR-01</span></div>
+          <p><strong>The Saboteur</strong> — cuts the cable or jams the signal. Nobody upstairs even finds out there was a request.</p>
+          <p class="detect">Tell: link light's out, or a cable tester shows an open/short — before a laptop ever gets involved.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CHARACTERISTICS -->
+  <section id="characteristics">
+    <div class="section-head">
+      <p class="kicker">Module 4</p>
+      <h2>Purpose &amp; characteristics</h2>
+      <p>The physical layer takes the frame handed down from Local Dispatch and encodes it into a signal that can actually travel: electrical pulses over copper, light pulses over fiber, or radio waves through the air. That's it — three media, no addressing, no logic, just transmission.</p>
+    </div>
+
+    <figure>
+      <svg viewBox="0 0 500 180" role="img" aria-label="Bandwidth is greater than or equal to throughput, which is greater than or equal to goodput.">
+        <g font-family="IBM Plex Mono" fill="var(--ink)">
+          <text x="20" y="24" font-size="12" fill="var(--kraft-dark)" letter-spacing="1">THE SIGNAL FUNNEL — always narrows, never widens</text>
+
+          <rect x="20" y="38" width="460" height="34" fill="var(--paper)" stroke="var(--ink)" stroke-width="1.5"/>
+          <text x="35" y="60" font-size="14" font-weight="700">BANDWIDTH</text>
+
+          <rect x="20" y="82" width="330" height="34" fill="var(--blue-soft)" stroke="var(--blue)" stroke-width="1.5"/>
+          <text x="35" y="104" font-size="14" font-weight="700" fill="var(--blue)">THROUGHPUT</text>
+
+          <rect x="20" y="126" width="210" height="34" fill="var(--red-soft)" stroke="var(--red)" stroke-width="1.5"/>
+          <text x="35" y="148" font-size="14" font-weight="700" fill="var(--red)">GOODPUT</text>
+
+          <text x="20" y="170" font-size="11" fill="var(--ink)" opacity="0.75">theoretical ceiling → measured rate → usable data</text>
+        </g>
+      </svg>
+      <figcaption>Bandwidth ≥ throughput ≥ goodput — always in that order. Goodput is the number a user actually feels. (Full definitions in the table below.)</figcaption>
+    </figure>
+
+    <table class="spec">
+      <thead><tr><th>Term</th><th>Definition</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;">Encoding</td><td>How a bit stream becomes a signal pattern on the medium (e.g., Manchester encoding).</td></tr>
+        <tr><td style="font-weight:600;">Signaling method</td><td>How 0s and 1s are represented physically — a voltage level, a light pulse, a radio wave modulation.</td></tr>
+        <tr><td style="font-weight:600;">Bandwidth</td><td>The theoretical maximum capacity of a medium, set by physics and standards. Measured in bps.</td></tr>
+        <tr><td style="font-weight:600;">Throughput</td><td>The actual measured transfer rate — always ≤ bandwidth, degraded by devices, errors, and overhead.</td></tr>
+        <tr><td style="font-weight:600;">Goodput</td><td>Throughput minus overhead — the usable data rate a user actually experiences.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- COPPER -->
+  <section id="copper">
+    <div class="section-head">
+      <p class="kicker">Module 4</p>
+      <h2>Copper cabling</h2>
+      <p>Electrical signals — cheapest and most common, but vulnerable to interference. Twisting each pair of wires cancels out most of it, which is why it's called <em>twisted pair</em> in the first place.</p>
+    </div>
+
+    <div class="card-row">
+      <div class="case-file">
+        <span class="tab">MEDIUM 01</span>
+        <div class="card-inner">
+          <div class="card-head">
+            <span class="icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><rect x="5" y="6" width="14" height="9" rx="1"/><line x1="8" y1="15" x2="8" y2="19"/><line x1="12" y1="15" x2="12" y2="19"/><line x1="16" y1="15" x2="16" y2="19"/></svg>
+            </span>
+            <div>
+              <h3>UTP / STP / Coax</h3>
+              <p class="duty">Electrical pulses down twisted pairs — the default for every desk drop in the building.</p>
+            </div>
+          </div>
+          <span class="stamp">STANDARD</span>
+          <dl class="stats">
+            <div><dt>Standard</dt><dd>TIA/EIA-568, RJ-45 connector, 8 pins / 4 pairs</dd></div>
+            <div><dt>Types</dt><dd>UTP (unshielded, standard LAN) · STP (shielded, high-EMI areas) · Coax (mostly legacy)</dd></div>
+            <div><dt>Categories</dt><dd>Cat5e (1 Gbps) · Cat6 (1–10 Gbps) · Cat6a (10 Gbps @ 100m)</dd></div>
+            <div><dt>Weakness</dt><dd>EMI, RFI, crosstalk — twisting the pairs is the countermeasure</dd></div>
+            <div><dt>On the range</dt><dd>Every patch cable from a student PC to a C1000 switch</dd></div>
+          </dl>
+        </div>
+      </div>
+    </div>
+
+    <div class="teach-note">
+      <span class="label">Why does twisting help?</span>
+      Two wires carrying opposite signals, twisted together, generate opposing magnetic fields that cancel most external interference (EMI/RFI) and most crosstalk from the pair right next to them. Untwist the ends too far past the connector during termination and you've reopened the exact problem the twisting was solving.
+    </div>
+  </section>
+
+  <!-- CABLE TYPES -->
+  <section id="cables">
+    <div class="section-head">
+      <p class="kicker">Module 4</p>
+      <h2>Cable types — wiring, not color</h2>
+      <p>The cable type is defined by which pins carry which signal at each end, not by the jacket color. This is the checkpoint's favorite way to catch a guess.</p>
+    </div>
+
+    <table class="spec">
+      <thead><tr><th>Cable type</th><th>Wiring</th><th>Use case</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;">Straight-through</td><td>Same pinout both ends</td><td>Dissimilar devices — PC↔switch, switch↔router</td></tr>
+        <tr><td style="font-weight:600;">Crossover</td><td>TX/RX pairs swapped one end</td><td>Similar devices — switch↔switch, PC↔PC, router↔router</td></tr>
+        <tr><td style="font-weight:600;">Rollover</td><td>Reverses every pin</td><td>Console cable — PC↔router/switch console port, management only</td></tr>
+      </tbody>
+    </table>
+
+    <div class="teach-note">
+      <span class="label">Auto-MDIX</span>
+      Modern switch ports auto-detect and adjust their pinout, so a straight-through cable often works where crossover was traditionally required. It doesn't remove the concept from the exam — it just removes it from most real cabling closets.
+    </div>
+  </section>
+
+  <!-- FIBER & WIRELESS -->
+  <section id="fiber-wireless">
+    <div class="section-head">
+      <p class="kicker">Module 4</p>
+      <h2>Fiber-optic &amp; wireless media</h2>
+      <p>Two ways to skip copper's problems entirely — at the cost of either budget or open air.</p>
+    </div>
+
+    <div class="card-row">
+      <div class="case-file">
+        <span class="tab">MEDIUM 02</span>
+        <div class="card-inner">
+          <div class="card-head">
+            <span class="icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M4 19 L20 5"/><circle cx="8" cy="15.5" r="1.3" fill="var(--ink)" stroke="none"/><circle cx="13" cy="10.5" r="1.3" fill="var(--ink)" stroke="none"/><circle cx="18" cy="5.5" r="1.3" fill="var(--ink)" stroke="none"/></svg>
+            </span>
+            <div>
+              <h3>Fiber-Optic Cabling</h3>
+              <p class="duty">Light pulses instead of electricity. Immune to everything that gives copper trouble.</p>
+            </div>
+          </div>
+          <span class="stamp">LONG HAUL</span>
+          <dl class="stats">
+            <div><dt>Types</dt><dd>Single-mode (SMF) — laser, long-haul, narrow core · Multimode (MMF) — LED, shorter runs, wider core</dd></div>
+            <div><dt>Connectors</dt><dd>ST, SC, LC</dd></div>
+            <div><dt>Strength</dt><dd>Total EMI/RFI immunity, longest distances, highest bandwidth</dd></div>
+            <div><dt>Trade-off</dt><dd>Cost, careful handling — won't tolerate sharp bends</dd></div>
+            <div><dt>On the range</dt><dd>Campus backbone links — already in the walls, never seen</dd></div>
+          </dl>
+        </div>
+      </div>
+
+      <div class="case-file">
+        <span class="tab">MEDIUM 03</span>
+        <div class="card-inner">
+          <div class="card-head">
+            <span class="icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="19" r="1.3" fill="var(--ink)" stroke="none"/><path d="M7 14.5a7 7 0 0 1 10 0"/><path d="M3.5 11a12 12 0 0 1 17 0"/></svg>
+            </span>
+            <div>
+              <h3>Wireless Media</h3>
+              <p class="duty">No cable at all. Radio waves through open air — convenient, and everyone's problem at once.</p>
+            </div>
+          </div>
+          <span class="stamp">SHARED AIR</span>
+          <dl class="stats">
+            <div><dt>Standards</dt><dd>802.11 (Wi-Fi) · 802.15 (Bluetooth) · 802.16 (WiMAX)</dd></div>
+            <div><dt>Medium</dt><dd>Shared — every device in range competes for airtime</dd></div>
+            <div><dt>Weakness</dt><dd>Coverage limited by power/obstacles/interference; harder to secure than a cable you can see</dd></div>
+            <div><dt>On the range</dt><dd>Every laptop and phone that never plugged into anything</dd></div>
+          </dl>
+        </div>
+      </div>
+    </div>
+
+    <table class="spec" style="margin-top:32px;">
+      <thead><tr><th></th><th>Copper (UTP)</th><th>Fiber</th><th>Wireless</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;">Signal</td><td>Electrical</td><td>Light</td><td>Radio</td></tr>
+        <tr><td style="font-weight:600;">Max practical distance</td><td>~100m</td><td>km (SMF) / ~550m (MMF)</td><td>Varies, shortest reliable range</td></tr>
+        <tr><td style="font-weight:600;">EMI immunity</td><td>Low</td><td>Total</td><td>N/A — different problem (RF interference)</td></tr>
+        <tr><td style="font-weight:600;">Cost</td><td>Lowest</td><td>Highest</td><td>Medium hardware, free medium</td></tr>
+        <tr><td style="font-weight:600;">Typical use</td><td>Desk drops, LAN</td><td>Backbone, long runs</td><td>End-user mobility</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- SABOTEUR CASE FILE -->
+  <section id="saboteur">
+    <div class="section-head">
+      <p class="kicker">Wanted</p>
+      <h2>Case File: IR-01, The Saboteur</h2>
+      <p>Every other incident this semester leaves a trace <em>somewhere</em> — a packet capture, a log, an ARP table. This one doesn't.</p>
+    </div>
+
+    <div class="wanted">
+      <span class="threat">THREAT LEVEL: PHYSICAL</span>
+      <p class="eyebrow">CROSS-REF LAYER 01 — INFRASTRUCTURE CREW</p>
+      <h3>The Saboteur</h3>
+      <p class="mo">Cuts the cable, or jams the signal. No forged header, no stolen session, no impersonated address — just a link that stops carrying volts, light, or radio. Nobody upstairs even finds out there was a request.</p>
+      <p class="tell"><strong>Tell:</strong> the link light is out, or a cable tester shows an open/short — before a laptop, a switch, or any Layer 2+ device is even involved.</p>
+      <p class="xref">See also: Personnel Directory, LAYER 01 · Security Bulletin, IR-01</p>
+    </div>
+
+    <div class="teach-note">
+      <span class="label">Debrief</span>
+      Every other incident report this semester — the Con Artist, the Eavesdropper, the Impersonator — leaves some trace in a packet capture or a log. Why doesn't the Saboteur? <em>(Wireshark captures frames. If Layer 1 never delivers a frame, there's nothing to capture. Physical-layer failures are diagnosed with link lights, cable testers, and <code>show interfaces</code> — not protocol analysis.)</em>
+    </div>
+  </section>
+
+  <!-- FLASHCARDS -->
+  <section id="flashcards">
+    <div class="section-head">
+      <p class="kicker">Study</p>
+      <h2>Flashcards</h2>
+      <p>Click to flip. Double-click to mark as known.</p>
+    </div>
+    <div class="toolbar">
+      <button class="btn" id="shuffleBtn">Shuffle</button>
+      <button class="btn" id="resetKnownBtn">Reset progress</button>
+      <span id="cardProgress"></span>
+    </div>
+    <div class="card-grid" id="cardGrid"></div>
+  </section>
+
+  <!-- QUIZ -->
+  <section id="quiz">
+    <div class="section-head">
+      <p class="kicker">Check yourself</p>
+      <h2>Sample questions</h2>
+      <p>Pick an answer to see if you're right — same style as the checkpoint exams.</p>
+    </div>
+    <div id="quizScore"></div>
+    <div id="quizList"></div>
+    <button class="btn" id="resetQuizBtn">Reset quiz</button>
+  </section>
+
+  <!-- EXAMPLES -->
+  <section id="examples">
+    <div class="section-head">
+      <p class="kicker">Applied</p>
+      <h2>Worked examples</h2>
+      <p>Think it through before you expand the answer.</p>
+    </div>
+
+    <div class="example">
+      <span class="tag">Cable ID</span>
+      <h3>Straight-through or crossover?</h3>
+      <p>You're connecting a PC to a switch, and separately, connecting two switches together to extend a LAN. Which cable type does each connection need — and would it matter on a modern switch?</p>
+      <details class="solution">
+        <summary>Show answer</summary>
+        <div class="solbody">
+          <p><strong>PC to switch:</strong> dissimilar devices → straight-through. <strong>Switch to switch:</strong> similar devices → crossover, traditionally. On a modern switch with <strong>Auto-MDIX</strong>, both ports auto-detect and adjust, so a straight-through cable would likely work in either case. The underlying wiring concept — and the exam question — doesn't go away just because the hardware compensates for it.</p>
+        </div>
+      </details>
+    </div>
+
+    <div class="example">
+      <span class="tag">Bandwidth vs. goodput</span>
+      <h3>The overnight download</h3>
+      <p>Your ISP advertises a 100 Mbps connection. A large file transfer overnight measures 80 Mbps of actual traffic on the line, but the download manager reports the file arrived at an effective rate of 65 Mbps. Name all three numbers.</p>
+      <details class="solution">
+        <summary>Show answer</summary>
+        <div class="solbody">
+          <p><strong>100 Mbps = bandwidth</strong> (the advertised, theoretical capacity). <strong>80 Mbps = throughput</strong> (what was actually measured moving across the line). <strong>65 Mbps = goodput</strong> (what the application actually got, after headers, retransmissions, and other overhead were subtracted out). Bandwidth ≥ throughput ≥ goodput, every time.</p>
+        </div>
+      </details>
+    </div>
+
+    <div class="example">
+      <span class="tag">Copper</span>
+      <h3>Why does the wire spiral?</h3>
+      <p>A student notices that inside every Ethernet cable, the wire pairs are twisted rather than running straight and parallel. Why bother?</p>
+      <details class="solution">
+        <summary>Show answer</summary>
+        <div class="solbody">
+          <p><strong>Answer:</strong> Two wires in a pair carry opposite polarity signals. Twisted together, their magnetic fields largely cancel out both interference arriving from <strong>outside</strong> the cable (EMI/RFI — motors, fluorescent lights) and interference bleeding in from the <strong>pair right next to it</strong> (crosstalk). Different pairs are twisted at different rates specifically so their cancellation patterns don't line up with each other.</p>
+        </div>
+      </details>
+    </div>
+
+    <div class="example">
+      <span class="tag">Fiber</span>
+      <h3>SMF or MMF?</h3>
+      <p>Your campus needs a link between two buildings three kilometers apart, and separately, a short run between two racks in the same data center. Which fiber type fits each job, and why not just use the more capable one everywhere?</p>
+      <details class="solution">
+        <summary>Show answer</summary>
+        <div class="solbody">
+          <p><strong>Building-to-building (3 km):</strong> single-mode fiber (SMF) — laser source, narrow core, built for long-haul distance. <strong>Rack-to-rack (short run):</strong> multimode fiber (MMF) — LED source, wider core, cheaper hardware, plenty of reach for a short distance. SMF isn't used everywhere because the laser transceivers cost more — there's no reason to pay for kilometers of range on a cable that's only ten feet long.</p>
+        </div>
+      </details>
+    </div>
+
+    <div class="example">
+      <span class="tag">Layer 1 vs. everything else</span>
+      <h3>The capture that shows nothing</h3>
+      <p>A NOC tech starts a Wireshark capture to investigate why a student station can't reach the network at all — not slow, not intermittent, completely dark. The capture comes back empty. Is the capture broken, or is that the answer?</p>
+      <details class="solution">
+        <summary>Show answer</summary>
+        <div class="solbody">
+          <p><strong>That's the answer.</strong> Wireshark captures frames as they arrive on an interface. If Layer 1 never delivers a signal — a cut cable, a bad port, a disconnected patch — there's no frame to ever reach Layer 2, and nothing for the capture to show. The right tools here are a link light, a cable tester, or <code>show interfaces</code> on the switch — not a protocol analyzer. This is IR-01, The Saboteur: the one incident this semester with no packet-level trace at all.</p>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <!-- GLOSSARY -->
+  <section id="glossary">
+    <div class="section-head">
+      <p class="kicker">Reference</p>
+      <h2>Glossary &amp; index</h2>
+      <p>Every term from this session, searchable and indexed A–Z.</p>
+    </div>
+    <input type="text" id="glossarySearch" placeholder="Search terms…" aria-label="Search glossary">
+    <div class="alpha-nav" id="alphaNav"></div>
+    <dl class="glossary" id="glossaryList"></dl>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>IT131 · CCNA: Introduction to Networks · Session 3 reference — more sessions added as the course progresses.</p>
+  </div>
+</footer>
+
+<script>
+  const TERMS = [
+    {t:"Auto-MDIX", d:"A feature on modern switch ports that auto-detects and adjusts pinout, so a straight-through cable often works where crossover was traditionally required."},
+    {t:"Bandwidth", d:"The theoretical maximum capacity of a medium, measured in bps. Set by the physics of the media and by standards — always the upper bound."},
+    {t:"Cat5e / Cat6 / Cat6a", d:"UTP cable categories under TIA/EIA-568. Cat5e supports 1 Gbps; Cat6 supports 1–10 Gbps (shorter range at 10G); Cat6a supports a full 10 Gbps over 100m."},
+    {t:"Coax (Coaxial cable)", d:"A copper medium with a single center conductor shielded by a braided layer. Mostly legacy in modern LANs — still seen with cable modems."},
+    {t:"Crossover cable", d:"A copper cable with TX/RX pairs swapped at one end. Used to connect similar devices — switch to switch, PC to PC."},
+    {t:"Crosstalk", d:"Signal bleeding from one twisted pair into an adjacent pair inside the same cable. Twisting each pair at a different rate limits it."},
+    {t:"EMI (Electromagnetic Interference)", d:"Interference from motors, fluorescent lights, and other electrical equipment that can corrupt signals on copper cabling."},
+    {t:"Encoding", d:"How a bit stream is converted into a signal pattern on the medium — e.g., Manchester encoding."},
+    {t:"Fiber-optic cable", d:"A medium that transmits light pulses instead of electrical signals. Immune to EMI/RFI, supports longer distances and higher bandwidth than copper."},
+    {t:"Goodput", d:"Throughput minus protocol overhead (headers, retransmissions) — the usable data rate a user actually experiences. The lowest of the three signal-funnel numbers."},
+    {t:"LC / SC / ST connectors", d:"The three common fiber-optic connector types. Recognition-level for this course — know they exist and look different from RJ-45."},
+    {t:"Multimode fiber (MMF)", d:"Fiber with a wider core and an LED light source. Shorter effective range (~550m) than single-mode, but cheaper — common in data centers and campus backbones."},
+    {t:"Physical layer (Layer 1)", d:"The OSI layer that transmits raw bits over a physical medium — copper, fiber, or wireless. No addressing, no logic, just transmission. PDU: bits."},
+    {t:"RFI (Radio Frequency Interference)", d:"Interference from radio-frequency sources that can corrupt signals on copper cabling, similar in effect to EMI."},
+    {t:"RJ-45", d:"The standard 8-pin, 8-conductor connector used for UTP/STP Ethernet cabling, governed by TIA/EIA-568."},
+    {t:"Rollover cable", d:"A copper cable that reverses every pin end to end. Used as a console cable to connect a PC to a router or switch's console port for out-of-band management."},
+    {t:"Signaling method", d:"How 0s and 1s are physically represented on a medium — a voltage level (copper), a light pulse (fiber), or a radio wave modulation (wireless)."},
+    {t:"Single-mode fiber (SMF)", d:"Fiber with a narrow core and a laser light source. Supports long-haul distances (kilometers) — used for carrier and backbone links."},
+    {t:"STP (Shielded Twisted Pair)", d:"Copper cabling with foil shielding around the twisted pairs, added for high-EMI environments like factory floors."},
+    {t:"Straight-through cable", d:"A copper cable with the same pinout at both ends. Used to connect dissimilar devices — PC to switch, switch to router."},
+    {t:"Throughput", d:"The actual measured rate of data transfer over time. Always ≤ bandwidth — degraded by attached devices, media errors, and overhead."},
+    {t:"TIA/EIA-568", d:"The standard governing UTP cabling, wiring pinouts, and connectors (RJ-45) for structured cabling."},
+    {t:"UTP (Unshielded Twisted Pair)", d:"The standard copper cabling for LANs — twisted pairs cancel most interference without needing extra shielding. Cheapest, most common medium."},
+    {t:"Wireless standards (802.11 / 802.15 / 802.16)", d:"IEEE standards governing wireless media: 802.11 (Wi-Fi), 802.15 (Bluetooth), 802.16 (WiMAX). All share a medium — every device in range competes for airtime."},
+  ];
+
+  const QUIZ = [
+    {
+      q:"Which is always true?",
+      choices:["Goodput ≥ throughput ≥ bandwidth","Bandwidth ≥ throughput ≥ goodput","Throughput ≥ bandwidth ≥ goodput","They're unrelated"],
+      correct:1,
+      explain:"Bandwidth is the theoretical ceiling, throughput is what's actually measured, goodput is throughput minus overhead. The order never reverses."
+    },
+    {
+      q:"Why are the wire pairs inside an Ethernet cable twisted?",
+      choices:["To make the cable easier to bend","To cancel EMI, RFI, and crosstalk","To increase the connector's pin count","To slow down the signal for safety"],
+      correct:1,
+      explain:"Twisting causes the magnetic fields of the two wires in a pair to largely cancel external interference and crosstalk from adjacent pairs."
+    },
+    {
+      q:"Which cabling standard governs UTP wiring and the RJ-45 connector?",
+      choices:["802.11","TIA/EIA-568","ISO 9001","RFC 791"],
+      correct:1,
+      explain:"TIA/EIA-568 defines UTP cabling pinouts and connector standards used throughout structured cabling."
+    },
+    {
+      q:"You need to connect two switches together to extend a LAN. On legacy hardware (no Auto-MDIX), what cable type do you need?",
+      choices:["Straight-through","Crossover","Rollover","Coax"],
+      correct:1,
+      explain:"Similar devices (switch-to-switch) traditionally require a crossover cable, which swaps the TX/RX pairs at one end."
+    },
+    {
+      q:"What is a rollover cable used for?",
+      choices:["Connecting a PC to a switch's data port","Connecting two routers over a WAN link","Connecting a PC to a router or switch's console port","Extending a fiber run"],
+      correct:2,
+      explain:"A rollover cable reverses every pin and is used strictly for out-of-band console management, not for carrying network traffic."
+    },
+    {
+      q:"What does Auto-MDIX do?",
+      choices:["Encrypts traffic on the port","Auto-detects and adjusts port pinout so straight-through cables often work anywhere","Automatically negotiates the fastest available speed","Converts copper signals to light"],
+      correct:1,
+      explain:"Auto-MDIX lets a modern switch port sense whether it needs straight-through or crossover wiring and adjust internally."
+    },
+    {
+      q:"Which fiber type uses a laser light source and is built for long-haul distances?",
+      choices:["Multimode fiber (MMF)","Coaxial cable","Single-mode fiber (SMF)","Shielded twisted pair (STP)"],
+      correct:2,
+      explain:"Single-mode fiber has a narrow core and a laser source, supporting kilometers of distance — used for backbone and carrier links."
+    },
+    {
+      q:"What do 802.11, 802.15, and 802.16 all have in common?",
+      choices:["They're all copper cabling standards","They're all wireless standards using a shared medium","They're all fiber connector types","They're all OSI layer names"],
+      correct:1,
+      explain:"802.11 (Wi-Fi), 802.15 (Bluetooth), and 802.16 (WiMAX) are wireless standards — every device in range shares and competes for the same medium."
+    },
+    {
+      q:"A student station has no connectivity at all — not slow, completely dark — and a Wireshark capture on that link shows nothing. What's the most likely explanation?",
+      choices:["The capture filter is misconfigured","A physical-layer failure — no signal ever reached the interface to become a frame","The switch is running an outdated IOS","DNS is not resolving"],
+      correct:1,
+      explain:"Wireshark captures frames. If Layer 1 never delivers a signal, no frame is ever produced — there's nothing to capture. This is why physical-layer failures are diagnosed with link lights and cable testers, not protocol analyzers."
+    },
+    {
+      q:"Which copper cabling type adds shielding for high-EMI environments like factory floors?",
+      choices:["UTP","STP","Coax","Rollover"],
+      correct:1,
+      explain:"STP (Shielded Twisted Pair) adds a foil shield around the twisted pairs for extra protection where EMI is especially high."
+    },
+  ];
+
+  const grid = document.getElementById('cardGrid');
+  TERMS.forEach((item, i) => {
+    const card = document.createElement('button');
+    card.className = 'flashcard';
+    card.setAttribute('aria-label', 'Flashcard: ' + item.t + '. Press to flip.');
+    card.dataset.i = i;
+    card.innerHTML = `
+      <div class="flashcard-inner">
+        <div class="flashcard-face front"><div class="lbl">Term</div><div class="term">${item.t}</div></div>
+        <div class="flashcard-face back"><div class="lbl">Definition</div><div class="def">${item.d}</div></div>
+      </div>`;
+    card.addEventListener('click', () => card.classList.toggle('flipped'));
+    card.addEventListener('dblclick', () => { card.classList.toggle('known'); updateProgress(); });
+    grid.appendChild(card);
+  });
+  function updateProgress(){
+    const known = document.querySelectorAll('.flashcard.known').length;
+    document.getElementById('cardProgress').textContent = `${known} / ${TERMS.length} marked known (double-click a card to mark it)`;
+  }
+  updateProgress();
+  document.getElementById('shuffleBtn').addEventListener('click', () => {
+    const cards = Array.from(grid.children);
+    cards.sort(() => Math.random() - 0.5);
+    cards.forEach(c => { c.classList.remove('flipped'); grid.appendChild(c); });
+  });
+  document.getElementById('resetKnownBtn').addEventListener('click', () => {
+    document.querySelectorAll('.flashcard.known').forEach(c => c.classList.remove('known'));
+    updateProgress();
+  });
+
+  const quizList = document.getElementById('quizList');
+  let score = 0, answered = 0;
+  function renderQuiz(){
+    quizList.innerHTML = ''; score = 0; answered = 0;
+    QUIZ.forEach((item, qi) => {
+      const box = document.createElement('div');
+      box.className = 'quiz-q';
+      box.innerHTML = `<p class="qtext"><span class="qnum">Q${qi+1}.</span>${item.q}</p><div class="choices"></div><p class="explain"></p>`;
+      const choicesEl = box.querySelector('.choices');
+      item.choices.forEach((c, ci) => {
+        const b = document.createElement('button');
+        b.className = 'choice'; b.textContent = c;
+        b.addEventListener('click', () => {
+          if (box.dataset.done) return;
+          box.dataset.done = '1'; answered++;
+          if (ci === item.correct) score++;
+          Array.from(choicesEl.children).forEach((el, ei) => {
+            el.disabled = true;
+            if (ei === item.correct) el.classList.add('correct');
+            else if (ei === ci) el.classList.add('incorrect');
+          });
+          box.querySelector('.explain').textContent = item.explain;
+          box.querySelector('.explain').classList.add('show');
+          updateScore();
+        });
+        choicesEl.appendChild(b);
+      });
+      quizList.appendChild(box);
+    });
+    updateScore();
+  }
+  function updateScore(){
+    document.getElementById('quizScore').textContent =
+      answered === 0 ? `${QUIZ.length} questions — click an answer to check yourself` : `Score: ${score} / ${answered} answered`;
+  }
+  renderQuiz();
+  document.getElementById('resetQuizBtn').addEventListener('click', renderQuiz);
+
+  const glossaryList = document.getElementById('glossaryList');
+  const alphaNav = document.getElementById('alphaNav');
+  const letters = [...new Set(TERMS.map(t => t.t[0].toUpperCase()))];
+  'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').forEach(L => {
+    const a = document.createElement('a');
+    a.textContent = L;
+    if (letters.includes(L)) { a.href = '#g-' + L; a.className = 'has'; }
+    else { a.href = 'javascript:void(0)'; }
+    alphaNav.appendChild(a);
+  });
+  let currentLetter = '';
+  TERMS.forEach(item => {
+    const L = item.t[0].toUpperCase();
+    if (L !== currentLetter) {
+      currentLetter = L;
+      const h = document.createElement('div');
+      h.className = 'glossary-letter'; h.id = 'g-' + L; h.textContent = L;
+      glossaryList.appendChild(h);
+    }
+    const wrap = document.createElement('div');
+    wrap.className = 'gitem';
+    wrap.innerHTML = `<dt>${item.t}</dt><dd>${item.d}</dd>`;
+    wrap.dataset.search = (item.t + ' ' + item.d).toLowerCase();
+    glossaryList.appendChild(wrap);
+  });
+  document.getElementById('glossarySearch').addEventListener('input', (e) => {
+    const q = e.target.value.toLowerCase().trim();
+    document.querySelectorAll('.gitem').forEach(el => {
+      el.classList.toggle('hidden', q && !el.dataset.search.includes(q));
+    });
+  });
+</script>

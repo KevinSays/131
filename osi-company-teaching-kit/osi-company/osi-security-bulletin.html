@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The OSI Company — Security Bulletin Board</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EDE8DD;
+    --canvas:#D9D2C3;
+    --ink:#1F2421;
+    --kraft:#B08554;
+    --blue:#2F4858;
+    --red:#A23A2E;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--canvas);
+    background-image: radial-gradient(rgba(31,36,33,0.05) 1px, transparent 1px);
+    background-size: 16px 16px;
+    color:var(--ink);
+    font-family:'IBM Plex Sans', system-ui, sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:940px;margin:0 auto;padding:32px 18px 60px;}
+
+  header.masthead{margin-bottom:40px;}
+  .eyebrow{
+    display:inline-block;
+    font-family:'Special Elite', 'Courier New', monospace;
+    font-size:0.68rem;
+    letter-spacing:0.12em;
+    border:2px solid var(--red);
+    color:var(--red);
+    padding:4px 10px;
+    transform:rotate(-3deg);
+    background:var(--paper);
+  }
+  h1{
+    font-family:'Special Elite', 'Courier New', monospace;
+    font-weight:400;
+    font-size:clamp(1.6rem, 5vw, 2.4rem);
+    margin:14px 0 10px;
+    line-height:1.18;
+  }
+  .subtitle{font-size:0.95rem;line-height:1.55;max-width:64ch;opacity:0.85;margin:0;}
+
+  .board-grid{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:46px 30px;
+    padding-top:10px;
+  }
+  @media (min-width:720px){
+    .board-grid{grid-template-columns:1fr 1fr;}
+  }
+
+  .poster{
+    position:relative;
+    background:var(--paper);
+    border:2px solid var(--ink);
+    box-shadow:5px 5px 0 rgba(31,36,33,0.16);
+    padding:22px 20px 18px;
+    text-align:center;
+  }
+  .poster:nth-child(odd){transform:rotate(-1deg);}
+  .poster:nth-child(even){transform:rotate(1deg);}
+
+  .pin{
+    position:absolute;
+    top:-9px;left:50%;
+    transform:translateX(-50%);
+    width:15px;height:15px;
+    border-radius:50%;
+    background:radial-gradient(circle at 35% 32%, #e8b7a2, var(--red) 72%);
+    border:1px solid rgba(0,0,0,0.35);
+    box-shadow:0 2px 3px rgba(0,0,0,0.35);
+  }
+
+  .wanted-word{
+    font-family:'Special Elite','Courier New',monospace;
+    font-size:0.78rem;
+    letter-spacing:0.35em;
+    color:var(--red);
+    border-top:2px solid var(--red);
+    border-bottom:2px solid var(--red);
+    display:inline-block;
+    padding:3px 14px;
+    margin:6px 0 12px;
+  }
+  h2.villain-name{
+    font-family:'Special Elite','Courier New',monospace;
+    font-weight:400;
+    font-size:1.3rem;
+    margin:0 0 4px;
+  }
+  .alias{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:0.72rem;
+    letter-spacing:0.03em;
+    opacity:0.75;
+    margin:0 0 4px;
+  }
+  .layer-tag{
+    display:inline-block;
+    margin-top:6px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:0.66rem;
+    letter-spacing:0.06em;
+    color:var(--blue);
+    border:1.5px solid var(--blue);
+    padding:2px 8px;
+  }
+
+  .mugshot{
+    width:100px;height:100px;
+    margin:16px auto 14px;
+    border:2px solid var(--ink);
+    background-image:repeating-linear-gradient(to bottom, transparent 0 15px, rgba(31,36,33,0.16) 15px 16px);
+    display:flex;align-items:center;justify-content:center;
+  }
+  .mugshot svg{width:46px;height:46px;stroke:var(--ink);fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;}
+
+  dl.case-stats{
+    text-align:left;
+    margin:14px 0 0;
+    padding-top:12px;
+    border-top:1px dashed rgba(31,36,33,0.35);
+  }
+  dl.case-stats > div{display:flex;gap:10px;margin-bottom:8px;align-items:baseline;}
+  dl.case-stats dt{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:0.64rem;
+    font-weight:600;
+    letter-spacing:0.05em;
+    text-transform:uppercase;
+    color:var(--kraft);
+    min-width:108px;
+    flex-shrink:0;
+  }
+  dl.case-stats dd{margin:0;font-size:0.83rem;line-height:1.42;}
+
+  .threat-row{
+    margin-top:14px;
+    padding-top:10px;
+    border-top:1px dashed rgba(31,36,33,0.35);
+    font-family:'IBM Plex Mono',monospace;
+    font-size:0.72rem;
+  }
+  .threat-row .dots{letter-spacing:0.15em;font-size:0.95rem;margin-left:6px;color:var(--red);}
+
+  .reward{
+    margin-top:12px;
+    padding-top:10px;
+    border-top:2px dashed var(--ink);
+    font-size:0.78rem;
+    font-style:italic;
+    line-height:1.4;
+    opacity:0.85;
+  }
+  .reward strong{font-style:normal;color:var(--red);}
+
+  footer{
+    margin-top:44px;
+    padding-top:20px;
+    border-top:2px dashed rgba(31,36,33,0.35);
+    font-size:0.8rem;
+  }
+  .fineprint{opacity:0.6;font-size:0.75rem;margin-top:6px;}
+
+  @media print{
+    body{background:#fff;}
+    .poster{box-shadow:none;transform:none !important;break-inside:avoid;page-break-inside:avoid;}
+    .eyebrow{background:#fff;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <span class="eyebrow">POSTED OUTSIDE THE NOC</span>
+    <h1>SECURITY BULLETIN BOARD</h1>
+    <p class="subtitle">Seven repeat offenders, one per department. Every incident report on file traces back to one of these. Approach with a packet capture, not your hands.</p>
+  </header>
+
+  <div class="board-grid">
+
+    <!-- L7 -->
+    <article class="poster">
+      <div class="pin"></div>
+      <div class="wanted-word">WANTED</div>
+      <h2 class="villain-name">The Con Artist</h2>
+      <p class="alias">AKA: Phishing / Social Engineering</p>
+      <span class="layer-tag">LAST SEEN: LAYER 07 — FRONT DESK</span>
+      <div class="mugshot">
+        <svg viewBox="0 0 24 24"><path d="M9 3v9a4 4 0 0 0 7 2.5"/><circle cx="9" cy="3" r="1.6"/></svg>
+      </div>
+      <dl class="case-stats">
+        <div><dt>MO</dt><dd>Sends a request that looks completely legitimate and asks for something Front Desk shouldn't hand over.</dd></div>
+        <div><dt>Tools of the trade</dt><dd>Spoofed sender addresses, lookalike domains, pretext phone calls</dd></div>
+        <div><dt>Countermeasure</dt><dd>Security-awareness training; verify out-of-band before acting</dd></div>
+      </dl>
+      <div class="threat-row">THREAT LEVEL: NOVICE <span class="dots">●●○○○</span></div>
+      <div class="reward">REWARD: <strong>full credit</strong> on the incident report if you can explain why this one never shows up in a packet capture.</div>
+    </article>
+
+    <!-- L6 -->
+    <article class="poster">
+      <div class="pin"></div>
+      <div class="wanted-word">WANTED</div>
+      <h2 class="villain-name">The Eavesdropper</h2>
+      <p class="alias">AKA: Packet Sniffing</p>
+      <span class="layer-tag">LAST SEEN: LAYER 06 — TRANSLATION &amp; WARDROBE</span>
+      <div class="mugshot">
+        <svg viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>
+      </div>
+      <dl class="case-stats">
+        <div><dt>MO</dt><dd>Reads outgoing mail before it's sealed — only works if it was never sealed in the first place.</dd></div>
+        <div><dt>Tools of the trade</dt><dd>Wireshark, tcpdump on an unsecured segment</dd></div>
+        <div><dt>Countermeasure</dt><dd>Encrypt everything — TLS, SSH, VPN tunnels</dd></div>
+      </dl>
+      <div class="threat-row">THREAT LEVEL: NOVICE–INTERMEDIATE <span class="dots">●●●○○</span></div>
+      <div class="reward">REWARD: <strong>full credit</strong> for spotting the cleartext protocol in the capture before the professor does.</div>
+    </article>
+
+    <!-- L5 -->
+    <article class="poster">
+      <div class="pin"></div>
+      <div class="wanted-word">WANTED</div>
+      <h2 class="villain-name">The Impostor</h2>
+      <p class="alias">AKA: Session Hijacking</p>
+      <span class="layer-tag">LAST SEEN: LAYER 05 — SCHEDULING</span>
+      <div class="mugshot">
+        <svg viewBox="0 0 24 24"><path d="M4 9c0-2.5 3.5-4 8-4s8 1.5 8 4-1 6-8 6-8-3.5-8-6z"/><ellipse cx="9" cy="9" rx="1.4" ry="1"/><ellipse cx="15" cy="9" rx="1.4" ry="1"/></svg>
+      </div>
+      <dl class="case-stats">
+        <div><dt>MO</dt><dd>Steals an already-open meeting room instead of knocking — rides a session it never earned.</dd></div>
+        <div><dt>Tools of the trade</dt><dd>Stolen cookies/tokens, replay of captured session data</dd></div>
+        <div><dt>Countermeasure</dt><dd>Session timeouts, token rotation, re-auth on sensitive actions</dd></div>
+      </dl>
+      <div class="threat-row">THREAT LEVEL: INTERMEDIATE <span class="dots">●●●●○</span></div>
+      <div class="reward">REWARD: <strong>full credit</strong> for spotting a session token reused from an unexpected location.</div>
+    </article>
+
+    <!-- L4 -->
+    <article class="poster">
+      <div class="pin"></div>
+      <div class="wanted-word">WANTED</div>
+      <h2 class="villain-name">The Flood</h2>
+      <p class="alias">AKA: DoS / DDoS</p>
+      <span class="layer-tag">LAST SEEN: LAYER 04 — SHIPPING &amp; RECEIVING</span>
+      <div class="mugshot">
+        <svg viewBox="0 0 24 24"><path d="M2 8c2-2 4-2 6 0s4 2 6 0 4-2 6 0"/><path d="M2 13c2-2 4-2 6 0s4 2 6 0 4-2 6 0"/><path d="M2 18c2-2 4-2 6 0s4 2 6 0 4-2 6 0"/></svg>
+      </div>
+      <dl class="case-stats">
+        <div><dt>MO</dt><dd>Jams the loading dock with fake orders until real shipments can't get through.</dd></div>
+        <div><dt>Tools of the trade</dt><dd>Traffic generators, botnets</dd></div>
+        <div><dt>Countermeasure</dt><dd>Rate limiting, SYN cookies, upstream filtering</dd></div>
+      </dl>
+      <div class="threat-row">THREAT LEVEL: INTERMEDIATE <span class="dots">●●●○○</span></div>
+      <div class="reward">REWARD: <strong>full credit</strong> for finding the spike in half-open connections in netstat.</div>
+    </article>
+
+    <!-- L3 -->
+    <article class="poster">
+      <div class="pin"></div>
+      <div class="wanted-word">WANTED</div>
+      <h2 class="villain-name">The Forger</h2>
+      <p class="alias">AKA: IP Spoofing</p>
+      <span class="layer-tag">LAST SEEN: LAYER 03 — LOGISTICS</span>
+      <div class="mugshot">
+        <svg viewBox="0 0 24 24"><rect x="9" y="2" width="6" height="7" rx="1"/><rect x="5" y="9" width="14" height="4" rx="1"/><path d="M6 13l-2 8h16l-2-8"/></svg>
+      </div>
+      <dl class="case-stats">
+        <div><dt>MO</dt><dd>Fakes the return address on a routing slip so the reply goes somewhere it shouldn't.</dd></div>
+        <div><dt>Tools of the trade</dt><dd>Crafted packets with a forged source address</dd></div>
+        <div><dt>Countermeasure</dt><dd>Ingress/egress filtering (BCP38), authenticated routing</dd></div>
+      </dl>
+      <div class="threat-row">THREAT LEVEL: INTERMEDIATE <span class="dots">●●●●○</span></div>
+      <div class="reward">REWARD: <strong>full credit</strong> for catching a source IP that doesn't match the expected subnet.</div>
+    </article>
+
+    <!-- L2 -->
+    <article class="poster">
+      <div class="pin"></div>
+      <div class="wanted-word">WANTED</div>
+      <h2 class="villain-name">The Impersonator</h2>
+      <p class="alias">AKA: ARP Spoofing</p>
+      <span class="layer-tag">LAST SEEN: LAYER 02 — LOCAL DISPATCH</span>
+      <div class="mugshot">
+        <svg viewBox="0 0 24 24"><rect x="10" y="1" width="4" height="3" rx="1"/><rect x="5" y="4" width="14" height="17" rx="2"/><circle cx="12" cy="10" r="3"/><line x1="8" y1="16" x2="16" y2="16"/><line x1="8" y1="19" x2="16" y2="19"/></svg>
+      </div>
+      <dl class="case-stats">
+        <div><dt>MO</dt><dd>Hands out a fake address label so local traffic gets rerouted through the wrong desk.</dd></div>
+        <div><dt>Tools of the trade</dt><dd>ARP cache poisoning on the local segment</dd></div>
+        <div><dt>Countermeasure</dt><dd>Dynamic ARP Inspection, static ARP on critical hosts</dd></div>
+      </dl>
+      <div class="threat-row">THREAT LEVEL: INTERMEDIATE <span class="dots">●●●○○</span></div>
+      <div class="reward">REWARD: <strong>full credit</strong> for spotting two IPs claiming the same MAC in the ARP table.</div>
+    </article>
+
+    <!-- L1 -->
+    <article class="poster">
+      <div class="pin"></div>
+      <div class="wanted-word">WANTED</div>
+      <h2 class="villain-name">The Saboteur</h2>
+      <p class="alias">AKA: Physical Tampering</p>
+      <span class="layer-tag">LAST SEEN: LAYER 01 — INFRASTRUCTURE CREW</span>
+      <div class="mugshot">
+        <svg viewBox="0 0 24 24"><circle cx="6" cy="6" r="2.5"/><circle cx="6" cy="18" r="2.5"/><line x1="8" y1="8" x2="20" y2="20"/><line x1="8" y1="16" x2="20" y2="4"/></svg>
+      </div>
+      <dl class="case-stats">
+        <div><dt>MO</dt><dd>Cuts the cable or jams the signal. Nobody upstairs even finds out there was a request.</dd></div>
+        <div><dt>Tools of the trade</dt><dd>Cable/patch panel access, an RF jammer</dd></div>
+        <div><dt>Countermeasure</dt><dd>Locked wiring closets, port security, cable audits</dd></div>
+      </dl>
+      <div class="threat-row">THREAT LEVEL: NOVICE <span class="dots">●●○○○</span></div>
+      <div class="reward">REWARD: <strong>full credit</strong> for finding the open/short before a laptop ever gets involved.</div>
+    </article>
+
+  </div>
+
+  <footer>
+    <p>Cross-reference: each bulletin corresponds to the Incident Report filed in the matching department's case file (IR-01 through IR-07).</p>
+    <p class="fineprint">Posted for staff awareness. Photocopy freely for classroom use.</p>
+  </footer>
+
+</div>
+</body>
+</html>
