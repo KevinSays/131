@@ -1,0 +1,752 @@
+<title>IT131 Session 4 – Number Systems &amp; the Data Link Layer</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --paper:#EDE8DD; --canvas:#D9D2C3; --ink:#1F2421; --kraft:#B08554; --kraft-dark:#664526;
+    --blue:#2F4858; --red:#A23A2E; --ticket:#F3E7E2;
+    --blue-soft:rgba(47,72,88,.08); --red-soft:rgba(162,58,46,.08);
+    --kraft-soft:rgba(176,133,84,.14); --ink-soft:rgba(31,36,33,.06);
+    --shadow:5px 5px 0 rgba(31,36,33,.16);
+    --display:'Special Elite','Courier New',monospace;
+    --sans:'IBM Plex Sans', system-ui, sans-serif;
+    --mono:'IBM Plex Mono', monospace;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth; font-size:125%;}
+  body{
+    margin:0; background:var(--canvas); color:var(--ink); font-family:var(--sans);
+    line-height:1.55; -webkit-font-smoothing:antialiased;
+    background-image:radial-gradient(rgba(31,36,33,.06) 1px, transparent 1px);
+    background-size:16px 16px;
+  }
+  ::selection{ background:var(--kraft-soft); }
+  .wrap{ max-width:940px; margin:0 auto; padding:0 20px; }
+  code{ font-family:var(--mono); background:var(--ink-soft); padding:1px 6px; border-radius:2px; font-size:.9em; }
+
+  /* MASTHEAD */
+  header.masthead{ padding:48px 0 30px; }
+  .eyebrow{ display:inline-block; font-family:var(--mono); font-size:.86rem; letter-spacing:.12em;
+    border:2px solid var(--blue); color:var(--blue); padding:4px 10px; transform:rotate(-2deg); background:var(--paper); }
+  h1{ font-family:var(--display); font-weight:400; font-size:clamp(1.9rem,5vw,2.9rem); letter-spacing:.01em;
+    margin:16px 0 10px; line-height:1.15; }
+  .lede{ max-width:64ch; font-size:1.02rem; line-height:1.6; opacity:.85; margin:0 0 18px; }
+  .factrow{ display:flex; flex-wrap:wrap; gap:10px; }
+  .fact{ font-family:var(--mono); font-size:.82rem; letter-spacing:.02em; background:var(--paper);
+    border:1.5px solid var(--ink); padding:.4em .8em; display:flex; gap:.5em; box-shadow:3px 3px 0 rgba(31,36,33,.14); }
+  .fact b{ color:var(--kraft-dark); font-weight:600; text-transform:uppercase; letter-spacing:.06em; font-size:.88rem; }
+
+  /* NAV */
+  nav.index{ position:sticky; top:0; z-index:20; background:color-mix(in srgb, var(--canvas) 92%, transparent);
+    backdrop-filter:blur(6px); border-top:2px solid var(--ink); border-bottom:2px solid var(--ink); }
+  nav.index .wrap{ display:flex; gap:2px; overflow-x:auto; padding:8px 20px; scrollbar-width:none; }
+  nav.index .wrap::-webkit-scrollbar{ display:none; }
+  nav.index a{ font-family:var(--mono); font-weight:600; letter-spacing:.03em; font-size:.82rem; text-decoration:none;
+    color:var(--ink); opacity:.85; padding:.5em .8em; white-space:nowrap; text-transform:uppercase; border:1px solid transparent; }
+  nav.index a:hover{ opacity:1; border-color:var(--ink); background:var(--paper); }
+  nav.index a.toc-link{ color:var(--blue); opacity:1; border-right:1.5px solid var(--ink); margin-right:8px; padding-right:16px; }
+  nav.index a.toc-link:hover{ background:var(--blue-soft); border-color:var(--ink); }
+
+  section{ padding:44px 0; border-bottom:2px dashed rgba(31,36,33,.3); }
+  section:last-of-type{ border-bottom:none; }
+  .section-head{ margin-bottom:26px; max-width:70ch; }
+  .kicker{ font-family:var(--mono); font-weight:600; font-size:.9rem; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--red); margin:0 0 .4em; }
+  h2{ font-family:var(--display); font-weight:400; font-size:clamp(1.4rem,2.8vw,1.9rem); margin:0 0 .25em; letter-spacing:.005em; }
+  .section-head p{ opacity:.82; margin:.5em 0 0; }
+
+  .obj-list{ display:grid; gap:10px; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); list-style:none; margin:0; padding:0; }
+  .obj-list li{ background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow); padding:14px 16px; font-size:.92rem; }
+  .obj-list li::before{ content:"▸"; color:var(--red); margin-right:.5em; font-weight:700; }
+
+  /* CALLOUT / TEACH NOTE */
+  .teach-note{ margin:18px 0; padding:12px 14px; border:1.5px dashed var(--blue); background:var(--blue-soft);
+    font-family:var(--mono); font-size:.82rem; line-height:1.6; }
+  .teach-note .label{ color:var(--blue); font-weight:600; letter-spacing:.05em; text-transform:uppercase; font-size:.88rem; display:block; margin-bottom:.4em; }
+
+  /* COLD OPEN */
+  .cold-open{ background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow); padding:18px 20px; margin:24px 0; }
+  .cold-open .tag{ font-family:var(--mono); font-size:.84rem; letter-spacing:.1em; color:var(--red); margin:0 0 8px; text-transform:uppercase; }
+  .cold-open p{ margin:0; font-size:.95rem; line-height:1.6; font-style:italic; }
+
+  /* CASE-FILE / DEPARTMENT CARDS */
+  .case-file{ position:relative; margin-top:16px; background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow); }
+  .case-file.featured{ margin-top:20px; }
+  .tab{ position:absolute; top:-15px; left:16px; background:var(--kraft); color:var(--ink); font-family:var(--mono);
+    font-weight:600; font-size:.82rem; letter-spacing:.06em; padding:4px 9px; border:1.5px solid var(--ink); border-bottom:none; }
+  .card-inner{ padding:22px 18px 18px; }
+  .card-head{ position:relative; display:flex; align-items:flex-start; gap:11px; margin-bottom:12px; padding-right:110px; }
+  .icon{ flex-shrink:0; margin-top:2px; }
+  .icon svg{ width:26px; height:26px; stroke:var(--ink); fill:none; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; }
+  .card-head h3{ font-family:var(--display); font-weight:400; font-size:1.02rem; margin:0 0 4px; line-height:1.25; }
+  .duty{ margin:0; font-size:.82rem; line-height:1.4; opacity:.85; }
+  .stamp{ position:absolute; top:-2px; right:0; border:2px solid var(--blue); color:var(--blue); font-family:var(--display);
+    font-size:.78rem; letter-spacing:.06em; padding:4px 6px; transform:rotate(-6deg); white-space:nowrap; }
+  dl.stats{ margin:12px 0 0; padding-top:10px; border-top:1px dashed rgba(31,36,33,.35); }
+  dl.stats > div{ display:flex; gap:8px; margin-bottom:7px; align-items:baseline; }
+  dl.stats dt{ font-family:var(--mono); font-size:.8rem; font-weight:600; letter-spacing:.05em; text-transform:uppercase;
+    color:var(--kraft-dark); min-width:96px; flex-shrink:0; }
+  dl.stats dd{ margin:0; font-size:.8rem; line-height:1.42; }
+  .incident-ticket{ margin-top:14px; padding-top:12px; border-top:2px dashed var(--ink); background:var(--ticket);
+    margin-left:-18px; margin-right:-18px; margin-bottom:-18px; padding-left:18px; padding-right:18px; padding-bottom:15px; }
+  .ticket-head{ display:flex; justify-content:space-between; align-items:baseline; font-family:var(--display); color:var(--red);
+    font-size:.84rem; letter-spacing:.08em; margin-bottom:6px; }
+  .ticket-head span.id{ font-family:var(--mono); color:var(--ink); opacity:.75; letter-spacing:.02em; }
+  .incident-ticket p{ margin:0 0 6px; font-size:.82rem; line-height:1.45; }
+  .incident-ticket p strong{ color:var(--red); }
+  .detect{ font-family:var(--mono); font-size:.88rem; opacity:.8; margin-bottom:0 !important; }
+
+  /* TABLES */
+  table.spec{ width:100%; border-collapse:collapse; margin:18px 0; font-size:.86rem; }
+  table.spec th{ font-family:var(--mono); font-weight:600; text-transform:uppercase; letter-spacing:.05em; font-size:.86rem;
+    color:var(--kraft-dark); text-align:left; padding:8px 10px; border-bottom:2px solid var(--ink); }
+  table.spec td{ padding:9px 10px; border-bottom:1px dashed rgba(31,36,33,.3); vertical-align:top; }
+  table.spec tr:last-child td{ border-bottom:none; }
+  table.spec td.mono, table.spec th.mono{ font-family:var(--mono); }
+
+  /* BIT STRIP */
+  .bit-strip{ display:flex; gap:6px; margin:22px 0 8px; }
+  .bit-cell{ flex:1; border:1.5px solid var(--ink); background:var(--paper); text-align:center; padding:10px 2px; }
+  .bit-cell .place{ display:block; font-family:var(--mono); font-size:.66rem; color:var(--kraft-dark); margin-bottom:4px; }
+  .bit-cell .bitval{ display:block; font-family:var(--display); font-size:1.3rem; }
+  .bit-cell.on{ background:var(--blue-soft); border-color:var(--blue); }
+  .bit-cell.on .bitval{ color:var(--blue); }
+  .bit-total{ font-family:var(--mono); font-size:.88rem; text-align:right; margin:0 0 20px; opacity:.85; }
+  .bit-total strong{ color:var(--blue); font-size:1.05em; }
+
+  /* FLASHCARDS */
+  .toolbar{ display:flex; gap:10px; align-items:center; margin-bottom:20px; flex-wrap:wrap; }
+  button.btn{ font-family:var(--mono); font-weight:600; letter-spacing:.03em; text-transform:uppercase; font-size:.9rem;
+    background:var(--paper); color:var(--ink); border:1.5px solid var(--ink); padding:.55em 1em; cursor:pointer; box-shadow:3px 3px 0 rgba(31,36,33,.14); }
+  button.btn:hover{ background:var(--kraft-soft); }
+  button.btn:focus-visible, a:focus-visible, .flashcard:focus-visible, input:focus-visible{ outline:2px solid var(--blue); outline-offset:2px; }
+  #cardProgress{ font-family:var(--mono); font-size:.85rem; opacity:.75; }
+  .card-grid{ display:grid; gap:16px; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); }
+  .flashcard{ perspective:1200px; height:190px; cursor:pointer; border:none; background:none; padding:0; font-family:inherit; text-align:left; width:100%; }
+  .flashcard-inner{ position:relative; width:100%; height:100%; transition:transform .5s cubic-bezier(.4,.2,.2,1); transform-style:preserve-3d; -webkit-transform-style:preserve-3d; will-change:transform; }
+  .flashcard.flipped .flashcard-inner{ transform:rotateY(180deg); -webkit-transform:rotateY(180deg); }
+  .flashcard-face{ position:absolute; inset:0; backface-visibility:hidden; -webkit-backface-visibility:hidden; -moz-backface-visibility:hidden; border:1.5px solid var(--ink); box-shadow:var(--shadow);
+    padding:15px; display:flex; flex-direction:column; justify-content:center; }
+  .flashcard-face.front{ background:var(--paper); transform:translateZ(.5px); }
+  .flashcard-face.back{ background:var(--ticket); transform:rotateY(180deg) translateZ(.5px); overflow-y:auto; }
+  .flashcard-face .lbl{ font-family:var(--mono); font-weight:600; letter-spacing:.1em; text-transform:uppercase; font-size:.82rem; color:var(--kraft-dark); margin-bottom:.5em; }
+  .flashcard-face.front .term{ font-family:var(--display); font-weight:400; font-size:1.05rem; letter-spacing:.01em; }
+  .flashcard-face.back .def{ font-size:.82rem; }
+  .flashcard.known .flashcard-face.front{ border-color:var(--blue); border-width:2px; }
+
+  /* QUIZ */
+  .quiz-q{ background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow); padding:18px 20px; margin-bottom:18px; }
+  .quiz-q .qtext{ font-weight:600; margin:0 0 13px; }
+  .quiz-q .qnum{ font-family:var(--display); color:var(--red); margin-right:.5em; }
+  .choices{ display:grid; gap:8px; }
+  .choice{ text-align:left; font-family:var(--sans); font-size:.9rem; background:var(--ticket); border:1.5px solid var(--ink);
+    padding:.65em .85em; cursor:pointer; color:var(--ink); }
+  .choice:hover{ border-color:var(--blue); }
+  .choice.correct{ background:var(--blue-soft); border-color:var(--blue); border-width:2px; }
+  .choice.incorrect{ background:var(--red-soft); border-color:var(--red); border-width:2px; }
+  .choice[disabled]{ cursor:default; }
+  .explain{ margin-top:12px; font-size:.84rem; opacity:.85; border-left:3px solid var(--kraft); padding-left:12px; display:none; font-family:var(--mono); }
+  .explain.show{ display:block; }
+  #quizScore{ font-family:var(--mono); font-size:.9rem; opacity:.75; margin-bottom:16px; }
+
+  /* EXAMPLES */
+  .example{ background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow); padding:20px 22px; margin-bottom:16px; }
+  .example h3{ font-family:var(--display); font-weight:400; font-size:1.15rem; margin:0 0 8px; }
+  .example .tag{ display:inline-block; font-family:var(--mono); font-weight:600; font-size:.86rem; text-transform:uppercase; letter-spacing:.07em;
+    color:var(--blue); background:var(--blue-soft); border:1px solid var(--blue); padding:.25em .6em; margin-bottom:10px; }
+  details.solution{ margin-top:12px; }
+  details.solution summary{ cursor:pointer; font-family:var(--mono); font-weight:600; letter-spacing:.03em; text-transform:uppercase;
+    font-size:.9rem; color:var(--blue); list-style:none; display:inline-flex; align-items:center; gap:.4em; }
+  details.solution summary::-webkit-details-marker{ display:none; }
+  details.solution summary::before{ content:"▸"; transition:transform .15s; }
+  details.solution[open] summary::before{ transform:rotate(90deg); }
+  details.solution .solbody{ margin-top:10px; padding:13px 15px; background:var(--ticket); font-size:.88rem; }
+
+  /* GLOSSARY */
+  #glossarySearch{ width:100%; max-width:400px; font-family:var(--sans); font-size:.9rem; padding:.65em .85em;
+    border:1.5px solid var(--ink); background:var(--paper); color:var(--ink); margin-bottom:16px; }
+  .alpha-nav{ display:flex; flex-wrap:wrap; gap:4px; margin-bottom:22px; }
+  .alpha-nav a{ font-family:var(--mono); font-weight:600; font-size:.82rem; width:1.8em; height:1.8em; display:flex;
+    align-items:center; justify-content:center; border:1px solid var(--ink); text-decoration:none; color:var(--ink); opacity:.35; }
+  .alpha-nav a.has{ opacity:1; background:var(--paper); }
+  .alpha-nav a.has:hover{ border-color:var(--blue); color:var(--blue); }
+  .glossary-letter{ font-family:var(--display); font-weight:400; color:var(--red); font-size:1.1rem; margin:20px 0 6px; }
+  dl.glossary{ margin:0; }
+  dl.glossary .gitem{ border-top:1px dashed rgba(31,36,33,.35); padding:11px 0; }
+  dl.glossary dt{ font-family:var(--mono); font-weight:600; font-size:.98rem; }
+  dl.glossary dd{ margin:.3em 0 0; opacity:.8; font-size:.86rem; }
+  .gitem.hidden{ display:none; }
+
+  footer{ padding:30px 0 60px; }
+  footer p{ opacity:.65; font-size:.82rem; font-family:var(--mono); letter-spacing:.02em; }
+
+  /* BACK TO TOP */
+  .back-to-top{ position:fixed; bottom:22px; right:22px; z-index:40; width:50px; height:50px;
+    background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow);
+    font-family:var(--display); font-size:1.4rem; color:var(--ink); line-height:1;
+    display:flex; align-items:center; justify-content:center; padding:0; cursor:pointer; text-decoration:none;
+    opacity:0; visibility:hidden; transform:translateY(10px);
+    transition:opacity .25s ease, transform .25s ease, visibility 0s .25s; }
+  .back-to-top.show{ opacity:1; visibility:visible; transform:translateY(0); transition:opacity .25s ease, transform .25s ease, visibility 0s; }
+  .back-to-top:hover{ background:var(--blue-soft); border-color:var(--blue); color:var(--blue); }
+  .back-to-top:focus-visible{ outline:2px solid var(--blue); outline-offset:2px; }
+
+  @media print{
+    body{ background:#fff; }
+    nav.index{ display:none; }
+    .case-file, .quiz-q, .example, .flashcard-face{ box-shadow:none; }
+    .back-to-top{ display:none; }
+  }
+</style>
+
+<header class="masthead">
+  <div class="wrap">
+    <p class="eyebrow">IT131 · SESSION 04 · FIELD NOTES</p>
+    <h1>Number Systems &amp; the Data Link Layer</h1>
+    <p class="lede">Before today, every address you've seen was already translated into something readable. Today you learn the raw language underneath it — binary and hex — and meet the department that actually writes addresses onto the wire, one hop at a time.</p>
+    <div class="factrow">
+      <span class="fact"><b>New material</b> Module 5 — Number Systems</span>
+      <span class="fact"><b>New material</b> Module 6 — Data Link Layer</span>
+    </div>
+  </div>
+</header>
+
+<nav class="index" aria-label="Section index">
+  <div class="wrap">
+    <a href="index.html" class="toc-link">↩ Contents</a>
+    <a href="#overview">Overview</a>
+    <a href="#dispatch">Local Dispatch</a>
+    <a href="#binary">Binary &amp; Decimal</a>
+    <a href="#hex">Hexadecimal</a>
+    <a href="#datalink">Data Link Purpose</a>
+    <a href="#access">Media Access</a>
+    <a href="#frames">Frame Fields</a>
+    <a href="#flashcards">Flashcards</a>
+    <a href="#quiz">Quiz</a>
+    <a href="#examples">Examples</a>
+    <a href="#glossary">Glossary</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+  <!-- OVERVIEW -->
+  <section id="overview">
+    <div class="section-head">
+      <p class="kicker">Overview</p>
+      <h2>What Session 4 covers</h2>
+      <p>Module 5 is the math underneath every address you've typed so far — binary is what the hardware actually does, hex is just a compact way to write it. Module 6 is the layer that turns a packet into something that can physically leave the machine: framing, addressing, and the rules for who gets to talk on a shared wire.</p>
+    </div>
+    <ul class="obj-list">
+      <li>Convert between binary, decimal, and hexadecimal</li>
+      <li>Explain why hexadecimal exists — the nibble shortcut</li>
+      <li>Explain the purpose of the data link layer and its two IEEE sublayers</li>
+      <li>Compare contention-based and controlled media access, and CSMA/CD vs. CSMA/CA</li>
+      <li>Identify the generic fields of a Layer 2 frame</li>
+      <li>Explain why a MAC address is hop-to-hop while an IP address stays end-to-end</li>
+    </ul>
+    <div class="teach-note">
+      <span class="label">Where this goes next</span>
+      This session sets up two things you'll use for the rest of the course: binary/hex math is the foundation for IPv4 subnetting (Module 11) and IPv6 (Module 12); MAC addressing here is the foundation for ARP (Module 9) — where Local Dispatch's incident file below finally gets opened.
+    </div>
+  </section>
+
+  <!-- LOCAL DISPATCH HOOK -->
+  <section id="dispatch">
+    <div class="section-head">
+      <p class="kicker">Case File</p>
+      <h2>Meet Local Dispatch</h2>
+      <p>Front Desk formats the request. Logistics routes it across the network. Local Dispatch is the department that actually gets a frame from one machine to the next machine over — and only the next one.</p>
+    </div>
+
+    <div class="cold-open">
+      <p class="tag">Cold open</p>
+      <p>Local Dispatch doesn't know your final destination and doesn't want to. All it knows is the address of the next desk over — and it knows every one of those addresses cold, because that's the entire job.</p>
+    </div>
+
+    <div class="case-file featured">
+      <span class="tab">LAYER 02</span>
+      <div class="card-inner">
+        <div class="card-head">
+          <span class="icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><rect x="3" y="10" width="12" height="7" rx="1"/><path d="M15 12h3l3 3v2h-6"/><circle cx="7" cy="19" r="1.6"/><circle cx="18" cy="19" r="1.6"/></svg>
+          </span>
+          <div>
+            <h3>Local Dispatch</h3>
+            <p class="duty">Knows every address on this block by heart. Hands the truck to the next truck.</p>
+          </div>
+        </div>
+        <span class="stamp">OPERATIVE</span>
+        <dl class="stats">
+          <div><dt>PDU</dt><dd>Frame</dd></div>
+          <div><dt>Signature</dt><dd>Ethernet, ARP, PPP</dd></div>
+          <div><dt>On the range</dt><dd>Your C1000 switches — and the layer every ARP table lives on</dd></div>
+        </dl>
+        <div class="incident-ticket">
+          <div class="ticket-head"><span>INCIDENT REPORT</span><span class="id">IR-02</span></div>
+          <p><strong>The Impersonator</strong> — hands out a fake address label so local traffic gets rerouted through the wrong desk.</p>
+          <p class="detect">Tell: two IPs claiming the same MAC address in the ARP table. <em>(Case stays sealed until Module 9 — today is just the address format this incident abuses.)</em></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BINARY & DECIMAL -->
+  <section id="binary">
+    <div class="section-head">
+      <p class="kicker">Module 5</p>
+      <h2>Binary &amp; decimal</h2>
+      <p>A transistor is a switch — on or off, current or no current. Two reliable states, not ten. Binary isn't tradition, it's just what the hardware physically is. Every bit position is worth a power of 2.</p>
+    </div>
+
+    <div class="bit-strip">
+      <div class="bit-cell on"><span class="place">128</span><span class="bitval">1</span></div>
+      <div class="bit-cell on"><span class="place">64</span><span class="bitval">1</span></div>
+      <div class="bit-cell"><span class="place">32</span><span class="bitval">0</span></div>
+      <div class="bit-cell"><span class="place">16</span><span class="bitval">0</span></div>
+      <div class="bit-cell"><span class="place">8</span><span class="bitval">0</span></div>
+      <div class="bit-cell"><span class="place">4</span><span class="bitval">0</span></div>
+      <div class="bit-cell"><span class="place">2</span><span class="bitval">0</span></div>
+      <div class="bit-cell"><span class="place">1</span><span class="bitval">0</span></div>
+    </div>
+    <p class="bit-total"><code>11000000</code> → 128 + 64 = <strong>192</strong></p>
+
+    <div class="bit-strip">
+      <div class="bit-cell on"><span class="place">128</span><span class="bitval">1</span></div>
+      <div class="bit-cell"><span class="place">64</span><span class="bitval">0</span></div>
+      <div class="bit-cell on"><span class="place">32</span><span class="bitval">1</span></div>
+      <div class="bit-cell"><span class="place">16</span><span class="bitval">0</span></div>
+      <div class="bit-cell"><span class="place">8</span><span class="bitval">1</span></div>
+      <div class="bit-cell"><span class="place">4</span><span class="bitval">0</span></div>
+      <div class="bit-cell on"><span class="place">2</span><span class="bitval">1</span></div>
+      <div class="bit-cell"><span class="place">1</span><span class="bitval">0</span></div>
+    </div>
+    <p class="bit-total"><code>10101010</code> → 128 + 32 + 8 + 2 = <strong>170</strong></p>
+
+    <table class="spec">
+      <thead><tr><th>Direction</th><th>Method</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;">Binary → decimal</td><td>Add up the place value of every position holding a 1. Nothing more.</td></tr>
+        <tr><td style="font-weight:600;">Decimal → binary</td><td>Subtraction method: does the largest place value (128) fit? Mark 1, subtract, carry the remainder into the next place value. Repeat down to 1.</td></tr>
+      </tbody>
+    </table>
+
+    <div class="teach-note">
+      <span class="label">Why this matters later</span>
+      This exact skill — reading an 8-bit octet as a sum of place values — is the entire mechanism behind subnetting in Module 11. Get fluent now; nobody subnets by memorizing tables, they do this math cold.
+    </div>
+  </section>
+
+  <!-- HEXADECIMAL -->
+  <section id="hex">
+    <div class="section-head">
+      <p class="kicker">Module 5</p>
+      <h2>Hexadecimal — compressed binary</h2>
+      <p>Hex isn't a separate system to memorize — it's a shorthand. Every hex digit represents exactly one 4-bit chunk of binary (a <strong>nibble</strong>). Split a byte into two nibbles, convert each independently, done.</p>
+    </div>
+
+    <table class="spec">
+      <thead><tr><th class="mono">Decimal</th><th class="mono">Binary</th><th class="mono">Hex</th><th class="mono">Decimal</th><th class="mono">Binary</th><th class="mono">Hex</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">0</td><td class="mono">0000</td><td class="mono">0</td><td class="mono">8</td><td class="mono">1000</td><td class="mono">8</td></tr>
+        <tr><td class="mono">1</td><td class="mono">0001</td><td class="mono">1</td><td class="mono">9</td><td class="mono">1001</td><td class="mono">9</td></tr>
+        <tr><td class="mono">2</td><td class="mono">0010</td><td class="mono">2</td><td class="mono">10</td><td class="mono">1010</td><td class="mono">A</td></tr>
+        <tr><td class="mono">3</td><td class="mono">0011</td><td class="mono">3</td><td class="mono">11</td><td class="mono">1011</td><td class="mono">B</td></tr>
+        <tr><td class="mono">4</td><td class="mono">0100</td><td class="mono">4</td><td class="mono">12</td><td class="mono">1100</td><td class="mono">C</td></tr>
+        <tr><td class="mono">5</td><td class="mono">0101</td><td class="mono">5</td><td class="mono">13</td><td class="mono">1101</td><td class="mono">D</td></tr>
+        <tr><td class="mono">6</td><td class="mono">0110</td><td class="mono">6</td><td class="mono">14</td><td class="mono">1110</td><td class="mono">E</td></tr>
+        <tr><td class="mono">7</td><td class="mono">0111</td><td class="mono">7</td><td class="mono">15</td><td class="mono">1111</td><td class="mono">F</td></tr>
+      </tbody>
+    </table>
+
+    <p class="bit-total" style="text-align:left;"><code>11000000</code> → <code>1100</code> <code>0000</code> → <strong>C</strong> <strong>0</strong> → <code>0xC0</code> — no detour through decimal required.</p>
+
+    <div class="teach-note">
+      <span class="label">Where hex actually shows up</span>
+      MAC addresses: <code>AA:BB:CC:DD:EE:FF</code> — 12 hex digits = 48 bits = 6 bytes. IPv6 addresses: each colon-separated group is 4 hex digits = 16 bits. Anywhere you see a long address written in hex, it's binary wearing a shorter costume.
+    </div>
+  </section>
+
+  <!-- DATA LINK PURPOSE -->
+  <section id="datalink">
+    <div class="section-head">
+      <p class="kicker">Module 6</p>
+      <h2>Purpose of the data link layer</h2>
+      <p>Takes a packet handed down from Logistics (Layer 3) and prepares it for transmission onto whatever medium is actually underneath — copper, fiber, radio. On the way back up, it decides whether an arriving frame is intact and addressed to this device at all.</p>
+    </div>
+
+    <table class="spec">
+      <thead><tr><th>Sublayer</th><th>Job</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;">LLC (Logical Link Control)</td><td>Upper sublayer — talks to Layer 3 above, identifies which network-layer protocol is riding inside the frame (IPv4? IPv6?), independent of the physical medium.</td></tr>
+        <tr><td style="font-weight:600;">MAC (Media Access Control)</td><td>Lower sublayer — handles physical addressing (the MAC address lives here) and controls access to whatever medium is actually in use.</td></tr>
+      </tbody>
+    </table>
+
+    <div class="teach-note">
+      <span class="label">Naming collision, watch for it</span>
+      "MAC" the sublayer and "MAC address" are related but not interchangeable — a MAC address is assigned <em>by</em> the MAC sublayer, it isn't the sublayer itself. Be precise about which one a question is asking about.
+    </div>
+  </section>
+
+  <!-- MEDIA ACCESS -->
+  <section id="access">
+    <div class="section-head">
+      <p class="kicker">Module 6</p>
+      <h2>Media access control</h2>
+      <p>Point-to-point links (two nodes, one wire) don't need traffic rules — nobody to contend with. Multi-access links (a shared medium, wired or wireless) absolutely do, or every device talks over every other device.</p>
+    </div>
+
+    <table class="spec">
+      <thead><tr><th>Method</th><th>How it works</th><th>Where it's used</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;">CSMA/CD</td><td>Carrier Sense Multiple Access, Collision <em>Detection</em>. Listen first; if a collision happens anyway, both sides back off and retry.</td><td>Legacy shared-medium Ethernet — mostly obsolete now that switched full-duplex Ethernet removes collisions entirely, but the acronym is still exam-relevant.</td></tr>
+        <tr><td style="font-weight:600;">CSMA/CA</td><td>Collision <em>Avoidance</em>. Can't reliably detect a collision on a wireless medium the way you can on a wire, so the strategy shifts to avoiding one in the first place — announce intent to send, then wait.</td><td>Wi-Fi (802.11).</td></tr>
+        <tr><td style="font-weight:600;">Controlled access</td><td>Deterministic, scheduled, or token-passing turn order — no collisions possible, but wasteful when the medium is mostly idle.</td><td>Legacy/rare in modern networks — recognition-level only.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- FRAME FIELDS -->
+  <section id="frames">
+    <div class="section-head">
+      <p class="kicker">Module 6</p>
+      <h2>Frame fields</h2>
+      <p>Every Layer 2 frame — regardless of the specific protocol — carries some version of these fields. This is exactly the header (and trailer) that gets added when a packet becomes a frame on the way down the stack.</p>
+    </div>
+
+    <table class="spec">
+      <thead><tr><th>Field</th><th>Purpose</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;">Frame start/stop</td><td>Marks where the frame begins and ends on the wire.</td></tr>
+        <tr><td style="font-weight:600;">Addressing</td><td>Source and destination — Layer 2 (MAC) addresses, not Layer 3.</td></tr>
+        <tr><td style="font-weight:600;">Type/length</td><td>Identifies what's riding inside — which Layer 3 protocol to hand this up to.</td></tr>
+        <tr><td style="font-weight:600;">Data</td><td>The actual payload — the packet handed down from Layer 3.</td></tr>
+        <tr><td style="font-weight:600;">FCS (Frame Check Sequence)</td><td>Trailer field — lets the receiver verify the frame arrived intact.</td></tr>
+      </tbody>
+    </table>
+
+    <div class="teach-note">
+      <span class="label">The freshman trap, again</span>
+      Local Dispatch's address is never the final destination — it's just "who's next." A MAC address changes at every router the frame crosses (<strong>hop-to-hop</strong>). The IP address inside stays the same the entire trip (<strong>end-to-end</strong>). Switches forward frames unchanged at Layer 2 — only crossing a router changes the MAC addressing.
+    </div>
+  </section>
+
+  <!-- FLASHCARDS -->
+  <section id="flashcards">
+    <div class="section-head">
+      <p class="kicker">Study</p>
+      <h2>Flashcards</h2>
+      <p>Click to flip. Double-click to mark as known.</p>
+    </div>
+    <div class="toolbar">
+      <button class="btn" id="shuffleBtn">Shuffle</button>
+      <button class="btn" id="resetKnownBtn">Reset progress</button>
+      <span id="cardProgress"></span>
+    </div>
+    <div class="card-grid" id="cardGrid"></div>
+  </section>
+
+  <!-- QUIZ -->
+  <section id="quiz">
+    <div class="section-head">
+      <p class="kicker">Check yourself</p>
+      <h2>Sample questions</h2>
+      <p>Pick an answer to see if you're right — same style as the checkpoint exams.</p>
+    </div>
+    <div id="quizScore"></div>
+    <div id="quizList"></div>
+    <button class="btn" id="resetQuizBtn">Reset quiz</button>
+  </section>
+
+  <!-- EXAMPLES -->
+  <section id="examples">
+    <div class="section-head">
+      <p class="kicker">Applied</p>
+      <h2>Worked examples</h2>
+      <p>Think it through before you expand the answer.</p>
+    </div>
+
+    <div class="example">
+      <span class="tag">Binary → decimal</span>
+      <h3>Read the octet</h3>
+      <p>Convert <code>11100000</code> to decimal.</p>
+      <details class="solution">
+        <summary>Show answer</summary>
+        <div class="solbody">
+          <p><strong>224.</strong> Positions holding a 1: 128, 64, 32. 128 + 64 + 32 = 224. Every other position is 0 and contributes nothing.</p>
+        </div>
+      </details>
+    </div>
+
+    <div class="example">
+      <span class="tag">Decimal → binary</span>
+      <h3>Build the octet</h3>
+      <p>Convert 150 to binary using the subtraction method.</p>
+      <details class="solution">
+        <summary>Show answer</summary>
+        <div class="solbody">
+          <p><strong>10010110.</strong> 128 fits into 150 (mark 1, remainder 22). 64 doesn't fit into 22 (mark 0). 32 doesn't fit (mark 0). 16 fits (mark 1, remainder 6). 8 doesn't fit (mark 0). 4 fits (mark 1, remainder 2). 2 fits (mark 1, remainder 0). 1 doesn't fit (mark 0). Result: <code>10010110</code>.</p>
+        </div>
+      </details>
+    </div>
+
+    <div class="example">
+      <span class="tag">Nibble shortcut</span>
+      <h3>Skip the decimal detour</h3>
+      <p>Convert <code>10101111</code> directly to hex without calculating its decimal value first.</p>
+      <details class="solution">
+        <summary>Show answer</summary>
+        <div class="solbody">
+          <p><strong>0xAF.</strong> Split into two nibbles: <code>1010</code> and <code>1111</code>. <code>1010</code> = decimal 10 = hex <strong>A</strong>. <code>1111</code> = decimal 15 = hex <strong>F</strong>. Each nibble converts independently — that's the entire reason hex is faster than going through decimal.</p>
+        </div>
+      </details>
+    </div>
+
+    <div class="example">
+      <span class="tag">CSMA/CD vs. CSMA/CA</span>
+      <h3>Why can't Wi-Fi just detect collisions?</h3>
+      <p>Legacy wired Ethernet uses CSMA/<strong>CD</strong> — it detects a collision after it happens and recovers. Wi-Fi uses CSMA/<strong>CA</strong> instead. Why not just detect collisions on Wi-Fi the same way?</p>
+      <details class="solution">
+        <summary>Show answer</summary>
+        <div class="solbody">
+          <p><strong>Answer:</strong> On a wire, a device can listen to the line while it's transmitting and notice the voltage pattern change if another signal collides with its own. A wireless radio transmitting at full power on its own antenna can't simultaneously listen for a faint colliding signal on the same frequency — it would just hear itself. Since collision <em>detection</em> isn't physically practical, Wi-Fi shifts the strategy to collision <em>avoidance</em>: announce intent to send and wait for a clear window instead.</p>
+        </div>
+      </details>
+    </div>
+
+    <div class="example">
+      <span class="tag">MAC vs. IP</span>
+      <h3>What changes, what doesn't</h3>
+      <p>A packet travels from a laptop, through two switches, through one router, to a server on a different network. How many times does the source MAC address change along the way? How many times does the source IP address change?</p>
+      <details class="solution">
+        <summary>Show answer</summary>
+        <div class="solbody">
+          <p><strong>MAC address:</strong> changes once — at the router. Switches forward frames unchanged at Layer 2, so crossing two switches doesn't touch the MAC addressing at all; only crossing the router (a new hop) causes Local Dispatch to re-address the frame. <strong>IP address:</strong> never changes. It's end-to-end — the same source IP the entire trip, from laptop to server.</p>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <!-- GLOSSARY -->
+  <section id="glossary">
+    <div class="section-head">
+      <p class="kicker">Reference</p>
+      <h2>Glossary &amp; index</h2>
+      <p>Every term from this session, searchable and indexed A–Z.</p>
+    </div>
+    <input type="text" id="glossarySearch" placeholder="Search terms…" aria-label="Search glossary">
+    <div class="alpha-nav" id="alphaNav"></div>
+    <dl class="glossary" id="glossaryList"></dl>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>IT131 · CCNA: Introduction to Networks · Session 4 reference — more sessions added as the course progresses.</p>
+  </div>
+</footer>
+
+<button id="backToTop" class="back-to-top" aria-label="Back to top" title="Back to top">↑</button>
+
+<script>
+  const TERMS = [
+    {t:"Addressing field", d:"The part of a frame carrying source and destination Layer 2 (MAC) addresses — not Layer 3 addresses."},
+    {t:"Binary", d:"Base-2 number system — 0s and 1s. What the hardware actually does; a transistor has exactly two reliable states, on or off."},
+    {t:"Bit", d:"A single binary digit, 0 or 1. Eight bits make a byte (octet)."},
+    {t:"Byte (octet)", d:"Eight bits grouped together. An IPv4 address is written as four octets separated by dots."},
+    {t:"Contention-based access", d:"A media access method where every device competes for the medium as it becomes free — first come, first served. Risk: collisions."},
+    {t:"Controlled access", d:"A deterministic media access method — devices take turns in a scheduled or token-passing order. No collisions possible, but less efficient when the medium is mostly idle."},
+    {t:"CSMA/CA", d:"Carrier Sense Multiple Access with Collision Avoidance. Used by Wi-Fi, since a wireless radio can't reliably detect a collision while transmitting — it announces intent to send and waits instead."},
+    {t:"CSMA/CD", d:"Carrier Sense Multiple Access with Collision Detection. Used by legacy shared-medium Ethernet — listen before sending, and if a collision happens anyway, back off and retry. Obsolete on modern switched full-duplex Ethernet."},
+    {t:"Data link layer (Layer 2)", d:"The OSI layer that prepares packets for transmission onto the physical medium and controls access to that medium. PDU: frame."},
+    {t:"Decimal", d:"Base-10 number system — the human-readable format for IPv4 addresses (dotted decimal)."},
+    {t:"End-to-end addressing", d:"An address that stays the same for the entire trip from source to final destination — how IP addresses behave, unlike MAC addresses."},
+    {t:"FCS (Frame Check Sequence)", d:"A trailer field added to a frame that lets the receiver verify the frame arrived intact — error detection at Layer 2."},
+    {t:"Frame", d:"The Layer 2 protocol data unit (PDU) — a packet wrapped with a Layer 2 header (addressing, type) and trailer (FCS)."},
+    {t:"Hexadecimal", d:"Base-16 number system — 0–9 then A–F. A compact, lossless shorthand for binary: one hex digit always equals exactly one 4-bit nibble."},
+    {t:"Hop-to-hop addressing", d:"An address that changes at every hop along the path — how a MAC address behaves. A switch never changes it; only crossing a router does."},
+    {t:"LLC (Logical Link Control)", d:"The upper of the two IEEE data link sublayers. Talks to the network layer above and identifies which Layer 3 protocol is inside the frame, independent of the physical medium."},
+    {t:"MAC address", d:"A 48-bit physical address burned into a NIC, written as 12 hex digits (6 bytes). Identifies a device on the local link only — hop-to-hop, never end-to-end."},
+    {t:"MAC (Media Access Control) sublayer", d:"The lower of the two IEEE data link sublayers. Handles physical addressing (the MAC address) and controls access to the physical medium."},
+    {t:"Multi-access topology", d:"A topology where many nodes share one medium (legacy hub Ethernet, Wi-Fi) — requires a media access control method to prevent every device transmitting at once."},
+    {t:"Nibble", d:"Four bits — exactly the amount of information one hexadecimal digit represents. The entire reason hex compresses binary so cleanly."},
+    {t:"Point-to-point topology", d:"A topology with exactly two nodes on one link. No contention, so no media access control method is needed."},
+    {t:"Positional notation", d:"A number system where each digit's value depends on its position — e.g., in binary, each bit position is worth a power of 2 (128, 64, 32...)."},
+    {t:"Ring topology", d:"Each node connects to exactly two neighbors, forming a loop (legacy Token Ring). Historical/recognition-level for this course."},
+    {t:"Type/length field", d:"A frame field identifying which Layer 3 protocol is carried inside — tells the receiving device what to hand the payload up to."},
+  ];
+
+  const QUIZ = [
+    {
+      q:"What is 11000000 in decimal?",
+      choices:["192","96","224","128"],
+      correct:0,
+      explain:"Positions holding a 1: 128 and 64. 128 + 64 = 192."
+    },
+    {
+      q:"What is 200 in binary?",
+      choices:["11001000","11000100","10101000","11100000"],
+      correct:0,
+      explain:"128 fits (remainder 72), 64 fits (remainder 8), 32 and 16 don't fit, 8 fits (remainder 0), 4/2/1 don't fit: 11001000."
+    },
+    {
+      q:"Why does one hex digit always equal exactly 4 bits?",
+      choices:["It's a historical coincidence","Because 16 = 2^4, so a nibble (4 bits) has exactly 16 possible values — one per hex digit","Because hex is really base-10 in disguise","It doesn't — hex digits can represent different bit-lengths"],
+      correct:1,
+      explain:"4 bits can represent 16 distinct values (0000–1111), and hexadecimal has exactly 16 symbols (0–9, A–F) — a perfect, lossless match."
+    },
+    {
+      q:"What does 0xC0 represent in binary?",
+      choices:["11000000","01100000","11000011","10100000"],
+      correct:0,
+      explain:"C = 1100, 0 = 0000. Combined: 11000000."
+    },
+    {
+      q:"What is the job of the LLC sublayer?",
+      choices:["Assigns the MAC address","Detects collisions on the wire","Identifies which Layer 3 protocol is inside the frame, independent of the physical medium","Encrypts the frame payload"],
+      correct:2,
+      explain:"LLC is the upper data link sublayer — it talks to Layer 3 above and identifies the protocol riding inside, regardless of what physical medium is underneath."
+    },
+    {
+      q:"What is the job of the MAC sublayer?",
+      choices:["Routing between networks","Physical addressing and controlling access to the medium","Assigning IP addresses","Encoding bits into light pulses"],
+      correct:1,
+      explain:"MAC is the lower data link sublayer — it owns physical (MAC) addressing and the rules for accessing whatever medium is in use."
+    },
+    {
+      q:"Which access method does legacy shared-medium Ethernet use?",
+      choices:["CSMA/CA","Token passing","CSMA/CD","TDMA"],
+      correct:2,
+      explain:"CSMA/CD (Collision Detection) — listen before sending, and recover if a collision happens anyway. Mostly obsolete on modern switched Ethernet, but still exam-relevant."
+    },
+    {
+      q:"Why does Wi-Fi use CSMA/CA instead of CSMA/CD?",
+      choices:["Wi-Fi doesn't need any access control method","A transmitting radio can't reliably listen for a colliding signal on the same frequency, so avoidance replaces detection","CSMA/CA is faster in every case","CSMA/CD only works over fiber"],
+      correct:1,
+      explain:"A wireless radio transmitting at full power can't simultaneously detect a faint colliding signal the way a wired device can sense voltage changes on a line — so Wi-Fi avoids collisions up front instead of detecting them after the fact."
+    },
+    {
+      q:"What does the FCS field in a frame do?",
+      choices:["Assigns a destination MAC address","Lets the receiver verify the frame arrived intact","Encrypts the frame","Specifies the frame's priority"],
+      correct:1,
+      explain:"FCS (Frame Check Sequence) is an error-detection trailer — the receiver recalculates it and discards the frame if it doesn't match."
+    },
+    {
+      q:"A frame crosses two switches and one router on its way to a destination. How many times does the source MAC address change?",
+      choices:["Zero times","Once, at the router","Twice, once at each switch","Three times, once at each device"],
+      correct:1,
+      explain:"Switches forward frames unchanged at Layer 2. Only crossing a router — a new hop — causes the MAC addressing to be rewritten. This is why MAC addressing is described as hop-to-hop, not end-to-end."
+    },
+  ];
+
+  const grid = document.getElementById('cardGrid');
+  TERMS.forEach((item, i) => {
+    const card = document.createElement('button');
+    card.className = 'flashcard';
+    card.setAttribute('aria-label', 'Flashcard: ' + item.t + '. Press to flip.');
+    card.dataset.i = i;
+    card.innerHTML = `
+      <div class="flashcard-inner">
+        <div class="flashcard-face front"><div class="lbl">Term</div><div class="term">${item.t}</div></div>
+        <div class="flashcard-face back"><div class="lbl">Definition</div><div class="def">${item.d}</div></div>
+      </div>`;
+    card.addEventListener('click', () => card.classList.toggle('flipped'));
+    card.addEventListener('dblclick', () => { card.classList.toggle('known'); updateProgress(); });
+    grid.appendChild(card);
+  });
+  function updateProgress(){
+    const known = document.querySelectorAll('.flashcard.known').length;
+    document.getElementById('cardProgress').textContent = `${known} / ${TERMS.length} marked known (double-click a card to mark it)`;
+  }
+  updateProgress();
+  document.getElementById('shuffleBtn').addEventListener('click', () => {
+    const cards = Array.from(grid.children);
+    cards.sort(() => Math.random() - 0.5);
+    cards.forEach(c => { c.classList.remove('flipped'); grid.appendChild(c); });
+  });
+  document.getElementById('resetKnownBtn').addEventListener('click', () => {
+    document.querySelectorAll('.flashcard.known').forEach(c => c.classList.remove('known'));
+    updateProgress();
+  });
+
+  const quizList = document.getElementById('quizList');
+  let score = 0, answered = 0;
+  function renderQuiz(){
+    quizList.innerHTML = ''; score = 0; answered = 0;
+    QUIZ.forEach((item, qi) => {
+      const box = document.createElement('div');
+      box.className = 'quiz-q';
+      box.innerHTML = `<p class="qtext"><span class="qnum">Q${qi+1}.</span>${item.q}</p><div class="choices"></div><p class="explain"></p>`;
+      const choicesEl = box.querySelector('.choices');
+      item.choices.forEach((c, ci) => {
+        const b = document.createElement('button');
+        b.className = 'choice'; b.textContent = c;
+        b.addEventListener('click', () => {
+          if (box.dataset.done) return;
+          box.dataset.done = '1'; answered++;
+          if (ci === item.correct) score++;
+          Array.from(choicesEl.children).forEach((el, ei) => {
+            el.disabled = true;
+            if (ei === item.correct) el.classList.add('correct');
+            else if (ei === ci) el.classList.add('incorrect');
+          });
+          box.querySelector('.explain').textContent = item.explain;
+          box.querySelector('.explain').classList.add('show');
+          updateScore();
+        });
+        choicesEl.appendChild(b);
+      });
+      quizList.appendChild(box);
+    });
+    updateScore();
+  }
+  function updateScore(){
+    document.getElementById('quizScore').textContent =
+      answered === 0 ? `${QUIZ.length} questions — click an answer to check yourself` : `Score: ${score} / ${answered} answered`;
+  }
+  renderQuiz();
+  document.getElementById('resetQuizBtn').addEventListener('click', renderQuiz);
+
+  const glossaryList = document.getElementById('glossaryList');
+  const alphaNav = document.getElementById('alphaNav');
+  const letters = [...new Set(TERMS.map(t => t.t[0].toUpperCase()))];
+  'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').forEach(L => {
+    const a = document.createElement('a');
+    a.textContent = L;
+    if (letters.includes(L)) { a.href = '#g-' + L; a.className = 'has'; }
+    else { a.href = 'javascript:void(0)'; }
+    alphaNav.appendChild(a);
+  });
+  let currentLetter = '';
+  TERMS.forEach(item => {
+    const L = item.t[0].toUpperCase();
+    if (L !== currentLetter) {
+      currentLetter = L;
+      const h = document.createElement('div');
+      h.className = 'glossary-letter'; h.id = 'g-' + L; h.textContent = L;
+      glossaryList.appendChild(h);
+    }
+    const wrap = document.createElement('div');
+    wrap.className = 'gitem';
+    wrap.innerHTML = `<dt>${item.t}</dt><dd>${item.d}</dd>`;
+    wrap.dataset.search = (item.t + ' ' + item.d).toLowerCase();
+    glossaryList.appendChild(wrap);
+  });
+  document.getElementById('glossarySearch').addEventListener('input', (e) => {
+    const q = e.target.value.toLowerCase().trim();
+    document.querySelectorAll('.gitem').forEach(el => {
+      el.classList.toggle('hidden', q && !el.dataset.search.includes(q));
+    });
+  });
+
+  const backToTop = document.getElementById('backToTop');
+  function toggleBackToTop(){ backToTop.classList.toggle('show', window.scrollY > 480); }
+  window.addEventListener('scroll', toggleBackToTop, {passive:true});
+  toggleBackToTop();
+  backToTop.addEventListener('click', () => window.scrollTo({top:0, behavior:'smooth'}));
+</script>
