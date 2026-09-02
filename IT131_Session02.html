@@ -251,11 +251,17 @@
           <div class="terminal-body">
 <span class="comment">! running-config = what the switch is using RIGHT NOW (in RAM)</span>
 <span class="comment">! startup-config = what the switch WILL use on next boot (in NVRAM)</span>
-<span class="comment">!</span>
+
 <span class="comment">! If you make changes but don't save, they vanish on reboot.</span>
-<span class="prompt">Switch#</span> <span class="cmd">show running-config</span>    <span class="comment">! current active config</span>
-<span class="prompt">Switch#</span> <span class="cmd">show startup-config</span>  <span class="comment">! saved config (what boots next time)</span>
-<span class="prompt">Switch#</span> <span class="hl">copy running-config startup-config</span>  <span class="comment">! SAVE IT</span>
+
+<span class="prompt">Switch#</span> <span class="cmd">show running-config</span>
+<span class="comment">! current active config</span>
+
+<span class="prompt">Switch#</span> <span class="cmd">show startup-config</span>
+<span class="comment">! saved config (what boots next time)</span>
+
+<span class="prompt">Switch#</span> <span class="hl">copy running-config startup-config</span>
+<span class="comment">! SAVE IT</span>
           </div>
         </div>
       </div>
