@@ -24,6 +24,7 @@
     background-size:16px 16px;
   }
   ::selection{ background:var(--kraft-soft); }
+  a{ color:var(--blue); }
   .wrap{ max-width:940px; margin:0 auto; padding:0 20px; }
   code{ font-family:var(--mono); background:var(--ink-soft); padding:1px 6px; border-radius:2px; font-size:.9em; }
 
@@ -98,6 +99,7 @@
   .incident-ticket p{ margin:0 0 6px; font-size:.82rem; line-height:1.45; }
   .incident-ticket p strong{ color:var(--red); }
   .detect{ font-family:var(--mono); font-size:.88rem; opacity:.8; margin-bottom:0 !important; }
+  .incident-ticket .xref{ font-family:var(--mono); font-size:.8rem; opacity:.7; margin:8px 0 0 !important; }
 
   /* TABLES */
   table.spec{ width:100%; border-collapse:collapse; margin:18px 0; font-size:.86rem; }
@@ -289,6 +291,7 @@
           <div class="ticket-head"><span>INCIDENT REPORT</span><span class="id">IR-02</span></div>
           <p><strong>The Impersonator</strong> — hands out a fake address label so local traffic gets rerouted through the wrong desk.</p>
           <p class="detect">Tell: two IPs claiming the same MAC address in the ARP table. <em>(Case stays sealed until Module 9 — today is just the address format this incident abuses.)</em></p>
+          <p class="xref">Full personnel file: <a href="osi-company-teaching-kit/osi-company/osi-company-directory.html#layer-02">Personnel Directory, LAYER 02</a></p>
         </div>
       </div>
     </div>

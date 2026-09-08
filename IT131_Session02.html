@@ -66,6 +66,7 @@
   figure{ margin:36px 0 0; }
   figure svg{ width:100%; height:auto; display:block; background:var(--surface); border:1px solid var(--border); }
   figcaption{ font-size:.85rem; color:var(--muted); margin-top:.6em; }
+  .xref{ font-family:var(--mono); font-size:.85rem; color:var(--muted); margin-top:14px; }
   .diagram-grid{ display:grid; gap:32px; grid-template-columns:1fr; }
   @media(min-width:860px){ .diagram-grid{ grid-template-columns:1fr 1fr; } }
 
@@ -573,6 +574,8 @@
       </svg>
       <figcaption>Sending (left): each layer adds its header as data moves down. Receiving (right): each layer strips its header as data moves up. The PDU name changes at each layer.</figcaption>
     </figure>
+
+    <p class="xref">See also: <a href="osi-company-teaching-kit/osi-company/osi-episode-01-script.html">OSI Company Kit — Episode 01, "One Request, Seven Desks"</a> (full walkthrough of this same down-trip/up-trip, department by department, with a live Wireshark capture)</p>
   </section>
 
   <!-- FLASHCARDS -->

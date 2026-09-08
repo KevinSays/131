@@ -27,6 +27,7 @@
     background-size:16px 16px;
   }
   ::selection{ background:var(--kraft-soft); }
+  a{ color:var(--blue); }
   .wrap{ max-width:940px; margin:0 auto; padding:0 20px; }
   code{ font-family:var(--mono); background:var(--ink-soft); padding:1px 6px; border-radius:2px; font-size:.9em; }
 
@@ -120,6 +121,16 @@
     color:var(--kraft-dark); text-align:left; padding:8px 10px; border-bottom:2px solid var(--ink); }
   table.spec td{ padding:9px 10px; border-bottom:1px dashed rgba(31,36,33,.3); vertical-align:top; }
   table.spec tr:last-child td{ border-bottom:none; }
+
+  /* CABLE LAB — PINOUT STRIP */
+  .pin-strip{ display:flex; gap:6px; margin:22px 0 8px; flex-wrap:wrap; }
+  .pin-cell{ flex:1; min-width:78px; border:1.5px solid var(--ink); background:var(--paper); text-align:center; padding:10px 6px; }
+  .pin-cell .pin-num{ display:block; font-family:var(--mono); font-size:.72rem; color:var(--kraft-dark); margin-bottom:6px; }
+  .pin-cell .wire-swatch{ display:block; height:34px; border:1px solid var(--ink); margin-bottom:6px; }
+  .pin-cell.solid .wire-swatch{ background:var(--stripe); }
+  .pin-cell.striped .wire-swatch{ background:repeating-linear-gradient(45deg, #fff, #fff 4px, var(--stripe) 4px, var(--stripe) 8px); }
+  .pin-cell .wire-label{ display:block; font-family:var(--mono); font-size:.66rem; line-height:1.3; }
+  .pin-note{ font-family:var(--mono); font-size:.86rem; opacity:.85; margin:0 0 20px; }
 
   /* SVG DIAGRAM CONTAINER */
   figure{ margin:28px 0 0; }
@@ -230,6 +241,7 @@
     <a href="#characteristics">Bandwidth &amp; Signal</a>
     <a href="#copper">Copper</a>
     <a href="#cables">Cable Types</a>
+    <a href="#cable-lab">Cable Lab</a>
     <a href="#fiber-wireless">Fiber &amp; Wireless</a>
     <a href="#saboteur">Case File: IR-01</a>
     <a href="#flashcards">Flashcards</a>
@@ -253,6 +265,7 @@
       <li>Define bandwidth, throughput, and goodput — and rank them correctly</li>
       <li>Compare UTP, STP, and coax; identify EMI, RFI, and crosstalk as the problems twisting solves</li>
       <li>Identify straight-through, crossover, and rollover cabling and when each is used</li>
+      <li>Terminate a T568B straight-through cable by hand and verify it with a cable tester</li>
       <li>Compare single-mode and multimode fiber; recognize ST/SC/LC connectors</li>
       <li>Explain why a physical-layer failure is invisible to a packet capture</li>
     </ul>
@@ -404,6 +417,50 @@
     </div>
   </section>
 
+  <!-- CABLE LAB -->
+  <section id="cable-lab">
+    <div class="section-head">
+      <p class="kicker">Hands-On</p>
+      <h2>Build a cable: T568B straight-through</h2>
+      <p>Theory's on the page above — now put a connector on a piece of wire and test it. This is the exact job the Infrastructure Crew does every time a cable-related incident report crosses their desk.</p>
+    </div>
+
+    <div class="teach-note">
+      <span class="label">Tools &amp; materials, per pair</span>
+      Cat5e or Cat6 bulk cable (one length, cut to size) · two RJ-45 connectors · a crimping tool with a built-in stripper/cutter (or a separate cable stripper) · a cable tester to check the finished job.
+    </div>
+
+    <div class="pin-strip" role="img" aria-label="T568B pinout, pins 1 through 8: white/orange, orange, white/green, blue, white/blue, green, white/brown, brown">
+      <div class="pin-cell striped" style="--stripe:#f5871f;"><span class="pin-num">PIN 1</span><span class="wire-swatch"></span><span class="wire-label">White/ Orange</span></div>
+      <div class="pin-cell solid" style="--stripe:#f5871f;"><span class="pin-num">PIN 2</span><span class="wire-swatch"></span><span class="wire-label">Orange</span></div>
+      <div class="pin-cell striped" style="--stripe:#3aa655;"><span class="pin-num">PIN 3</span><span class="wire-swatch"></span><span class="wire-label">White/ Green</span></div>
+      <div class="pin-cell solid" style="--stripe:#2f4858;"><span class="pin-num">PIN 4</span><span class="wire-swatch"></span><span class="wire-label">Blue</span></div>
+      <div class="pin-cell striped" style="--stripe:#2f4858;"><span class="pin-num">PIN 5</span><span class="wire-swatch"></span><span class="wire-label">White/ Blue</span></div>
+      <div class="pin-cell solid" style="--stripe:#3aa655;"><span class="pin-num">PIN 6</span><span class="wire-swatch"></span><span class="wire-label">Green</span></div>
+      <div class="pin-cell striped" style="--stripe:#7a4a26;"><span class="pin-num">PIN 7</span><span class="wire-swatch"></span><span class="wire-label">White/ Brown</span></div>
+      <div class="pin-cell solid" style="--stripe:#7a4a26;"><span class="pin-num">PIN 8</span><span class="wire-swatch"></span><span class="wire-label">Brown</span></div>
+    </div>
+    <p class="pin-note">Same order on <strong>both</strong> ends — that's what makes it straight-through. (Swap pins 1↔3 and 2↔6 on one end only, and it becomes a crossover instead — don't do that today.)</p>
+
+    <table class="spec">
+      <thead><tr><th>Step</th><th>What to do</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;">1. Strip</td><td>Strip about 1–1.5" of jacket off the end. Don't nick the wires inside — that's a bad crimp waiting to happen.</td></tr>
+        <tr><td style="font-weight:600;">2. Untwist &amp; order</td><td>Untwist each pair only as far as you have to. Fan the eight wires flat, side by side, into the T568B order above.</td></tr>
+        <tr><td style="font-weight:600;">3. Trim</td><td>Trim the wires flush and even, leaving about 0.5" running straight from the edge of the jacket to the cut ends.</td></tr>
+        <tr><td style="font-weight:600;">4. Seat</td><td>Slide the wires into the RJ-45 connector, pin 1 to pin 1. Push until every copper tip is visible flush against the front of the connector — and the jacket itself, not just bare wire, is inside the connector body.</td></tr>
+        <tr><td style="font-weight:600;">5. Crimp</td><td>Insert the connector into the crimping tool and squeeze fully. This seats the pins through the wire insulation and locks the strain-relief tab over the jacket.</td></tr>
+        <tr><td style="font-weight:600;">6. Repeat</td><td>Terminate the other end the same way, same pinout order — straight-through, not crossover.</td></tr>
+        <tr><td style="font-weight:600;">7. Test</td><td>Plug both ends into a cable tester. All eight pins should light 1 through 8, in order, on both sides. Anything that doesn't light is an open; anything lighting on the wrong pin is a miswire.</td></tr>
+      </tbody>
+    </table>
+
+    <div class="teach-note">
+      <span class="label">If the tester doesn't light one pin</span>
+      Almost always one of three things: the wire didn't reach the front of the connector before crimping — re-terminate with a fresh connector, they're one-time use; the jacket wasn't seated inside the connector, so the strain-relief tab never gripped anything; or a pair got untwisted too far back and drifted out of order while you were seating it. This is the hands-on version of IR-01's tell from earlier in this section — a physical-layer problem the tester catches before a single frame is ever sent.
+    </div>
+  </section>
+
   <!-- FIBER & WIRELESS -->
   <section id="fiber-wireless">
     <div class="section-head">
@@ -485,7 +542,7 @@
       <h3>The Saboteur</h3>
       <p class="mo">Cuts the cable, or jams the signal. No forged header, no stolen session, no impersonated address — just a link that stops carrying volts, light, or radio. Nobody upstairs even finds out there was a request.</p>
       <p class="tell"><strong>Tell:</strong> the link light is out, or a cable tester shows an open/short — before a laptop, a switch, or any Layer 2+ device is even involved.</p>
-      <p class="xref">See also: Personnel Directory, LAYER 01 · Security Bulletin, IR-01</p>
+      <p class="xref">See also: <a href="osi-company-teaching-kit/osi-company/osi-company-directory.html#layer-01">Personnel Directory, LAYER 01</a> · <a href="osi-company-teaching-kit/osi-company/osi-security-bulletin.html#ir-01">Security Bulletin, IR-01</a></p>
     </div>
 
     <div class="teach-note">
@@ -537,6 +594,18 @@
         <summary>Show answer</summary>
         <div class="solbody">
           <p><strong>PC to switch:</strong> dissimilar devices → straight-through. <strong>Switch to switch:</strong> similar devices → crossover, traditionally. On a modern switch with <strong>Auto-MDIX</strong>, both ports auto-detect and adjust, so a straight-through cable would likely work in either case. The underlying wiring concept — and the exam question — doesn't go away just because the hardware compensates for it.</p>
+        </div>
+      </details>
+    </div>
+
+    <div class="example">
+      <span class="tag">Cable lab</span>
+      <h3>Reading the tester</h3>
+      <p>You test a freshly crimped cable. One end lights 1 through 8 in perfect order. The other end lights 1-2-3-6-5-4-7-8 — pins 4 and 6 came out swapped. Did you accidentally build a crossover cable, or make a mistake?</p>
+      <details class="solution">
+        <summary>Show answer</summary>
+        <div class="solbody">
+          <p><strong>A mistake, not a crossover.</strong> A real crossover swaps a specific, standardized pair of pins (1↔3 and 2↔6) — not an arbitrary one. Pins 4 and 6 landing out of order on only one end means those wires shifted while being seated into the connector, most likely from untwisting the pair too far back and losing track of the sequence. Re-terminate that end with a fresh connector rather than trying to reuse the crimped one.</p>
         </div>
       </details>
     </div>
@@ -616,6 +685,7 @@
   const TERMS = [
     {t:"Auto-MDIX", d:"A feature on modern switch ports that auto-detects and adjusts pinout, so a straight-through cable often works where crossover was traditionally required."},
     {t:"Bandwidth", d:"The theoretical maximum capacity of a medium, measured in bps. Set by the physics of the media and by standards — always the upper bound."},
+    {t:"Cable tester", d:"A device that lights each of a terminated cable's 8 pins in sequence on both ends, so a bad crimp (an open pin or a miswire) shows up before the cable ever carries real traffic."},
     {t:"Cat5e / Cat6 / Cat6a", d:"UTP cable categories under TIA/EIA-568. Cat5e supports 1 Gbps; Cat6 supports 1–10 Gbps (shorter range at 10G); Cat6a supports a full 10 Gbps over 100m."},
     {t:"Coax (Coaxial cable)", d:"A copper medium with a single center conductor shielded by a braided layer. Mostly legacy in modern LANs — still seen with cable modems."},
     {t:"Crossover cable", d:"A copper cable with TX/RX pairs swapped at one end. Used to connect similar devices — switch to switch, PC to PC."},
@@ -624,6 +694,7 @@
     {t:"Encoding", d:"How a bit stream is converted into a signal pattern on the medium — e.g., Manchester encoding."},
     {t:"Fiber-optic cable", d:"A medium that transmits light pulses instead of electrical signals. Immune to EMI/RFI, supports longer distances and higher bandwidth than copper."},
     {t:"Goodput", d:"Throughput minus protocol overhead (headers, retransmissions) — the usable data rate a user actually experiences. The lowest of the three signal-funnel numbers."},
+    {t:"IDC (Insulation Displacement Contact)", d:"The type of pin inside an RJ-45 connector — it pierces a wire's insulation to make contact when the connector is crimped, rather than needing the wire stripped down to bare copper at each pin."},
     {t:"LC / SC / ST connectors", d:"The three common fiber-optic connector types. Recognition-level for this course — know they exist and look different from RJ-45."},
     {t:"Multimode fiber (MMF)", d:"Fiber with a wider core and an LED light source. Shorter effective range (~550m) than single-mode, but cheaper — common in data centers and campus backbones."},
     {t:"Physical layer (Layer 1)", d:"The OSI layer that transmits raw bits over a physical medium — copper, fiber, or wireless. No addressing, no logic, just transmission. PDU: bits."},
@@ -634,6 +705,7 @@
     {t:"Single-mode fiber (SMF)", d:"Fiber with a narrow core and a laser light source. Supports long-haul distances (kilometers) — used for carrier and backbone links."},
     {t:"STP (Shielded Twisted Pair)", d:"Copper cabling with foil shielding around the twisted pairs, added for high-EMI environments like factory floors."},
     {t:"Straight-through cable", d:"A copper cable with the same pinout at both ends. Used to connect dissimilar devices — PC to switch, switch to router."},
+    {t:"T568B", d:"The TIA/EIA wiring standard specifying which color wire goes in which pin of an RJ-45 connector. Wiring both ends of a cable to T568B in the same order produces a straight-through cable."},
     {t:"Throughput", d:"The actual measured rate of data transfer over time. Always ≤ bandwidth — degraded by attached devices, media errors, and overhead."},
     {t:"TIA/EIA-568", d:"The standard governing UTP cabling, wiring pinouts, and connectors (RJ-45) for structured cabling."},
     {t:"UTP (Unshielded Twisted Pair)", d:"The standard copper cabling for LANs — twisted pairs cancel most interference without needing extra shielding. Cheapest, most common medium."},
@@ -670,6 +742,12 @@
       choices:["Connecting a PC to a switch's data port","Connecting two routers over a WAN link","Connecting a PC to a router or switch's console port","Extending a fiber run"],
       correct:2,
       explain:"A rollover cable reverses every pin and is used strictly for out-of-band console management, not for carrying network traffic."
+    },
+    {
+      q:"After crimping both ends of a cable, the tester lights pins 1-2-4-5-6-7-8 in order on both ends, but pin 3 never lights on either side. What's the most likely cause?",
+      choices:["The cable is actually a crossover, not a straight-through","Pin 3's wire never reached the front of the connector before crimping","The tester itself is broken","Pin 3 doesn't carry a signal on Ethernet"],
+      correct:1,
+      explain:"A pin that never lights on either end almost always means that wire didn't reach the front of the connector before crimping — an open, not a wiring-order mistake. A wiring-order mistake would show the signal on the wrong pin, not no signal at all."
     },
     {
       q:"What does Auto-MDIX do?",
