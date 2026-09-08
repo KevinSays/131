@@ -1,0 +1,690 @@
+<title>IT131 Session 5 – Ethernet Switching</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --paper:#EDE8DD; --canvas:#D9D2C3; --ink:#1F2421; --kraft:#B08554; --kraft-dark:#664526;
+    --blue:#2F4858; --red:#A23A2E; --ticket:#F3E7E2;
+    --blue-soft:rgba(47,72,88,.08); --red-soft:rgba(162,58,46,.08);
+    --kraft-soft:rgba(176,133,84,.14); --ink-soft:rgba(31,36,33,.06);
+    --shadow:5px 5px 0 rgba(31,36,33,.16);
+    --display:'Special Elite','Courier New',monospace;
+    --sans:'IBM Plex Sans', system-ui, sans-serif;
+    --mono:'IBM Plex Mono', monospace;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth; font-size:125%;}
+  body{
+    margin:0; background:var(--canvas); color:var(--ink); font-family:var(--sans);
+    line-height:1.55; -webkit-font-smoothing:antialiased;
+    background-image:radial-gradient(rgba(31,36,33,.06) 1px, transparent 1px);
+    background-size:16px 16px;
+  }
+  ::selection{ background:var(--kraft-soft); }
+  .wrap{ max-width:940px; margin:0 auto; padding:0 20px; }
+  code{ font-family:var(--mono); background:var(--ink-soft); padding:1px 6px; border-radius:2px; font-size:.9em; }
+
+  /* MASTHEAD */
+  header.masthead{ padding:48px 0 30px; }
+  .eyebrow{ display:inline-block; font-family:var(--mono); font-size:.86rem; letter-spacing:.12em;
+    border:2px solid var(--blue); color:var(--blue); padding:4px 10px; transform:rotate(-2deg); background:var(--paper); }
+  h1{ font-family:var(--display); font-weight:400; font-size:clamp(1.9rem,5vw,2.9rem); letter-spacing:.01em;
+    margin:16px 0 10px; line-height:1.15; }
+  .lede{ max-width:64ch; font-size:1.02rem; line-height:1.6; opacity:.85; margin:0 0 18px; }
+  .factrow{ display:flex; flex-wrap:wrap; gap:10px; }
+  .fact{ font-family:var(--mono); font-size:.82rem; letter-spacing:.02em; background:var(--paper);
+    border:1.5px solid var(--ink); padding:.4em .8em; display:flex; gap:.5em; box-shadow:3px 3px 0 rgba(31,36,33,.14); }
+  .fact b{ color:var(--kraft-dark); font-weight:600; text-transform:uppercase; letter-spacing:.06em; font-size:.88rem; }
+
+  /* NAV */
+  nav.index{ position:sticky; top:0; z-index:20; background:color-mix(in srgb, var(--canvas) 92%, transparent);
+    backdrop-filter:blur(6px); border-top:2px solid var(--ink); border-bottom:2px solid var(--ink); }
+  nav.index .wrap{ display:flex; gap:2px; overflow-x:auto; padding:8px 20px; scrollbar-width:none; }
+  nav.index .wrap::-webkit-scrollbar{ display:none; }
+  nav.index a{ font-family:var(--mono); font-weight:600; letter-spacing:.03em; font-size:.82rem; text-decoration:none;
+    color:var(--ink); opacity:.85; padding:.5em .8em; white-space:nowrap; text-transform:uppercase; border:1px solid transparent; }
+  nav.index a:hover{ opacity:1; border-color:var(--ink); background:var(--paper); }
+  nav.index a.toc-link{ color:var(--blue); opacity:1; border-right:1.5px solid var(--ink); margin-right:8px; padding-right:16px; }
+  nav.index a.toc-link:hover{ background:var(--blue-soft); border-color:var(--ink); }
+
+  section{ padding:44px 0; border-bottom:2px dashed rgba(31,36,33,.3); }
+  section:last-of-type{ border-bottom:none; }
+  .section-head{ margin-bottom:26px; max-width:70ch; }
+  .kicker{ font-family:var(--mono); font-weight:600; font-size:.9rem; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--red); margin:0 0 .4em; }
+  h2{ font-family:var(--display); font-weight:400; font-size:clamp(1.4rem,2.8vw,1.9rem); margin:0 0 .25em; letter-spacing:.005em; }
+  .section-head p{ opacity:.82; margin:.5em 0 0; }
+
+  .obj-list{ display:grid; gap:10px; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); list-style:none; margin:0; padding:0; }
+  .obj-list li{ background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow); padding:14px 16px; font-size:.92rem; }
+  .obj-list li::before{ content:"▸"; color:var(--red); margin-right:.5em; font-weight:700; }
+
+  /* CALLOUT / TEACH NOTE */
+  .teach-note{ margin:18px 0; padding:12px 14px; border:1.5px dashed var(--blue); background:var(--blue-soft);
+    font-family:var(--mono); font-size:.82rem; line-height:1.6; }
+  .teach-note .label{ color:var(--blue); font-weight:600; letter-spacing:.05em; text-transform:uppercase; font-size:.88rem; display:block; margin-bottom:.4em; }
+
+  /* COLD OPEN */
+  .cold-open{ background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow); padding:18px 20px; margin:24px 0; }
+  .cold-open .tag{ font-family:var(--mono); font-size:.84rem; letter-spacing:.1em; color:var(--red); margin:0 0 8px; text-transform:uppercase; }
+  .cold-open p{ margin:0; font-size:.95rem; line-height:1.6; font-style:italic; }
+
+  /* CASE-FILE / DEPARTMENT CARDS */
+  .case-file{ position:relative; margin-top:16px; background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow); }
+  .case-file.featured{ margin-top:20px; }
+  .tab{ position:absolute; top:-15px; left:16px; background:var(--kraft); color:var(--ink); font-family:var(--mono);
+    font-weight:600; font-size:.82rem; letter-spacing:.06em; padding:4px 9px; border:1.5px solid var(--ink); border-bottom:none; }
+  .card-inner{ padding:22px 18px 18px; }
+  .card-head{ position:relative; display:flex; align-items:flex-start; gap:11px; margin-bottom:12px; padding-right:110px; }
+  .icon{ flex-shrink:0; margin-top:2px; }
+  .icon svg{ width:26px; height:26px; stroke:var(--ink); fill:none; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; }
+  .card-head h3{ font-family:var(--display); font-weight:400; font-size:1.02rem; margin:0 0 4px; line-height:1.25; }
+  .duty{ margin:0; font-size:.82rem; line-height:1.4; opacity:.85; }
+  .stamp{ position:absolute; top:-2px; right:0; border:2px solid var(--blue); color:var(--blue); font-family:var(--display);
+    font-size:.78rem; letter-spacing:.06em; padding:4px 6px; transform:rotate(-6deg); white-space:nowrap; }
+  dl.stats{ margin:12px 0 0; padding-top:10px; border-top:1px dashed rgba(31,36,33,.35); }
+  dl.stats > div{ display:flex; gap:8px; margin-bottom:7px; align-items:baseline; }
+  dl.stats dt{ font-family:var(--mono); font-size:.8rem; font-weight:600; letter-spacing:.05em; text-transform:uppercase;
+    color:var(--kraft-dark); min-width:96px; flex-shrink:0; }
+  dl.stats dd{ margin:0; font-size:.8rem; line-height:1.42; }
+
+  /* TABLES */
+  table.spec{ width:100%; border-collapse:collapse; margin:18px 0; font-size:.86rem; }
+  table.spec th{ font-family:var(--mono); font-weight:600; text-transform:uppercase; letter-spacing:.05em; font-size:.86rem;
+    color:var(--kraft-dark); text-align:left; padding:8px 10px; border-bottom:2px solid var(--ink); }
+  table.spec td{ padding:9px 10px; border-bottom:1px dashed rgba(31,36,33,.3); vertical-align:top; }
+  table.spec tr:last-child td{ border-bottom:none; }
+  table.spec td.mono, table.spec th.mono{ font-family:var(--mono); }
+
+  /* ADDRESS BOOK / MAC TABLE STRIP */
+  .book{ margin:20px 0; background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow); }
+  .book-head{ display:flex; justify-content:space-between; align-items:baseline; padding:10px 16px;
+    border-bottom:2px dashed rgba(31,36,33,.3); font-family:var(--mono); font-size:.78rem; text-transform:uppercase; letter-spacing:.05em; color:var(--kraft-dark); }
+  .book table{ width:100%; border-collapse:collapse; font-size:.86rem; }
+  .book th{ font-family:var(--mono); font-weight:600; text-transform:uppercase; letter-spacing:.05em; font-size:.76rem;
+    color:var(--kraft-dark); text-align:left; padding:8px 16px; border-bottom:1.5px solid var(--ink); }
+  .book td{ padding:8px 16px; font-family:var(--mono); font-size:.84rem; border-bottom:1px dashed rgba(31,36,33,.25); }
+  .book tr:last-child td{ border-bottom:none; }
+  .book td.port{ color:var(--blue); font-weight:600; }
+
+  /* FLASHCARDS */
+  .toolbar{ display:flex; gap:10px; align-items:center; margin-bottom:20px; flex-wrap:wrap; }
+  button.btn{ font-family:var(--mono); font-weight:600; letter-spacing:.03em; text-transform:uppercase; font-size:.9rem;
+    background:var(--paper); color:var(--ink); border:1.5px solid var(--ink); padding:.55em 1em; cursor:pointer; box-shadow:3px 3px 0 rgba(31,36,33,.14); }
+  button.btn:hover{ background:var(--kraft-soft); }
+  button.btn:focus-visible, a:focus-visible, .flashcard:focus-visible, input:focus-visible{ outline:2px solid var(--blue); outline-offset:2px; }
+  #cardProgress{ font-family:var(--mono); font-size:.85rem; opacity:.75; }
+  .card-grid{ display:grid; gap:16px; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); }
+  .flashcard{ perspective:1200px; height:190px; cursor:pointer; border:none; background:none; padding:0; font-family:inherit; text-align:left; width:100%; }
+  .flashcard-inner{ position:relative; width:100%; height:100%; transition:transform .5s cubic-bezier(.4,.2,.2,1); transform-style:preserve-3d; -webkit-transform-style:preserve-3d; will-change:transform; }
+  .flashcard.flipped .flashcard-inner{ transform:rotateY(180deg); -webkit-transform:rotateY(180deg); }
+  .flashcard-face{ position:absolute; inset:0; backface-visibility:hidden; -webkit-backface-visibility:hidden; -moz-backface-visibility:hidden; border:1.5px solid var(--ink); box-shadow:var(--shadow);
+    padding:15px; display:flex; flex-direction:column; justify-content:center; }
+  .flashcard-face.front{ background:var(--paper); transform:translateZ(.5px); }
+  .flashcard-face.back{ background:var(--ticket); transform:rotateY(180deg) translateZ(.5px); overflow-y:auto; }
+  .flashcard-face .lbl{ font-family:var(--mono); font-weight:600; letter-spacing:.1em; text-transform:uppercase; font-size:.82rem; color:var(--kraft-dark); margin-bottom:.5em; }
+  .flashcard-face.front .term{ font-family:var(--display); font-weight:400; font-size:1.05rem; letter-spacing:.01em; }
+  .flashcard-face.back .def{ font-size:.82rem; }
+  .flashcard.known .flashcard-face.front{ border-color:var(--blue); border-width:2px; }
+
+  /* QUIZ */
+  .quiz-q{ background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow); padding:18px 20px; margin-bottom:18px; }
+  .quiz-q .qtext{ font-weight:600; margin:0 0 13px; }
+  .quiz-q .qnum{ font-family:var(--display); color:var(--red); margin-right:.5em; }
+  .choices{ display:grid; gap:8px; }
+  .choice{ text-align:left; font-family:var(--sans); font-size:.9rem; background:var(--ticket); border:1.5px solid var(--ink);
+    padding:.65em .85em; cursor:pointer; color:var(--ink); }
+  .choice:hover{ border-color:var(--blue); }
+  .choice.correct{ background:var(--blue-soft); border-color:var(--blue); border-width:2px; }
+  .choice.incorrect{ background:var(--red-soft); border-color:var(--red); border-width:2px; }
+  .choice[disabled]{ cursor:default; }
+  .explain{ margin-top:12px; font-size:.84rem; opacity:.85; border-left:3px solid var(--kraft); padding-left:12px; display:none; font-family:var(--mono); }
+  .explain.show{ display:block; }
+  #quizScore{ font-family:var(--mono); font-size:.9rem; opacity:.75; margin-bottom:16px; }
+
+  /* EXAMPLES */
+  .example{ background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow); padding:20px 22px; margin-bottom:16px; }
+  .example h3{ font-family:var(--display); font-weight:400; font-size:1.15rem; margin:0 0 8px; }
+  .example .tag{ display:inline-block; font-family:var(--mono); font-weight:600; font-size:.86rem; text-transform:uppercase; letter-spacing:.07em;
+    color:var(--blue); background:var(--blue-soft); border:1px solid var(--blue); padding:.25em .6em; margin-bottom:10px; }
+  details.solution{ margin-top:12px; }
+  details.solution summary{ cursor:pointer; font-family:var(--mono); font-weight:600; letter-spacing:.03em; text-transform:uppercase;
+    font-size:.9rem; color:var(--blue); list-style:none; display:inline-flex; align-items:center; gap:.4em; }
+  details.solution summary::-webkit-details-marker{ display:none; }
+  details.solution summary::before{ content:"▸"; transition:transform .15s; }
+  details.solution[open] summary::before{ transform:rotate(90deg); }
+  details.solution .solbody{ margin-top:10px; padding:13px 15px; background:var(--ticket); font-size:.88rem; }
+
+  /* GLOSSARY */
+  #glossarySearch{ width:100%; max-width:400px; font-family:var(--sans); font-size:.9rem; padding:.65em .85em;
+    border:1.5px solid var(--ink); background:var(--paper); color:var(--ink); margin-bottom:16px; }
+  .alpha-nav{ display:flex; flex-wrap:wrap; gap:4px; margin-bottom:22px; }
+  .alpha-nav a{ font-family:var(--mono); font-weight:600; font-size:.82rem; width:1.8em; height:1.8em; display:flex;
+    align-items:center; justify-content:center; border:1px solid var(--ink); text-decoration:none; color:var(--ink); opacity:.35; }
+  .alpha-nav a.has{ opacity:1; background:var(--paper); }
+  .alpha-nav a.has:hover{ border-color:var(--blue); color:var(--blue); }
+  .glossary-letter{ font-family:var(--display); font-weight:400; color:var(--red); font-size:1.1rem; margin:20px 0 6px; }
+  dl.glossary{ margin:0; }
+  dl.glossary .gitem{ border-top:1px dashed rgba(31,36,33,.35); padding:11px 0; }
+  dl.glossary dt{ font-family:var(--mono); font-weight:600; font-size:.98rem; }
+  dl.glossary dd{ margin:.3em 0 0; opacity:.8; font-size:.86rem; }
+  .gitem.hidden{ display:none; }
+
+  footer{ padding:30px 0 60px; }
+  footer p{ opacity:.65; font-size:.82rem; font-family:var(--mono); letter-spacing:.02em; }
+
+  /* BACK TO TOP */
+  .back-to-top{ position:fixed; bottom:22px; right:22px; z-index:40; width:50px; height:50px;
+    background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow);
+    font-family:var(--display); font-size:1.4rem; color:var(--ink); line-height:1;
+    display:flex; align-items:center; justify-content:center; padding:0; cursor:pointer; text-decoration:none;
+    opacity:0; visibility:hidden; transform:translateY(10px);
+    transition:opacity .25s ease, transform .25s ease, visibility 0s .25s; }
+  .back-to-top.show{ opacity:1; visibility:visible; transform:translateY(0); transition:opacity .25s ease, transform .25s ease, visibility 0s; }
+  .back-to-top:hover{ background:var(--blue-soft); border-color:var(--blue); color:var(--blue); }
+  .back-to-top:focus-visible{ outline:2px solid var(--blue); outline-offset:2px; }
+
+  @media print{
+    body{ background:#fff; }
+    nav.index{ display:none; }
+    .case-file, .quiz-q, .example, .flashcard-face, .book{ box-shadow:none; }
+    .back-to-top{ display:none; }
+  }
+</style>
+
+<header class="masthead">
+  <div class="wrap">
+    <p class="eyebrow">IT131 · SESSION 05 · FIELD NOTES</p>
+    <h1>Ethernet Switching</h1>
+    <p class="lede">Local Dispatch's whole job description got a lot more specific this week. Today you open the actual desk drawer — the address book a switch builds on its own, the two ways it decides to hand a frame off, and the port settings that quietly break a link when they don't match.</p>
+    <div class="factrow">
+      <span class="fact"><b>New material</b> Module 7 — Ethernet Switching</span>
+      <span class="fact"><b>Checkpoint</b> Module Quiz — Ethernet Switching</span>
+    </div>
+  </div>
+</header>
+
+<nav class="index" aria-label="Section index">
+  <div class="wrap">
+    <a href="index.html" class="toc-link">↩ Contents</a>
+    <a href="#overview">Overview</a>
+    <a href="#frame">Ethernet Frame</a>
+    <a href="#macaddr">MAC Addresses</a>
+    <a href="#mactable">MAC Address Table</a>
+    <a href="#forwarding">Forwarding Methods</a>
+    <a href="#ports">Port Settings</a>
+    <a href="#flashcards">Flashcards</a>
+    <a href="#quiz">Quiz</a>
+    <a href="#examples">Examples</a>
+    <a href="#glossary">Glossary</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+  <!-- OVERVIEW -->
+  <section id="overview">
+    <div class="section-head">
+      <p class="kicker">Overview</p>
+      <h2>What Session 5 covers</h2>
+      <p>Module 6 gave you the generic shape of a Layer 2 frame and introduced the MAC address. Module 7 is what a switch actually <em>does</em> with both — how it reads the Ethernet II frame fields, how it builds its own address book instead of being handed one, and the two competing philosophies for how fast to forward a frame once it knows where that frame is going.</p>
+    </div>
+    <ul class="obj-list">
+      <li>Identify the fields of an Ethernet II frame</li>
+      <li>Describe the structure of a MAC address and how the OUI identifies the vendor</li>
+      <li>Explain how a switch dynamically builds and ages out its MAC address table</li>
+      <li>Compare store-and-forward and cut-through switching, and their trade-offs</li>
+      <li>Explain duplex and speed mismatches, and what auto-MDIX solves</li>
+    </ul>
+    <div class="teach-note">
+      <span class="label">Where this goes next</span>
+      The MAC address table you learn to read here is the same structure the ARP incident file (Module 9, "The Impersonator") ultimately corrupts — a switch that's been fed a spoofed entry starts sending traffic to the wrong desk without ever knowing it made a mistake.
+    </div>
+  </section>
+
+  <!-- ETHERNET FRAME -->
+  <section id="frame">
+    <div class="section-head">
+      <p class="kicker">Module 7</p>
+      <h2>The Ethernet II frame, field by field</h2>
+      <p>Module 6 covered the generic Layer 2 frame — start/stop, addressing, type, data, FCS. Ethernet II is the specific implementation almost every wired network actually runs. Same job, concrete field sizes.</p>
+    </div>
+
+    <table class="spec">
+      <thead><tr><th>Field</th><th class="mono">Size</th><th>Purpose</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;">Preamble &amp; SFD</td><td class="mono">8 bytes</td><td>Alternating 1s and 0s that let the receiving NIC's clock sync up, ending in a Start Frame Delimiter that marks "the real frame starts now."</td></tr>
+        <tr><td style="font-weight:600;">Destination MAC</td><td class="mono">6 bytes</td><td>Address of the next desk over — not necessarily the final destination, just the next hop.</td></tr>
+        <tr><td style="font-weight:600;">Source MAC</td><td class="mono">6 bytes</td><td>Address of the device that put this frame on the wire.</td></tr>
+        <tr><td style="font-weight:600;">Type</td><td class="mono">2 bytes</td><td>Identifies the Layer 3 protocol riding inside — <code>0x0800</code> for IPv4, <code>0x86DD</code> for IPv6.</td></tr>
+        <tr><td style="font-weight:600;">Data</td><td class="mono">46–1500 bytes</td><td>The packet handed down from Logistics. Padded up to the 46-byte minimum if the packet is smaller.</td></tr>
+        <tr><td style="font-weight:600;">FCS</td><td class="mono">4 bytes</td><td>Trailer — lets the receiver verify the frame arrived intact. A failed check means the frame is silently dropped.</td></tr>
+      </tbody>
+    </table>
+
+    <div class="teach-note">
+      <span class="label">The size limits matter</span>
+      Minimum frame size is <strong>64 bytes</strong>, maximum is <strong>1518 bytes</strong> (Preamble/SFD isn't counted in either). Anything shorter than 64 bytes is a "runt" — almost always evidence of a collision. Anything longer than 1518 without being explicitly configured as a jumbo frame is a "giant." Both are discarded.
+    </div>
+  </section>
+
+  <!-- MAC ADDRESSES -->
+  <section id="macaddr">
+    <div class="section-head">
+      <p class="kicker">Module 7</p>
+      <h2>MAC address structure</h2>
+      <p>A MAC address is 48 bits, written as 12 hex digits — and it isn't random. It splits cleanly into two halves, and the first half tells you who manufactured the card.</p>
+    </div>
+
+    <table class="spec">
+      <thead><tr><th class="mono">Bits 1–24</th><th class="mono">Bits 25–48</th></tr></thead>
+      <tbody>
+        <tr><td><strong>OUI</strong> (Organizationally Unique Identifier) — assigned to the manufacturer by the IEEE. Every NIC that vendor builds starts with this prefix.</td><td><strong>Vendor-assigned</strong> — a unique value the manufacturer stamps on each individual NIC. Never reused within that OUI.</td></tr>
+      </tbody>
+    </table>
+
+    <table class="spec">
+      <thead><tr><th>MAC type</th><th>Who receives it</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;">Unicast</td><td>One specific NIC — the normal case, one sender to one receiver.</td></tr>
+        <tr><td style="font-weight:600;">Broadcast</td><td><code>FF:FF:FF:FF:FF:FF</code> — every device on the local segment. ARP requests use this.</td></tr>
+        <tr><td style="font-weight:600;">Multicast</td><td>A defined group of interested devices, not everyone — used by protocols like OSPF that only need a subset of neighbors to listen.</td></tr>
+      </tbody>
+    </table>
+
+    <div class="teach-note">
+      <span class="label">Carried over from Module 6</span>
+      Still hop-to-hop, not end-to-end — a switch never rewrites the MAC addressing on a frame it forwards, it only reads it to decide which port to send the frame out.
+    </div>
+  </section>
+
+  <!-- MAC ADDRESS TABLE -->
+  <section id="mactable">
+    <div class="section-head">
+      <p class="kicker">Module 7</p>
+      <h2>How the address book gets built</h2>
+      <p>Nobody hands Local Dispatch its address book. It builds one itself, one incoming frame at a time — and it only ever learns <em>source</em> addresses, never destinations.</p>
+    </div>
+
+    <div class="cold-open">
+      <p class="tag">Cold open</p>
+      <p>A frame lands on Port 3 with a source address Local Dispatch has never seen. It doesn't ask who that is — it just writes it down: "whoever this address belongs to sits behind Port 3." That's the entire learning process, repeated on every single frame.</p>
+    </div>
+
+    <table class="spec">
+      <thead><tr><th>Step</th><th>What happens</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;">1. Examine</td><td>A frame arrives on a port. The switch reads its <strong>source</strong> MAC address.</td></tr>
+        <tr><td style="font-weight:600;">2. Learn</td><td>If that source address isn't already in the table, add it: source MAC → the port it just arrived on.</td></tr>
+        <tr><td style="font-weight:600;">3. Look up destination</td><td>The switch checks the table for the frame's <strong>destination</strong> MAC address.</td></tr>
+        <tr><td style="font-weight:600;">4. Forward, filter, or flood</td><td>Known and on a different port → send out only that port (<strong>forward</strong>). Known and on the same port it arrived on → drop it, the destination already heard it (<strong>filter</strong>). Unknown, or broadcast/multicast → send out every port except the one it arrived on (<strong>flood</strong>).</td></tr>
+      </tbody>
+    </table>
+
+    <div class="book">
+      <div class="book-head"><span>Switch: MAC Address Table</span><span>Aging time: 300s</span></div>
+      <table>
+        <thead><tr><th>MAC Address</th><th>Port</th><th>Age</th></tr></thead>
+        <tbody>
+          <tr><td>AA:BB:CC:00:11:22</td><td class="port">Fa0/1</td><td>42s</td></tr>
+          <tr><td>AA:BB:CC:00:11:33</td><td class="port">Fa0/2</td><td>118s</td></tr>
+          <tr><td>AA:BB:CC:00:11:44</td><td class="port">Fa0/3</td><td>6s</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="teach-note">
+      <span class="label">Entries don't live forever</span>
+      Each entry carries an aging timer (default 300 seconds on most Cisco switches). No traffic from that address before the timer expires, and the entry is dropped — the next frame to that destination gets flooded again until the switch relearns where it lives.
+    </div>
+  </section>
+
+  <!-- FORWARDING METHODS -->
+  <section id="forwarding">
+    <div class="section-head">
+      <p class="kicker">Module 7</p>
+      <h2>Switching forwarding methods</h2>
+      <p>Once the switch knows which port to use, it still has to decide <em>when</em> to start sending — wait for the whole frame to arrive first, or start relaying it out the destination port before it's even finished coming in.</p>
+    </div>
+
+    <table class="spec">
+      <thead><tr><th>Method</th><th>How it works</th><th>Trade-off</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;">Store-and-forward</td><td>Receives the entire frame, checks the FCS, and only forwards it if the check passes.</td><td>Slower (adds latency) but never forwards a corrupted frame. Default and most common on modern switches.</td></tr>
+        <tr><td style="font-weight:600;">Cut-through</td><td>Reads only the destination MAC address, then starts forwarding immediately — before the rest of the frame has even arrived.</td><td>Lower latency, but can forward a frame that turns out to be corrupted, since the FCS isn't checked first.</td></tr>
+        <tr><td style="font-weight:600;">Fragment-free (variant)</td><td>A middle ground: waits for the first 64 bytes before forwarding — enough to catch most collision fragments — then forwards without waiting for the full frame.</td><td>Faster than store-and-forward, catches more errors than plain cut-through.</td></tr>
+      </tbody>
+    </table>
+
+    <div class="teach-note">
+      <span class="label">Exam framing</span>
+      If a question says "checks for errors before forwarding," that's store-and-forward. If it says "starts forwarding as soon as it reads the destination address," that's cut-through. Fragment-free only comes up if the question specifically calls out the 64-byte checkpoint.
+    </div>
+  </section>
+
+  <!-- PORT SETTINGS -->
+  <section id="ports">
+    <div class="section-head">
+      <p class="kicker">Module 7</p>
+      <h2>Switch port settings</h2>
+      <p>Two devices on the same link have to agree on how to use it. When they don't, the link usually still comes up — it just performs badly, which makes this a classic troubleshooting trap.</p>
+    </div>
+
+    <table class="spec">
+      <thead><tr><th>Setting</th><th>Options</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;">Duplex</td><td>Half vs. full</td><td><strong>Half-duplex:</strong> send or receive, never both at once — the old shared-medium model, needs CSMA/CD. <strong>Full-duplex:</strong> send and receive simultaneously — the norm on switched links, no collisions possible at all.</td></tr>
+        <tr><td style="font-weight:600;">Speed</td><td>10/100/1000 Mbps, etc.</td><td>Both ends of a link should run the same speed. Auto-negotiation usually handles this without intervention.</td></tr>
+        <tr><td style="font-weight:600;">Auto-MDIX</td><td>Enabled/disabled</td><td>Automatically detects whether a straight-through or crossover cable was plugged in and adjusts the port internally — the reason you rarely need to care which cable type you grab anymore.</td></tr>
+      </tbody>
+    </table>
+
+    <div class="teach-note">
+      <span class="label">The trap</span>
+      A <strong>duplex mismatch</strong> (one side full, one side half) doesn't take the link down — it degrades it. The full-duplex side transmits whenever it wants; the half-duplex side, still playing by collision rules, treats that as a collision and starts dropping/retransmitting frames. Symptom: a link that's "up" but slow and full of late collisions — not a link that's obviously broken.
+    </div>
+  </section>
+
+  <!-- FLASHCARDS -->
+  <section id="flashcards">
+    <div class="section-head">
+      <p class="kicker">Study</p>
+      <h2>Flashcards</h2>
+      <p>Click to flip. Double-click to mark as known.</p>
+    </div>
+    <div class="toolbar">
+      <button class="btn" id="shuffleBtn">Shuffle</button>
+      <button class="btn" id="resetKnownBtn">Reset progress</button>
+      <span id="cardProgress"></span>
+    </div>
+    <div class="card-grid" id="cardGrid"></div>
+  </section>
+
+  <!-- QUIZ -->
+  <section id="quiz">
+    <div class="section-head">
+      <p class="kicker">Check yourself</p>
+      <h2>Sample questions</h2>
+      <p>Pick an answer to see if you're right — same style as the module quiz.</p>
+    </div>
+    <div id="quizScore"></div>
+    <div id="quizList"></div>
+    <button class="btn" id="resetQuizBtn">Reset quiz</button>
+  </section>
+
+  <!-- EXAMPLES -->
+  <section id="examples">
+    <div class="section-head">
+      <p class="kicker">Applied</p>
+      <h2>Worked examples</h2>
+      <p>Think it through before you expand the answer.</p>
+    </div>
+
+    <div class="example">
+      <span class="tag">MAC address table</span>
+      <h3>Learn, then decide</h3>
+      <p>A switch's MAC address table is empty. A frame arrives on Port 1 from <code>AA:AA:AA:AA:AA:AA</code>, destined for <code>BB:BB:BB:BB:BB:BB</code>. What does the switch do with this frame, and what does its table look like afterward?</p>
+      <details class="solution">
+        <summary>Show answer</summary>
+        <div class="solbody">
+          <p><strong>Answer:</strong> The switch first learns the source: <code>AA:AA:AA:AA:AA:AA</code> → Port 1 is added to the table. It then looks up the destination, <code>BB:BB:BB:BB:BB:BB</code> — not found, since the table only had one entry and it isn't this one. With no match, the switch <strong>floods</strong> the frame out every port except Port 1. The table now has exactly one entry: <code>AA:AA:AA:AA:AA:AA → Port 1</code>.</p>
+        </div>
+      </details>
+    </div>
+
+    <div class="example">
+      <span class="tag">Forward, filter, or flood</span>
+      <h3>Same port, different frame</h3>
+      <p>The table already has <code>AA:AA:AA:AA:AA:AA → Port 1</code> and <code>BB:BB:BB:BB:BB:BB → Port 1</code> — both devices sit behind the same downstream hub on Port 1. A frame arrives on Port 1 from AA to BB. What does the switch do?</p>
+      <details class="solution">
+        <summary>Show answer</summary>
+        <div class="solbody">
+          <p><strong>Answer:</strong> It <strong>filters</strong> the frame — drops it entirely. The destination (BB) is known to live on the exact same port the frame arrived on, meaning BB already received the frame directly over the shared segment. Forwarding it back out Port 1 would just be noise.</p>
+        </div>
+      </details>
+    </div>
+
+    <div class="example">
+      <span class="tag">Store-and-forward vs. cut-through</span>
+      <h3>Pick the method</h3>
+      <p>A switch is dropping a noticeable number of frames that turn out to be corrupted on arrival, but network engineers want the lowest possible latency for a latency-sensitive application. Which forwarding method fits, and what's the trade-off?</p>
+      <details class="solution">
+        <summary>Show answer</summary>
+        <div class="solbody">
+          <p><strong>Answer:</strong> This is a genuine trade-off, not a trick — <strong>cut-through</strong> gives the lowest latency, since it starts forwarding right after reading the destination MAC, but it will forward those corrupted frames rather than dropping them (the FCS never gets checked before forwarding). <strong>Store-and-forward</strong> catches every corrupted frame via the FCS check, at the cost of added latency from buffering the whole frame first. Fragment-free is the compromise: waits for the first 64 bytes, catching most collision-related corruption, without waiting for the full frame.</p>
+        </div>
+      </details>
+    </div>
+
+    <div class="example">
+      <span class="tag">Duplex mismatch</span>
+      <h3>Diagnose the symptom</h3>
+      <p>A link light is green and the interface shows "up," but a user reports the connection is slow and a show command on the switch reveals a climbing count of late collisions on that port. What's the likely cause?</p>
+      <details class="solution">
+        <summary>Show answer</summary>
+        <div class="solbody">
+          <p><strong>Answer:</strong> A <strong>duplex mismatch</strong>. One side of the link is running full-duplex and transmitting whenever it has data, while the other side is still running half-duplex and interprets that overlapping traffic as a collision. The link never goes down — it just performs badly, which is exactly why duplex mismatches are a classic "it's up but it's slow" troubleshooting case rather than an obvious outage.</p>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <!-- GLOSSARY -->
+  <section id="glossary">
+    <div class="section-head">
+      <p class="kicker">Reference</p>
+      <h2>Glossary &amp; index</h2>
+      <p>Every term from this session, searchable and indexed A–Z.</p>
+    </div>
+    <input type="text" id="glossarySearch" placeholder="Search terms…" aria-label="Search glossary">
+    <div class="alpha-nav" id="alphaNav"></div>
+    <dl class="glossary" id="glossaryList"></dl>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>IT131 · CCNA: Introduction to Networks · Session 5 reference — more sessions added as the course progresses.</p>
+  </div>
+</footer>
+
+<button id="backToTop" class="back-to-top" aria-label="Back to top" title="Back to top">↑</button>
+
+<script>
+  const TERMS = [
+    {t:"Aging timer", d:"A per-entry countdown (default 300 seconds on most Cisco switches) in the MAC address table. If no traffic arrives from that address before it expires, the entry is removed."},
+    {t:"Auto-MDIX", d:"A feature that automatically detects whether a straight-through or crossover cable is plugged into a port and adjusts the port's internal wiring to match — removes the need to pick the right cable type by hand."},
+    {t:"Broadcast MAC address", d:"FF:FF:FF:FF:FF:FF — delivered to every device on the local segment. Used by ARP requests, among others."},
+    {t:"Cut-through switching", d:"A forwarding method that reads only the destination MAC address, then begins forwarding immediately, without waiting for the rest of the frame or checking the FCS. Lower latency, but can forward corrupted frames."},
+    {t:"Duplex mismatch", d:"A misconfiguration where one end of a link runs full-duplex and the other half-duplex. The link stays up but performs badly — the half-duplex side treats the full-duplex side's overlapping traffic as collisions."},
+    {t:"FCS (Frame Check Sequence)", d:"A trailer field added to a frame that lets the receiver verify the frame arrived intact. Store-and-forward switching checks this before forwarding; cut-through does not."},
+    {t:"Filter (switching)", d:"A switch's decision to drop a frame rather than forward it, because the destination is known to already be on the same port the frame arrived on."},
+    {t:"Flood (switching)", d:"A switch's decision to send a frame out every port except the one it arrived on — used when the destination MAC isn't yet in the table, or the destination is a broadcast/multicast address."},
+    {t:"Forward (switching)", d:"A switch's decision to send a frame out only the specific port where the destination MAC address is known to live."},
+    {t:"Fragment-free switching", d:"A forwarding method that waits for the first 64 bytes of a frame — enough to catch most collision-related fragments — before forwarding, without waiting for the entire frame. A middle ground between cut-through and store-and-forward."},
+    {t:"Full-duplex", d:"A link mode where a device can send and receive simultaneously. The norm on modern switched links, where collisions aren't possible at all."},
+    {t:"Giant frame", d:"An Ethernet frame longer than the 1518-byte maximum without being configured for jumbo frames. Discarded on receipt."},
+    {t:"Half-duplex", d:"A link mode where a device can either send or receive at any given moment, never both — the old shared-medium model, requiring CSMA/CD."},
+    {t:"MAC address table", d:"A switch's dynamically-built map of MAC addresses to the ports they were learned on. Built entirely from source addresses on incoming frames — never handed to the switch, never built from destination addresses."},
+    {t:"Multicast MAC address", d:"An address delivered to a defined group of interested devices rather than everyone — used by protocols like OSPF that only need a subset of neighbors listening."},
+    {t:"OUI (Organizationally Unique Identifier)", d:"The first 24 bits (first 6 hex digits) of a MAC address, assigned by the IEEE to a specific manufacturer. Every NIC that vendor builds shares this prefix."},
+    {t:"Preamble / SFD", d:"The first 8 bytes of an Ethernet II frame — alternating bits that let the receiving NIC's clock synchronize, ending in a Start Frame Delimiter marking where the real frame begins."},
+    {t:"Runt frame", d:"An Ethernet frame shorter than the 64-byte minimum. Almost always evidence of a collision; discarded on receipt."},
+    {t:"Store-and-forward switching", d:"A forwarding method that receives the entire frame, checks its FCS, and only forwards it if the check passes. Slower than cut-through, but never forwards a corrupted frame. The default on most modern switches."},
+    {t:"Type field", d:"A 2-byte Ethernet II field identifying the Layer 3 protocol inside the frame — 0x0800 for IPv4, 0x86DD for IPv6."},
+    {t:"Unicast MAC address", d:"An address belonging to one specific NIC — the normal case of one sender addressing one receiver."},
+  ];
+
+  const QUIZ = [
+    {
+      q:"What does the Type field in an Ethernet II frame identify?",
+      choices:["The destination port number","Which Layer 3 protocol is carried inside the frame","The frame's priority level","The switch's forwarding method"],
+      correct:1,
+      explain:"The Type field (e.g. 0x0800 for IPv4, 0x86DD for IPv6) tells the receiving device which Layer 3 protocol to hand the payload up to."
+    },
+    {
+      q:"What is the minimum valid Ethernet frame size?",
+      choices:["46 bytes","64 bytes","1500 bytes","1518 bytes"],
+      correct:1,
+      explain:"64 bytes is the minimum. Anything shorter is a 'runt' frame, almost always caused by a collision, and gets discarded."
+    },
+    {
+      q:"What does the OUI portion of a MAC address identify?",
+      choices:["The device's IP address","The manufacturer of the NIC","The switch port the device is connected to","The VLAN the device belongs to"],
+      correct:1,
+      explain:"The OUI is the first 24 bits of a MAC address, assigned by the IEEE to a specific vendor — every NIC that vendor builds shares this prefix."
+    },
+    {
+      q:"How does a switch build its MAC address table?",
+      choices:["An administrator manually types every entry","It's downloaded from a central server on boot","By reading the source MAC address of every incoming frame","By reading the destination MAC address of every incoming frame"],
+      correct:2,
+      explain:"A switch only ever learns from source addresses. When a frame arrives, it records: this source MAC lives behind the port the frame just arrived on."
+    },
+    {
+      q:"A switch receives a frame whose destination MAC isn't in its table yet. What does it do?",
+      choices:["Drops the frame","Sends it back out the port it arrived on","Floods it out every port except the one it arrived on","Holds it until the address ages in"],
+      correct:2,
+      explain:"With no matching entry, the switch floods the frame out every other port so it's guaranteed to reach the actual destination, wherever it is."
+    },
+    {
+      q:"Which forwarding method checks the FCS before forwarding a frame?",
+      choices:["Cut-through","Store-and-forward","Fragment-free","None of them check the FCS"],
+      correct:1,
+      explain:"Store-and-forward receives the entire frame and validates the FCS before forwarding — the trade-off is added latency."
+    },
+    {
+      q:"Why is cut-through switching faster than store-and-forward?",
+      choices:["It uses a faster type of cable","It starts forwarding as soon as it reads the destination MAC, without waiting for the rest of the frame","It skips the MAC address table lookup entirely","It only works on full-duplex links"],
+      correct:1,
+      explain:"Cut-through doesn't wait for the whole frame to arrive — it reads just the destination address and immediately starts relaying it out, at the cost of not checking for errors first."
+    },
+    {
+      q:"What's the practical symptom of a duplex mismatch?",
+      choices:["The link doesn't come up at all","The link comes up but performs poorly, with rising late collisions","The switch reboots","The MAC address table stops updating"],
+      correct:1,
+      explain:"A duplex mismatch doesn't prevent the link from coming up — the half-duplex side just keeps interpreting the full-duplex side's traffic as collisions, degrading performance without an obvious outage."
+    },
+    {
+      q:"What problem does auto-MDIX solve?",
+      choices:["Speed mismatches between two switches","Needing to pick the correct cable type (straight-through vs. crossover) by hand","Duplicate MAC addresses on the same segment","Frames arriving out of order"],
+      correct:1,
+      explain:"Auto-MDIX detects which cable type was plugged in and adjusts the port's internal wiring to match, so the cable choice stops mattering."
+    },
+    {
+      q:"A switch's table has BB:BB:BB:BB:BB:BB mapped to Port 2. A frame arrives on Port 2 addressed to BB:BB:BB:BB:BB:BB. What does the switch do?",
+      choices:["Forwards it out Port 2 again","Floods it out every port","Filters it — drops the frame","Adds a second entry for the same address"],
+      correct:2,
+      explain:"The destination is already known to live on the exact port the frame arrived on, meaning it already received the frame over the shared segment — the switch filters (drops) it rather than forwarding it back out the same port."
+    },
+  ];
+
+  const grid = document.getElementById('cardGrid');
+  TERMS.forEach((item, i) => {
+    const card = document.createElement('button');
+    card.className = 'flashcard';
+    card.setAttribute('aria-label', 'Flashcard: ' + item.t + '. Press to flip.');
+    card.dataset.i = i;
+    card.innerHTML = `
+      <div class="flashcard-inner">
+        <div class="flashcard-face front"><div class="lbl">Term</div><div class="term">${item.t}</div></div>
+        <div class="flashcard-face back"><div class="lbl">Definition</div><div class="def">${item.d}</div></div>
+      </div>`;
+    card.addEventListener('click', () => card.classList.toggle('flipped'));
+    card.addEventListener('dblclick', () => { card.classList.toggle('known'); updateProgress(); });
+    grid.appendChild(card);
+  });
+  function updateProgress(){
+    const known = document.querySelectorAll('.flashcard.known').length;
+    document.getElementById('cardProgress').textContent = `${known} / ${TERMS.length} marked known (double-click a card to mark it)`;
+  }
+  updateProgress();
+  document.getElementById('shuffleBtn').addEventListener('click', () => {
+    const cards = Array.from(grid.children);
+    cards.sort(() => Math.random() - 0.5);
+    cards.forEach(c => { c.classList.remove('flipped'); grid.appendChild(c); });
+  });
+  document.getElementById('resetKnownBtn').addEventListener('click', () => {
+    document.querySelectorAll('.flashcard.known').forEach(c => c.classList.remove('known'));
+    updateProgress();
+  });
+
+  const quizList = document.getElementById('quizList');
+  let score = 0, answered = 0;
+  function renderQuiz(){
+    quizList.innerHTML = ''; score = 0; answered = 0;
+    QUIZ.forEach((item, qi) => {
+      const box = document.createElement('div');
+      box.className = 'quiz-q';
+      box.innerHTML = `<p class="qtext"><span class="qnum">Q${qi+1}.</span>${item.q}</p><div class="choices"></div><p class="explain"></p>`;
+      const choicesEl = box.querySelector('.choices');
+      item.choices.forEach((c, ci) => {
+        const b = document.createElement('button');
+        b.className = 'choice'; b.textContent = c;
+        b.addEventListener('click', () => {
+          if (box.dataset.done) return;
+          box.dataset.done = '1'; answered++;
+          if (ci === item.correct) score++;
+          Array.from(choicesEl.children).forEach((el, ei) => {
+            el.disabled = true;
+            if (ei === item.correct) el.classList.add('correct');
+            else if (ei === ci) el.classList.add('incorrect');
+          });
+          box.querySelector('.explain').textContent = item.explain;
+          box.querySelector('.explain').classList.add('show');
+          updateScore();
+        });
+        choicesEl.appendChild(b);
+      });
+      quizList.appendChild(box);
+    });
+    updateScore();
+  }
+  function updateScore(){
+    document.getElementById('quizScore').textContent =
+      answered === 0 ? `${QUIZ.length} questions — click an answer to check yourself` : `Score: ${score} / ${answered} answered`;
+  }
+  renderQuiz();
+  document.getElementById('resetQuizBtn').addEventListener('click', renderQuiz);
+
+  const glossaryList = document.getElementById('glossaryList');
+  const alphaNav = document.getElementById('alphaNav');
+  const letters = [...new Set(TERMS.map(t => t.t[0].toUpperCase()))];
+  'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').forEach(L => {
+    const a = document.createElement('a');
+    a.textContent = L;
+    if (letters.includes(L)) { a.href = '#g-' + L; a.className = 'has'; }
+    else { a.href = 'javascript:void(0)'; }
+    alphaNav.appendChild(a);
+  });
+  let currentLetter = '';
+  TERMS.forEach(item => {
+    const L = item.t[0].toUpperCase();
+    if (L !== currentLetter) {
+      currentLetter = L;
+      const h = document.createElement('div');
+      h.className = 'glossary-letter'; h.id = 'g-' + L; h.textContent = L;
+      glossaryList.appendChild(h);
+    }
+    const wrap = document.createElement('div');
+    wrap.className = 'gitem';
+    wrap.innerHTML = `<dt>${item.t}</dt><dd>${item.d}</dd>`;
+    wrap.dataset.search = (item.t + ' ' + item.d).toLowerCase();
+    glossaryList.appendChild(wrap);
+  });
+  document.getElementById('glossarySearch').addEventListener('input', (e) => {
+    const q = e.target.value.toLowerCase().trim();
+    document.querySelectorAll('.gitem').forEach(el => {
+      el.classList.toggle('hidden', q && !el.dataset.search.includes(q));
+    });
+  });
+
+  const backToTop = document.getElementById('backToTop');
+  function toggleBackToTop(){ backToTop.classList.toggle('show', window.scrollY > 480); }
+  window.addEventListener('scroll', toggleBackToTop, {passive:true});
+  toggleBackToTop();
+  backToTop.addEventListener('click', () => window.scrollTo({top:0, behavior:'smooth'}));
+</script>
