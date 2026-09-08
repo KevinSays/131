@@ -1,0 +1,734 @@
+<title>IT131 Session 6 – The Network Layer &amp; Address Resolution</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --paper:#EDE8DD; --canvas:#D9D2C3; --ink:#1F2421; --kraft:#B08554; --kraft-dark:#664526;
+    --blue:#2F4858; --red:#A23A2E; --ticket:#F3E7E2;
+    --blue-soft:rgba(47,72,88,.08); --red-soft:rgba(162,58,46,.08);
+    --kraft-soft:rgba(176,133,84,.14); --ink-soft:rgba(31,36,33,.06);
+    --shadow:5px 5px 0 rgba(31,36,33,.16);
+    --display:'Special Elite','Courier New',monospace;
+    --sans:'IBM Plex Sans', system-ui, sans-serif;
+    --mono:'IBM Plex Mono', monospace;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth; font-size:125%;}
+  body{
+    margin:0; background:var(--canvas); color:var(--ink); font-family:var(--sans);
+    line-height:1.55; -webkit-font-smoothing:antialiased;
+    background-image:radial-gradient(rgba(31,36,33,.06) 1px, transparent 1px);
+    background-size:16px 16px;
+  }
+  ::selection{ background:var(--kraft-soft); }
+  a{ color:var(--blue); }
+  .wrap{ max-width:940px; margin:0 auto; padding:0 20px; }
+  code{ font-family:var(--mono); background:var(--ink-soft); padding:1px 6px; border-radius:2px; font-size:.9em; }
+
+  /* MASTHEAD */
+  header.masthead{ padding:48px 0 30px; }
+  .eyebrow{ display:inline-block; font-family:var(--mono); font-size:.86rem; letter-spacing:.12em;
+    border:2px solid var(--blue); color:var(--blue); padding:4px 10px; transform:rotate(-2deg); background:var(--paper); }
+  h1{ font-family:var(--display); font-weight:400; font-size:clamp(1.9rem,5vw,2.9rem); letter-spacing:.01em;
+    margin:16px 0 10px; line-height:1.15; }
+  .lede{ max-width:64ch; font-size:1.02rem; line-height:1.6; opacity:.85; margin:0 0 18px; }
+  .factrow{ display:flex; flex-wrap:wrap; gap:10px; }
+  .fact{ font-family:var(--mono); font-size:.82rem; letter-spacing:.02em; background:var(--paper);
+    border:1.5px solid var(--ink); padding:.4em .8em; display:flex; gap:.5em; box-shadow:3px 3px 0 rgba(31,36,33,.14); }
+  .fact b{ color:var(--kraft-dark); font-weight:600; text-transform:uppercase; letter-spacing:.06em; font-size:.88rem; }
+
+  /* NAV */
+  nav.index{ position:sticky; top:0; z-index:20; background:color-mix(in srgb, var(--canvas) 92%, transparent);
+    backdrop-filter:blur(6px); border-top:2px solid var(--ink); border-bottom:2px solid var(--ink); }
+  nav.index .wrap{ display:flex; gap:2px; overflow-x:auto; padding:8px 20px; scrollbar-width:none; }
+  nav.index .wrap::-webkit-scrollbar{ display:none; }
+  nav.index a{ font-family:var(--mono); font-weight:600; letter-spacing:.03em; font-size:.82rem; text-decoration:none;
+    color:var(--ink); opacity:.85; padding:.5em .8em; white-space:nowrap; text-transform:uppercase; border:1px solid transparent; }
+  nav.index a:hover{ opacity:1; border-color:var(--ink); background:var(--paper); }
+  nav.index a.toc-link{ color:var(--blue); opacity:1; border-right:1.5px solid var(--ink); margin-right:8px; padding-right:16px; }
+  nav.index a.toc-link:hover{ background:var(--blue-soft); border-color:var(--ink); }
+
+  section{ padding:44px 0; border-bottom:2px dashed rgba(31,36,33,.3); }
+  section:last-of-type{ border-bottom:none; }
+  .section-head{ margin-bottom:26px; max-width:70ch; }
+  .kicker{ font-family:var(--mono); font-weight:600; font-size:.9rem; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--red); margin:0 0 .4em; }
+  h2{ font-family:var(--display); font-weight:400; font-size:clamp(1.4rem,2.8vw,1.9rem); margin:0 0 .25em; letter-spacing:.005em; }
+  .section-head p{ opacity:.82; margin:.5em 0 0; }
+
+  .obj-list{ display:grid; gap:10px; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); list-style:none; margin:0; padding:0; }
+  .obj-list li{ background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow); padding:14px 16px; font-size:.92rem; }
+  .obj-list li::before{ content:"▸"; color:var(--red); margin-right:.5em; font-weight:700; }
+
+  /* CALLOUT / TEACH NOTE */
+  .teach-note{ margin:18px 0; padding:12px 14px; border:1.5px dashed var(--blue); background:var(--blue-soft);
+    font-family:var(--mono); font-size:.82rem; line-height:1.6; }
+  .teach-note .label{ color:var(--blue); font-weight:600; letter-spacing:.05em; text-transform:uppercase; font-size:.88rem; display:block; margin-bottom:.4em; }
+  .teach-note.try{ border-color:var(--kraft-dark); background:var(--kraft-soft); }
+  .teach-note.try .label{ color:var(--kraft-dark); }
+
+  /* COLD OPEN */
+  .cold-open{ background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow); padding:18px 20px; margin:24px 0; }
+  .cold-open .tag{ font-family:var(--mono); font-size:.84rem; letter-spacing:.1em; color:var(--red); margin:0 0 8px; text-transform:uppercase; }
+  .cold-open p{ margin:0; font-size:.95rem; line-height:1.6; font-style:italic; }
+
+  /* CASE-FILE / DEPARTMENT CARDS */
+  .case-file{ position:relative; margin-top:16px; background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow); }
+  .case-file.featured{ margin-top:20px; }
+  .tab{ position:absolute; top:-15px; left:16px; background:var(--kraft); color:var(--ink); font-family:var(--mono);
+    font-weight:600; font-size:.82rem; letter-spacing:.06em; padding:4px 9px; border:1.5px solid var(--ink); border-bottom:none; }
+  .card-inner{ padding:22px 18px 18px; }
+  .card-head{ position:relative; display:flex; align-items:flex-start; gap:11px; margin-bottom:12px; padding-right:110px; }
+  .icon{ flex-shrink:0; margin-top:2px; }
+  .icon svg{ width:26px; height:26px; stroke:var(--ink); fill:none; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; }
+  .card-head h3{ font-family:var(--display); font-weight:400; font-size:1.02rem; margin:0 0 4px; line-height:1.25; }
+  .duty{ margin:0; font-size:.82rem; line-height:1.4; opacity:.85; }
+  .stamp{ position:absolute; top:-2px; right:0; border:2px solid var(--blue); color:var(--blue); font-family:var(--display);
+    font-size:.78rem; letter-spacing:.06em; padding:4px 6px; transform:rotate(-6deg); white-space:nowrap; }
+  dl.stats{ margin:12px 0 0; padding-top:10px; border-top:1px dashed rgba(31,36,33,.35); }
+  dl.stats > div{ display:flex; gap:8px; margin-bottom:7px; align-items:baseline; }
+  dl.stats dt{ font-family:var(--mono); font-size:.8rem; font-weight:600; letter-spacing:.05em; text-transform:uppercase;
+    color:var(--kraft-dark); min-width:96px; flex-shrink:0; }
+  dl.stats dd{ margin:0; font-size:.8rem; line-height:1.42; }
+  .incident-ticket{ margin-top:14px; padding-top:12px; border-top:2px dashed var(--ink); background:var(--ticket);
+    margin-left:-18px; margin-right:-18px; margin-bottom:-18px; padding-left:18px; padding-right:18px; padding-bottom:15px; }
+  .ticket-head{ display:flex; justify-content:space-between; align-items:baseline; font-family:var(--display); color:var(--red);
+    font-size:.84rem; letter-spacing:.08em; margin-bottom:6px; }
+  .ticket-head span.id{ font-family:var(--mono); color:var(--ink); opacity:.75; letter-spacing:.02em; }
+  .incident-ticket p{ margin:0 0 6px; font-size:.82rem; line-height:1.45; }
+  .incident-ticket p strong{ color:var(--red); }
+  .detect{ font-family:var(--mono); font-size:.88rem; opacity:.8; margin-bottom:0 !important; }
+  .incident-ticket .xref{ font-family:var(--mono); font-size:.8rem; opacity:.7; margin:8px 0 0 !important; }
+
+  /* WANTED POSTER (case file reveal) */
+  .wanted{ background:var(--paper); border:2px solid var(--ink); box-shadow:var(--shadow); padding:24px 24px 20px; margin:22px 0; position:relative; }
+  .wanted .eyebrow{ margin-bottom:14px; }
+  .wanted h3{ font-family:var(--display); font-weight:400; font-size:1.5rem; margin:0 0 6px; }
+  .wanted .mo{ font-size:.95rem; line-height:1.6; margin:0 0 14px; }
+  .wanted .threat{ position:absolute; top:20px; right:24px; border:2px solid var(--red); color:var(--red); font-family:var(--display);
+    font-size:.84rem; letter-spacing:.07em; padding:5px 8px; transform:rotate(5deg); }
+  .wanted .tell{ font-family:var(--mono); font-size:.8rem; border-top:2px dashed var(--ink); padding-top:12px; margin-top:12px; line-height:1.7; }
+  .wanted .xref{ font-family:var(--mono); font-size:.88rem; opacity:.75; margin-top:10px; }
+
+  /* TABLES */
+  table.spec{ width:100%; border-collapse:collapse; margin:18px 0; font-size:.86rem; }
+  table.spec th{ font-family:var(--mono); font-weight:600; text-transform:uppercase; letter-spacing:.05em; font-size:.86rem;
+    color:var(--kraft-dark); text-align:left; padding:8px 10px; border-bottom:2px solid var(--ink); }
+  table.spec td{ padding:9px 10px; border-bottom:1px dashed rgba(31,36,33,.3); vertical-align:top; }
+  table.spec tr:last-child td{ border-bottom:none; }
+  table.spec td.mono, table.spec th.mono{ font-family:var(--mono); }
+
+  /* FLASHCARDS */
+  .toolbar{ display:flex; gap:10px; align-items:center; margin-bottom:20px; flex-wrap:wrap; }
+  button.btn{ font-family:var(--mono); font-weight:600; letter-spacing:.03em; text-transform:uppercase; font-size:.9rem;
+    background:var(--paper); color:var(--ink); border:1.5px solid var(--ink); padding:.55em 1em; cursor:pointer; box-shadow:3px 3px 0 rgba(31,36,33,.14); }
+  button.btn:hover{ background:var(--kraft-soft); }
+  button.btn:focus-visible, a:focus-visible, .flashcard:focus-visible, input:focus-visible{ outline:2px solid var(--blue); outline-offset:2px; }
+  #cardProgress{ font-family:var(--mono); font-size:.85rem; opacity:.75; }
+  .card-grid{ display:grid; gap:16px; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); }
+  .flashcard{ perspective:1200px; height:190px; cursor:pointer; border:none; background:none; padding:0; font-family:inherit; text-align:left; width:100%; }
+  .flashcard-inner{ position:relative; width:100%; height:100%; transition:transform .5s cubic-bezier(.4,.2,.2,1); transform-style:preserve-3d; -webkit-transform-style:preserve-3d; will-change:transform; }
+  .flashcard.flipped .flashcard-inner{ transform:rotateY(180deg); -webkit-transform:rotateY(180deg); }
+  .flashcard-face{ position:absolute; inset:0; backface-visibility:hidden; -webkit-backface-visibility:hidden; -moz-backface-visibility:hidden; border:1.5px solid var(--ink); box-shadow:var(--shadow);
+    padding:15px; display:flex; flex-direction:column; justify-content:center; }
+  .flashcard-face.front{ background:var(--paper); transform:translateZ(.5px); }
+  .flashcard-face.back{ background:var(--ticket); transform:rotateY(180deg) translateZ(.5px); overflow-y:auto; }
+  .flashcard-face .lbl{ font-family:var(--mono); font-weight:600; letter-spacing:.1em; text-transform:uppercase; font-size:.82rem; color:var(--kraft-dark); margin-bottom:.5em; }
+  .flashcard-face.front .term{ font-family:var(--display); font-weight:400; font-size:1.05rem; letter-spacing:.01em; }
+  .flashcard-face.back .def{ font-size:.82rem; }
+  .flashcard.known .flashcard-face.front{ border-color:var(--blue); border-width:2px; }
+
+  /* QUIZ */
+  .quiz-q{ background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow); padding:18px 20px; margin-bottom:18px; }
+  .quiz-q .qtext{ font-weight:600; margin:0 0 13px; }
+  .quiz-q .qnum{ font-family:var(--display); color:var(--red); margin-right:.5em; }
+  .choices{ display:grid; gap:8px; }
+  .choice{ text-align:left; font-family:var(--sans); font-size:.9rem; background:var(--ticket); border:1.5px solid var(--ink);
+    padding:.65em .85em; cursor:pointer; color:var(--ink); }
+  .choice:hover{ border-color:var(--blue); }
+  .choice.correct{ background:var(--blue-soft); border-color:var(--blue); border-width:2px; }
+  .choice.incorrect{ background:var(--red-soft); border-color:var(--red); border-width:2px; }
+  .choice[disabled]{ cursor:default; }
+  .explain{ margin-top:12px; font-size:.84rem; opacity:.85; border-left:3px solid var(--kraft); padding-left:12px; display:none; font-family:var(--mono); }
+  .explain.show{ display:block; }
+  #quizScore{ font-family:var(--mono); font-size:.9rem; opacity:.75; margin-bottom:16px; }
+
+  /* EXAMPLES */
+  .example{ background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow); padding:20px 22px; margin-bottom:16px; }
+  .example h3{ font-family:var(--display); font-weight:400; font-size:1.15rem; margin:0 0 8px; }
+  .example .tag{ display:inline-block; font-family:var(--mono); font-weight:600; font-size:.86rem; text-transform:uppercase; letter-spacing:.07em;
+    color:var(--blue); background:var(--blue-soft); border:1px solid var(--blue); padding:.25em .6em; margin-bottom:10px; }
+  details.solution{ margin-top:12px; }
+  details.solution summary{ cursor:pointer; font-family:var(--mono); font-weight:600; letter-spacing:.03em; text-transform:uppercase;
+    font-size:.9rem; color:var(--blue); list-style:none; display:inline-flex; align-items:center; gap:.4em; }
+  details.solution summary::-webkit-details-marker{ display:none; }
+  details.solution summary::before{ content:"▸"; transition:transform .15s; }
+  details.solution[open] summary::before{ transform:rotate(90deg); }
+  details.solution .solbody{ margin-top:10px; padding:13px 15px; background:var(--ticket); font-size:.88rem; }
+
+  /* GLOSSARY */
+  #glossarySearch{ width:100%; max-width:400px; font-family:var(--sans); font-size:.9rem; padding:.65em .85em;
+    border:1.5px solid var(--ink); background:var(--paper); color:var(--ink); margin-bottom:16px; }
+  .alpha-nav{ display:flex; flex-wrap:wrap; gap:4px; margin-bottom:22px; }
+  .alpha-nav a{ font-family:var(--mono); font-weight:600; font-size:.82rem; width:1.8em; height:1.8em; display:flex;
+    align-items:center; justify-content:center; border:1px solid var(--ink); text-decoration:none; color:var(--ink); opacity:.35; }
+  .alpha-nav a.has{ opacity:1; background:var(--paper); }
+  .alpha-nav a.has:hover{ border-color:var(--blue); color:var(--blue); }
+  .glossary-letter{ font-family:var(--display); font-weight:400; color:var(--red); font-size:1.1rem; margin:20px 0 6px; }
+  dl.glossary{ margin:0; }
+  dl.glossary .gitem{ border-top:1px dashed rgba(31,36,33,.35); padding:11px 0; }
+  dl.glossary dt{ font-family:var(--mono); font-weight:600; font-size:.98rem; }
+  dl.glossary dd{ margin:.3em 0 0; opacity:.8; font-size:.86rem; }
+  .gitem.hidden{ display:none; }
+
+  footer{ padding:30px 0 60px; }
+  footer p{ opacity:.65; font-size:.82rem; font-family:var(--mono); letter-spacing:.02em; }
+
+  .back-to-top{ position:fixed; bottom:22px; right:22px; z-index:40; width:50px; height:50px;
+    background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow);
+    font-family:var(--display); font-size:1.4rem; color:var(--ink); line-height:1;
+    display:flex; align-items:center; justify-content:center; padding:0; cursor:pointer; text-decoration:none;
+    opacity:0; visibility:hidden; transform:translateY(10px);
+    transition:opacity .25s ease, transform .25s ease, visibility 0s .25s; }
+  .back-to-top.show{ opacity:1; visibility:visible; transform:translateY(0); transition:opacity .25s ease, transform .25s ease, visibility 0s; }
+  .back-to-top:hover{ background:var(--blue-soft); border-color:var(--blue); color:var(--blue); }
+  .back-to-top:focus-visible{ outline:2px solid var(--blue); outline-offset:2px; }
+
+  @media print{
+    body{ background:#fff; }
+    nav.index{ display:none; }
+    .case-file, .wanted, .quiz-q, .example, .flashcard-face{ box-shadow:none; }
+    .back-to-top{ display:none; }
+  }
+</style>
+
+<header class="masthead">
+  <div class="wrap">
+    <p class="eyebrow">IT131 · SESSION 06 · FIELD NOTES</p>
+    <h1>The Network Layer &amp; Address Resolution</h1>
+    <p class="lede">Meet Logistics — the department that picks the route across town for every shipment. And today, the case file Session 4 sealed two weeks ago finally opens: how a device that only knows an IP address gets the MAC address it actually needs to send anything at all.</p>
+    <div class="factrow">
+      <span class="fact"><b>New material</b> Module 8 — Network Layer</span>
+      <span class="fact"><b>New material</b> Module 9 — Address Resolution</span>
+    </div>
+  </div>
+</header>
+
+<nav class="index" aria-label="Section index">
+  <div class="wrap">
+    <a href="index.html" class="toc-link">↩ Contents</a>
+    <a href="#overview">Overview</a>
+    <a href="#logistics">Meet Logistics</a>
+    <a href="#ipv4">IPv4 Packet</a>
+    <a href="#ipv6">IPv6 Packet</a>
+    <a href="#routing">Routing Basics</a>
+    <a href="#arp">Address Resolution</a>
+    <a href="#impersonator">Case File: IR-02</a>
+    <a href="#flashcards">Flashcards</a>
+    <a href="#quiz">Quiz</a>
+    <a href="#examples">Examples</a>
+    <a href="#glossary">Glossary</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+  <!-- OVERVIEW -->
+  <section id="overview">
+    <div class="section-head">
+      <p class="kicker">Overview</p>
+      <h2>What Session 6 covers</h2>
+      <p>Module 8 is the layer that makes internetworking possible in the first place — it hands every packet an address that means something end-to-end, no matter how many switches and routers it crosses. Module 9 is the missing piece from Sessions 4 and 5: a packet carries an IP address, but nothing physically moves without a MAC address too. Address resolution is how one gets translated into the other.</p>
+    </div>
+    <ul class="obj-list">
+      <li>Explain the network layer's characteristics: connectionless, best-effort, media-independent</li>
+      <li>Identify the key fields of the IPv4 and IPv6 packet header</li>
+      <li>Compare a host routing table to a router routing table, and explain the default gateway's role</li>
+      <li>Explain the ARP process: request, reply, and the ARP table</li>
+      <li>Explain why a host ARPs for its default gateway instead of an off-subnet destination</li>
+      <li>Identify the tell for ARP spoofing and reopen IR-02, "The Impersonator"</li>
+    </ul>
+    <div class="teach-note">
+      <span class="label">Where this goes next</span>
+      Module 10 (Week 7) picks up router configuration directly from the routing-table concepts introduced here. The IPv4 header's addressing scheme is the setup for Module 11's subnetting math (Week 8) — and TTL's role in this session previews Module 13's ICMP and traceroute (Week 9).
+    </div>
+  </section>
+
+  <!-- MEET LOGISTICS -->
+  <section id="logistics">
+    <div class="section-head">
+      <p class="kicker">Case File</p>
+      <h2>Meet Logistics</h2>
+      <p>Front Desk formats the request. Logistics picks the route it travels. Every router on the network — and every routing table on it — is Logistics doing its one job, over and over, one packet at a time.</p>
+    </div>
+
+    <div class="cold-open">
+      <p class="tag">Cold open</p>
+      <p>Logistics doesn't care what's inside the envelope, and it doesn't hand-deliver anything itself. It just reads the destination address, checks it against a list of known routes, and points the packet toward whichever desk is the next best guess. Repeat that at every stop, and eventually it arrives.</p>
+    </div>
+
+    <div class="case-file featured">
+      <span class="tab">LAYER 03</span>
+      <div class="card-inner">
+        <div class="card-head">
+          <span class="icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M9 3 3 5v16l6-2 6 2 6-2V3l-6 2-6-2z"/><line x1="9" y1="3" x2="9" y2="19"/><line x1="15" y1="5" x2="15" y2="21"/></svg>
+          </span>
+          <div>
+            <h3>Logistics</h3>
+            <p class="duty">Picks the route across town for every shipment.</p>
+          </div>
+        </div>
+        <span class="stamp">OPERATIVE</span>
+        <dl class="stats">
+          <div><dt>PDU</dt><dd>Packet</dd></div>
+          <div><dt>Signature</dt><dd>IP, ICMP, OSPF, BGP</dd></div>
+          <div><dt>On the range</dt><dd>Your C8200 routers — this is their entire job description</dd></div>
+        </dl>
+        <div class="incident-ticket">
+          <div class="ticket-head"><span>INCIDENT REPORT</span><span class="id">IR-03</span></div>
+          <p><strong>The Forger</strong> — fakes the return address on a routing slip so the reply goes somewhere it shouldn't.</p>
+          <p class="detect">Tell: a source IP that doesn't match the expected subnet in a traceroute. <em>(Case stays sealed until Module 16 — today is just the address this incident forges.)</em></p>
+          <p class="xref">Full personnel file: <a href="osi-company-teaching-kit/osi-company/osi-company-directory.html#layer-03">Personnel Directory, LAYER 03</a></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- IPV4 PACKET -->
+  <section id="ipv4">
+    <div class="section-head">
+      <p class="kicker">Module 8</p>
+      <h2>The IPv4 packet header</h2>
+      <p>This is what Logistics actually reads. Every field earns its place — there's no padding in a header that gets processed at every single hop.</p>
+    </div>
+
+    <table class="spec">
+      <thead><tr><th>Field</th><th>Purpose</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;">Version</td><td>4 — identifies this as an IPv4 packet.</td></tr>
+        <tr><td style="font-weight:600;">Header Length</td><td>How long the header itself is, since IPv4 headers can carry optional fields.</td></tr>
+        <tr><td style="font-weight:600;">DSCP</td><td>Requests a priority/QoS treatment — e.g. marking voice traffic for lower latency.</td></tr>
+        <tr><td style="font-weight:600;">Total Length</td><td>The size of the whole packet, header plus data.</td></tr>
+        <tr><td style="font-weight:600;">Identification, Flags, Fragment Offset</td><td>Support fragmentation — splitting a packet that's too large for a link, and reassembling it at the destination.</td></tr>
+        <tr><td style="font-weight:600;">Time to Live (TTL)</td><td>A hop counter, decremented by one at every router. Reaches zero → the packet is dropped. Exists purely to stop a misrouted packet from looping forever.</td></tr>
+        <tr><td style="font-weight:600;">Protocol</td><td>Identifies what's riding inside — 6 for TCP, 17 for UDP, 1 for ICMP.</td></tr>
+        <tr><td style="font-weight:600;">Header Checksum</td><td>Error-checks the header only (not the payload) — recalculated at every hop, since TTL changes the header each time.</td></tr>
+        <tr><td style="font-weight:600;">Source / Destination IPv4 Address</td><td>32-bit addresses. Unlike the MAC addressing from Session 4, these stay the same the entire trip — end-to-end, not hop-to-hop.</td></tr>
+      </tbody>
+    </table>
+
+    <div class="teach-note">
+      <span class="label">Connectionless &amp; best-effort</span>
+      The network layer doesn't set up a path before sending, and it doesn't guarantee delivery — no handshake, no acknowledgment, no retransmission. Every packet is routed independently, and it's entirely possible for packets from the same conversation to take different paths. Reliability, when it's needed, is Module 14's job (the transport layer), not this one.
+    </div>
+  </section>
+
+  <!-- IPV6 PACKET -->
+  <section id="ipv6">
+    <div class="section-head">
+      <p class="kicker">Module 8</p>
+      <h2>The IPv6 packet header</h2>
+      <p>Same job, radically simplified. IPv6 dropped the rarely-used fields entirely rather than carrying them everywhere just in case.</p>
+    </div>
+
+    <table class="spec">
+      <thead><tr><th>Field</th><th>Purpose</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;">Version</td><td>6 — identifies this as an IPv6 packet.</td></tr>
+        <tr><td style="font-weight:600;">Traffic Class</td><td>IPv6's version of DSCP — priority/QoS marking.</td></tr>
+        <tr><td style="font-weight:600;">Flow Label</td><td>Optionally tags packets belonging to the same flow, so routers can treat them consistently without re-inspecting every packet.</td></tr>
+        <tr><td style="font-weight:600;">Payload Length</td><td>The size of the data following the header (the header itself is always a fixed 40 bytes).</td></tr>
+        <tr><td style="font-weight:600;">Next Header</td><td>IPv6's version of the Protocol field — identifies the next header or upper-layer protocol.</td></tr>
+        <tr><td style="font-weight:600;">Hop Limit</td><td>IPv6's version of TTL — decremented at every router, packet dropped at zero.</td></tr>
+        <tr><td style="font-weight:600;">Source / Destination IPv6 Address</td><td>128-bit addresses — the format from Session 4's hex teach-note, four hex digits per colon-separated group.</td></tr>
+      </tbody>
+    </table>
+
+    <div class="teach-note">
+      <span class="label">What IPv6 dropped, and why</span>
+      No Header Checksum — recalculating it at every hop was expensive, and it duplicated error-checking already happening at Layer 2 (FCS) and often at Layer 4. No fragmentation fields in the base header, either — IPv6 routers don't fragment packets in transit at all; the sending host is expected to discover the path's maximum size up front instead.
+    </div>
+  </section>
+
+  <!-- ROUTING BASICS -->
+  <section id="routing">
+    <div class="section-head">
+      <p class="kicker">Module 8</p>
+      <h2>Routing tables — host and router</h2>
+      <p>Every IP-capable device keeps some version of a routing table. A host's is usually short; a router's is Logistics's entire personnel file.</p>
+    </div>
+
+    <table class="spec">
+      <thead><tr><th></th><th>What it holds</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;">Host routing table</td><td>A route to its own local subnet, plus a <strong>default route</strong> — send anything else to the <strong>default gateway</strong> and let it figure out the rest.</td></tr>
+        <tr><td style="font-weight:600;">Router routing table</td><td>Directly connected networks, static routes an admin typed in by hand, and dynamic routes learned from other routers via a routing protocol (OSPF, BGP).</td></tr>
+      </tbody>
+    </table>
+
+    <div class="teach-note">
+      <span class="label">The forwarding decision</span>
+      A router compares a packet's destination address against every route it knows and forwards using the <strong>most specific match</strong> — the route describing the smallest, most exact slice of address space wins over a broader one. No match at all, and the packet follows the router's own default route if it has one; otherwise it's dropped, and an ICMP "destination unreachable" message goes back to the sender.
+    </div>
+  </section>
+
+  <!-- ARP -->
+  <section id="arp">
+    <div class="section-head">
+      <p class="kicker">Module 9</p>
+      <h2>Address resolution: from IP to MAC</h2>
+      <p>A packet has a destination IP address. A frame needs a destination MAC address. ARP is the process that turns the first into the second — and it's the exact mechanism behind Session 4's ARP-table teach-note, finally explained in full.</p>
+    </div>
+
+    <table class="spec">
+      <thead><tr><th>Step</th><th>What happens</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;">1. Check the ARP table</td><td>Before sending, a device checks its own ARP cache for an existing IP → MAC mapping. Found one? Skip straight to sending the frame.</td></tr>
+        <tr><td style="font-weight:600;">2. ARP request</td><td>No entry — <strong>broadcast</strong> an ARP request: "Who has this IP? Tell this MAC." Every device on the segment receives it; only the owner responds.</td></tr>
+        <tr><td style="font-weight:600;">3. ARP reply</td><td>The device that owns the IP sends a <strong>unicast</strong> ARP reply straight back to the requester, carrying its own MAC address.</td></tr>
+        <tr><td style="font-weight:600;">4. Cache it</td><td>The requester stores the new IP → MAC mapping in its ARP table, subject to its own aging timer — the exact same aging pattern as a switch's MAC address table from Session 5.</td></tr>
+      </tbody>
+    </table>
+
+    <div class="teach-note">
+      <span class="label">Off-subnet destinations</span>
+      If the destination IP isn't on the local subnet, a host ARPs for its <strong>default gateway's</strong> MAC address instead — never the final destination's. The packet's destination IP still points all the way to the real target (end-to-end); only the frame's destination MAC changes, hop by hop, exactly as Session 4 described.
+    </div>
+
+    <div class="teach-note try">
+      <span class="label">Try it</span>
+      Open a terminal and run <code>arp -a</code> (Windows, macOS, and Linux all support it). Every row is a live IP → MAC mapping your own machine has already cached — the exact table this section just described, sitting on your own computer right now.
+    </div>
+  </section>
+
+  <!-- IMPERSONATOR CASE FILE -->
+  <section id="impersonator">
+    <div class="section-head">
+      <p class="kicker">Wanted</p>
+      <h2>Case File: IR-02, The Impersonator</h2>
+      <p>Sealed since Session 4. Now that ARP is on the table, so is the incident that abuses it.</p>
+    </div>
+
+    <div class="wanted">
+      <span class="threat">THREAT LEVEL: INTERMEDIATE</span>
+      <p class="eyebrow">CROSS-REF LAYER 02 — LOCAL DISPATCH</p>
+      <h3>The Impersonator</h3>
+      <p class="mo">ARP has no built-in authentication — nothing stops a device from sending an ARP reply nobody asked for, claiming to own an IP address that isn't its own. Every device that believes it updates its ARP table with a lie, and starts sending that traffic straight to the impersonator instead.</p>
+      <p class="tell"><strong>Tell:</strong> two different IP addresses claiming the same MAC address in the ARP table.<br><strong>Countermeasure:</strong> Dynamic ARP Inspection on managed switches, and static ARP entries on the handful of hosts where it matters most.</p>
+      <p class="xref">See also: <a href="osi-company-teaching-kit/osi-company/osi-company-directory.html#layer-02">Personnel Directory, LAYER 02</a> · <a href="osi-company-teaching-kit/osi-company/osi-security-bulletin.html#ir-02">Security Bulletin, IR-02</a> · <a href="osi-company-teaching-kit/osi-company/osi-episode-02-script.html">Episode 02, "The Impersonator"</a></p>
+    </div>
+
+    <div class="teach-note">
+      <span class="label">Debrief</span>
+      This is why ARP spoofing is usually step one of a bigger attack, not the whole thing — once traffic is quietly rerouted through the impersonator, everything downstream (sniffing, session hijacking) gets easier. Full mechanism, damage report, and repair checklist in Episode 02, linked above.
+    </div>
+  </section>
+
+  <!-- FLASHCARDS -->
+  <section id="flashcards">
+    <div class="section-head">
+      <p class="kicker">Study</p>
+      <h2>Flashcards</h2>
+      <p>Click to flip. Double-click to mark as known.</p>
+    </div>
+    <div class="toolbar">
+      <button class="btn" id="shuffleBtn">Shuffle</button>
+      <button class="btn" id="resetKnownBtn">Reset progress</button>
+      <span id="cardProgress"></span>
+    </div>
+    <div class="card-grid" id="cardGrid"></div>
+  </section>
+
+  <!-- QUIZ -->
+  <section id="quiz">
+    <div class="section-head">
+      <p class="kicker">Check yourself</p>
+      <h2>Sample questions</h2>
+      <p>Pick an answer to see if you're right — same style as the module quiz.</p>
+    </div>
+    <div id="quizScore"></div>
+    <div id="quizList"></div>
+    <button class="btn" id="resetQuizBtn">Reset quiz</button>
+  </section>
+
+  <!-- EXAMPLES -->
+  <section id="examples">
+    <div class="section-head">
+      <p class="kicker">Applied</p>
+      <h2>Worked examples</h2>
+      <p>Think it through before you expand the answer.</p>
+    </div>
+
+    <div class="example">
+      <span class="tag">ARP, same subnet</span>
+      <h3>The first message on a new segment</h3>
+      <p>PC A wants to send data to PC B for the first time. Both are on the same subnet, and PC A's ARP table is empty. Walk through what happens before the first real frame can be sent.</p>
+      <details class="solution">
+        <summary>Show answer</summary>
+        <div class="solbody">
+          <p><strong>Answer:</strong> PC A checks its ARP table, finds nothing for PC B's IP, and broadcasts an ARP request ("Who has this IP? Tell this MAC") to every device on the segment. Only PC B recognizes the IP as its own and sends a unicast ARP reply back with its MAC address. PC A caches that mapping in its ARP table, and only now can it actually address and send the real frame to PC B.</p>
+        </div>
+      </details>
+    </div>
+
+    <div class="example">
+      <span class="tag">ARP, off-subnet</span>
+      <h3>Who does the ARP request actually target?</h3>
+      <p>A laptop on Subnet A needs to reach a server on Subnet B, three routers away. Its ARP table is empty. Does it ARP for the server's IP address?</p>
+      <details class="solution">
+        <summary>Show answer</summary>
+        <div class="solbody">
+          <p><strong>No — it ARPs for its default gateway.</strong> A host only ever ARPs for something on its own local subnet, since ARP requests are broadcasts that never cross a router. The packet's destination IP still names the real server the whole way (end-to-end), but the frame's destination MAC is the local gateway's — Local Dispatch hands it to the next desk, which repeats this same process on the next subnet.</p>
+        </div>
+      </details>
+    </div>
+
+    <div class="example">
+      <span class="tag">TTL</span>
+      <h3>The packet that never arrives</h3>
+      <p>A misconfigured router creates a routing loop. A packet enters the loop with a TTL of 5. What happens, and why doesn't it loop forever?</p>
+      <details class="solution">
+        <summary>Show answer</summary>
+        <div class="solbody">
+          <p><strong>Answer:</strong> Each router in the loop decrements the TTL by 1. After 5 hops through the loop, TTL reaches 0, and the router holding it at that moment drops the packet — and sends an ICMP Time Exceeded message back to the original sender. TTL exists exactly for this scenario: without it, a misrouted packet would circulate forever, consuming bandwidth indefinitely. (This same mechanism, incrementing TTL by one probe at a time, is how <code>traceroute</code> works — a preview of Module 13.)</p>
+        </div>
+      </details>
+    </div>
+
+    <div class="example">
+      <span class="tag">Routing table</span>
+      <h3>Which route wins?</h3>
+      <p>A router's table has a route to <code>192.168.1.0/24</code> and a separate default route (<code>0.0.0.0/0</code>). A packet arrives addressed to <code>192.168.1.50</code>. Which route does the router use, and why?</p>
+      <details class="solution">
+        <summary>Show answer</summary>
+        <div class="solbody">
+          <p><strong>The 192.168.1.0/24 route.</strong> A router always forwards using the <strong>most specific matching route</strong> available, not just the first one it finds. The default route matches everything, but 192.168.1.0/24 matches this destination far more precisely — so it wins. The default route only gets used when nothing more specific matches at all.</p>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <!-- GLOSSARY -->
+  <section id="glossary">
+    <div class="section-head">
+      <p class="kicker">Reference</p>
+      <h2>Glossary &amp; index</h2>
+      <p>Every term from this session, searchable and indexed A–Z.</p>
+    </div>
+    <input type="text" id="glossarySearch" placeholder="Search terms…" aria-label="Search glossary">
+    <div class="alpha-nav" id="alphaNav"></div>
+    <dl class="glossary" id="glossaryList"></dl>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>IT131 · CCNA: Introduction to Networks · Session 6 reference — more sessions added as the course progresses.</p>
+  </div>
+</footer>
+
+<button id="backToTop" class="back-to-top" aria-label="Back to top" title="Back to top">↑</button>
+
+<script>
+  const TERMS = [
+    {t:"ARP (Address Resolution Protocol)", d:"The process that resolves a known IPv4 address into the MAC address needed to actually send a frame to it, using a broadcast request and a unicast reply."},
+    {t:"ARP cache / ARP table", d:"A device's local store of IP-to-MAC mappings it has already resolved. Entries age out over time, the same way a switch's MAC address table does."},
+    {t:"ARP reply", d:"A unicast frame sent by the device that owns a requested IP address, carrying its MAC address back to the original requester."},
+    {t:"ARP request", d:"A broadcast frame asking every device on the local segment 'who has this IP? Tell this MAC' — only the device that owns the IP responds."},
+    {t:"Best-effort delivery", d:"A network-layer characteristic: no guarantee a packet arrives, arrives in order, or arrives at all. Reliability, when needed, is added at the transport layer instead."},
+    {t:"Connectionless", d:"A network-layer characteristic: no path is set up before sending, and every packet is routed independently — packets from the same conversation can even take different paths."},
+    {t:"Default gateway", d:"The router a host sends traffic to when the destination isn't on its own local subnet. A host ARPs for the default gateway's MAC address, never an off-subnet destination's."},
+    {t:"Destination IP address", d:"A field in the IP header naming the packet's ultimate target. Stays the same for the entire trip — end-to-end, unlike the frame's destination MAC address."},
+    {t:"Directly connected route", d:"A routing table entry for a network the router itself has an interface on — no configuration or routing protocol needed, it's automatic."},
+    {t:"Dynamic route", d:"A routing table entry learned automatically from another router via a routing protocol (e.g. OSPF, BGP), rather than typed in by an administrator."},
+    {t:"Flags (IPv4)", d:"A field controlling whether a packet is allowed to be fragmented and whether more fragments follow — part of IPv4's fragmentation support."},
+    {t:"Fragment Offset", d:"A field indicating where a fragment belongs within the original, unfragmented packet, so the destination can reassemble the pieces in order."},
+    {t:"Header Checksum (IPv4)", d:"An IPv4 field that error-checks the header only (not the payload). Recalculated at every hop, since TTL changes the header each time it's forwarded. IPv6 removed this field entirely."},
+    {t:"Hop Limit (IPv6)", d:"IPv6's equivalent of TTL — decremented by one at every router; the packet is dropped when it reaches zero."},
+    {t:"IPv4 packet header", d:"The Layer 3 header format defining fields like Version, TTL, Protocol, and the 32-bit source/destination addresses."},
+    {t:"IPv6 packet header", d:"A simplified, fixed 40-byte Layer 3 header — no header checksum, no in-transit fragmentation fields — with 128-bit source/destination addresses."},
+    {t:"Media independence", d:"A network-layer characteristic: the same IP packet works over Ethernet, Wi-Fi, or any other Layer 1/2 medium without any change to the packet itself."},
+    {t:"Neighbor Discovery Protocol (NDP)", d:"IPv6's replacement for ARP, built on ICMPv6, used to resolve a neighbor's IPv6 address to its MAC address."},
+    {t:"Next Header (IPv6)", d:"IPv6's equivalent of the IPv4 Protocol field — identifies the next header or the upper-layer protocol carried inside."},
+    {t:"Protocol field (IPv4)", d:"Identifies the upper-layer protocol carried inside the packet — e.g. 6 for TCP, 17 for UDP, 1 for ICMP."},
+    {t:"Routing table", d:"A device's list of known destination networks and how to reach them. A host's is short (local subnet + default route); a router's includes directly connected, static, and dynamic routes."},
+    {t:"Source IP address", d:"A field in the IP header naming the packet's origin. Stays the same for the entire trip, unlike the frame's source MAC address."},
+    {t:"Static route", d:"A routing table entry an administrator types in by hand, rather than one learned automatically."},
+    {t:"Time to Live (TTL)", d:"An IPv4 field acting as a hop counter, decremented by one at every router. Reaching zero causes the packet to be dropped — prevents a misrouted packet from looping forever."},
+    {t:"Traffic Class (IPv6)", d:"IPv6's equivalent of IPv4's DSCP field — used to mark packets for priority/QoS handling."},
+  ];
+
+  const QUIZ = [
+    {
+      q:"What does it mean that the network layer is 'connectionless'?",
+      choices:["It never successfully delivers a packet","No path is set up before sending — every packet is routed independently","It only works on wired connections","It requires a VPN"],
+      correct:1,
+      explain:"Connectionless means no handshake or path setup happens first — each packet is forwarded on its own, and packets from the same conversation could even take different routes."
+    },
+    {
+      q:"What is the network layer's PDU?",
+      choices:["Frame","Segment","Packet","Bits"],
+      correct:2,
+      explain:"The network layer's protocol data unit is the packet — a segment wrapped with Layer 3 addressing."
+    },
+    {
+      q:"What field in the IPv4 header prevents a packet from looping forever?",
+      choices:["Header Checksum","Time to Live (TTL)","Protocol","Fragment Offset"],
+      correct:1,
+      explain:"TTL is decremented by one at every router hop. When it reaches zero, the packet is dropped rather than continuing to circulate."
+    },
+    {
+      q:"What is IPv6's equivalent of TTL?",
+      choices:["Flow Label","Traffic Class","Hop Limit","Next Header"],
+      correct:2,
+      explain:"Hop Limit does exactly what TTL does in IPv4 — decremented at each router, packet dropped at zero."
+    },
+    {
+      q:"Why doesn't the IPv6 header include a checksum field?",
+      choices:["IPv6 packets can never be corrupted","It duplicated error-checking already happening at other layers, and recalculating it at every hop was expensive","IPv6 doesn't support error checking at all","Only IPv4 routers can calculate checksums"],
+      correct:1,
+      explain:"IPv6 removed the header checksum to simplify router processing, relying instead on Layer 2's FCS and upper-layer checksums to catch errors."
+    },
+    {
+      q:"A host needs to reach a destination on a different subnet. What MAC address does it ARP for?",
+      choices:["The final destination's MAC address","Its own default gateway's MAC address","A broadcast MAC address for the destination","It doesn't need to ARP for off-subnet destinations"],
+      correct:1,
+      explain:"ARP requests are broadcasts that never cross a router, so a host can only resolve addresses on its own local subnet — it ARPs for the default gateway and lets that router continue the journey."
+    },
+    {
+      q:"What is the destination address of an ARP request frame?",
+      choices:["Unicast, to the target device","Broadcast (FF:FF:FF:FF:FF:FF)","Multicast","The default gateway's MAC address"],
+      correct:1,
+      explain:"An ARP request is broadcast to every device on the local segment, since the sender doesn't yet know which device owns the target IP."
+    },
+    {
+      q:"What is the destination address of an ARP reply frame?",
+      choices:["Broadcast, to the whole segment","Multicast","Unicast, back to the original requester","It has no destination address"],
+      correct:2,
+      explain:"Once the owning device knows who asked, it replies directly (unicast) to the requester's MAC address — no reason to broadcast the answer."
+    },
+    {
+      q:"A router's table has no route matching a packet's destination, and no default route configured. What happens?",
+      choices:["The packet is forwarded out every interface","The packet is queued until a route appears","The packet is dropped and an ICMP destination-unreachable message is sent back","The router creates a new route automatically"],
+      correct:2,
+      explain:"With no matching route and no default route to fall back on, the router drops the packet and notifies the sender via ICMP."
+    },
+    {
+      q:"Two different IP addresses are seen claiming the same MAC address in an ARP table. What incident does this describe?",
+      choices:["IR-01, The Saboteur","IR-02, The Impersonator","IR-03, The Forger","This is normal ARP behavior"],
+      correct:1,
+      explain:"This is the tell for ARP spoofing — The Impersonator sends unsolicited ARP replies claiming an IP address that isn't its own, which is exactly why two IPs end up mapped to one attacker-controlled MAC."
+    },
+  ];
+
+  const grid = document.getElementById('cardGrid');
+  TERMS.forEach((item, i) => {
+    const card = document.createElement('button');
+    card.className = 'flashcard';
+    card.setAttribute('aria-label', 'Flashcard: ' + item.t + '. Press to flip.');
+    card.dataset.i = i;
+    card.innerHTML = `
+      <div class="flashcard-inner">
+        <div class="flashcard-face front"><div class="lbl">Term</div><div class="term">${item.t}</div></div>
+        <div class="flashcard-face back"><div class="lbl">Definition</div><div class="def">${item.d}</div></div>
+      </div>`;
+    card.addEventListener('click', () => card.classList.toggle('flipped'));
+    card.addEventListener('dblclick', () => { card.classList.toggle('known'); updateProgress(); });
+    grid.appendChild(card);
+  });
+  function updateProgress(){
+    const known = document.querySelectorAll('.flashcard.known').length;
+    document.getElementById('cardProgress').textContent = `${known} / ${TERMS.length} marked known (double-click a card to mark it)`;
+  }
+  updateProgress();
+  document.getElementById('shuffleBtn').addEventListener('click', () => {
+    const cards = Array.from(grid.children);
+    cards.sort(() => Math.random() - 0.5);
+    cards.forEach(c => { c.classList.remove('flipped'); grid.appendChild(c); });
+  });
+  document.getElementById('resetKnownBtn').addEventListener('click', () => {
+    document.querySelectorAll('.flashcard.known').forEach(c => c.classList.remove('known'));
+    updateProgress();
+  });
+
+  const quizList = document.getElementById('quizList');
+  let score = 0, answered = 0;
+  function renderQuiz(){
+    quizList.innerHTML = ''; score = 0; answered = 0;
+    QUIZ.forEach((item, qi) => {
+      const box = document.createElement('div');
+      box.className = 'quiz-q';
+      box.innerHTML = `<p class="qtext"><span class="qnum">Q${qi+1}.</span>${item.q}</p><div class="choices"></div><p class="explain"></p>`;
+      const choicesEl = box.querySelector('.choices');
+      item.choices.forEach((c, ci) => {
+        const b = document.createElement('button');
+        b.className = 'choice'; b.textContent = c;
+        b.addEventListener('click', () => {
+          if (box.dataset.done) return;
+          box.dataset.done = '1'; answered++;
+          if (ci === item.correct) score++;
+          Array.from(choicesEl.children).forEach((el, ei) => {
+            el.disabled = true;
+            if (ei === item.correct) el.classList.add('correct');
+            else if (ei === ci) el.classList.add('incorrect');
+          });
+          box.querySelector('.explain').textContent = item.explain;
+          box.querySelector('.explain').classList.add('show');
+          updateScore();
+        });
+        choicesEl.appendChild(b);
+      });
+      quizList.appendChild(box);
+    });
+    updateScore();
+  }
+  function updateScore(){
+    document.getElementById('quizScore').textContent =
+      answered === 0 ? `${QUIZ.length} questions — click an answer to check yourself` : `Score: ${score} / ${answered} answered`;
+  }
+  renderQuiz();
+  document.getElementById('resetQuizBtn').addEventListener('click', renderQuiz);
+
+  const glossaryList = document.getElementById('glossaryList');
+  const alphaNav = document.getElementById('alphaNav');
+  const letters = [...new Set(TERMS.map(t => t.t[0].toUpperCase()))];
+  'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').forEach(L => {
+    const a = document.createElement('a');
+    a.textContent = L;
+    if (letters.includes(L)) { a.href = '#g-' + L; a.className = 'has'; }
+    else { a.href = 'javascript:void(0)'; }
+    alphaNav.appendChild(a);
+  });
+  let currentLetter = '';
+  TERMS.forEach(item => {
+    const L = item.t[0].toUpperCase();
+    if (L !== currentLetter) {
+      currentLetter = L;
+      const h = document.createElement('div');
+      h.className = 'glossary-letter'; h.id = 'g-' + L; h.textContent = L;
+      glossaryList.appendChild(h);
+    }
+    const wrap = document.createElement('div');
+    wrap.className = 'gitem';
+    wrap.innerHTML = `<dt>${item.t}</dt><dd>${item.d}</dd>`;
+    wrap.dataset.search = (item.t + ' ' + item.d).toLowerCase();
+    glossaryList.appendChild(wrap);
+  });
+  document.getElementById('glossarySearch').addEventListener('input', (e) => {
+    const q = e.target.value.toLowerCase().trim();
+    document.querySelectorAll('.gitem').forEach(el => {
+      el.classList.toggle('hidden', q && !el.dataset.search.includes(q));
+    });
+  });
+
+  const backToTop = document.getElementById('backToTop');
+  function toggleBackToTop(){ backToTop.classList.toggle('show', window.scrollY > 480); }
+  window.addEventListener('scroll', toggleBackToTop, {passive:true});
+  toggleBackToTop();
+  backToTop.addEventListener('click', () => window.scrollTo({top:0, behavior:'smooth'}));
+</script>
