@@ -1,0 +1,809 @@
+<title>IT131 Session 7 – Basic Router Configuration &amp; Midterm Review</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --paper:#EDE8DD; --canvas:#D9D2C3; --ink:#1F2421; --kraft:#B08554; --kraft-dark:#664526;
+    --blue:#2F4858; --red:#A23A2E; --ticket:#F3E7E2;
+    --blue-soft:rgba(47,72,88,.08); --red-soft:rgba(162,58,46,.08);
+    --kraft-soft:rgba(176,133,84,.14); --ink-soft:rgba(31,36,33,.06);
+    --shadow:5px 5px 0 rgba(31,36,33,.16);
+    --display:'Special Elite','Courier New',monospace;
+    --sans:'IBM Plex Sans', system-ui, sans-serif;
+    --mono:'IBM Plex Mono', monospace;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth; font-size:125%;}
+  body{
+    margin:0; background:var(--canvas); color:var(--ink); font-family:var(--sans);
+    line-height:1.55; -webkit-font-smoothing:antialiased;
+    background-image:radial-gradient(rgba(31,36,33,.06) 1px, transparent 1px);
+    background-size:16px 16px;
+  }
+  ::selection{ background:var(--kraft-soft); }
+  a{ color:var(--blue); }
+  .wrap{ max-width:940px; margin:0 auto; padding:0 20px; }
+  code{ font-family:var(--mono); background:var(--ink-soft); padding:1px 6px; border-radius:2px; font-size:.9em; }
+
+  header.masthead{ padding:48px 0 30px; }
+  .eyebrow{ display:inline-block; font-family:var(--mono); font-size:.86rem; letter-spacing:.12em;
+    border:2px solid var(--blue); color:var(--blue); padding:4px 10px; transform:rotate(-2deg); background:var(--paper); }
+  h1{ font-family:var(--display); font-weight:400; font-size:clamp(1.9rem,5vw,2.9rem); letter-spacing:.01em;
+    margin:16px 0 10px; line-height:1.15; }
+  .lede{ max-width:64ch; font-size:1.02rem; line-height:1.6; opacity:.85; margin:0 0 18px; }
+  .factrow{ display:flex; flex-wrap:wrap; gap:10px; }
+  .fact{ font-family:var(--mono); font-size:.82rem; letter-spacing:.02em; background:var(--paper);
+    border:1.5px solid var(--ink); padding:.4em .8em; display:flex; gap:.5em; box-shadow:3px 3px 0 rgba(31,36,33,.14); }
+  .fact b{ color:var(--kraft-dark); font-weight:600; text-transform:uppercase; letter-spacing:.06em; font-size:.88rem; }
+
+  nav.index{ position:sticky; top:0; z-index:20; background:color-mix(in srgb, var(--canvas) 92%, transparent);
+    backdrop-filter:blur(6px); border-top:2px solid var(--ink); border-bottom:2px solid var(--ink); }
+  nav.index .wrap{ display:flex; gap:2px; overflow-x:auto; padding:8px 20px; scrollbar-width:none; }
+  nav.index .wrap::-webkit-scrollbar{ display:none; }
+  nav.index a{ font-family:var(--mono); font-weight:600; letter-spacing:.03em; font-size:.82rem; text-decoration:none;
+    color:var(--ink); opacity:.85; padding:.5em .8em; white-space:nowrap; text-transform:uppercase; border:1px solid transparent; }
+  nav.index a:hover{ opacity:1; border-color:var(--ink); background:var(--paper); }
+  nav.index a.toc-link{ color:var(--blue); opacity:1; border-right:1.5px solid var(--ink); margin-right:8px; padding-right:16px; }
+  nav.index a.toc-link:hover{ background:var(--blue-soft); border-color:var(--ink); }
+
+  section{ padding:44px 0; border-bottom:2px dashed rgba(31,36,33,.3); }
+  section:last-of-type{ border-bottom:none; }
+  .section-head{ margin-bottom:26px; max-width:70ch; }
+  .kicker{ font-family:var(--mono); font-weight:600; font-size:.9rem; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--red); margin:0 0 .4em; }
+  h2{ font-family:var(--display); font-weight:400; font-size:clamp(1.4rem,2.8vw,1.9rem); margin:0 0 .25em; letter-spacing:.005em; }
+  .section-head p{ opacity:.82; margin:.5em 0 0; }
+  h3.sub{ font-family:var(--mono); font-size:1.02rem; margin:24px 0 10px; text-transform:uppercase; letter-spacing:.04em; color:var(--kraft-dark); }
+
+  .obj-list{ display:grid; gap:10px; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); list-style:none; margin:0; padding:0; }
+  .obj-list li{ background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow); padding:14px 16px; font-size:.92rem; }
+  .obj-list li::before{ content:"▸"; color:var(--red); margin-right:.5em; font-weight:700; }
+
+  .teach-note{ margin:18px 0; padding:12px 14px; border:1.5px dashed var(--blue); background:var(--blue-soft);
+    font-family:var(--mono); font-size:.82rem; line-height:1.6; }
+  .teach-note .label{ color:var(--blue); font-weight:600; letter-spacing:.05em; text-transform:uppercase; font-size:.88rem; display:block; margin-bottom:.4em; }
+  .teach-note.warn{ border-color:var(--red); background:var(--red-soft); }
+  .teach-note.warn .label{ color:var(--red); }
+  .teach-note.preview{ border-color:var(--kraft-dark); background:var(--kraft-soft); }
+  .teach-note.preview .label{ color:var(--kraft-dark); }
+
+  .cold-open{ background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow); padding:18px 20px; margin:24px 0; }
+  .cold-open .tag{ font-family:var(--mono); font-size:.84rem; letter-spacing:.1em; color:var(--red); margin:0 0 8px; text-transform:uppercase; }
+  .cold-open p{ margin:0; font-size:.95rem; line-height:1.6; font-style:italic; }
+
+  /* TERMINAL BLOCKS */
+  .terminal{ background:var(--ticket); color:var(--ink); border:1.5px solid var(--ink); margin:20px 0; overflow:hidden; box-shadow:var(--shadow); }
+  .terminal-header{ background:color-mix(in srgb, var(--ticket) 80%, #fff); padding:8px 14px; border-bottom:1px solid rgba(31,36,33,.15); display:flex; align-items:center; gap:6px; }
+  .terminal-dot{ width:10px; height:10px; border-radius:50%; }
+  .terminal-dot.r{ background:var(--red); }
+  .terminal-dot.y{ background:var(--kraft-dark); }
+  .terminal-dot.g{ background:var(--blue); }
+  .terminal-title{ font-family:var(--mono); font-size:.8rem; color:var(--kraft-dark); margin-left:8px; letter-spacing:.04em; }
+  .terminal-body{ padding:14px 18px; font-family:'Courier New', Courier, monospace; font-size:.84rem; line-height:1.65; overflow-x:auto; white-space:pre-wrap; word-wrap:break-word; }
+  .terminal-body .prompt{ color:var(--blue); font-weight:700; }
+  .terminal-body .cmd{ color:var(--ink); font-weight:600; }
+  .terminal-body .comment{ color:var(--kraft-dark); font-style:italic; }
+  .terminal-body .hl{ color:var(--red); font-weight:600; }
+  .terminal-body .out{ color:var(--ink); opacity:.7; }
+
+  table.spec{ width:100%; border-collapse:collapse; margin:18px 0; font-size:.86rem; }
+  table.spec th{ font-family:var(--mono); font-weight:600; text-transform:uppercase; letter-spacing:.05em; font-size:.86rem;
+    color:var(--kraft-dark); text-align:left; padding:8px 10px; border-bottom:2px solid var(--ink); }
+  table.spec td{ padding:9px 10px; border-bottom:1px dashed rgba(31,36,33,.3); vertical-align:top; }
+  table.spec tr:last-child td{ border-bottom:none; }
+  table.spec td.mono, table.spec th.mono{ font-family:var(--mono); }
+
+  .toolbar{ display:flex; gap:10px; align-items:center; margin-bottom:20px; flex-wrap:wrap; }
+  button.btn{ font-family:var(--mono); font-weight:600; letter-spacing:.03em; text-transform:uppercase; font-size:.9rem;
+    background:var(--paper); color:var(--ink); border:1.5px solid var(--ink); padding:.55em 1em; cursor:pointer; box-shadow:3px 3px 0 rgba(31,36,33,.14); }
+  button.btn:hover{ background:var(--kraft-soft); }
+  button.btn:focus-visible, a:focus-visible, .flashcard:focus-visible, input:focus-visible{ outline:2px solid var(--blue); outline-offset:2px; }
+  #cardProgress{ font-family:var(--mono); font-size:.85rem; opacity:.75; }
+  .card-grid{ display:grid; gap:16px; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); }
+  .flashcard{ perspective:1200px; height:190px; cursor:pointer; border:none; background:none; padding:0; font-family:inherit; text-align:left; width:100%; }
+  .flashcard-inner{ position:relative; width:100%; height:100%; transition:transform .5s cubic-bezier(.4,.2,.2,1); transform-style:preserve-3d; -webkit-transform-style:preserve-3d; will-change:transform; }
+  .flashcard.flipped .flashcard-inner{ transform:rotateY(180deg); -webkit-transform:rotateY(180deg); }
+  .flashcard-face{ position:absolute; inset:0; backface-visibility:hidden; -webkit-backface-visibility:hidden; -moz-backface-visibility:hidden; border:1.5px solid var(--ink); box-shadow:var(--shadow);
+    padding:15px; display:flex; flex-direction:column; justify-content:center; }
+  .flashcard-face.front{ background:var(--paper); transform:translateZ(.5px); }
+  .flashcard-face.back{ background:var(--ticket); transform:rotateY(180deg) translateZ(.5px); overflow-y:auto; }
+  .flashcard-face .lbl{ font-family:var(--mono); font-weight:600; letter-spacing:.1em; text-transform:uppercase; font-size:.82rem; color:var(--kraft-dark); margin-bottom:.5em; }
+  .flashcard-face.front .term{ font-family:var(--display); font-weight:400; font-size:1.05rem; letter-spacing:.01em; }
+  .flashcard-face.back .def{ font-size:.82rem; }
+  .flashcard.known .flashcard-face.front{ border-color:var(--blue); border-width:2px; }
+
+  .quiz-q{ background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow); padding:18px 20px; margin-bottom:18px; }
+  .quiz-q .qtext{ font-weight:600; margin:0 0 13px; }
+  .quiz-q .qnum{ font-family:var(--display); color:var(--red); margin-right:.5em; }
+  .choices{ display:grid; gap:8px; }
+  .choice{ text-align:left; font-family:var(--sans); font-size:.9rem; background:var(--ticket); border:1.5px solid var(--ink);
+    padding:.65em .85em; cursor:pointer; color:var(--ink); }
+  .choice:hover{ border-color:var(--blue); }
+  .choice.correct{ background:var(--blue-soft); border-color:var(--blue); border-width:2px; }
+  .choice.incorrect{ background:var(--red-soft); border-color:var(--red); border-width:2px; }
+  .choice[disabled]{ cursor:default; }
+  .explain{ margin-top:12px; font-size:.84rem; opacity:.85; border-left:3px solid var(--kraft); padding-left:12px; display:none; font-family:var(--mono); }
+  .explain.show{ display:block; }
+  #quizScore{ font-family:var(--mono); font-size:.9rem; opacity:.75; margin-bottom:16px; }
+
+  .example{ background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow); padding:20px 22px; margin-bottom:16px; }
+  .example h3{ font-family:var(--display); font-weight:400; font-size:1.15rem; margin:0 0 8px; }
+  .example .tag{ display:inline-block; font-family:var(--mono); font-weight:600; font-size:.86rem; text-transform:uppercase; letter-spacing:.07em;
+    color:var(--blue); background:var(--blue-soft); border:1px solid var(--blue); padding:.25em .6em; margin-bottom:10px; }
+  details.solution{ margin-top:12px; }
+  details.solution summary{ cursor:pointer; font-family:var(--mono); font-weight:600; letter-spacing:.03em; text-transform:uppercase;
+    font-size:.9rem; color:var(--blue); list-style:none; display:inline-flex; align-items:center; gap:.4em; }
+  details.solution summary::-webkit-details-marker{ display:none; }
+  details.solution summary::before{ content:"▸"; transition:transform .15s; }
+  details.solution[open] summary::before{ transform:rotate(90deg); }
+  details.solution .solbody{ margin-top:10px; padding:13px 15px; background:var(--ticket); font-size:.88rem; }
+
+  #glossarySearch{ width:100%; max-width:400px; font-family:var(--sans); font-size:.9rem; padding:.65em .85em;
+    border:1.5px solid var(--ink); background:var(--paper); color:var(--ink); margin-bottom:16px; }
+  .alpha-nav{ display:flex; flex-wrap:wrap; gap:4px; margin-bottom:22px; }
+  .alpha-nav a{ font-family:var(--mono); font-weight:600; font-size:.82rem; width:1.8em; height:1.8em; display:flex;
+    align-items:center; justify-content:center; border:1px solid var(--ink); text-decoration:none; color:var(--ink); opacity:.35; }
+  .alpha-nav a.has{ opacity:1; background:var(--paper); }
+  .alpha-nav a.has:hover{ border-color:var(--blue); color:var(--blue); }
+  .glossary-letter{ font-family:var(--display); font-weight:400; color:var(--red); font-size:1.1rem; margin:20px 0 6px; }
+  dl.glossary{ margin:0; }
+  dl.glossary .gitem{ border-top:1px dashed rgba(31,36,33,.35); padding:11px 0; }
+  dl.glossary dt{ font-family:var(--mono); font-weight:600; font-size:.98rem; }
+  dl.glossary dd{ margin:.3em 0 0; opacity:.8; font-size:.86rem; }
+  .gitem.hidden{ display:none; }
+
+  footer{ padding:30px 0 60px; }
+  footer p{ opacity:.65; font-size:.82rem; font-family:var(--mono); letter-spacing:.02em; }
+
+  .back-to-top{ position:fixed; bottom:22px; right:22px; z-index:40; width:50px; height:50px;
+    background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow);
+    font-family:var(--display); font-size:1.4rem; color:var(--ink); line-height:1;
+    display:flex; align-items:center; justify-content:center; padding:0; cursor:pointer; text-decoration:none;
+    opacity:0; visibility:hidden; transform:translateY(10px);
+    transition:opacity .25s ease, transform .25s ease, visibility 0s .25s; }
+  .back-to-top.show{ opacity:1; visibility:visible; transform:translateY(0); transition:opacity .25s ease, transform .25s ease, visibility 0s; }
+  .back-to-top:hover{ background:var(--blue-soft); border-color:var(--blue); color:var(--blue); }
+  .back-to-top:focus-visible{ outline:2px solid var(--blue); outline-offset:2px; }
+
+  @media print{
+    body{ background:#fff; }
+    nav.index{ display:none; }
+    .quiz-q, .example, .flashcard-face, .terminal{ box-shadow:none; }
+    .back-to-top{ display:none; }
+  }
+</style>
+
+<header class="masthead">
+  <div class="wrap">
+    <p class="eyebrow">IT131 · SESSION 07 · FIELD NOTES</p>
+    <h1>Basic Router Configuration &amp; Midterm Review</h1>
+    <p class="lede">Local Dispatch and the address book are last week's story. This week Logistics gets its own hands on the CLI — initial router config, interfaces that don't come up for free the way a switch port does, and the one command that quietly does nothing if you bring your Session 2 muscle memory with you.</p>
+    <div class="factrow">
+      <span class="fact"><b>New material</b> Module 10 — Basic Router Configuration</span>
+      <span class="fact"><b>Checkpoint</b> Module Quiz — Communicating Between Networks (Modules 8–10)</span>
+      <span class="fact"><b>Also this week</b> Midterm review</span>
+    </div>
+  </div>
+</header>
+
+<nav class="index" aria-label="Section index">
+  <div class="wrap">
+    <a href="index.html" class="toc-link">↩ Contents</a>
+    <a href="#overview">Overview</a>
+    <a href="#config">Router Config</a>
+    <a href="#compare">Switch vs. Router</a>
+    <a href="#routing">Static Routing (Preview)</a>
+    <a href="#verify">Verification</a>
+    <a href="#mistakes">Common Mistakes</a>
+    <a href="#midterm">Midterm Review</a>
+    <a href="#flashcards">Flashcards</a>
+    <a href="#quiz">Quiz</a>
+    <a href="#examples">Examples</a>
+    <a href="#glossary">Glossary</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+  <!-- OVERVIEW -->
+  <section id="overview">
+    <div class="section-head">
+      <p class="kicker">Module 10</p>
+      <h2>What Session 7 covers</h2>
+      <p>Three topics, in order: initial router settings, interfaces, and the default gateway — but "default gateway" here means configuring hosts and switches to point <em>at</em> the router, not configuring something on the router itself.</p>
+    </div>
+    <ul class="obj-list">
+      <li>Configure initial settings on a Cisco IOS router: hostname, secured EXEC/console/vty access, SSH, banner</li>
+      <li>Configure a router interface (IP address + <code>no shutdown</code>) and explain why that step is mandatory here</li>
+      <li>Explain what "configure the default gateway" actually means at this stage of the course</li>
+      <li>Verify a router's configuration with <code>show</code> commands and read a routing table</li>
+    </ul>
+    <div class="teach-note">
+      <span class="label">Checkpoint scope</span>
+      The Module Quiz covers Modules 8–10: the IPv4/IPv6 header (Session 6), ARP (Session 6), and this session's router configuration. <strong>Static routing is not on it</strong> — that's CCNA 2 material, flagged clearly below where it comes up, because you'll ask "so how do two LANs actually talk to each other" the moment you see two routers on a diagram.
+    </div>
+  </section>
+
+  <!-- ROUTER CONFIG -->
+  <section id="config">
+    <div class="section-head">
+      <p class="kicker">Module 10</p>
+      <h2>Initial router configuration</h2>
+      <p>Same shape as Session 2's switch walkthrough, same security reasoning — but read the ordering notes below before you run this. Two things must happen before <code>crypto key generate rsa</code> will even work.</p>
+    </div>
+
+    <div class="teach-note">
+      <span class="label">Ordering matters</span>
+      1. <code>hostname</code> <strong>and</strong> a domain name must both be set before <code>crypto key generate rsa</code> — the key pair is literally named <code>hostname.domain-name</code>, and IOS refuses with "% Please define a domain-name first" if either is missing. 2. <code>username</code> must exist before you rely on <code>login local</code>, or you lock yourself out of the vty lines. 3. <code>ip address</code> and <code>no shutdown</code> are an inseparable pair — more on that below.
+    </div>
+
+    <div class="terminal">
+      <div class="terminal-header">
+        <span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span>
+        <span class="terminal-title">Router Initial Configuration (full walkthrough)</span>
+      </div>
+      <div class="terminal-body">
+<span class="comment">! === Step 1: Enter privileged EXEC, then global config ===</span>
+<span class="prompt">Router&gt;</span> <span class="cmd">enable</span>
+<span class="prompt">Router#</span> <span class="cmd">configure terminal</span>
+<span class="prompt">Router(config)#</span>
+
+<span class="comment">! === Step 2: Device name ===</span>
+<span class="prompt">Router(config)#</span> <span class="cmd">hostname R1</span>
+<span class="prompt">R1(config)#</span>
+
+<span class="comment">! === Step 3: Secure privileged EXEC mode ===</span>
+<span class="prompt">R1(config)#</span> <span class="hl">enable secret Cisco123</span>
+<span class="comment">! "enable secret" is hashed. "enable password" is plaintext — never use it.</span>
+
+<span class="comment">! === Step 4: Secure the console line ===</span>
+<span class="prompt">R1(config)#</span> <span class="cmd">line console 0</span>
+<span class="prompt">R1(config-line)#</span> <span class="cmd">password ConP@ss</span>
+<span class="prompt">R1(config-line)#</span> <span class="cmd">login</span>
+<span class="prompt">R1(config-line)#</span> <span class="hl">exec-timeout 5 0</span>
+<span class="comment">! auto-logout after 5 min idle — a Module 16 habit, worth planting here</span>
+<span class="prompt">R1(config-line)#</span> <span class="hl">logging synchronous</span>
+<span class="comment">! stops console log messages from chopping up the line you're typing</span>
+<span class="prompt">R1(config-line)#</span> <span class="cmd">exit</span>
+
+<span class="comment">! === Step 5: Secure remote access with SSH (the complete sequence) ===</span>
+<span class="prompt">R1(config)#</span> <span class="hl">ip domain-name it131.local</span>
+<span class="comment">! Classic IOS / Packet Tracer: "ip domain-name" (hyphen).
+! Current IOS-XE docs spell it "ip domain name" (space) — most images
+! still accept the hyphen as a legacy alias.</span>
+<span class="prompt">R1(config)#</span> <span class="hl">crypto key generate rsa modulus 1024</span>
+<span class="out">The name for the keys will be: R1.it131.local
+% The key modulus size is 1024 bits
+% Generating 1024 bit RSA keys, keys will be non-exportable...
+[OK] (elapsed time was 2 seconds)</span>
+<span class="comment">! Requires the hostname AND domain name set above. 1024 is a lab
+! convenience — 2048 is the real-world minimum today.</span>
+<span class="prompt">R1(config)#</span> <span class="hl">ip ssh version 2</span>
+<span class="prompt">R1(config)#</span> <span class="hl">username admin secret Cisco123</span>
+<span class="comment">! SSH authenticates a USER, not a line password. This is mandatory.</span>
+<span class="prompt">R1(config)#</span> <span class="cmd">line vty 0 4</span>
+<span class="prompt">R1(config-line)#</span> <span class="hl">login local</span>
+<span class="prompt">R1(config-line)#</span> <span class="hl">transport input ssh</span>
+<span class="prompt">R1(config-line)#</span> <span class="hl">exec-timeout 5 0</span>
+<span class="prompt">R1(config-line)#</span> <span class="cmd">exit</span>
+
+<span class="comment">! === Step 6: Encrypt the remaining plaintext passwords ===</span>
+<span class="prompt">R1(config)#</span> <span class="hl">service password-encryption</span>
+<span class="comment">! Type 7 — weakly obscures the LINE passwords only. Contrast with
+! "enable secret", which is a real hash.</span>
+
+<span class="comment">! === Step 7: Legal banner ===</span>
+<span class="prompt">R1(config)#</span> <span class="cmd">banner motd #</span>
+<span class="cmd">Enter TEXT message.  End with the character '#'.</span>
+<span class="cmd">Authorized access only. All activity is monitored.#</span>
+<span class="comment">! The delimiter (#) must not appear anywhere inside the message text.</span>
+
+<span class="comment">! === Step 8: Configure the LAN-facing interface ===</span>
+<span class="prompt">R1(config)#</span> <span class="cmd">interface gigabitethernet 0/0/1</span>
+<span class="prompt">R1(config-if)#</span> <span class="cmd">description LAN-A -- Building 1 users</span>
+<span class="prompt">R1(config-if)#</span> <span class="hl">ip address 192.168.10.1 255.255.255.0</span>
+<span class="prompt">R1(config-if)#</span> <span class="hl">no shutdown</span>
+<span class="out">%LINK-5-CHANGED: Interface GigabitEthernet0/0/1, changed state to up
+%LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet0/0/1,
+changed state to up</span>
+<span class="prompt">R1(config-if)#</span> <span class="cmd">exit</span>
+
+<span class="comment">! === Step 9: SAVE the config ===</span>
+<span class="prompt">R1(config)#</span> <span class="cmd">end</span>
+<span class="prompt">R1#</span> <span class="cmd">copy running-config startup-config</span>
+<span class="out">Destination filename [startup-config]? [Enter]
+Building configuration...
+[OK]</span>
+      </div>
+    </div>
+
+    <div class="teach-note warn">
+      <span class="label">Why "no shutdown" is mandatory here — the switch confusion, resolved</span>
+      Every physical interface on a router is <strong>administratively down</strong> by default — a router out of the box has <em>no</em> active interfaces at all. <code>no shutdown</code> isn't housekeeping, it's the command that turns the port on. A switch <em>access port</em> is the opposite — enabled by default, which is why plugging a cable straight into a factory switch just works. What confuses students is the switch <strong>SVI</strong> from Session 2 (<code>interface vlan 1</code>), which also needs <code>no shutdown</code> — so the real rule isn't "switches don't need it, routers do." It's: <strong>Layer 3 interfaces are shut down by default. Layer 2 switch ports are not.</strong> A router's GE port is L3. A switch's SVI is L3. A switch's access port is L2. Watch for the <code>%LINK-5-CHANGED</code> / <code>%LINEPROTO-5-UPDOWN</code> pair — if you don't see both lines, the interface is not up.
+    </div>
+  </section>
+
+  <!-- SWITCH VS ROUTER -->
+  <section id="compare">
+    <div class="section-head">
+      <p class="kicker">Module 10</p>
+      <h2>What genuinely differs from switch configuration</h2>
+      <p>Most of Session 2 carries straight over — <code>enable secret</code>, console/vty security, the whole SSH block, banners, saving. This table is only the parts that don't.</p>
+    </div>
+    <table class="spec">
+      <thead><tr><th></th><th>Switch (2960 / C1000)</th><th>Router (ISR 4321 / 4221)</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;">Physical port, default state</td><td>Enabled</td><td>Administratively down</td></tr>
+        <tr><td style="font-weight:600;">IP address lives on</td><td>One SVI (<code>interface vlan 1</code>) — a management IP only</td><td>Every routed interface, one per subnet</td></tr>
+        <tr><td style="font-weight:600;"><code>switchport</code> commands</td><td>Yes — mode access, access vlan, etc.</td><td>Don't exist on a router's GE port</td></tr>
+        <tr><td style="font-weight:600;">Routing between subnets</td><td>Off by default (it's an L2 switch)</td><td>On by default (<code>ip routing</code>)</td></tr>
+        <tr><td style="font-weight:600;">Reaching other subnets</td><td><code>ip default-gateway</code> — one command, points off-device</td><td>A default <strong>route</strong> — see the preview below</td></tr>
+        <tr><td style="font-weight:600;">Number of L3 interfaces</td><td>Typically one (the SVI)</td><td>As many as you have ports</td></tr>
+      </tbody>
+    </table>
+
+    <div class="teach-note">
+      <span class="label">The best trap in this session</span>
+      Session 2 taught <code>ip default-gateway</code> on a switch. That command exists on a router too — but Cisco's own documentation says it <strong>only functions when <code>ip routing</code> is disabled</strong>, and <code>ip routing</code> is on by default on every router. A student who "applies what they learned in Session 2" types <code>ip default-gateway 192.168.1.1</code> on a router — IOS accepts it without complaint, and it does <strong>nothing</strong>. No error, no effect. Module 10's own topic title, "Configure the Default Gateway," is actually about configuring <strong>hosts and switches</strong> to point at the router — the router itself doesn't have a default gateway, it has a default route.
+    </div>
+
+    <div class="teach-note warn">
+      <span class="label">Two more silent-ish failures worth knowing</span>
+      <strong>Overlapping subnets on two interfaces:</strong> <code>% 192.168.10.0 overlaps with GigabitEthernet0/0/1</code> — the address is rejected and <strong>not applied</strong>. <strong>Network/broadcast address assigned to an interface</strong> (e.g. <code>192.168.10.0</code> or <code>.255</code> with a /24): also rejected, also not applied, with a "bad mask" style error. Both are easy to skip past in a wall of terminal output, and both leave the interface with no IP at all — students then spend twenty minutes debugging a dead interface that was never actually misconfigured, just unconfigured.
+    </div>
+  </section>
+
+  <!-- STATIC ROUTING PREVIEW -->
+  <section id="routing">
+    <div class="section-head">
+      <p class="kicker">Preview — not on this quiz</p>
+      <h2>So how do two LANs actually talk?</h2>
+      <p><strong>Static routing is CCNA 2 material (Switching, Routing &amp; Wireless Essentials, Module 15), not Module 10.</strong> It isn't on the Modules 8–10 checkpoint. It's here because the question is inevitable the moment two routers show up on a diagram, and having the answer beats pretending routing tables are magic for another semester.</p>
+    </div>
+
+    <h3 class="sub">Topology</h3>
+    <table class="spec">
+      <thead><tr><th>Router</th><th>Interface</th><th>Address</th><th>Role</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">R1</td><td class="mono">G0/0/1</td><td class="mono">192.168.10.1/24</td><td>LAN-A default gateway</td></tr>
+        <tr><td class="mono">R1</td><td class="mono">G0/0/0</td><td class="mono">10.0.0.1/30</td><td>link to R2</td></tr>
+        <tr><td class="mono">R2</td><td class="mono">G0/0/0</td><td class="mono">10.0.0.2/30</td><td>link to R1</td></tr>
+        <tr><td class="mono">R2</td><td class="mono">G0/0/1</td><td class="mono">192.168.20.1/24</td><td>LAN-B default gateway</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:.88rem;opacity:.8;">R1's LAN interface here is the exact one configured in the walkthrough above — the two sections chain together.</p>
+
+    <div class="terminal">
+      <div class="terminal-header">
+        <span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span>
+        <span class="terminal-title">Static routes — R1 and R2</span>
+      </div>
+      <div class="terminal-body">
+<span class="comment">! ---------- R1: a specific static route ----------</span>
+<span class="prompt">R1(config)#</span> <span class="hl">ip route 192.168.20.0 255.255.255.0 10.0.0.2</span>
+<span class="comment">! Syntax: ip route &lt;destination-network&gt; &lt;mask&gt; &lt;next-hop-IP&gt;
+! "To reach LAN-B, hand the packet to R2's address on our shared link."
+! The next hop is always the NEIGHBOR's address — never our own.</span>
+
+<span class="comment">! ---------- R2: a default route ----------</span>
+<span class="prompt">R2(config)#</span> <span class="hl">ip route 0.0.0.0 0.0.0.0 10.0.0.1</span>
+<span class="comment">! R2 is a stub — one way out of its own networks, so a default route
+! is the right tool. 0.0.0.0 0.0.0.0 matches EVERY destination, which
+! makes it the last resort: the router always prefers the longest
+! (most specific) prefix match it has.</span>
+      </div>
+    </div>
+
+    <div class="teach-note warn">
+      <span class="label">The whole lesson, in one sentence</span>
+      A static route is <strong>one-directional</strong>. Configure R1 and forget R2, and a ping from LAN-A <em>arrives</em> at LAN-B and dies there — it's the <em>reply</em> that has nowhere to go. Students read that as "ping failed" and go straight back to staring at R1. Routes must exist in both directions, on both routers.
+    </div>
+
+    <h3 class="sub">Reading show ip route</h3>
+    <div class="terminal">
+      <div class="terminal-header">
+        <span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span>
+        <span class="terminal-title">R1# show ip route</span>
+      </div>
+      <div class="terminal-body">
+<span class="out">Gateway of last resort is not set
+
+      10.0.0.0/8 is variably subnetted, 2 subnets, 2 masks
+C        10.0.0.0/30 is directly connected, GigabitEthernet0/0/0
+L        10.0.0.1/32 is directly connected, GigabitEthernet0/0/0
+      192.168.10.0/24 is variably subnetted, 2 subnets, 2 masks
+C        192.168.10.0/24 is directly connected, GigabitEthernet0/0/1
+L        192.168.10.1/32 is directly connected, GigabitEthernet0/0/1
+S     192.168.20.0/24 [1/0] via 10.0.0.2</span>
+      </div>
+    </div>
+    <div class="terminal">
+      <div class="terminal-header">
+        <span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span>
+        <span class="terminal-title">R2# show ip route</span>
+      </div>
+      <div class="terminal-body">
+<span class="out">Gateway of last resort is 10.0.0.1 to network 0.0.0.0
+
+S*    0.0.0.0/0 [1/0] via 10.0.0.1
+      10.0.0.0/8 is variably subnetted, 2 subnets, 2 masks
+C        10.0.0.0/30 is directly connected, GigabitEthernet0/0/0
+L        10.0.0.2/32 is directly connected, GigabitEthernet0/0/0
+      192.168.20.0/24 is variably subnetted, 2 subnets, 2 masks
+C        192.168.20.0/24 is directly connected, GigabitEthernet0/0/1
+L        192.168.20.1/32 is directly connected, GigabitEthernet0/0/1</span>
+      </div>
+    </div>
+
+    <table class="spec">
+      <thead><tr><th class="mono">Code</th><th>Name</th><th>Comes from</th><th>Means</th></tr></thead>
+      <tbody>
+        <tr><td class="mono" style="font-weight:600;">C</td><td>Connected</td><td>Automatic</td><td>The router has an interface <em>in</em> this network. Appears only when the interface has an IP and is up/up.</td></tr>
+        <tr><td class="mono" style="font-weight:600;">L</td><td>Local</td><td>Automatic</td><td>The router's own address on that interface — always a /32 host route. "This one address is me." Generated automatically alongside every C route.</td></tr>
+        <tr><td class="mono" style="font-weight:600;">S</td><td>Static</td><td>You typed <code>ip route</code></td><td>A manually configured route to a remote network.</td></tr>
+        <tr><td class="mono" style="font-weight:600;">S*</td><td>Static + candidate default</td><td>You typed <code>ip route 0.0.0.0 0.0.0.0</code></td><td>A static default route — the gateway of last resort.</td></tr>
+      </tbody>
+    </table>
+    <div class="teach-note">
+      <span class="label">The highest-yield fact in this section</span>
+      One <code>ip address</code> plus one <code>no shutdown</code> produces exactly <strong>two</strong> routing-table lines — a C and an L. If a student sees only one, or neither, the interface isn't up. <code>[1/0]</code> is [administrative distance / metric] — AD 1 is the default for a static route, and a connected route's AD 0 is why it always wins over a static route to the same network.
+    </div>
+  </section>
+
+  <!-- VERIFICATION -->
+  <section id="verify">
+    <div class="section-head">
+      <p class="kicker">Module 10</p>
+      <h2>Verification commands</h2>
+      <p>What each one is actually for, not just what it prints.</p>
+    </div>
+    <table class="spec">
+      <thead><tr><th>Command</th><th>Answers</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">show ip interface brief</td><td>"Are my interfaces on and addressed?" Fastest sanity check on a router. Status = Layer 1 (carrier present?), Protocol = Layer 2 (line protocol up?). Only <code>up/up</code> is good.</td></tr>
+        <tr><td class="mono">show ip route</td><td>"Does this router know how to reach that network?" No matching entry (and no default route) means the packet gets dropped, with an ICMP Destination Unreachable sent back.</td></tr>
+        <tr><td class="mono">show running-config</td><td>"What is configured right now?" — RAM, not what boots next time.</td></tr>
+        <tr><td class="mono">show startup-config</td><td>"What will it look like after a reboot?" If it differs from running-config, you haven't saved.</td></tr>
+        <tr><td class="mono">show cdp neighbors</td><td>"Is there a Cisco device on the other end of this cable, and which port?" Layer 2 — works even when IP addressing is completely broken. <em>(Module 17 material — preview.)</em></td></tr>
+      </tbody>
+    </table>
+
+    <div class="terminal">
+      <div class="terminal-header">
+        <span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span>
+        <span class="terminal-title">A router before any configuration</span>
+      </div>
+      <div class="terminal-body">
+<span class="prompt">Router#</span> <span class="cmd">show ip interface brief</span>
+<span class="out">Interface              IP-Address      OK? Method Status                Protocol
+GigabitEthernet0/0/0   unassigned      YES unset  administratively down down
+GigabitEthernet0/0/1   unassigned      YES unset  administratively down down</span>
+      </div>
+    </div>
+    <div class="terminal">
+      <div class="terminal-header">
+        <span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span>
+        <span class="terminal-title">R1 after configuration</span>
+      </div>
+      <div class="terminal-body">
+<span class="prompt">R1#</span> <span class="cmd">show ip interface brief</span>
+<span class="out">Interface              IP-Address      OK? Method Status                Protocol
+GigabitEthernet0/0/0   10.0.0.1        YES manual up                    up
+GigabitEthernet0/0/1   192.168.10.1    YES manual up                    up</span>
+      </div>
+    </div>
+
+    <div class="teach-note try">
+      <span class="label">Try it — the host side still applies</span>
+      Session 2's ping ladder carries over unchanged, with one addition: if <code>ping &lt;default gateway&gt;</code> works but <code>ping &lt;remote LAN host&gt;</code> fails, run <code>tracert</code> from the PC. The hop where it stops is exactly which router is missing a route — the fastest diagnostic there is for "static route configured on only one side."
+    </div>
+  </section>
+
+  <!-- COMMON MISTAKES -->
+  <section id="mistakes">
+    <div class="section-head">
+      <p class="kicker">Watch for this</p>
+      <h2>The most common Module 10 mistakes</h2>
+      <p>In roughly the order you're likely to hit them.</p>
+    </div>
+    <ul class="obj-list">
+      <li>Forgetting <code>no shutdown</code> — interface stays administratively down, no C/L route appears at all.</li>
+      <li>Configuring the IP on the wrong interface — easy when a diagram's port order doesn't match the CLI's.</li>
+      <li>PC's default gateway is wrong or unset — same-LAN pings work, everything off-subnet fails, and the router gets blamed.</li>
+      <li>Assigning a network or broadcast address to an interface — rejected, and the interface is left with no IP.</li>
+      <li>Overlapping subnets on two interfaces — rejected with "overlaps with," address not applied.</li>
+      <li>Using <code>ip default-gateway</code> on a router — accepted, does nothing, no error (see the trap above).</li>
+      <li>Static route configured on only one router — the request arrives, the reply has nowhere to go.</li>
+      <li>Putting the <em>local</em> network in an <code>ip route</code> statement instead of the remote one.</li>
+      <li>Using the router's own interface address as the next hop instead of the neighbor's.</li>
+      <li>Forgetting <code>copy running-config startup-config</code> — same lesson as Session 2, more painful on a longer config.</li>
+    </ul>
+  </section>
+
+  <!-- MIDTERM REVIEW -->
+  <section id="midterm">
+    <div class="section-head">
+      <p class="kicker">Midterm</p>
+      <h2>Cross-module review</h2>
+      <p>If you can answer these three cold, Modules 1–10 have landed. All three come straight out of material already covered — this is recall, not new content.</p>
+    </div>
+    <ul class="obj-list">
+      <li><strong>C vs. L in a routing table.</strong> C is the network the interface sits in; L is the interface's own /32 address. Both appear together, or neither does.</li>
+      <li><strong>When does a host ARP for the destination vs. the gateway?</strong> Same subnet → ARP for the destination directly. Off-subnet → ARP for the default gateway, never the far-off target (Session 6).</li>
+      <li><strong>What changes at each router, what doesn't.</strong> The frame is discarded and rebuilt at every router hop (new MAC addressing); the packet's IP addresses ride end-to-end, untouched (Sessions 4 &amp; 6).</li>
+    </ul>
+    <div class="teach-note">
+      <span class="label">Where to actually study</span>
+      Every session page on this site has its own flashcards, quiz, and glossary — the midterm is those seven sessions' checkpoints combined, not new material layered on top.
+    </div>
+  </section>
+
+  <!-- FLASHCARDS -->
+  <section id="flashcards">
+    <div class="section-head">
+      <p class="kicker">Study</p>
+      <h2>Flashcards</h2>
+      <p>Click to flip. Double-click to mark as known.</p>
+    </div>
+    <div class="toolbar">
+      <button class="btn" id="shuffleBtn">Shuffle</button>
+      <button class="btn" id="resetKnownBtn">Reset progress</button>
+      <span id="cardProgress"></span>
+    </div>
+    <div class="card-grid" id="cardGrid"></div>
+  </section>
+
+  <!-- QUIZ -->
+  <section id="quiz">
+    <div class="section-head">
+      <p class="kicker">Check yourself</p>
+      <h2>Sample questions</h2>
+      <p>Pick an answer to see if you're right — same style as the module quiz.</p>
+    </div>
+    <div id="quizScore"></div>
+    <div id="quizList"></div>
+    <button class="btn" id="resetQuizBtn">Reset quiz</button>
+  </section>
+
+  <!-- EXAMPLES -->
+  <section id="examples">
+    <div class="section-head">
+      <p class="kicker">Applied</p>
+      <h2>Worked examples</h2>
+      <p>Think it through before you expand the answer.</p>
+    </div>
+
+    <div class="example">
+      <span class="tag">Router boot</span>
+      <h3>Why won't it ping?</h3>
+      <p>A fresh router has <code>ip address 192.168.1.1 255.255.255.0</code> configured on G0/0/1. A PC plugged into that LAN can't ping the router at all. <code>show ip interface brief</code> shows the interface as <code>administratively down / down</code>. What's the single missing command?</p>
+      <details class="solution">
+        <summary>Show answer</summary>
+        <div class="solbody">
+          <p><strong>Answer:</strong> <code>no shutdown</code>. Unlike a switch port, a router's physical interface starts administratively down and stays that way until explicitly enabled — configuring an IP address alone doesn't turn the port on.</p>
+        </div>
+      </details>
+    </div>
+
+    <div class="example">
+      <span class="tag">The gateway trap</span>
+      <h3>Accepted, but does nothing</h3>
+      <p>A student, fresh off Session 2, types <code>ip default-gateway 192.168.1.1</code> in global config on a router. IOS accepts it with no error. Two weeks later, off-subnet traffic still isn't reaching anywhere. Why did the command not help?</p>
+      <details class="solution">
+        <summary>Show answer</summary>
+        <div class="solbody">
+          <p><strong>Answer:</strong> <code>ip default-gateway</code> only takes effect when <code>ip routing</code> is disabled — and <code>ip routing</code> is on by default on every router. The command is legal syntax, gets accepted, and simply does nothing. A router needs a <strong>default route</strong> (<code>ip route 0.0.0.0 0.0.0.0 &lt;next-hop&gt;</code>) to send unmatched traffic somewhere, not a default gateway.</p>
+        </div>
+      </details>
+    </div>
+
+    <div class="example">
+      <span class="tag">Static routing</span>
+      <h3>Half the route</h3>
+      <p>R1 has <code>ip route 192.168.20.0 255.255.255.0 10.0.0.2</code> configured. R2 has no static routes at all. A PC on LAN-A pings a PC on LAN-B. What happens?</p>
+      <details class="solution">
+        <summary>Show answer</summary>
+        <div class="solbody">
+          <p><strong>Answer:</strong> The ping <em>request</em> arrives fine — R1 knows how to reach 192.168.20.0/24 and forwards it, and R2 is directly connected to that LAN so it delivers the packet. But the <em>reply</em>, generated by the LAN-B host and destined for 192.168.10.0/24, has no route on R2 and gets dropped there. The ping times out, and the failure looks like it's on R1's end even though R1's configuration was correct — a static route only tells its own router how to send, never how to receive a reply.</p>
+        </div>
+      </details>
+    </div>
+
+    <div class="example">
+      <span class="tag">Reading the table</span>
+      <h3>C, L, or S?</h3>
+      <p><code>show ip route</code> on a router shows: <code>C 10.0.0.0/30 is directly connected, GigabitEthernet0/0/0</code>, <code>L 10.0.0.1/32 is directly connected, GigabitEthernet0/0/0</code>, and <code>S 192.168.20.0/24 [1/0] via 10.0.0.2</code>. In one sentence each, what produced every line?</p>
+      <details class="solution">
+        <summary>Show answer</summary>
+        <div class="solbody">
+          <p><strong>C:</strong> automatic, the moment the interface has an IP address and is up/up — this router has a presence in 10.0.0.0/30. <strong>L:</strong> automatic alongside every C route — this router's own address, a /32 host route. <strong>S:</strong> someone typed <code>ip route 192.168.20.0 255.255.255.0 10.0.0.2</code> by hand.</p>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <!-- GLOSSARY -->
+  <section id="glossary">
+    <div class="section-head">
+      <p class="kicker">Reference</p>
+      <h2>Glossary &amp; index</h2>
+      <p>Every term from this session, searchable and indexed A–Z.</p>
+    </div>
+    <input type="text" id="glossarySearch" placeholder="Search terms…" aria-label="Search glossary">
+    <div class="alpha-nav" id="alphaNav"></div>
+    <dl class="glossary" id="glossaryList"></dl>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>IT131 · CCNA: Introduction to Networks · Session 7 reference — more sessions added as the course progresses.</p>
+  </div>
+</footer>
+
+<button id="backToTop" class="back-to-top" aria-label="Back to top" title="Back to top">↑</button>
+
+<script>
+  const TERMS = [
+    {t:"Administratively down", d:"A router interface's default state until 'no shutdown' is run — the port is off regardless of cabling or IP configuration. Contrast with a switch access port, which is enabled by default."},
+    {t:"C (Connected route)", d:"A routing table entry generated automatically the moment an interface has an IP address and is up/up. Marks a network the router has a direct presence in."},
+    {t:"crypto key generate rsa", d:"Generates the RSA key pair SSH needs to operate. Requires a non-default hostname and a domain name to already be set — the key is named hostname.domain-name."},
+    {t:"Default route", d:"A routing table entry (0.0.0.0/0) matching any destination not covered by a more specific route — the last-resort path, shown as S* when statically configured. Not the same thing as 'default gateway,' which is a host/switch concept."},
+    {t:"Gateway of last resort", d:"The next hop a router uses when no other route matches a packet's destination — populated by a default route."},
+    {t:"ip default-gateway", d:"A command that tells a Layer 2 switch (or a router with ip routing disabled) where to send traffic bound for other subnets. On a router with routing enabled — the default state — this command is accepted but has no effect."},
+    {t:"ip route", d:"The command that adds a static route to a router's routing table: ip route <destination-network> <mask> <next-hop-IP>. One-directional — the return path needs its own route on the other router. CCNA 2 material."},
+    {t:"L (Local route)", d:"A /32 routing table entry generated automatically alongside every connected (C) route — the router's own address on that interface, marking 'deliver locally, don't forward.'"},
+    {t:"login local", d:"A line configuration command authenticating remote sessions (SSH/Telnet) against the router's local username database instead of a shared line password. Requires at least one 'username ... secret ...' to exist first."},
+    {t:"no shutdown", d:"The command that administratively enables a router interface. Mandatory on every router physical interface, since they default to administratively down — unlike a switch access port."},
+    {t:"Static route", d:"A manually configured routing table entry, added with ip route. Shown as S (specific network) or S* (default route) in show ip route output."},
+  ];
+
+  const QUIZ = [
+    {
+      q:"What state is a router's physical interface in by default, before any configuration?",
+      choices:["Up/up, ready to use","Administratively down","Down/down but usable once cabled","Waiting for DHCP"],
+      correct:1,
+      explain:"Every router interface starts administratively down. Configuring an IP address doesn't change that — 'no shutdown' does."
+    },
+    {
+      q:"A router interface has a correct IP address configured but never comes up. What's the most likely missing step?",
+      choices:["A default route","no shutdown","A static ARP entry","service password-encryption"],
+      correct:1,
+      explain:"Unlike a switch access port, a router's physical interface must be explicitly enabled with 'no shutdown' regardless of IP configuration."
+    },
+    {
+      q:"What does 'ip default-gateway' do when typed on a router with ip routing enabled (the default)?",
+      choices:["Sets the router's own default route","Nothing — it's accepted but has no effect","Disables all other interfaces","Forces the router to act as a switch"],
+      correct:1,
+      explain:"ip default-gateway only functions when ip routing is disabled. On a router — routing enabled by default — the command is silently inert."
+    },
+    {
+      q:"A router's own address on an interface, shown as a /32 entry in the routing table, uses which code?",
+      choices:["C","L","S","S*"],
+      correct:1,
+      explain:"L (Local) marks the router's own address on an interface, automatically generated as a /32 alongside every connected (C) route."
+    },
+    {
+      q:"R1 has a static route to LAN-B. R2 has no route back to LAN-A. What happens when a PC on LAN-A pings a PC on LAN-B?",
+      choices:["It succeeds normally","The request arrives, but the reply has nowhere to go and the ping times out","R1 immediately shows an error","Nothing leaves R1 at all"],
+      correct:1,
+      explain:"A static route is one-directional. The request reaches LAN-B fine, but without a route back on R2, the reply is dropped — the ping fails even though R1's configuration was correct."
+    },
+    {
+      q:"Is static routing (the 'ip route' command) covered on the Modules 8–10 checkpoint quiz?",
+      choices:["Yes, it's core Module 10 content","No — it's CCNA 2 (SRWE) material, previewed here but not tested","Only the default route form is tested","Only on the final exam"],
+      correct:1,
+      explain:"Module 10 covers initial settings, interfaces, and the default gateway. Static routing is CCNA 2 Module 15 — included here as a preview, not as checkpoint material."
+    },
+  ];
+
+  const grid = document.getElementById('cardGrid');
+  TERMS.forEach((item, i) => {
+    const card = document.createElement('button');
+    card.className = 'flashcard';
+    card.setAttribute('aria-label', 'Flashcard: ' + item.t + '. Press to flip.');
+    card.dataset.i = i;
+    card.innerHTML = `
+      <div class="flashcard-inner">
+        <div class="flashcard-face front"><div class="lbl">Term</div><div class="term">${item.t}</div></div>
+        <div class="flashcard-face back"><div class="lbl">Definition</div><div class="def">${item.d}</div></div>
+      </div>`;
+    card.addEventListener('click', () => card.classList.toggle('flipped'));
+    card.addEventListener('dblclick', () => { card.classList.toggle('known'); updateProgress(); });
+    grid.appendChild(card);
+  });
+  function updateProgress(){
+    const known = document.querySelectorAll('.flashcard.known').length;
+    document.getElementById('cardProgress').textContent = `${known} / ${TERMS.length} marked known (double-click a card to mark it)`;
+  }
+  updateProgress();
+  document.getElementById('shuffleBtn').addEventListener('click', () => {
+    const cards = Array.from(grid.children);
+    cards.sort(() => Math.random() - 0.5);
+    cards.forEach(c => { c.classList.remove('flipped'); grid.appendChild(c); });
+  });
+  document.getElementById('resetKnownBtn').addEventListener('click', () => {
+    document.querySelectorAll('.flashcard.known').forEach(c => c.classList.remove('known'));
+    updateProgress();
+  });
+
+  const quizList = document.getElementById('quizList');
+  let score = 0, answered = 0;
+  function renderQuiz(){
+    quizList.innerHTML = ''; score = 0; answered = 0;
+    QUIZ.forEach((item, qi) => {
+      const box = document.createElement('div');
+      box.className = 'quiz-q';
+      box.innerHTML = `<p class="qtext"><span class="qnum">Q${qi+1}.</span>${item.q}</p><div class="choices"></div><p class="explain"></p>`;
+      const choicesEl = box.querySelector('.choices');
+      item.choices.forEach((c, ci) => {
+        const b = document.createElement('button');
+        b.className = 'choice'; b.textContent = c;
+        b.addEventListener('click', () => {
+          if (box.dataset.done) return;
+          box.dataset.done = '1'; answered++;
+          if (ci === item.correct) score++;
+          Array.from(choicesEl.children).forEach((el, ei) => {
+            el.disabled = true;
+            if (ei === item.correct) el.classList.add('correct');
+            else if (ei === ci) el.classList.add('incorrect');
+          });
+          box.querySelector('.explain').textContent = item.explain;
+          box.querySelector('.explain').classList.add('show');
+          updateScore();
+        });
+        choicesEl.appendChild(b);
+      });
+      quizList.appendChild(box);
+    });
+    updateScore();
+  }
+  function updateScore(){
+    document.getElementById('quizScore').textContent =
+      answered === 0 ? `${QUIZ.length} questions — click an answer to check yourself` : `Score: ${score} / ${answered} answered`;
+  }
+  renderQuiz();
+  document.getElementById('resetQuizBtn').addEventListener('click', renderQuiz);
+
+  const glossaryList = document.getElementById('glossaryList');
+  const alphaNav = document.getElementById('alphaNav');
+  const letters = [...new Set(TERMS.map(t => t.t[0].toUpperCase()))];
+  'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').forEach(L => {
+    const a = document.createElement('a');
+    a.textContent = L;
+    if (letters.includes(L)) { a.href = '#g-' + L; a.className = 'has'; }
+    else { a.href = 'javascript:void(0)'; }
+    alphaNav.appendChild(a);
+  });
+  let currentLetter = '';
+  TERMS.forEach(item => {
+    const L = item.t[0].toUpperCase();
+    if (L !== currentLetter) {
+      currentLetter = L;
+      const h = document.createElement('div');
+      h.className = 'glossary-letter'; h.id = 'g-' + L; h.textContent = L;
+      glossaryList.appendChild(h);
+    }
+    const wrap = document.createElement('div');
+    wrap.className = 'gitem';
+    wrap.innerHTML = `<dt>${item.t}</dt><dd>${item.d}</dd>`;
+    wrap.dataset.search = (item.t + ' ' + item.d).toLowerCase();
+    glossaryList.appendChild(wrap);
+  });
+  document.getElementById('glossarySearch').addEventListener('input', (e) => {
+    const q = e.target.value.toLowerCase().trim();
+    document.querySelectorAll('.gitem').forEach(el => {
+      el.classList.toggle('hidden', q && !el.dataset.search.includes(q));
+    });
+  });
+
+  const backToTop = document.getElementById('backToTop');
+  function toggleBackToTop(){ backToTop.classList.toggle('show', window.scrollY > 480); }
+  window.addEventListener('scroll', toggleBackToTop, {passive:true});
+  toggleBackToTop();
+  backToTop.addEventListener('click', () => window.scrollTo({top:0, behavior:'smooth'}));
+</script>
