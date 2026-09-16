@@ -259,6 +259,7 @@
           <div class="ticket-head">INCIDENT REPORT <span class="id">IR-06</span></div>
           <p><strong>The Eavesdropper</strong> — reads outgoing mail before it's sealed, because it was never sealed in the first place.</p>
           <p class="detect">Tell: cleartext HTTP or Telnet showing up where you expected TLS or SSH.</p>
+          <p class="detect">Filed under the department that failed to stop it (encryption, L6), not the department it operates at — packet sniffing itself happens at L1/L2, on the wire or in a promiscuous-mode NIC.</p>
         </div>
       </div>
     </article>
@@ -284,6 +285,7 @@
           <div class="ticket-head">INCIDENT REPORT <span class="id">IR-05</span></div>
           <p><strong>The Impostor</strong> — steals an already-open meeting room instead of knocking, riding a session it never earned.</p>
           <p class="detect">Tell: a session cookie or token reused from an unexpected IP or location.</p>
+          <p class="detect">Filed under the department that failed to stop it (session management, L5) — in practice, stolen session cookies are usually an L7 application-layer concern.</p>
         </div>
       </div>
     </article>
@@ -309,6 +311,7 @@
           <div class="ticket-head">INCIDENT REPORT <span class="id">IR-04</span></div>
           <p><strong>The Flood</strong> — jams the loading dock with fake orders until real shipments can't get through.</p>
           <p class="detect">Tell: SYN floods with no completed handshake, or a spike in half-open connections.</p>
+          <p class="detect">Filed under the department that failed to stop it — and correctly so here, since this attack does operate at L4.</p>
         </div>
       </div>
     </article>
@@ -334,6 +337,7 @@
           <div class="ticket-head">INCIDENT REPORT <span class="id">IR-03</span></div>
           <p><strong>The Forger</strong> — fakes the return address on a routing slip so the reply goes somewhere it shouldn't.</p>
           <p class="detect">Tell: a source IP that doesn't match the expected subnet in a traceroute.</p>
+          <p class="detect">Filed under the department that failed to stop it — and correctly so here, since IP spoofing does operate at L3.</p>
         </div>
       </div>
     </article>
@@ -358,7 +362,8 @@
         <div class="incident-ticket">
           <div class="ticket-head">INCIDENT REPORT <span class="id">IR-02</span></div>
           <p><strong>The Impersonator</strong> — hands out a fake address label so local traffic gets rerouted through the wrong desk.</p>
-          <p class="detect">Tell: two IPs claiming the same MAC address in the ARP table.</p>
+          <p class="detect">Tell, from a victim host's ARP table: two IPs claiming the same MAC address. Tell, from the NOC watching ARP traffic over time: one IP claimed by two different MACs. Same attack — different vantage point, different symptom.</p>
+          <p class="detect">Filed under the department that failed to stop it — and correctly so here, since ARP spoofing does operate at L2. Note: this poisons the <em>hosts'</em> ARP caches, not the switch's MAC address table — the switch's table stays accurate the entire time.</p>
         </div>
       </div>
     </article>
@@ -384,6 +389,7 @@
           <div class="ticket-head">INCIDENT REPORT <span class="id">IR-01</span></div>
           <p><strong>The Saboteur</strong> — cuts the cable or jams the signal. Nobody upstairs even finds out there was a request.</p>
           <p class="detect">Tell: link light's out, or a cable tester shows an open/short before a laptop ever gets involved.</p>
+          <p class="detect">Filed under the department that failed to stop it — and correctly so here, since this attack does operate at L1.</p>
         </div>
       </div>
     </article>

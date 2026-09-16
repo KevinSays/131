@@ -392,6 +392,16 @@
       <span class="label">Why does twisting help?</span>
       Two wires carrying opposite signals, twisted together, generate opposing magnetic fields that cancel most external interference (EMI/RFI) and most crosstalk from the pair right next to them. Untwist the ends too far past the connector during termination and you've reopened the exact problem the twisting was solving.
     </div>
+
+    <div class="teach-note">
+      <span class="label">Which pins actually carry signal?</span>
+      10/100BASE-TX only uses two of the four pairs: pins 1 &amp; 2 transmit, pins 3 &amp; 6 receive. Pins 4, 5, 7, 8 are idle. That's exactly why the crossover swap is 1↔3 and 2↔6 — it's not an arbitrary rule, it's wiring one side's transmit pair straight into the other side's receive pair. 1000BASE-T (Gigabit) uses <strong>all four pairs, bidirectionally</strong> — which is also why a cable with one damaged pair can sometimes still pass 100 Mbps but fails outright at gigabit.
+    </div>
+
+    <div class="teach-note">
+      <span class="label">Copper safety hazards</span>
+      Two hazards specific to copper cabling, not just "be careful with tools": <strong>fire hazard</strong> — cable jacketing that isn't plenum-rated releases toxic fumes when burned, which is why plenum-rated cable is required in air-handling spaces (above drop ceilings, in HVAC returns). <strong>Electrical hazard</strong> — copper conducts; running network cable near power lines or into a location with a voltage fault can carry that voltage into networking equipment and to anyone touching it.
+    </div>
   </section>
 
   <!-- CABLE TYPES -->
@@ -486,6 +496,8 @@
           <dl class="stats">
             <div><dt>Types</dt><dd>Single-mode (SMF) — laser, long-haul, narrow core · Multimode (MMF) — LED, shorter runs, wider core</dd></div>
             <div><dt>Connectors</dt><dd>ST, SC, LC</dd></div>
+            <div><dt>Deployment types</dt><dd>Enterprise (campus backbone) · FTTH (fiber to the home) · Long-haul (city to city) · Submarine (ocean-crossing links)</dd></div>
+            <div><dt>Patch cords</dt><dd>Simplex (one strand — one direction) or duplex (two strands zipped together — send + receive)</dd></div>
             <div><dt>Strength</dt><dd>Total EMI/RFI immunity, longest distances, highest bandwidth</dd></div>
             <div><dt>Trade-off</dt><dd>Cost, careful handling — won't tolerate sharp bends</dd></div>
             <div><dt>On the range</dt><dd>Campus backbone links — already in the walls, never seen</dd></div>
@@ -507,7 +519,7 @@
           </div>
           <span class="stamp">SHARED AIR</span>
           <dl class="stats">
-            <div><dt>Standards</dt><dd>802.11 (Wi-Fi) · 802.15 (Bluetooth) · 802.16 (WiMAX)</dd></div>
+            <div><dt>Standards</dt><dd>802.11 (Wi-Fi, including 802.11ax "Wi-Fi 6"/6E — what's actually in this building) · 802.15 (Bluetooth) · 802.16 (WiMAX)</dd></div>
             <div><dt>Medium</dt><dd>Shared — every device in range competes for airtime</dd></div>
             <div><dt>Weakness</dt><dd>Coverage limited by power/obstacles/interference; harder to secure than a cable you can see</dd></div>
             <div><dt>On the range</dt><dd>Every laptop and phone that never plugged into anything</dd></div>
@@ -606,6 +618,19 @@
         <summary>Show answer</summary>
         <div class="solbody">
           <p><strong>A mistake, not a crossover.</strong> A real crossover swaps a specific, standardized pair of pins (1↔3 and 2↔6) — not an arbitrary one. Pins 4 and 6 landing out of order on only one end means those wires shifted while being seated into the connector, most likely from untwisting the pair too far back and losing track of the sequence. Re-terminate that end with a fresh connector rather than trying to reuse the crimped one.</p>
+        </div>
+      </details>
+    </div>
+
+    <div class="example">
+      <span class="tag">Troubleshooting</span>
+      <h3>Clean tester, wrong speed</h3>
+      <p>A 90-meter cable run tests clean end-to-end on a cable tester — all 8 pins light up correctly, no shorts. But when plugged in, the link negotiates at 100 Mbps instead of the expected 1 Gbps, and shows CRC errors under load. Name two plausible physical-layer causes.</p>
+      <details class="solution">
+        <summary>Show answer</summary>
+        <div class="solbody">
+          <p><strong>1. A pair used only by gigabit is damaged or miswired</strong> — most basic testers only verify continuity (a signal makes it end to end), not signal quality. 10/100BASE-TX only needs pins 1/2/3/6; 1000BASE-T needs all four pairs. A marginal problem on pins 4/5/7/8 — a bad splice, a pair untwisted too far at one connector — won't show up until gigabit tries to use it.</p>
+          <p><strong>2. The run is near its distance/interference limit.</strong> At 90m (close to the 100m Cat5e/Cat6 max), accumulated attenuation and crosstalk can be enough to force a fallback to a lower, more error-tolerant speed and still throw CRC errors under sustained load, even though a quick continuity test passes.</p>
         </div>
       </details>
     </div>

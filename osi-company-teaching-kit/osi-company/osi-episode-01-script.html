@@ -170,7 +170,7 @@
     <p class="narrator">A student opens a browser tab and types a URL. That's the entire ask.</p>
     <div class="line"><span class="who">FRONT DESK</span><p class="say">One request — GET /schedule.html — standard delivery.</p></div>
     <p class="stage">[Writes the request in plain language and passes it on without sealing anything.]</p>
-    <p class="narrator">Front Desk's whole job is "take the request." It doesn't encrypt it, doesn't address it, doesn't even know which building it's headed to. That's three floors down.</p>
+    <p class="narrator">Front Desk's whole job is "take the request." It doesn't encrypt it, doesn't address it, doesn't even know which building it's headed to. That's three floors down. (It may have already asked DNS which building — but that's a separate errand, already finished before this request left the desk.)</p>
     <div class="teach-note"><span class="label">TEACHING NOTE —</span> Layer 7, Application. PDU is just called <b>Data</b>. Real protocols: HTTP, DNS, SMTP, FTP.</div>
   </div>
 
@@ -273,7 +273,7 @@
       <li>Start a capture on the range, then generate one plain-HTTP request — a lab-hosted page is best, since most public sites now force HTTPS and won't show the readable version.</li>
       <li>Stop the capture, select the GET packet, and expand the packet-details pane from the bottom up: <code>Frame</code> → <code>Ethernet II</code> → <code>Internet Protocol</code> → <code>TCP</code> → <code>Hypertext Transfer Protocol</code>.</li>
       <li>Call out each section by department name as you expand it — this is the Up Trip playing out for real, in the exact order it was just performed.</li>
-      <li>Now repeat the request against an HTTPS site and expand the same pane. This is the twist: <code>Ethernet</code>, <code>IP</code>, and <code>TCP</code> still show plainly, but everything from <code>TLS</code> up is opaque. Translation &amp; Wardrobe closed the curtain — and the TLS handshake itself is Scheduling's session-opening ritual, hiding in plain sight where the model says Layer 5 shouldn't have its own visible line.</li>
+      <li>Now repeat the request against an HTTPS site and expand the same pane. This is the twist: <code>Ethernet</code>, <code>IP</code>, and <code>TCP</code> still show plainly, but everything from <code>TLS</code> up is opaque. Translation &amp; Wardrobe closed the curtain — and the TLS handshake itself does some of Scheduling's session-opening work too, which is why the table below lists it at both floors.</li>
     </ol>
     <table class="filters">
       <tr><th>Layer</th><th>Wireshark section</th><th>Department</th></tr>
@@ -283,6 +283,7 @@
       <tr><td>5–6</td><td><code>TLS</code> (when present)</td><td>Scheduling &amp; Translation/Wardrobe</td></tr>
       <tr><td>7</td><td><code>HTTP</code> / <code>DNS</code> / etc.</td><td>Front Desk</td></tr>
     </table>
+    <div class="teach-note"><span class="label">TEACHING NOTE —</span> Cisco files TLS at Presentation (L6) — that's the exam answer. What you're watching in this capture is <em>why</em> the model gets fuzzy above Layer 4: the TLS handshake is doing Session-layer work (opening and authenticating a conversation) inside what's officially a Presentation-layer protocol. Real protocols don't respect the org chart the way the seven-layer diagram implies.</div>
   </div>
 
   <div class="st-block">

@@ -217,6 +217,7 @@
     <a href="#mactable">MAC Address Table</a>
     <a href="#forwarding">Forwarding Methods</a>
     <a href="#ports">Port Settings</a>
+    <a href="#domains">Collision/Broadcast Domains</a>
     <a href="#flashcards">Flashcards</a>
     <a href="#quiz">Quiz</a>
     <a href="#examples">Examples</a>
@@ -242,7 +243,7 @@
     </ul>
     <div class="teach-note">
       <span class="label">Where this goes next</span>
-      The MAC address table you learn to read here is the same structure the ARP incident file (Module 9, <a href="osi-company-teaching-kit/osi-company/osi-company-directory.html#layer-02">"The Impersonator"</a>) ultimately corrupts — a switch that's been fed a spoofed entry starts sending traffic to the wrong desk without ever knowing it made a mistake.
+      The MAC address table you learn to read here is the switch-side half of a pair. The host-side half is the <strong>ARP table</strong> (IP→MAC), and that's the one the Module 9 incident file (<a href="osi-company-teaching-kit/osi-company/osi-company-directory.html#layer-02">"The Impersonator"</a>) corrupts. Worth noticing when you get there: the switch's table stays perfectly accurate the whole time the attack is running — which is exactly why nobody at the switch notices.
     </div>
   </section>
 
@@ -292,7 +293,7 @@
       <tbody>
         <tr><td style="font-weight:600;">Unicast</td><td>One specific NIC — the normal case, one sender to one receiver.</td></tr>
         <tr><td style="font-weight:600;">Broadcast</td><td><code>FF:FF:FF:FF:FF:FF</code> — every device on the local segment. ARP requests use this.</td></tr>
-        <tr><td style="font-weight:600;">Multicast</td><td>A defined group of interested devices, not everyone — used by protocols like OSPF that only need a subset of neighbors to listen.</td></tr>
+        <tr><td style="font-weight:600;">Multicast</td><td>A defined group of interested devices, not everyone — used by protocols like OSPF that only need a subset of neighbors to listen. IPv4 multicast maps to the concrete prefix <code>01:00:5E:xx:xx:xx</code> — recognize this prefix and you know you're looking at multicast without decoding anything else.</td></tr>
       </tbody>
     </table>
 
@@ -387,6 +388,37 @@
       <span class="label">The trap</span>
       A <strong>duplex mismatch</strong> (one side full, one side half) doesn't take the link down — it degrades it. The full-duplex side transmits whenever it wants; the half-duplex side, still playing by collision rules, treats that as a collision and starts dropping/retransmitting frames. Symptom: a link that's "up" but slow and full of late collisions — not a link that's obviously broken.
     </div>
+
+    <div class="teach-note">
+      <span class="label">Auto-MDIX has a prerequisite</span>
+      On Cisco switches, Auto-MDIX only functions when <strong>both</strong> speed and duplex are set to <code>auto</code>. Hard-code either one — force the speed, force the duplex — and Auto-MDIX silently stops working, with no warning. It's a genuinely common real-world gotcha and a favorite exam trap: "I plugged in the wrong cable type and it still worked" only holds if nothing on that port was manually pinned.
+    </div>
+
+    <div class="teach-note">
+      <span class="label">Memory buffering</span>
+      A switch has to hold frames somewhere while it decides where to send them, especially when several inbound ports want the same outbound port at once. <strong>Port-based memory</strong> gives each port its own fixed queue — simple, but one busy port's queue can fill up and drop frames even while other ports' buffers sit empty. <strong>Shared memory</strong> pools buffer space across all ports dynamically, so a burst on one port can borrow capacity that isn't in use elsewhere — better utilization, more complex to manage.
+    </div>
+  </section>
+
+  <!-- COLLISION & BROADCAST DOMAINS -->
+  <section id="domains">
+    <div class="section-head">
+      <p class="kicker">Module 7</p>
+      <h2>Collision domains vs. broadcast domains</h2>
+      <p>Two different boundaries, easy to conflate. This is the concept behind "why switches replaced hubs," "why full-duplex eliminates collisions," and "why a router bounds ARP broadcasts" — all ideas this course has used without naming yet.</p>
+    </div>
+    <table class="spec">
+      <thead><tr><th>Device</th><th>Collision domains</th><th>Broadcast domains</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;">Hub</td><td>1 — every port shares one medium; any two devices sending at once collide.</td><td>1</td></tr>
+        <tr><td style="font-weight:600;">Switch</td><td>1 per port — full-duplex switch links have no shared medium, so collisions are impossible per link.</td><td>1 — a switch floods broadcasts out every port; it doesn't stop them.</td></tr>
+        <tr><td style="font-weight:600;">Router</td><td>1 per interface</td><td>1 per interface — a router does not forward broadcasts between its interfaces. This is what "ARP broadcasts never cross a router" (Session 6) actually depends on.</td></tr>
+      </tbody>
+    </table>
+    <div class="teach-note">
+      <span class="label">Why this matters</span>
+      A switch replacing a hub turns one collision domain into N — that's the entire reason switches took over from hubs. A VLAN (Session 2's glossary term) is literally a way to split one broadcast domain into several without adding a router. Neither of those statements means anything until collision domain and broadcast domain are separately defined — which is why this table exists.
+    </div>
   </section>
 
   <!-- FLASHCARDS -->
@@ -432,6 +464,29 @@
         <summary>Show answer</summary>
         <div class="solbody">
           <p><strong>Answer:</strong> The switch first learns the source: <code>AA:AA:AA:AA:AA:AA</code> → Port 1 is added to the table. It then looks up the destination, <code>BB:BB:BB:BB:BB:BB</code> — not found, since the table only had one entry and it isn't this one. With no match, the switch <strong>floods</strong> the frame out every port except Port 1. The table now has exactly one entry: <code>AA:AA:AA:AA:AA:AA → Port 1</code>.</p>
+        </div>
+      </details>
+    </div>
+
+    <div class="example">
+      <span class="tag">Multi-step trace</span>
+      <h3>Four frames, one empty table</h3>
+      <p>A 4-port switch boots with an empty MAC address table. These four frames arrive in order:</p>
+      <ol style="font-size:.92rem;">
+        <li>Port 1: <code>AA</code> → <code>BB</code></li>
+        <li>Port 2: <code>BB</code> → <code>AA</code></li>
+        <li>Port 3: <code>CC</code> → <code>AA</code></li>
+        <li>Port 1: <code>AA</code> → <code>CC</code></li>
+      </ol>
+      <p>For each frame, say forward/filter/flood — and give the table's final contents.</p>
+      <details class="solution">
+        <summary>Show answer</summary>
+        <div class="solbody">
+          <p><strong>Frame 1</strong> (Port 1, AA→BB): learns AA→Port 1. BB unknown → <strong>flood</strong> out ports 2, 3, 4.</p>
+          <p><strong>Frame 2</strong> (Port 2, BB→AA): learns BB→Port 2. AA is known, on Port 1 (different port) → <strong>forward</strong> out Port 1 only.</p>
+          <p><strong>Frame 3</strong> (Port 3, CC→AA): learns CC→Port 3. AA is known, on Port 1 → <strong>forward</strong> out Port 1 only.</p>
+          <p><strong>Frame 4</strong> (Port 1, AA→CC): AA→Port 1 already in the table, entry just refreshed (no change). CC is known, on Port 3 (different port) → <strong>forward</strong> out Port 3 only.</p>
+          <p><strong>Final table:</strong> <code>AA → Port 1</code>, <code>BB → Port 2</code>, <code>CC → Port 3</code>. Only frame 1 got flooded — every later frame's destination was already learned from an earlier frame's source address.</p>
         </div>
       </details>
     </div>
@@ -500,6 +555,8 @@
     {t:"Aging timer", d:"A per-entry countdown (default 300 seconds on most Cisco switches) in the MAC address table. If no traffic arrives from that address before it expires, the entry is removed."},
     {t:"Auto-MDIX", d:"A feature that automatically detects whether a straight-through or crossover cable is plugged into a port and adjusts the port's internal wiring to match — removes the need to pick the right cable type by hand."},
     {t:"Broadcast MAC address", d:"FF:FF:FF:FF:FF:FF — delivered to every device on the local segment. Used by ARP requests, among others."},
+    {t:"Broadcast domain", d:"The set of devices that receive a broadcast frame sent by any one of them. A switch floods broadcasts out every port (doesn't bound them); a router does not forward broadcasts between its interfaces (does bound them). A VLAN splits one broadcast domain into several without adding a router."},
+    {t:"Collision domain", d:"The set of devices that can cause a collision with each other by sending at the same time. A hub is one collision domain for all its ports. A switch is one collision domain per port — full-duplex switch links have no shared medium to collide on at all."},
     {t:"Cut-through switching", d:"A forwarding method that reads only the destination MAC address, then begins forwarding immediately, without waiting for the rest of the frame or checking the FCS. Lower latency, but can forward corrupted frames."},
     {t:"Duplex mismatch", d:"A misconfiguration where one end of a link runs full-duplex and the other half-duplex. The link stays up but performs badly — the half-duplex side treats the full-duplex side's overlapping traffic as collisions."},
     {t:"FCS (Frame Check Sequence)", d:"A trailer field added to a frame that lets the receiver verify the frame arrived intact. Store-and-forward switching checks this before forwarding; cut-through does not."},
@@ -511,7 +568,9 @@
     {t:"Giant frame", d:"An Ethernet frame longer than the 1518-byte maximum without being configured for jumbo frames. Discarded on receipt."},
     {t:"Half-duplex", d:"A link mode where a device can either send or receive at any given moment, never both — the old shared-medium model, requiring CSMA/CD."},
     {t:"MAC address table", d:"A switch's dynamically-built map of MAC addresses to the ports they were learned on. Built entirely from source addresses on incoming frames — never handed to the switch, never built from destination addresses."},
-    {t:"Multicast MAC address", d:"An address delivered to a defined group of interested devices rather than everyone — used by protocols like OSPF that only need a subset of neighbors listening."},
+    {t:"Multicast MAC address", d:"An address delivered to a defined group of interested devices rather than everyone — used by protocols like OSPF that only need a subset of neighbors listening. IPv4 multicast maps to the concrete prefix 01:00:5E:xx:xx:xx."},
+    {t:"Memory buffering (port-based)", d:"Each switch port gets its own fixed-size frame queue. Simple, but one busy port's queue can fill and drop frames while other ports' buffers sit idle."},
+    {t:"Memory buffering (shared)", d:"Buffer space is pooled across all ports and allocated dynamically. Better utilization under bursty traffic than port-based buffering, at the cost of more complex management."},
     {t:"OUI (Organizationally Unique Identifier)", d:"The first 24 bits (first 6 hex digits) of a MAC address, assigned by the IEEE to a specific manufacturer. Every NIC that vendor builds shares this prefix."},
     {t:"Preamble / SFD", d:"The first 8 bytes of an Ethernet II frame — alternating bits that let the receiving NIC's clock synchronize, ending in a Start Frame Delimiter marking where the real frame begins."},
     {t:"Runt frame", d:"An Ethernet frame shorter than the 64-byte minimum. Almost always evidence of a collision; discarded on receipt."},

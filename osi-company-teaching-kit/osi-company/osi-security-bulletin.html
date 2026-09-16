@@ -222,6 +222,7 @@
         <div><dt>MO</dt><dd>Reads outgoing mail before it's sealed — only works if it was never sealed in the first place.</dd></div>
         <div><dt>Tools of the trade</dt><dd>Wireshark, tcpdump on an unsecured segment</dd></div>
         <div><dt>Countermeasure</dt><dd>Encrypt everything — TLS, SSH, VPN tunnels</dd></div>
+        <div><dt>Filed at</dt><dd>The department that failed to stop it (encryption, L6) — not where the crime itself happens. Sniffing is an L1/L2 act (physical medium access, promiscuous-mode NIC capture); L6 is only the countermeasure.</dd></div>
       </dl>
       <div class="threat-row">THREAT LEVEL: NOVICE–INTERMEDIATE <span class="dots">●●●○○</span></div>
       <div class="reward">REWARD: <strong>full credit</strong> for spotting the cleartext protocol in the capture before the professor does.</div>
@@ -241,6 +242,7 @@
         <div><dt>MO</dt><dd>Steals an already-open meeting room instead of knocking — rides a session it never earned.</dd></div>
         <div><dt>Tools of the trade</dt><dd>Stolen cookies/tokens, replay of captured session data</dd></div>
         <div><dt>Countermeasure</dt><dd>Session timeouts, token rotation, re-auth on sensitive actions</dd></div>
+        <div><dt>Filed at</dt><dd>The department that failed to stop it (session management, L5) — in practice, stolen session cookies are usually an L7 application-layer concern.</dd></div>
       </dl>
       <div class="threat-row">THREAT LEVEL: INTERMEDIATE <span class="dots">●●●●○</span></div>
       <div class="reward">REWARD: <strong>full credit</strong> for spotting a session token reused from an unexpected location.</div>
@@ -260,6 +262,7 @@
         <div><dt>MO</dt><dd>Jams the loading dock with fake orders until real shipments can't get through.</dd></div>
         <div><dt>Tools of the trade</dt><dd>Traffic generators, botnets</dd></div>
         <div><dt>Countermeasure</dt><dd>Rate limiting, SYN cookies, upstream filtering</dd></div>
+        <div><dt>Filed at</dt><dd>The department that failed to stop it — and correctly so, since this attack operates at L4.</dd></div>
       </dl>
       <div class="threat-row">THREAT LEVEL: INTERMEDIATE <span class="dots">●●●○○</span></div>
       <div class="reward">REWARD: <strong>full credit</strong> for finding the spike in half-open connections in netstat.</div>
@@ -279,6 +282,7 @@
         <div><dt>MO</dt><dd>Fakes the return address on a routing slip so the reply goes somewhere it shouldn't.</dd></div>
         <div><dt>Tools of the trade</dt><dd>Crafted packets with a forged source address</dd></div>
         <div><dt>Countermeasure</dt><dd>Ingress/egress filtering (BCP38), authenticated routing</dd></div>
+        <div><dt>Filed at</dt><dd>The department that failed to stop it — and correctly so, since IP spoofing operates at L3.</dd></div>
       </dl>
       <div class="threat-row">THREAT LEVEL: INTERMEDIATE <span class="dots">●●●●○</span></div>
       <div class="reward">REWARD: <strong>full credit</strong> for catching a source IP that doesn't match the expected subnet.</div>
@@ -297,10 +301,11 @@
       <dl class="case-stats">
         <div><dt>MO</dt><dd>Hands out a fake address label so local traffic gets rerouted through the wrong desk.</dd></div>
         <div><dt>Tools of the trade</dt><dd>ARP cache poisoning on the local segment</dd></div>
-        <div><dt>Countermeasure</dt><dd>Dynamic ARP Inspection, static ARP on critical hosts</dd></div>
+        <div><dt>Countermeasure</dt><dd>Dynamic ARP Inspection, static ARP on critical hosts. DAI and DHCP snooping are CCNA2 (Switching, Routing &amp; Wireless Essentials) material — know the concept here, not the configuration.</dd></div>
+        <div><dt>Filed at</dt><dd>The department that failed to stop it — and correctly so, since ARP spoofing operates at L2. It poisons the victim hosts' ARP caches, not the switch's MAC address table, which stays accurate throughout.</dd></div>
       </dl>
       <div class="threat-row">THREAT LEVEL: INTERMEDIATE <span class="dots">●●●○○</span></div>
-      <div class="reward">REWARD: <strong>full credit</strong> for spotting two IPs claiming the same MAC in the ARP table.</div>
+      <div class="reward">REWARD: <strong>full credit</strong> for spotting the tell — from a victim host's ARP table, two IPs claiming the same MAC; from the NOC watching ARP traffic over time, one IP claimed by two different MACs. Same attack, different vantage point.</div>
     </article>
 
     <!-- L1 -->
@@ -317,6 +322,7 @@
         <div><dt>MO</dt><dd>Cuts the cable or jams the signal. Nobody upstairs even finds out there was a request.</dd></div>
         <div><dt>Tools of the trade</dt><dd>Cable/patch panel access, an RF jammer</dd></div>
         <div><dt>Countermeasure</dt><dd>Locked wiring closets, port security, cable audits</dd></div>
+        <div><dt>Filed at</dt><dd>The department that failed to stop it — and correctly so, since this attack operates at L1.</dd></div>
       </dl>
       <div class="threat-row">THREAT LEVEL: NOVICE <span class="dots">●●○○○</span></div>
       <div class="reward">REWARD: <strong>full credit</strong> for finding the open/short before a laptop ever gets involved.</div>

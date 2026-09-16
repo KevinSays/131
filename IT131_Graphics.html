@@ -133,6 +133,26 @@
         <p class="exhibit-meta">Module 3 — Protocols and Models · Session 2</p>
         <img class="exhibit-img" src="Instructional_Assets/IT131_wk2_OSI.jpg" alt="IT131 CCNA reference sheet mapping all seven OSI layers to their function, example protocols and tools, and related CLI commands, from Application (Layer 7) down to Physical (Layer 1).">
         <p class="exhibit-caption">All seven OSI layers in one table — <strong>function</strong>, <strong>example protocols/tools</strong>, and the <strong>CLI commands</strong> tied to each layer. A standing reference worth pulling up any time a layer number comes up in class, not just during Module 3.</p>
+
+        <table style="width:100%; border-collapse:collapse; font-size:.85rem; margin-top:14px;">
+          <caption style="text-align:left; font-family:var(--mono); font-size:.8rem; text-transform:uppercase; letter-spacing:.05em; color:var(--kraft-dark); margin-bottom:8px; caption-side:top;">PDU companion table — the one column the image above doesn't have</caption>
+          <thead>
+            <tr style="background:var(--blue-soft);">
+              <th style="border:1px solid var(--ink); padding:6px 8px; text-align:left;">Layer</th>
+              <th style="border:1px solid var(--ink); padding:6px 8px; text-align:left;">PDU</th>
+              <th style="border:1px solid var(--ink); padding:6px 8px; text-align:left;">Notes on this reference sheet</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="border:1px solid var(--ink); padding:6px 8px; font-weight:600;">7 Application</td><td style="border:1px solid var(--ink); padding:6px 8px;">Data</td><td style="border:1px solid var(--ink); padding:6px 8px;">Wireshark is an L7 <em>application</em> — but it captures raw L2 frames and dissects every layer inside them. Don't read "Wireshark → L7" as "Wireshark only sees L7."</td></tr>
+            <tr><td style="border:1px solid var(--ink); padding:6px 8px; font-weight:600;">6 Presentation</td><td style="border:1px solid var(--ink); padding:6px 8px;">Data</td><td style="border:1px solid var(--ink); padding:6px 8px;">—</td></tr>
+            <tr><td style="border:1px solid var(--ink); padding:6px 8px; font-weight:600;">5 Session</td><td style="border:1px solid var(--ink); padding:6px 8px;">Data</td><td style="border:1px solid var(--ink); padding:6px 8px;">—</td></tr>
+            <tr><td style="border:1px solid var(--ink); padding:6px 8px; font-weight:600;">4 Transport</td><td style="border:1px solid var(--ink); padding:6px 8px;">Segment (TCP) / Datagram (UDP)</td><td style="border:1px solid var(--ink); padding:6px 8px;">QoS is commonly <em>classified</em> by L4 port numbers, but it's <em>marked</em> in the L3 IPv4 header (the DSCP field) — that's the layer Session 6 actually teaches it at.</td></tr>
+            <tr><td style="border:1px solid var(--ink); padding:6px 8px; font-weight:600;">3 Network</td><td style="border:1px solid var(--ink); padding:6px 8px;">Packet</td><td style="border:1px solid var(--ink); padding:6px 8px;">—</td></tr>
+            <tr><td style="border:1px solid var(--ink); padding:6px 8px; font-weight:600;">2 Data Link</td><td style="border:1px solid var(--ink); padding:6px 8px;">Frame</td><td style="border:1px solid var(--ink); padding:6px 8px;">Wi-Fi (802.11) spans <strong>L1 and L2</strong> — it isn't a pure L2 example the way Ethernet is.</td></tr>
+            <tr><td style="border:1px solid var(--ink); padding:6px 8px; font-weight:600;">1 Physical</td><td style="border:1px solid var(--ink); padding:6px 8px;">Bits</td><td style="border:1px solid var(--ink); padding:6px 8px;">—</td></tr>
+          </tbody>
+        </table>
       </div>
     </div>
   </section>

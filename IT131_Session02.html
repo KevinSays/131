@@ -206,7 +206,7 @@
             <rect x="20" y="30" width="140" height="80" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.5"/>
             <text x="90" y="58" text-anchor="middle" fill="var(--accent)">1. POST</text>
             <text x="90" y="78" text-anchor="middle" font-family="IBM Plex Sans" font-size="11" fill="var(--muted)">Power-On Self-Test</text>
-            <text x="90" y="95" text-anchor="middle" font-family="IBM Plex Sans" font-size="10" fill="var(--muted)">Hardware check (CPU, RAM, ports)</text>
+            <text x="90" y="95" text-anchor="middle" font-family="IBM Plex Sans" font-size="10" fill="var(--muted)">Run from ROM (CPU, RAM, ports)</text>
             <!-- Arrow -->
             <line x1="160" y1="70" x2="200" y2="70" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#arr)"/>
             <!-- Step 2: Load IOS -->
@@ -223,23 +223,27 @@
             <text x="445" y="95" text-anchor="middle" font-family="IBM Plex Sans" font-size="10" fill="var(--muted)">From NVRAM → RAM</text>
 
             <!-- Memory types -->
-            <text x="260" y="150" text-anchor="middle" font-size="13" fill="var(--accent-2)">Where configs live</text>
-            <rect x="30" y="170" width="130" height="70" fill="var(--surface-2)" stroke="var(--border)"/>
-            <text x="95" y="192" text-anchor="middle" font-size="12" fill="var(--accent-2)">Flash</text>
-            <text x="95" y="210" text-anchor="middle" font-family="IBM Plex Sans" font-size="10" fill="var(--muted)">IOS image file</text>
-            <text x="95" y="225" text-anchor="middle" font-family="IBM Plex Sans" font-size="10" fill="var(--muted)">Persistent (survives reboot)</text>
-            <rect x="195" y="170" width="130" height="70" fill="var(--surface-2)" stroke="var(--border)"/>
-            <text x="260" y="192" text-anchor="middle" font-size="12" fill="var(--accent-2)">NVRAM</text>
-            <text x="260" y="210" text-anchor="middle" font-family="IBM Plex Sans" font-size="10" fill="var(--muted)">startup-config</text>
-            <text x="260" y="225" text-anchor="middle" font-family="IBM Plex Sans" font-size="10" fill="var(--muted)">Persistent (survives reboot)</text>
-            <rect x="360" y="170" width="130" height="70" fill="var(--surface-2)" stroke="var(--border)"/>
-            <text x="425" y="192" text-anchor="middle" font-size="12" fill="var(--accent-2)">RAM</text>
-            <text x="425" y="210" text-anchor="middle" font-family="IBM Plex Sans" font-size="10" fill="var(--muted)">running-config</text>
-            <text x="425" y="225" text-anchor="middle" font-family="IBM Plex Sans" font-size="10" fill="var(--muted)">Volatile (lost on reboot)</text>
+            <text x="260" y="150" text-anchor="middle" font-size="13" fill="var(--accent-2)">Where configs (and code) live</text>
+            <rect x="10" y="170" width="120" height="70" fill="var(--surface-2)" stroke="var(--border)"/>
+            <text x="70" y="192" text-anchor="middle" font-size="12" fill="var(--accent-2)">ROM</text>
+            <text x="70" y="210" text-anchor="middle" font-family="IBM Plex Sans" font-size="10" fill="var(--muted)">Bootstrap, POST, ROMMON</text>
+            <text x="70" y="225" text-anchor="middle" font-family="IBM Plex Sans" font-size="10" fill="var(--muted)">Fixed — not writable</text>
+            <rect x="140" y="170" width="120" height="70" fill="var(--surface-2)" stroke="var(--border)"/>
+            <text x="200" y="192" text-anchor="middle" font-size="12" fill="var(--accent-2)">Flash</text>
+            <text x="200" y="210" text-anchor="middle" font-family="IBM Plex Sans" font-size="10" fill="var(--muted)">IOS image file</text>
+            <text x="200" y="225" text-anchor="middle" font-family="IBM Plex Sans" font-size="10" fill="var(--muted)">Persistent (survives reboot)</text>
+            <rect x="270" y="170" width="120" height="70" fill="var(--surface-2)" stroke="var(--border)"/>
+            <text x="330" y="192" text-anchor="middle" font-size="12" fill="var(--accent-2)">NVRAM</text>
+            <text x="330" y="210" text-anchor="middle" font-family="IBM Plex Sans" font-size="10" fill="var(--muted)">startup-config</text>
+            <text x="330" y="225" text-anchor="middle" font-family="IBM Plex Sans" font-size="10" fill="var(--muted)">Persistent (survives reboot)</text>
+            <rect x="400" y="170" width="120" height="70" fill="var(--surface-2)" stroke="var(--border)"/>
+            <text x="460" y="192" text-anchor="middle" font-size="12" fill="var(--accent-2)">RAM</text>
+            <text x="460" y="210" text-anchor="middle" font-family="IBM Plex Sans" font-size="10" fill="var(--muted)">running-config</text>
+            <text x="460" y="225" text-anchor="middle" font-family="IBM Plex Sans" font-size="10" fill="var(--muted)">Volatile (lost on reboot)</text>
           </g>
           <defs><marker id="arr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="var(--accent)"/></marker></defs>
         </svg>
-        <figcaption>The switch boots by testing hardware (POST), loading the IOS from flash, then loading the saved config from NVRAM into RAM. If no saved config exists, it enters setup mode.</figcaption>
+        <figcaption>The switch boots by running the bootstrap program from ROM, testing hardware (POST), loading the IOS from flash, then loading the saved config from NVRAM into RAM. If no saved config exists, it enters setup mode.</figcaption>
       </figure>
 
       <div>
@@ -326,7 +330,8 @@
   Always works. No network needed. The "break glass" method.
 
 <span class="hl">SSH</span> <span class="comment">— encrypted remote access over the network</span>
-  Requires: management IP + enable secret + line vty config.
+  Requires: management IP + hostname + domain name + RSA keys +
+  a local username + "login local" on the vty lines.
   Preferred for day-to-day management.
 
 <span class="hl">Telnet</span> <span class="comment">— unencrypted remote access</span>
@@ -375,11 +380,19 @@
 <span class="prompt">Floor1-SW(config-line)#</span> <span class="cmd">exit</span>
 
 <span class="comment">! === Step 6: Secure remote access (SSH) ===</span>
+<span class="comment">! SSH won't start without a domain name and an RSA key pair —</span>
+<span class="comment">! and a line password alone can't authenticate an SSH session.</span>
+<span class="prompt">Floor1-SW(config)#</span> <span class="hl">ip domain-name it131.local</span>
+<span class="prompt">Floor1-SW(config)#</span> <span class="hl">crypto key generate rsa modulus 1024</span>
+<span class="prompt">Floor1-SW(config)#</span> <span class="hl">ip ssh version 2</span>
+<span class="prompt">Floor1-SW(config)#</span> <span class="hl">username admin secret Cisco123</span>
 <span class="prompt">Floor1-SW(config)#</span> <span class="cmd">line vty 0 4</span>
-<span class="prompt">Floor1-SW(config-line)#</span> <span class="cmd">password VtYp@ss</span>
-<span class="prompt">Floor1-SW(config-line)#</span> <span class="cmd">login</span>
-<span class="prompt">Floor1-SW(config-line)#</span> <span class="hl">transport input ssh</span>
+<span class="prompt">Floor1-SW(config-line)#</span> <span class="hl">login local</span> <span class="comment">! authenticate against the local username database</span>
+<span class="prompt">Floor1-SW(config-line)#</span> <span class="hl">transport input ssh</span> <span class="comment">! SSH only — refuse Telnet</span>
 <span class="prompt">Floor1-SW(config-line)#</span> <span class="cmd">exit</span>
+<span class="prompt">Floor1-SW(config)#</span> <span class="hl">service password-encryption</span>
+<span class="comment">! Weakly obscures the line passwords set above (type 7 — trivially</span>
+<span class="comment">! reversible). Contrast with "enable secret", which is a real hash.</span>
 
 <span class="comment">! === Step 7: Set a legal warning banner ===</span>
 <span class="prompt">Floor1-SW(config)#</span> <span class="cmd">banner motd #</span>
@@ -414,6 +427,22 @@
 <span class="prompt">Floor1-SW#</span> <span class="cmd">show interfaces</span>            <span class="comment">! detailed interface status</span>
 <span class="prompt">Floor1-SW#</span> <span class="cmd">show version</span>               <span class="comment">! IOS version, uptime, config register</span>
 <span class="prompt">Floor1-SW#</span> <span class="cmd">show ip ssh</span>                <span class="comment">! SSH status and version</span>
+      </div>
+    </div>
+
+    <div class="terminal" style="margin-top:20px;">
+      <div class="terminal-header">
+        <span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span>
+        <span class="terminal-title">End-device verification — every lab starts here</span>
+      </div>
+      <div class="terminal-body">
+<span class="comment">! Everything above is switch-side. You need the host-side commands</span>
+<span class="comment">! just as often — this ladder is the single most useful troubleshooting</span>
+<span class="comment">! habit you can install this early.</span>
+<span class="prompt">C:\&gt;</span> <span class="cmd">ipconfig /all</span>        <span class="comment">! IP, mask, gateway, MAC, DNS — all in one place</span>
+<span class="prompt">C:\&gt;</span> <span class="cmd">ping 127.0.0.1</span>       <span class="comment">! loopback — tests the local TCP/IP stack, not the NIC</span>
+<span class="prompt">C:\&gt;</span> <span class="cmd">ping 192.168.1.10</span>    <span class="comment">! L3 reachability to the switch's own SVI</span>
+<span class="prompt">C:\&gt;</span> <span class="cmd">tracert 8.8.8.8</span>      <span class="comment">! hop-by-hop path (previews Module 13's TTL trick)</span>
       </div>
     </div>
   </section>
@@ -482,13 +511,13 @@
             <tr><td style="font-weight:700;">7 Application</td><td>Network services to apps</td><td>Data</td><td>HTTP, DNS, SMTP, DHCP</td></tr>
             <tr><td style="font-weight:700;">6 Presentation</td><td>Encoding, encryption</td><td>Data</td><td>JPEG, ASCII, SSL/TLS</td></tr>
             <tr><td style="font-weight:700;">5 Session</td><td>Manage dialogues</td><td>Data</td><td>NetBIOS, RPC</td></tr>
-            <tr><td style="font-weight:700;">4 Transport</td><td>End-to-end delivery</td><td>Segment</td><td>TCP, UDP</td></tr>
+            <tr><td style="font-weight:700;">4 Transport</td><td>End-to-end delivery</td><td>Segment (TCP) / Datagram (UDP)</td><td>TCP, UDP</td></tr>
             <tr><td style="font-weight:700;">3 Network</td><td>Routing across networks</td><td>Packet</td><td>IP, ICMP, OSPF</td></tr>
             <tr><td style="font-weight:700;">2 Data Link</td><td>MAC addressing, error detection</td><td>Frame</td><td>Ethernet 802.3, Wi-Fi 802.11</td></tr>
             <tr><td style="font-weight:700;">1 Physical</td><td>Bits on the wire</td><td>Bits</td><td>Cables, connectors, signaling</td></tr>
           </tbody>
         </table>
-        <p style="font-family:var(--mono);font-size:.88rem;color:var(--muted);margin-top:8px;"><strong>Memory aid:</strong> "All People Seem To Need Data Processing" (bottom → top)</p>
+        <p style="font-family:var(--mono);font-size:.88rem;color:var(--muted);margin-top:8px;"><strong>Memory aid (top → bottom):</strong> "All People Seem To Need Data Processing"<br><strong>Memory aid (bottom → top):</strong> "Please Do Not Throw Sausage Pizza Away"</p>
       </div>
     </div>
   </section>
@@ -638,6 +667,28 @@
     </div>
 
     <div class="example">
+      <span class="tag">Diagnosis</span>
+      <h3>Find the three problems</h3>
+      <p>A classmate pastes you this fragment of a switch's <code>running-config</code> and asks why they can't reach it over SSH:</p>
+      <pre style="background:var(--surface-2);border:1px solid var(--border);padding:10px 14px;font-family:var(--mono);font-size:.85rem;overflow-x:auto;">hostname Switch
+enable password cisco
+!
+line vty 0 4
+ login
+ transport input telnet</pre>
+      <p>Find three problems with this fragment.</p>
+      <details class="solution">
+        <summary>Show answer</summary>
+        <div class="solbody">
+          <p><strong>1. <code>enable password</code>, not <code>enable secret</code>.</strong> Stores the privileged-EXEC password in plaintext in the config instead of hashing it.</p>
+          <p><strong>2. <code>transport input telnet</code> — not SSH.</strong> Even if it were <code>ssh</code>, there's no <code>ip domain-name</code> and no <code>crypto key generate rsa</code> anywhere, so the SSH server has nothing to start with.</p>
+          <p><strong>3. Hostname is still the default (<code>Switch</code>).</strong> RSA key generation requires a non-default hostname <em>and</em> a domain name — so even fixing #2 in isolation would still fail until this is set too.</p>
+          <p>Diagnosing a broken config from the artifact itself — not just transcribing a correct one — is a different, more durable skill than following the walkthrough above.</p>
+        </div>
+      </details>
+    </div>
+
+    <div class="example">
       <span class="tag">SSH vs Telnet</span>
       <h3>Why SSH?</h3>
       <p>A student asks: "If both SSH and Telnet let me configure a switch remotely, why does it matter which one I use?"</p>
@@ -720,7 +771,7 @@
     {t:"CLI (Command-Line Interface)", d:"The text-based interface for configuring Cisco IOS devices. You type commands at a prompt rather than clicking through a GUI."},
     {t:"Console", d:"A physical serial cable connection to a device — works regardless of network state. The only guaranteed access method on a freshly unconfigured switch."},
     {t:"Data Link layer (Layer 2)", d:"The OSI layer responsible for MAC addressing and error detection on a local link. Switches operate here. PDU: frame."},
-    {t:"Default gateway", d:"The router interface IP on the same subnet — without it, a device can talk locally but not across networks. Configured on end devices, not switches."},
+    {t:"Default gateway", d:"The router interface IP on the same subnet — without it, a device can talk locally but not across networks. Configured on end devices, and on a Layer 2 switch as well ('ip default-gateway') so the switch's own management traffic can leave its subnet. A Layer 2 switch doesn't route user traffic through it — the gateway is only for traffic the switch itself originates."},
     {t:"DNS (Domain Name System)", d:"Translates human-readable domain names (google.com) into IP addresses. An Application layer (Layer 7) protocol."},
     {t:"DHCP", d:"Dynamic Host Configuration Protocol — automatically assigns IP addresses, subnet masks, default gateways, and DNS servers to devices. Application layer (Layer 7)."},
     {t:"Encapsulation", d:"The process of wrapping data with protocol headers as it moves down the OSI stack. Each layer adds its own header (and sometimes a trailer)."},
@@ -732,17 +783,18 @@
     {t:"Internet layer", d:"The TCP/IP model layer that handles logical addressing and routing — maps to OSI Layer 3 (Network). Uses IP."},
     {t:"IOS (Internetwork Operating System)", d:"The operating system that runs on Cisco switches and routers. Provides the CLI interface and all networking functions."},
     {t:"IP address", d:"A logical 32-bit (IPv4) or 128-bit (IPv6) address that identifies a host on a network. Used at Layer 3 for routing between networks."},
-    {t:"MAC address", d:"A 48-bit hardware address burned into a NIC. Used at Layer 2 to identify devices on the same local link. Written as 6 hex pairs (e.g., AA:BB:CC:DD:EE:FF)."},
+    {t:"MAC address", d:"A 48-bit hardware address — the BIA (burned-in address) — assigned to a NIC by its manufacturer. Used at Layer 2 to identify devices on the same local link. Written as 6 hex pairs (e.g., AA:BB:CC:DD:EE:FF). Can be overridden in software, which is how MAC spoofing works."},
     {t:"NVRAM", d:"Non-Volatile RAM — stores the startup-config. Survives reboots. Contrast with RAM (running-config, volatile)."},
     {t:"OSI model", d:"Open Systems Interconnection — a 7-layer reference model describing how network communication works. The universal vocabulary for discussing layers."},
     {t:"Physical layer (Layer 1)", d:"The OSI layer that transmits raw bits over a physical medium — cables, connectors, signaling. PDU: bits."},
     {t:"Presentation layer (Layer 6)", d:"The OSI layer responsible for data encoding, encryption, and compression. PDU: data."},
+    {t:"ROM (Read-Only Memory)", d:"Stores the bootstrap program, POST, and ROMMON (a minimal recovery OS). Fixed at manufacture — not rewritten by normal configuration. Runs before flash or NVRAM are even read."},
     {t:"Privileged EXEC mode", d:"The IOS mode with full access to show commands, debug, and config. Entered with 'enable'. Prompt ends in #. Protect with enable secret."},
     {t:"Protocol", d:"A set of rules governing how devices communicate — message format, ordering, speed, error handling. Without protocols, devices can't interoperate."},
-    {t:"Protocol suite", d:"A group of protocols working together at different layers. The two major suites: OSI (7 layers) and TCP/IP (4 layers)."},
+    {t:"Protocol suite", d:"A group of related protocols that work together across layers — TCP/IP is the suite the internet runs on. Contrast with a reference model like OSI, which describes layered functions but isn't itself a set of protocols."},
     {t:"Running-config", d:"The currently active configuration in RAM. Changes take effect immediately but are lost on reboot unless saved to startup-config."},
     {t:"Session layer (Layer 5)", d:"The OSI layer that manages dialogues between applications — opening, maintaining, and closing sessions. PDU: data."},
-    {t:"SSH (Secure Shell)", d:"Encrypted remote access protocol. Preferred over Telnet for managing switches/routers remotely. Requires a management IP and enable secret."},
+    {t:"SSH (Secure Shell)", d:"Encrypted remote access protocol. Preferred over Telnet for managing switches/routers remotely. Requires a management IP, a hostname and domain name, an RSA key pair ('crypto key generate rsa'), and a local username with 'login local' on the vty lines."},
     {t:"Startup-config", d:"The saved configuration stored in NVRAM. Loaded into RAM (as running-config) every time the device boots."},
     {t:"SVI (Switch Virtual Interface)", d:"A virtual Layer 3 interface on a switch associated with a VLAN. Used for management IP addressing — e.g., 'interface vlan 1'."},
     {t:"Telnet", d:"An unencrypted remote access protocol. Mentioned only to contrast with SSH — never use it in production. Text sent in plaintext, including passwords."},
@@ -767,9 +819,9 @@
     },
     {
       q:"Which command saves the running-config to startup-config?",
-      choices:["save config","write","copy running-config startup-config","startup-config save"],
+      choices:["save config","copy startup-config running-config","copy running-config startup-config","startup-config save"],
       correct:2,
-      explain:"'copy running-config startup-config' copies the active config to NVRAM so it survives a reboot."
+      explain:"'copy running-config startup-config' copies the active config to NVRAM so it survives a reboot. ('write memory' also works, but isn't one of the choices here.) Watch out for 'copy startup-config running-config' — a real command, but it copies in the opposite direction."
     },
     {
       q:"What is the prompt for global configuration mode?",
@@ -803,9 +855,9 @@
     },
     {
       q:"Why should you use 'enable secret' instead of 'enable password'?",
-      choices:["enable secret is shorter","enable secret encrypts the password; enable password stores it in plaintext","enable secret is only for SSH","enable password doesn't work on switches"],
+      choices:["enable secret is shorter","enable secret hashes the password; enable password stores it in plaintext","enable secret is only for SSH","enable password doesn't work on switches"],
       correct:1,
-      explain:"'enable password' stores the password in plaintext in the config — anyone who can view the config can read it. 'enable secret' hashes it."
+      explain:"'enable password' stores the password in plaintext in the config — anyone who can view the config can read it. 'enable secret' hashes it (type 5/8/9), which can't be reversed — that's the whole security argument."
     },
     {
       q:"What port number does HTTPS use?",

@@ -411,6 +411,25 @@
         <tr><td style="font-weight:600;">Controlled access</td><td>Deterministic, scheduled, or token-passing turn order — no collisions possible, but wasteful when the medium is mostly idle.</td><td>Legacy/rare in modern networks — recognition-level only.</td></tr>
       </tbody>
     </table>
+
+    <div class="teach-note">
+      <span class="label">Half-duplex vs. full-duplex</span>
+      <strong>Half-duplex</strong> — one direction at a time, like a walkie-talkie. This is exactly why CSMA/CD exists: on a shared, half-duplex medium, two devices sending at once means a collision. <strong>Full-duplex</strong> — both directions simultaneously, like a phone call, over separate transmit/receive paths (separate wire pairs, or separate frequencies). A modern switch port running full-duplex has no shared medium to contend for, so collisions become physically impossible and CSMA/CD has nothing to do — which is the real reason it's "obsolete," not just that hardware got faster.
+    </div>
+
+    <h3 style="font-family:var(--mono);font-size:1.1rem;margin:24px 0 12px;">LAN &amp; WAN topology types</h3>
+    <p>The physical/logical topology distinction from Session 1 has named shapes at both scales:</p>
+    <table class="spec">
+      <thead><tr><th>Scope</th><th>Topology</th><th>Shape</th></tr></thead>
+      <tbody>
+        <tr><td rowspan="3" style="font-weight:600;">LAN</td><td>Star</td><td>Every device connects to one central point (a switch). Standard for modern wired LANs — one cable failure only takes out one device.</td></tr>
+        <tr><td>Extended star</td><td>Multiple stars connected together — switches connected to switches, each with its own set of end devices. How most real buildings are wired.</td></tr>
+        <tr><td>Bus / Ring</td><td>Legacy — all devices share one backbone cable (bus) or a closed loop (ring, e.g. Token Ring). Recognition-level only.</td></tr>
+        <tr><td rowspan="3" style="font-weight:600;">WAN</td><td>Point-to-point</td><td>One dedicated link between two sites — simple, but a single failure isolates both ends.</td></tr>
+        <tr><td>Hub-and-spoke</td><td>One central site connects to every remote site individually — cheaper than a full mesh, but the hub is a single point of failure.</td></tr>
+        <tr><td>Mesh</td><td>Every site connects to every other site (full mesh) or to several others (partial mesh) — maximum redundancy, highest cost/complexity.</td></tr>
+      </tbody>
+    </table>
   </section>
 
   <!-- FRAME FIELDS -->
@@ -434,7 +453,7 @@
 
     <div class="teach-note">
       <span class="label">The freshman trap, again</span>
-      Local Dispatch's address is never the final destination — it's just "who's next." A MAC address changes at every router the frame crosses (<strong>hop-to-hop</strong>). The IP address inside stays the same the entire trip (<strong>end-to-end</strong>). Switches forward frames unchanged at Layer 2 — only crossing a router changes the MAC addressing.
+      Local Dispatch's address is never the final destination — it's just "who's next." Strictly, the frame itself never crosses the router: at each router the old frame is <strong>discarded entirely</strong> and a brand-new one is built with new source/destination MAC addressing (<strong>hop-to-hop</strong>). The packet inside is untouched — the IP address stays the same the entire trip (<strong>end-to-end</strong>). Switches forward frames unchanged at Layer 2 — only crossing a router triggers a new frame.
     </div>
   </section>
 
@@ -522,13 +541,39 @@
     </div>
 
     <div class="example">
+      <span class="tag">Recognition drill</span>
+      <h3>The eight mask octet values</h3>
+      <p>Every subnet mask octet is one of exactly eight values — the running total of 128+64+32+16+8+4+2+1 as you turn on bits from the left. Module 11 assumes you recognize these on sight, no scratch work. Cover the right column and name each one's binary before checking.</p>
+      <details class="solution">
+        <summary>Show answer</summary>
+        <div class="solbody">
+          <table class="spec">
+            <thead><tr><th>Decimal</th><th>Binary</th><th>On bits</th></tr></thead>
+            <tbody>
+              <tr><td>128</td><td>10000000</td><td>1</td></tr>
+              <tr><td>192</td><td>11000000</td><td>2</td></tr>
+              <tr><td>224</td><td>11100000</td><td>3</td></tr>
+              <tr><td>240</td><td>11110000</td><td>4</td></tr>
+              <tr><td>248</td><td>11111000</td><td>5</td></tr>
+              <tr><td>252</td><td>11111100</td><td>6</td></tr>
+              <tr><td>254</td><td>11111110</td><td>7</td></tr>
+              <tr><td>255</td><td>11111111</td><td>8</td></tr>
+            </tbody>
+          </table>
+          <p>These eight values are the <em>only</em> numbers that can legally appear in a subnet mask octet. Nobody subnets by memorizing tables in practice — they recognize this set cold and do the math live.</p>
+        </div>
+      </details>
+    </div>
+
+    <div class="example">
       <span class="tag">MAC vs. IP</span>
       <h3>What changes, what doesn't</h3>
       <p>A packet travels from a laptop, through two switches, through one router, to a server on a different network. How many times does the source MAC address change along the way? How many times does the source IP address change?</p>
       <details class="solution">
         <summary>Show answer</summary>
         <div class="solbody">
-          <p><strong>MAC address:</strong> changes once — at the router. Switches forward frames unchanged at Layer 2, so crossing two switches doesn't touch the MAC addressing at all; only crossing the router (a new hop) causes Local Dispatch to re-address the frame. <strong>IP address:</strong> never changes. It's end-to-end — the same source IP the entire trip, from laptop to server.</p>
+          <p><strong>MAC address:</strong> changes once — at the router. Switches forward frames unchanged at Layer 2, so crossing two switches doesn't touch the MAC addressing at all; only crossing the router (a new hop) causes Local Dispatch to re-address the frame. <strong>IP address:</strong> unchanged for this trip. It's end-to-end — the same source IP the entire way, from laptop to server.</p>
+          <p><strong>The exception you'll meet later:</strong> NAT. A home router deliberately rewrites the source IP address on the way out to the internet — that's the one case where "IP is end-to-end" stops being literally true. Until NAT comes up later in the course, treat IP addressing as end-to-end.</p>
         </div>
       </details>
     </div>
@@ -568,13 +613,17 @@
     {t:"CSMA/CD", d:"Carrier Sense Multiple Access with Collision Detection. Used by legacy shared-medium Ethernet — listen before sending, and if a collision happens anyway, back off and retry. Obsolete on modern switched full-duplex Ethernet."},
     {t:"Data link layer (Layer 2)", d:"The OSI layer that prepares packets for transmission onto the physical medium and controls access to that medium. PDU: frame."},
     {t:"Decimal", d:"Base-10 number system — the human-readable format for IPv4 addresses (dotted decimal)."},
+    {t:"Full-duplex", d:"Both directions transmit simultaneously over separate paths. No shared medium to contend for, so collisions are physically impossible — this is why CSMA/CD is obsolete on modern switch ports."},
+    {t:"Half-duplex", d:"Only one direction transmits at a time, like a walkie-talkie. Requires a media access method (e.g. CSMA/CD) to arbitrate who gets to send."},
+    {t:"Hub-and-spoke (WAN topology)", d:"One central site connects individually to each remote site. Cheaper than full mesh, but the hub is a single point of failure."},
+    {t:"Mesh (WAN topology)", d:"Every site connects to every other site (full) or to several (partial). Maximum redundancy, highest cost/complexity."},
     {t:"End-to-end addressing", d:"An address that stays the same for the entire trip from source to final destination — how IP addresses behave, unlike MAC addresses."},
     {t:"FCS (Frame Check Sequence)", d:"A trailer field added to a frame that lets the receiver verify the frame arrived intact — error detection at Layer 2."},
     {t:"Frame", d:"The Layer 2 protocol data unit (PDU) — a packet wrapped with a Layer 2 header (addressing, type) and trailer (FCS)."},
     {t:"Hexadecimal", d:"Base-16 number system — 0–9 then A–F. A compact, lossless shorthand for binary: one hex digit always equals exactly one 4-bit nibble."},
     {t:"Hop-to-hop addressing", d:"An address that changes at every hop along the path — how a MAC address behaves. A switch never changes it; only crossing a router does."},
     {t:"LLC (Logical Link Control)", d:"The upper of the two IEEE data link sublayers. Talks to the network layer above and identifies which Layer 3 protocol is inside the frame, independent of the physical medium."},
-    {t:"MAC address", d:"A 48-bit physical address burned into a NIC, written as 12 hex digits (6 bytes). Identifies a device on the local link only — hop-to-hop, never end-to-end."},
+    {t:"MAC address", d:"A 48-bit physical address — the BIA (burned-in address) assigned by the manufacturer — written as 12 hex digits (6 bytes). Identifies a device on the local link only — hop-to-hop, never end-to-end. Can be overridden in software, which is how MAC spoofing works."},
     {t:"MAC (Media Access Control) sublayer", d:"The lower of the two IEEE data link sublayers. Handles physical addressing (the MAC address) and controls access to the physical medium."},
     {t:"Multi-access topology", d:"A topology where many nodes share one medium (legacy hub Ethernet, Wi-Fi) — requires a media access control method to prevent every device transmitting at once."},
     {t:"Nibble", d:"Four bits — exactly the amount of information one hexadecimal digit represents. The entire reason hex compresses binary so cleanly."},
