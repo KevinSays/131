@@ -1,0 +1,456 @@
+<title>Do You Know Modules 1–10?</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --paper:#EDE8DD; --canvas:#D9D2C3; --ink:#1F2421; --kraft:#B08554; --kraft-dark:#664526;
+    --blue:#2F4858; --red:#A23A2E; --ticket:#F3E7E2;
+    --blue-soft:rgba(47,72,88,.08); --red-soft:rgba(162,58,46,.08);
+    --kraft-soft:rgba(176,133,84,.14); --ink-soft:rgba(31,36,33,.06);
+    --shadow:5px 5px 0 rgba(31,36,33,.16);
+    --display:'Special Elite','Courier New',monospace;
+    --sans:'IBM Plex Sans', system-ui, sans-serif;
+    --mono:'IBM Plex Mono', monospace;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth; font-size:125%;}
+  body{
+    margin:0; background:var(--canvas); color:var(--ink); font-family:var(--sans);
+    line-height:1.55; -webkit-font-smoothing:antialiased;
+    background-image:radial-gradient(rgba(31,36,33,.06) 1px, transparent 1px);
+    background-size:16px 16px;
+  }
+  ::selection{ background:var(--kraft-soft); }
+  a{ color:var(--blue); }
+  .wrap{ max-width:940px; margin:0 auto; padding:0 20px; }
+  [hidden]{ display:none !important; }
+
+  header.masthead{ padding:48px 0 30px; }
+  .eyebrow{ display:inline-block; font-family:var(--mono); font-size:.86rem; letter-spacing:.12em;
+    border:2px solid var(--blue); color:var(--blue); padding:4px 10px; transform:rotate(-2deg); background:var(--paper); }
+  h1{ font-family:var(--display); font-weight:400; font-size:clamp(1.9rem,5vw,2.9rem); letter-spacing:.01em;
+    margin:16px 0 10px; line-height:1.15; }
+  .lede{ max-width:64ch; font-size:1.02rem; line-height:1.6; opacity:.85; margin:0 0 18px; }
+  .factrow{ display:flex; flex-wrap:wrap; gap:10px; }
+  .fact{ font-family:var(--mono); font-size:.82rem; letter-spacing:.02em; background:var(--paper);
+    border:1.5px solid var(--ink); padding:.4em .8em; display:flex; gap:.5em; box-shadow:3px 3px 0 rgba(31,36,33,.14); }
+  .fact b{ color:var(--kraft-dark); font-weight:600; text-transform:uppercase; letter-spacing:.06em; font-size:.88rem; }
+
+  nav.index{ position:sticky; top:0; z-index:20; background:color-mix(in srgb, var(--canvas) 92%, transparent);
+    backdrop-filter:blur(6px); border-top:2px solid var(--ink); border-bottom:2px solid var(--ink); }
+  nav.index .wrap{ display:flex; gap:2px; overflow-x:auto; padding:8px 20px; scrollbar-width:none; }
+  nav.index .wrap::-webkit-scrollbar{ display:none; }
+  nav.index a{ font-family:var(--mono); font-weight:600; letter-spacing:.03em; font-size:.82rem; text-decoration:none;
+    color:var(--ink); opacity:.85; padding:.5em .8em; white-space:nowrap; text-transform:uppercase; border:1px solid transparent; }
+  nav.index a:hover{ opacity:1; border-color:var(--ink); background:var(--paper); }
+  nav.index a.toc-link{ color:var(--blue); opacity:1; border-right:1.5px solid var(--ink); margin-right:8px; padding-right:16px; }
+  nav.index a.toc-link:hover{ background:var(--blue-soft); border-color:var(--ink); }
+
+  section{ padding:44px 0; border-bottom:2px dashed rgba(31,36,33,.3); }
+  section:last-of-type{ border-bottom:none; }
+  .section-head{ margin-bottom:26px; max-width:70ch; }
+  .kicker{ font-family:var(--mono); font-weight:600; font-size:.9rem; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--red); margin:0 0 .4em; }
+  h2{ font-family:var(--display); font-weight:400; font-size:clamp(1.4rem,2.8vw,1.9rem); margin:0 0 .25em; letter-spacing:.005em; }
+  .section-head p{ opacity:.82; margin:.5em 0 0; }
+
+  button.btn{ font-family:var(--mono); font-weight:600; letter-spacing:.03em; text-transform:uppercase; font-size:.9rem;
+    background:var(--paper); color:var(--ink); border:1.5px solid var(--ink); padding:.55em 1em; cursor:pointer; box-shadow:3px 3px 0 rgba(31,36,33,.14); }
+  button.btn:hover{ background:var(--kraft-soft); }
+  button.btn.primary{ background:var(--blue); color:var(--paper); border-color:var(--ink); }
+  button.btn.primary:hover{ background:#243b48; }
+  button.btn.kraft{ background:var(--kraft); color:var(--paper); border-color:var(--ink); }
+  button.btn.kraft:hover{ background:var(--kraft-dark); }
+  .start-row{ display:flex; gap:12px; flex-wrap:wrap; align-items:flex-start; }
+  .start-row .start-opt{ display:flex; flex-direction:column; gap:6px; }
+  .start-opt .hint{ font-family:var(--mono); font-size:.76rem; opacity:.65; max-width:26ch; }
+  button.btn:focus-visible, a:focus-visible, input:focus-visible, .mod-check:focus-within{ outline:2px solid var(--blue); outline-offset:2px; }
+  button.btn:disabled{ opacity:.45; cursor:not-allowed; }
+
+  /* SETUP PANEL */
+  .setup-card{ background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow); padding:22px 24px; }
+  .setup-card h3{ font-family:var(--display); font-weight:400; font-size:1.05rem; margin:0 0 12px; }
+  .mod-grid{ display:grid; gap:8px; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); margin-bottom:8px; }
+  .mod-check{ display:flex; align-items:flex-start; gap:9px; background:var(--ticket); border:1.5px solid var(--ink);
+    padding:.65em .85em; font-size:.88rem; cursor:pointer; }
+  .mod-check input{ flex-shrink:0; width:16px; height:16px; margin-top:.2em; accent-color:var(--blue); }
+  .mod-label{ display:flex; flex-direction:column; gap:2px; }
+  .mod-name{ line-height:1.3; }
+  .mod-count{ font-family:var(--mono); font-size:.74rem; opacity:.6; white-space:nowrap; }
+  .mod-toolbar{ display:flex; gap:8px; margin-bottom:16px; }
+  .mod-toolbar button{ font-size:.78rem; padding:.4em .8em; }
+  .count-row{ display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin:20px 0; padding-top:18px; border-top:2px dashed rgba(31,36,33,.3); }
+  .count-row label{ font-family:var(--mono); font-weight:600; font-size:.86rem; text-transform:uppercase; letter-spacing:.04em; }
+  .count-row input[type=number]{ font-family:var(--mono); font-size:1rem; width:5em; padding:.4em .6em; border:1.5px solid var(--ink); background:var(--ticket); color:var(--ink); }
+  #countHint{ font-family:var(--mono); font-size:.8rem; opacity:.7; }
+  #startBtn{ margin-top:4px; font-size:1rem; padding:.7em 1.4em; }
+
+  /* QUIZ AREA */
+  #scorebar{ display:flex; flex-wrap:wrap; gap:14px; align-items:center; justify-content:space-between; margin-bottom:16px; }
+  #quizScore{ font-family:var(--mono); font-size:.95rem; font-weight:600; }
+  .breakdown{ margin:0 0 24px; border:1.5px solid var(--ink); background:var(--paper); box-shadow:var(--shadow); }
+  .breakdown table{ width:100%; border-collapse:collapse; font-size:.84rem; }
+  .breakdown th{ font-family:var(--mono); font-weight:600; text-transform:uppercase; letter-spacing:.04em; font-size:.78rem;
+    color:var(--kraft-dark); text-align:left; padding:8px 12px; border-bottom:2px solid var(--ink); }
+  .breakdown td{ padding:7px 12px; border-bottom:1px dashed rgba(31,36,33,.3); }
+  .breakdown tr:last-child td{ border-bottom:none; }
+  .breakdown td.num{ font-family:var(--mono); text-align:right; }
+
+  .quiz-q{ background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow); padding:18px 20px; margin-bottom:18px; }
+  .quiz-q .modtag{ display:inline-block; font-family:var(--mono); font-size:.72rem; letter-spacing:.05em; text-transform:uppercase;
+    color:var(--blue); background:var(--blue-soft); border:1px solid var(--blue); padding:.2em .55em; margin-bottom:10px; }
+  .quiz-q .qtext{ font-weight:600; margin:0 0 13px; }
+  .quiz-q .qnum{ font-family:var(--display); color:var(--red); margin-right:.5em; }
+  .choices{ display:grid; gap:8px; }
+  .choice{ text-align:left; font-family:var(--sans); font-size:.9rem; background:var(--ticket); border:1.5px solid var(--ink);
+    padding:.65em .85em; cursor:pointer; color:var(--ink); }
+  .choice:hover{ border-color:var(--blue); }
+  .choice.correct{ background:var(--blue-soft); border-color:var(--blue); border-width:2px; }
+  .choice.incorrect{ background:var(--red-soft); border-color:var(--red); border-width:2px; }
+  .choice[disabled]{ cursor:default; }
+  .explain{ margin-top:12px; font-size:.84rem; opacity:.85; border-left:3px solid var(--kraft); padding-left:12px; display:none; font-family:var(--mono); }
+  .explain.show{ display:block; }
+
+  footer{ padding:30px 0 60px; }
+  footer p{ opacity:.65; font-size:.82rem; font-family:var(--mono); letter-spacing:.02em; }
+
+  .back-to-top{ position:fixed; bottom:22px; right:22px; z-index:40; width:50px; height:50px;
+    background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow);
+    font-family:var(--display); font-size:1.4rem; color:var(--ink); line-height:1;
+    display:flex; align-items:center; justify-content:center; padding:0; cursor:pointer; text-decoration:none;
+    opacity:0; visibility:hidden; transform:translateY(10px);
+    transition:opacity .25s ease, transform .25s ease, visibility 0s .25s; }
+  .back-to-top.show{ opacity:1; visibility:visible; transform:translateY(0); transition:opacity .25s ease, transform .25s ease, visibility 0s; }
+  .back-to-top:hover{ background:var(--blue-soft); border-color:var(--blue); color:var(--blue); }
+
+  @media print{
+    body{ background:#fff; }
+    nav.index{ display:none; }
+    .setup-card, .quiz-q, .breakdown{ box-shadow:none; }
+    .back-to-top{ display:none; }
+  }
+</style>
+
+<header class="masthead">
+  <div class="wrap">
+    <p class="eyebrow">IT131 &middot; MIDTERM PREP</p>
+    <h1>Do You Know Modules 1&ndash;10?</h1>
+    <p class="lede">A self-check covering everything from Networking Today through Basic Router Configuration. Pick which modules to drill and how many questions you want, and find out where to focus your review before the midterm.</p>
+    <div class="factrow">
+      <span class="fact"><b>Bank size</b> 100 practice questions</span>
+      <span class="fact"><b>Coverage</b> Modules 1&ndash;10</span>
+      <span class="fact"><b>Feedback</b> Instant, per question</span>
+    </div>
+  </div>
+</header>
+
+<nav class="index" aria-label="Section index">
+  <div class="wrap">
+    <a href="index.html" class="toc-link">&#8617; Contents</a>
+    <a href="#setup">Build a practice test</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+  <section id="setup">
+    <div class="section-head">
+      <p class="kicker">Step 1</p>
+      <h2>Build your practice test</h2>
+      <p>Uncheck any modules you don't want to drill right now, set how many questions you'd like, then start.</p>
+    </div>
+    <div class="setup-card">
+      <h3>Modules to include</h3>
+      <div class="mod-toolbar">
+        <button class="btn" id="selectAllBtn" type="button">Select all</button>
+        <button class="btn" id="selectNoneBtn" type="button">Select none</button>
+      </div>
+      <div class="mod-grid" id="modGrid">
+            <label class="mod-check">
+              <input type="checkbox" class="module-check" value="Module 1 - Networking Today" checked>
+              <span class="mod-label">
+                <span class="mod-name">Module 1 - Networking Today</span>
+                <span class="mod-count">10 available</span>
+              </span>
+            </label>
+            <label class="mod-check">
+              <input type="checkbox" class="module-check" value="Module 2 - Basic Switch and End Device Configuration" checked>
+              <span class="mod-label">
+                <span class="mod-name">Module 2 - Basic Switch and End Device Configuration</span>
+                <span class="mod-count">10 available</span>
+              </span>
+            </label>
+            <label class="mod-check">
+              <input type="checkbox" class="module-check" value="Module 3 - Protocols and Models" checked>
+              <span class="mod-label">
+                <span class="mod-name">Module 3 - Protocols and Models</span>
+                <span class="mod-count">8 available</span>
+              </span>
+            </label>
+            <label class="mod-check">
+              <input type="checkbox" class="module-check" value="Module 4 - Physical Layer" checked>
+              <span class="mod-label">
+                <span class="mod-name">Module 4 - Physical Layer</span>
+                <span class="mod-count">12 available</span>
+              </span>
+            </label>
+            <label class="mod-check">
+              <input type="checkbox" class="module-check" value="Module 5 - Number Systems" checked>
+              <span class="mod-label">
+                <span class="mod-name">Module 5 - Number Systems</span>
+                <span class="mod-count">10 available</span>
+              </span>
+            </label>
+            <label class="mod-check">
+              <input type="checkbox" class="module-check" value="Module 6 - Data Link Layer" checked>
+              <span class="mod-label">
+                <span class="mod-name">Module 6 - Data Link Layer</span>
+                <span class="mod-count">8 available</span>
+              </span>
+            </label>
+            <label class="mod-check">
+              <input type="checkbox" class="module-check" value="Module 7 - Ethernet Switching" checked>
+              <span class="mod-label">
+                <span class="mod-name">Module 7 - Ethernet Switching</span>
+                <span class="mod-count">12 available</span>
+              </span>
+            </label>
+            <label class="mod-check">
+              <input type="checkbox" class="module-check" value="Module 8 - Network Layer" checked>
+              <span class="mod-label">
+                <span class="mod-name">Module 8 - Network Layer</span>
+                <span class="mod-count">10 available</span>
+              </span>
+            </label>
+            <label class="mod-check">
+              <input type="checkbox" class="module-check" value="Module 9 - Address Resolution" checked>
+              <span class="mod-label">
+                <span class="mod-name">Module 9 - Address Resolution</span>
+                <span class="mod-count">8 available</span>
+              </span>
+            </label>
+            <label class="mod-check">
+              <input type="checkbox" class="module-check" value="Module 10 - Basic Router Configuration" checked>
+              <span class="mod-label">
+                <span class="mod-name">Module 10 - Basic Router Configuration</span>
+                <span class="mod-count">12 available</span>
+              </span>
+            </label>
+      </div>
+      <div class="count-row">
+        <label for="qCount">Questions</label>
+        <input type="number" id="qCount" min="1" value="20">
+        <span id="countHint"></span>
+      </div>
+      <div class="start-row">
+        <div class="start-opt">
+          <button class="btn primary" id="startBtn" type="button">Start practice test</button>
+          <span class="hint">Uses your module and count picks above</span>
+        </div>
+        <div class="start-opt">
+          <button class="btn kraft" id="mockBtn" type="button">OH, I know 1&ndash;10</button>
+          <span class="hint">All 10 modules, 40 questions, same mix as the real midterm</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="quizArea" hidden>
+    <div class="section-head">
+      <p class="kicker">Step 2</p>
+      <h2>Answer &amp; check yourself</h2>
+      <p>Pick an answer to see if you're right, with a short explanation either way.</p>
+    </div>
+    <div id="scorebar">
+      <div id="quizScore"></div>
+      <button class="btn" id="newTestBtn" type="button">New practice test</button>
+    </div>
+    <div class="breakdown">
+      <table>
+        <thead><tr><th>Module</th><th class="num">Correct</th><th class="num">Drawn</th></tr></thead>
+        <tbody id="breakdownBody"></tbody>
+      </table>
+    </div>
+    <div id="quizList"></div>
+    <button class="btn" id="newTestBtn2" type="button">New practice test</button>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>IT131 &middot; CCNA: Introduction to Networks &middot; Practice self-check covering Modules 1&ndash;10.</p>
+  </div>
+</footer>
+
+<button id="backToTop" class="back-to-top" aria-label="Back to top" title="Back to top">&uarr;</button>
+
+<script>
+  const QUESTIONS = [{"module": "Module 1 - Networking Today", "q": "What is the purpose of an ACL (Access Control List)?", "choices": ["To permit or deny traffic based on criteria like source/destination address", "To encrypt traffic between two sites", "To translate domain names into IP addresses", "To assign IP addresses automatically"], "correct": 0, "explain": "ACLs are rule sets that permit or deny traffic based on criteria like addresses."}, {"module": "Module 1 - Networking Today", "q": "Which wired internet technology is delivered over coaxial cable and typically shares bandwidth among neighborhood subscribers?", "choices": ["Cable internet", "DSL", "Fiber", "Satellite"], "correct": 0, "explain": "Cable internet uses coax and shares bandwidth among neighboring subscribers."}, {"module": "Module 1 - Networking Today", "q": "Which wireless internet access technology uses the mobile 4G/5G network?", "choices": ["Cellular", "DSL", "Cable internet", "Satellite"], "correct": 0, "explain": "Cellular is wireless internet access over the mobile network."}, {"module": "Module 1 - Networking Today", "q": "A company stops running its own servers and instead consumes computing resources as a service. This is an example of:", "choices": ["Cloud computing", "BYOD", "QoS", "An intranet"], "correct": 0, "explain": "Cloud computing means consuming computing resources as a service rather than owning the infrastructure."}, {"module": "Module 1 - Networking Today", "q": "Which network characteristic describes a network's ability to survive failures through redundancy and multiple paths?", "choices": ["Fault tolerance", "Scalability", "QoS", "Security"], "correct": 0, "explain": "Fault tolerance means surviving failures via redundancy, with no single point of failure."}, {"module": "Module 1 - Networking Today", "q": "Which security device actively monitors traffic and blocks detected threats in real time, rather than just filtering by static rule?", "choices": ["IPS (Intrusion Prevention System)", "Firewall", "VPN", "ACL"], "correct": 0, "explain": "An IPS actively monitors and blocks threats in real time; a firewall filters by rule."}, {"module": "Module 1 - Networking Today", "q": "A network spans an entire city - larger than a LAN but smaller than a WAN. What type of network is this?", "choices": ["MAN", "LAN", "Intranet", "Extranet"], "correct": 0, "explain": "MAN (Metropolitan Area Network) is city-sized."}, {"module": "Module 1 - Networking Today", "q": "What term describes the physical or wireless path that data actually travels across - copper, fiber, or radio?", "choices": ["Network media", "Topology", "Protocol", "Bandwidth"], "correct": 0, "explain": "Network media is the physical or wireless path data travels."}, {"module": "Module 1 - Networking Today", "q": "An employee working from home connects to the company's private network over an encrypted tunnel across the public internet. What is this called?", "choices": ["VPN", "Extranet", "Intranet", "A MAN"], "correct": 0, "explain": "A VPN is an encrypted tunnel across a public network, used for secure remote access."}, {"module": "Module 1 - Networking Today", "q": "Which network is private and accessible only within a single organization, with no outside access at all?", "choices": ["Intranet", "Extranet", "The Internet", "A MAN"], "correct": 0, "explain": "An intranet is private and internal-only; an extranet allows controlled outside access."}, {"module": "Module 2 - Basic Switch and End Device Configuration", "q": "Where is the IOS image file stored on a Cisco switch, surviving reboots?", "choices": ["Flash memory", "RAM", "NVRAM", "ROM"], "correct": 0, "explain": "Flash holds the IOS image and survives reboots, distinct from NVRAM (startup-config)."}, {"module": "Module 2 - Basic Switch and End Device Configuration", "q": "Which port number does HTTPS use by default?", "choices": ["443", "80", "23", "22"], "correct": 0, "explain": "HTTPS uses port 443; HTTP uses port 80."}, {"module": "Module 2 - Basic Switch and End Device Configuration", "q": "What is a MAC address?", "choices": ["A 48-bit hardware address burned into a NIC, used to identify a device on the local link", "A logical address used to route between networks", "A password used to access privileged EXEC mode", "A port number identifying an application"], "correct": 0, "explain": "A MAC address is a 48-bit hardware address that identifies a device on the local link, at Layer 2."}, {"module": "Module 2 - Basic Switch and End Device Configuration", "q": "What is an IP address used for?", "choices": ["A logical address that identifies a host and is used for routing between networks", "A physical address burned into a NIC", "A password for remote access", "An error-detection value appended to a frame"], "correct": 0, "explain": "An IP address is a logical Layer 3 address, used for routing between networks."}, {"module": "Module 2 - Basic Switch and End Device Configuration", "q": "Which storage location holds the currently active configuration on a switch, lost if not saved before a reboot?", "choices": ["Running-config, in RAM", "Startup-config, in NVRAM", "The IOS image, in flash", "The bootstrap program, in ROM"], "correct": 0, "explain": "Running-config is the active configuration, held in volatile RAM."}, {"module": "Module 2 - Basic Switch and End Device Configuration", "q": "What does IOS stand for, and what is its role on a Cisco device?", "choices": ["Internetwork Operating System - it provides the CLI and networking functions", "Internet Operating Standard - it defines cabling pinouts", "Input/Output System - it manages port hardware only", "Interior OSI Suite - a routing protocol"], "correct": 0, "explain": "IOS (Internetwork Operating System) runs the CLI and all of a Cisco device's networking functions."}, {"module": "Module 2 - Basic Switch and End Device Configuration", "q": "Which command prompt indicates a device is in privileged EXEC mode?", "choices": ["Switch#", "Switch>", "Switch(config)#", "Switch(config-if)#"], "correct": 0, "explain": "'#' indicates privileged EXEC; '>' is user EXEC; '(config)#' is global configuration mode."}, {"module": "Module 2 - Basic Switch and End Device Configuration", "q": "A switch has an enable secret configured but no line console password. What happens when someone connects via the console port?", "choices": ["They reach user EXEC mode freely, but need the enable secret to reach privileged EXEC", "They are blocked from connecting at all", "They automatically land in privileged EXEC mode", "The console port refuses connections without a password"], "correct": 0, "explain": "Without a console password, user EXEC is open; enable secret still gates privileged EXEC separately."}, {"module": "Module 2 - Basic Switch and End Device Configuration", "q": "What does the 'no shutdown' command do when applied to a switch interface?", "choices": ["Administratively enables the interface if it was disabled", "Assigns an IP address to the interface", "Saves the configuration to NVRAM", "Enables SSH access on that interface"], "correct": 0, "explain": "'no shutdown' administratively enables an interface - the same concept applies on switches and routers."}, {"module": "Module 2 - Basic Switch and End Device Configuration", "q": "Which of the following is true about 'enable password' compared to 'enable secret'?", "choices": ["'enable password' stores the password in plaintext and should never be used in practice", "'enable password' is the modern, encrypted replacement for 'enable secret'", "They are functionally identical", "'enable password' only works on routers, not switches"], "correct": 0, "explain": "'enable password' is the legacy, plaintext option; 'enable secret' is the correct, encrypted choice."}, {"module": "Module 3 - Protocols and Models", "q": "What is the Transport layer's protocol data unit (PDU) called?", "choices": ["Segment", "Packet", "Frame", "Bits"], "correct": 0, "explain": "The Transport layer's PDU is the segment (TCP or UDP)."}, {"module": "Module 3 - Protocols and Models", "q": "Which OSI layer's PDU is simply 'bits'?", "choices": ["Physical (Layer 1)", "Data Link (Layer 2)", "Network (Layer 3)", "Transport (Layer 4)"], "correct": 0, "explain": "The Physical layer transmits raw bits - no addressing or logic involved."}, {"module": "Module 3 - Protocols and Models", "q": "Which two protocols represent the reliable-vs-fast trade-off at the Transport layer?", "choices": ["TCP (reliable) and UDP (fast)", "HTTP and HTTPS", "IPv4 and IPv6", "ARP and NDP"], "correct": 0, "explain": "TCP is reliable delivery; UDP is fast with no delivery guarantee - both operate at the Transport layer."}, {"module": "Module 3 - Protocols and Models", "q": "Which OSI layer uses port numbers to identify which application a segment belongs to?", "choices": ["Transport (Layer 4)", "Network (Layer 3)", "Session (Layer 5)", "Application (Layer 7)"], "correct": 0, "explain": "The Transport layer uses port numbers to identify the destination application."}, {"module": "Module 3 - Protocols and Models", "q": "Which statement correctly compares the OSI and TCP/IP models?", "choices": ["OSI has 7 layers and TCP/IP has 4 - they describe the same concepts at different granularity", "TCP/IP has more layers than OSI", "Only TCP/IP supports encapsulation", "OSI is used only for wireless networks"], "correct": 0, "explain": "OSI (7 layers) and TCP/IP (4 layers) describe the same underlying communication concepts at different granularity."}, {"module": "Module 3 - Protocols and Models", "q": "Where does DHCP operate, and what does it do?", "choices": ["Application layer (Layer 7) - automatically assigns IP addresses, masks, gateways, and DNS servers", "Network layer (Layer 3) - routes packets between networks", "Transport layer (Layer 4) - guarantees reliable delivery", "Physical layer (Layer 1) - transmits raw bits"], "correct": 0, "explain": "DHCP is an Application layer protocol that automates IP configuration assignment."}, {"module": "Module 3 - Protocols and Models", "q": "A protocol suite is best described as:", "choices": ["A group of protocols working together at different layers", "A single protocol that handles every layer", "A physical cabling standard", "A type of intermediary device"], "correct": 0, "explain": "A protocol suite (like TCP/IP) is a group of protocols working together across layers."}, {"module": "Module 3 - Protocols and Models", "q": "Why do network engineers still reference the 7-layer OSI model even though TCP/IP (4 layers) is what's actually implemented?", "choices": ["OSI provides a more granular, universal vocabulary for discussing and troubleshooting each function separately", "OSI is a newer model that replaced TCP/IP", "TCP/IP cannot describe encapsulation", "OSI is required by law for network documentation"], "correct": 0, "explain": "OSI's extra granularity makes it a useful shared vocabulary for discussion and troubleshooting, even though TCP/IP is what's deployed."}, {"module": "Module 4 - Physical Layer", "q": "Which UTP cabling category supports a full 10 Gbps over the standard 100-meter run?", "choices": ["Cat6a", "Cat5e", "Cat6", "Coax"], "correct": 0, "explain": "Cat6a supports a full 10 Gbps at 100m; Cat6 is limited to a shorter range at 10G."}, {"module": "Module 4 - Physical Layer", "q": "How many pins does a standard RJ-45 connector have?", "choices": ["8", "4", "6", "10"], "correct": 0, "explain": "RJ-45 is an 8-pin, 8-conductor connector."}, {"module": "Module 4 - Physical Layer", "q": "What type of pin inside an RJ-45 connector pierces a wire's insulation to make contact during crimping?", "choices": ["IDC (Insulation Displacement Contact)", "RJ-11", "SC connector", "ST connector"], "correct": 0, "explain": "IDC pins pierce a wire's insulation during crimping rather than requiring stripped wire."}, {"module": "Module 4 - Physical Layer", "q": "Which fiber connector types are commonly used with fiber-optic cabling (recognition-level for this course)?", "choices": ["LC, SC, and ST", "RJ-45, RJ-11, and BNC", "T568A and T568B", "Cat5e and Cat6"], "correct": 0, "explain": "LC, SC, and ST are the three common fiber connector types; RJ-45 is for UTP."}, {"module": "Module 4 - Physical Layer", "q": "Which fiber type uses an LED light source and is common in data centers and campus backbones due to lower cost?", "choices": ["Multimode fiber (MMF)", "Single-mode fiber (SMF)", "Coax", "STP"], "correct": 0, "explain": "Multimode fiber uses an LED, has a shorter range (~550m), and is cheaper - typical for data centers."}, {"module": "Module 4 - Physical Layer", "q": "What is 'encoding,' in the context of the physical layer?", "choices": ["How a bit stream is converted into a signal pattern on the medium", "How a MAC address is assigned to a NIC", "How a switch decides which port to forward a frame out", "How IP addresses are translated to domain names"], "correct": 0, "explain": "Encoding is how a bit stream gets converted into a signal pattern (e.g., Manchester encoding)."}, {"module": "Module 4 - Physical Layer", "q": "Which IEEE standard governs Bluetooth?", "choices": ["802.15", "802.11", "802.16", "802.3"], "correct": 0, "explain": "802.15 governs Bluetooth (short-range wireless); 802.11 governs Wi-Fi."}, {"module": "Module 4 - Physical Layer", "q": "Which IEEE standard governs WiMAX?", "choices": ["802.16", "802.11", "802.15", "802.1"], "correct": 0, "explain": "802.16 governs WiMAX, a broadband wireless standard."}, {"module": "Module 4 - Physical Layer", "q": "You need to connect two switches directly to extend a LAN, and the hardware is legacy (no Auto-MDIX support). What cable type is required?", "choices": ["Crossover", "Straight-through", "Rollover", "Coax"], "correct": 0, "explain": "Similar devices (switch-to-switch) traditionally need a crossover cable without Auto-MDIX."}, {"module": "Module 4 - Physical Layer", "q": "Which legacy copper medium uses a single center conductor shielded by a braided layer, mostly seen today with cable modems?", "choices": ["Coax (Coaxial cable)", "UTP", "STP", "Fiber-optic"], "correct": 0, "explain": "Coax has a single center conductor with braided shielding - legacy in LANs, still used with cable modems."}, {"module": "Module 4 - Physical Layer", "q": "What does a 'signaling method' refer to at the physical layer?", "choices": ["How 0s and 1s are physically represented on a medium (voltage, light, or radio wave)", "How a switch builds its MAC address table", "How IP addresses are subnetted", "How a frame's FCS is calculated"], "correct": 0, "explain": "Signaling method is how bits get physically represented on the medium."}, {"module": "Module 4 - Physical Layer", "q": "Which of these statements about copper vs. fiber cabling is accurate?", "choices": ["Fiber supports longer distances and higher bandwidth and is immune to EMI; copper is cheaper and easier to terminate", "Copper always outperforms fiber in bandwidth and distance", "Fiber is more susceptible to EMI than copper", "Copper and fiber have identical distance limitations"], "correct": 0, "explain": "Fiber wins on distance/bandwidth/EMI immunity; copper wins on cost and ease of termination."}, {"module": "Module 5 - Number Systems", "q": "What is 11110000 in decimal?", "choices": ["240", "224", "120", "15"], "correct": 0, "explain": "128+64+32+16 = 240."}, {"module": "Module 5 - Number Systems", "q": "What is 77 in binary?", "choices": ["01001101", "01001110", "01011101", "01001100"], "correct": 0, "explain": "64+8+4+1 = 77, which is 01001101."}, {"module": "Module 5 - Number Systems", "q": "What does 0x5A represent in binary?", "choices": ["01011010", "01011011", "10100101", "01010101"], "correct": 0, "explain": "5 = 0101, A = 1010, combined = 01011010."}, {"module": "Module 5 - Number Systems", "q": "What is the maximum decimal value representable by a single byte (8 bits)?", "choices": ["255", "256", "254", "128"], "correct": 0, "explain": "All 8 bits set (11111111) equals 255 - the range is 0 to 255, or 256 total values."}, {"module": "Module 5 - Number Systems", "q": "How many distinct values can a nibble (4 bits) represent?", "choices": ["16", "8", "4", "32"], "correct": 0, "explain": "4 bits gives 2^4 = 16 possible values, matching hex's 16 symbols."}, {"module": "Module 5 - Number Systems", "q": "What is 0x0F in binary?", "choices": ["00001111", "11110000", "00001110", "11111111"], "correct": 0, "explain": "0 = 0000, F = 1111, combined = 00001111."}, {"module": "Module 5 - Number Systems", "q": "Convert 200 to binary.", "choices": ["11001000", "11000100", "10101000", "11100000"], "correct": 0, "explain": "128+64+8 = 200, which is 11001000."}, {"module": "Module 5 - Number Systems", "q": "Which number system uses exactly two digits, 0 and 1?", "choices": ["Binary", "Decimal", "Hexadecimal", "Octal"], "correct": 0, "explain": "Binary is base-2, using only 0 and 1."}, {"module": "Module 5 - Number Systems", "q": "What is the decimal equivalent of 0x10?", "choices": ["16", "10", "32", "1"], "correct": 0, "explain": "0x10 = 1*16 + 0 = 16."}, {"module": "Module 5 - Number Systems", "q": "Why is positional notation useful for converting between number systems?", "choices": ["Each digit's value depends on its position, worth a power of the base - the same rule works across binary, decimal, or hex", "It only works for decimal numbers", "It eliminates the need to know a number system's base", "It only applies to IP addresses"], "correct": 0, "explain": "Positional notation's power-of-the-base rule is the same mechanism regardless of base, which is why conversion technique generalizes."}, {"module": "Module 6 - Data Link Layer", "q": "What is a 'controlled access' media access method?", "choices": ["A deterministic method where devices take turns in a scheduled or token-passing order, so no collisions are possible", "A method where every device competes for the medium as it becomes free", "A method used only by Wi-Fi", "A method that requires no coordination between devices at all"], "correct": 0, "explain": "Controlled access is deterministic and scheduled or token-based - no collisions possible, but less efficient when idle."}, {"module": "Module 6 - Data Link Layer", "q": "What is a 'contention-based' media access method, and what's its main risk?", "choices": ["Every device competes for the medium as it becomes free (first come, first served) - risk is collisions", "Devices take scheduled turns - risk is inefficiency", "Only one device can ever transmit - risk is starvation", "Devices never transmit simultaneously - risk is none"], "correct": 0, "explain": "Contention-based access is first-come-first-served competition; the main risk is collisions."}, {"module": "Module 6 - Data Link Layer", "q": "What is a multi-access topology, and why does it need a media access control method?", "choices": ["Many nodes share one medium (like legacy hub Ethernet or Wi-Fi), so a method is needed to prevent every device transmitting at once", "Exactly two nodes share a link, so no coordination is needed", "It only describes fiber-optic networks", "It's a topology with no physical connections at all"], "correct": 0, "explain": "Multi-access means many nodes share one medium, requiring an access method like CSMA/CD or CSMA/CA."}, {"module": "Module 6 - Data Link Layer", "q": "What was 'ring topology,' as used by legacy Token Ring networks?", "choices": ["Each node connects to exactly two neighbors, forming a loop", "All nodes connect to one central switch", "Every node has a direct link to every other node", "Nodes connect in a strict parent-child hierarchy"], "correct": 0, "explain": "Ring topology connects each node to exactly two neighbors, forming a loop - historical/recognition-level for this course."}, {"module": "Module 6 - Data Link Layer", "q": "What does the Type/length field in a frame tell the receiving device?", "choices": ["Which Layer 3 protocol is carried inside, so it knows what to hand the payload up to", "The frame's priority level", "The destination port number", "The switch's forwarding method"], "correct": 0, "explain": "The Type/length field identifies which Layer 3 protocol is inside the frame."}, {"module": "Module 6 - Data Link Layer", "q": "What information does the addressing field of a frame carry?", "choices": ["Source and destination Layer 2 (MAC) addresses", "Source and destination Layer 3 (IP) addresses", "The frame's error-detection value", "The application port number"], "correct": 0, "explain": "A frame's addressing field carries MAC addresses, not IP addresses."}, {"module": "Module 6 - Data Link Layer", "q": "What is a bit?", "choices": ["A single binary digit, 0 or 1", "A group of 8 binary digits", "A group of 4 binary digits", "A hexadecimal digit"], "correct": 0, "explain": "A bit is a single binary digit; 8 bits make a byte."}, {"module": "Module 6 - Data Link Layer", "q": "How does end-to-end addressing (like an IP address) differ from hop-to-hop addressing (like a MAC address)?", "choices": ["End-to-end addressing stays the same for the entire trip; hop-to-hop addressing changes at every hop", "End-to-end addressing changes at every hop; hop-to-hop stays the same the whole trip", "They are two names for the same behavior", "Only hop-to-hop addressing is used in modern networks"], "correct": 0, "explain": "An IP address is end-to-end and stays the same the whole trip; a MAC address is hop-to-hop and changes at every hop."}, {"module": "Module 7 - Ethernet Switching", "q": "A switch receives a frame whose destination MAC is already known to be on the same port the frame arrived on. What does the switch do?", "choices": ["Filters (drops) the frame, since forwarding it back out the same port is unnecessary", "Floods it out every port", "Forwards it back out the arrival port", "Holds it until the entry ages out"], "correct": 0, "explain": "A switch filters (drops) a frame whose known destination is already on the arrival port."}, {"module": "Module 7 - Ethernet Switching", "q": "A switch knows exactly which port a destination MAC lives on, different from the arrival port. What does it do with the frame?", "choices": ["Forwards it out only that specific port", "Floods it out every port", "Filters (drops) it", "Holds it until asked for"], "correct": 0, "explain": "Forward means sending the frame out only the specific port where the known destination lives."}, {"module": "Module 7 - Ethernet Switching", "q": "What is fragment-free switching, and how does it compare to cut-through and store-and-forward?", "choices": ["It waits for the first 64 bytes (enough to catch most collision fragments) before forwarding - a middle ground between the other two", "It waits for the entire frame, exactly like store-and-forward", "It forwards immediately after reading only the destination MAC, exactly like cut-through", "It never forwards frames, only floods them"], "correct": 0, "explain": "Fragment-free switching waits for the first 64 bytes as a middle ground between cut-through and store-and-forward."}, {"module": "Module 7 - Ethernet Switching", "q": "What does full-duplex mean for a switched link?", "choices": ["A device can send and receive simultaneously", "A device can either send or receive at any moment, never both", "A device can only receive, never send", "Two devices must take turns transmitting"], "correct": 0, "explain": "Full-duplex means simultaneous send and receive - the norm on modern switched links."}, {"module": "Module 7 - Ethernet Switching", "q": "What does half-duplex mean, and what access method does it require?", "choices": ["A device can either send or receive at any given moment, never both - requires CSMA/CD", "A device can send and receive simultaneously - requires no access method", "It only applies to fiber links", "It means the link is down"], "correct": 0, "explain": "Half-duplex means one direction at a time - the old shared-medium model requiring CSMA/CD."}, {"module": "Module 7 - Ethernet Switching", "q": "What is a multicast MAC address used for?", "choices": ["Delivering a frame to a defined group of interested devices, rather than everyone or just one device", "Delivering a frame to every device on the segment", "Delivering a frame to exactly one specific NIC", "Delivering a frame only to the default gateway"], "correct": 0, "explain": "A multicast MAC address delivers a frame to a defined subset of interested devices."}, {"module": "Module 7 - Ethernet Switching", "q": "What is the purpose of the Preamble/SFD at the start of an Ethernet II frame?", "choices": ["Lets the receiving NIC's clock synchronize, ending in a marker for where the real frame begins", "Verifies the frame arrived intact", "Identifies the Layer 3 protocol inside the frame", "Assigns the frame's destination MAC address"], "correct": 0, "explain": "The Preamble/SFD is clock-synchronization bits ending in the Start Frame Delimiter marking the frame's actual start."}, {"module": "Module 7 - Ethernet Switching", "q": "What does a Type field value of 0x0800 in an Ethernet II frame indicate?", "choices": ["The frame carries an IPv4 packet", "The frame carries an IPv6 packet", "The frame is a broadcast", "The frame failed its FCS check"], "correct": 0, "explain": "0x0800 indicates IPv4; 0x86DD indicates IPv6."}, {"module": "Module 7 - Ethernet Switching", "q": "What is a unicast MAC address?", "choices": ["An address belonging to one specific NIC - one sender addressing one specific receiver", "An address delivered to every device on the segment", "An address delivered to a defined group of devices", "An address that changes at every hop"], "correct": 0, "explain": "A unicast MAC address belongs to one specific NIC - the normal one-to-one case."}, {"module": "Module 7 - Ethernet Switching", "q": "Which switching method is the default on most modern switches, prioritizing frame integrity over minimum latency?", "choices": ["Store-and-forward", "Cut-through", "Fragment-free", "Half-duplex"], "correct": 0, "explain": "Store-and-forward, which checks the FCS before forwarding, is the default on most modern switches."}, {"module": "Module 7 - Ethernet Switching", "q": "A network administrator notices increasing late collisions on a link that is technically up. What should they suspect first?", "choices": ["A duplex mismatch between the two connected devices", "A giant frame being received", "The MAC address table has filled up", "The cable is unplugged"], "correct": 0, "explain": "Rising late collisions on an up link is the classic symptom of a duplex mismatch."}, {"module": "Module 7 - Ethernet Switching", "q": "What is the practical difference between a runt frame and a giant frame?", "choices": ["A runt is under 64 bytes (collision evidence); a giant is over 1518 bytes without jumbo-frame support (discarded)", "They are two names for the same problem", "A runt is too long; a giant is too short", "Both are always caused by duplex mismatches"], "correct": 0, "explain": "A runt frame is under 64 bytes (collision evidence); a giant frame is over 1518 bytes and is discarded unless jumbo frames are configured."}, {"module": "Module 8 - Network Layer", "q": "What does the Source IP address field in a packet's header identify, and does it change during the trip?", "choices": ["The packet's origin - it stays the same for the entire trip, unlike the frame's source MAC address", "The packet's final destination - it changes at every hop", "The packet's priority level", "The upper-layer protocol carried inside"], "correct": 0, "explain": "The Source IP address stays constant end-to-end, unlike a frame's source MAC which changes hop-to-hop."}, {"module": "Module 8 - Network Layer", "q": "What is a dynamic route in a router's routing table?", "choices": ["A route learned automatically from another router via a routing protocol, like OSPF or BGP", "A route entered manually by an administrator", "A route to a network the router itself is directly attached to", "A route that never actually appears in the table"], "correct": 0, "explain": "A dynamic route is learned automatically via a routing protocol, unlike a static or directly connected route."}, {"module": "Module 8 - Network Layer", "q": "What do the IPv4 header's Flags field and Fragment Offset field together support?", "choices": ["Fragmentation - splitting a packet into pieces and reassembling them correctly at the destination", "Encryption of the packet payload", "Assigning a default gateway", "Verifying the frame's FCS"], "correct": 0, "explain": "Flags and Fragment Offset together support IPv4 fragmentation and correct reassembly order."}, {"module": "Module 8 - Network Layer", "q": "Roughly how large is a fixed IPv6 header, and what did that simplification remove compared to IPv4?", "choices": ["A fixed 40 bytes, with no header checksum and no in-transit fragmentation fields", "A variable size up to 60 bytes, keeping all of IPv4's fields", "A fixed 20 bytes, identical in structure to IPv4", "IPv6 has no fixed header size at all"], "correct": 0, "explain": "IPv6 uses a simplified, fixed 40-byte header, dropping the checksum and in-transit fragmentation support."}, {"module": "Module 8 - Network Layer", "q": "What is IPv6's Next Header field the equivalent of in IPv4?", "choices": ["The Protocol field", "The Time to Live field", "The Header Checksum field", "The Flags field"], "correct": 0, "explain": "Next Header identifies the next header or upper-layer protocol, the same role as IPv4's Protocol field."}, {"module": "Module 8 - Network Layer", "q": "In general terms, what does a device's routing table contain?", "choices": ["A list of known destination networks and how to reach them", "A list of MAC-to-port mappings", "A list of IP-to-MAC address mappings", "A list of open TCP ports"], "correct": 0, "explain": "A routing table lists known destination networks and how to reach them."}, {"module": "Module 8 - Network Layer", "q": "How does a host's routing table typically compare to a router's?", "choices": ["A host's is short (local subnet plus a default route); a router's includes directly connected, static, and dynamic routes", "They are always identical in size and content", "A host's routing table is always larger than a router's", "Hosts don't maintain a routing table at all"], "correct": 0, "explain": "Hosts keep a minimal routing table; routers maintain a fuller one with multiple route types."}, {"module": "Module 8 - Network Layer", "q": "What is IPv6's Traffic Class field roughly equivalent to in IPv4?", "choices": ["The DSCP field, used to mark packets for priority/QoS handling", "The TTL field", "The Header Checksum field", "The Fragment Offset field"], "correct": 0, "explain": "IPv6's Traffic Class field mirrors IPv4's DSCP field for QoS marking."}, {"module": "Module 8 - Network Layer", "q": "Which network-layer characteristic explains why packets from the same conversation could take entirely different paths through the network?", "choices": ["Connectionless delivery - every packet is routed independently", "Best-effort delivery", "Media independence", "Fragmentation"], "correct": 0, "explain": "Connectionless delivery means each packet is routed independently, even within the same conversation."}, {"module": "Module 8 - Network Layer", "q": "Why is 'best-effort delivery' at the network layer not a flaw, but a deliberate design choice?", "choices": ["Reliability, when an application needs it, is added at the transport layer instead, keeping the network layer simple and fast", "It guarantees every packet arrives, so reliability is unnecessary elsewhere", "It only applies to wireless networks", "It was replaced by guaranteed delivery in IPv6"], "correct": 0, "explain": "Best-effort delivery keeps Layer 3 simple and fast; reliability, when needed, is layered on at Layer 4."}, {"module": "Module 9 - Address Resolution", "q": "Two PCs are on the same local subnet. PC1 wants to ping PC2 for the first time. What must happen at Layer 2 before the ping frame can be sent?", "choices": ["PC1 must ARP for PC2's MAC address, since it only has PC2's IP address so far", "PC1 must ARP for the default gateway's MAC address instead", "No ARP is needed - IP addresses are used directly at Layer 2", "PC1 must first query DNS for PC2's MAC address"], "correct": 0, "explain": "Even on the same subnet, ARP is still required to resolve the destination's MAC address."}, {"module": "Module 9 - Address Resolution", "q": "Why does an ARP request go out as a broadcast instead of being sent to a specific device?", "choices": ["The sender doesn't yet know which device on the segment owns the target IP address", "Broadcasts are required by IPv6 only", "Unicast ARP requests are not supported by any switch", "It's sent as a broadcast purely for historical reasons with no technical basis"], "correct": 0, "explain": "The sender doesn't know who owns the target IP yet, so it has to ask every device on the segment."}, {"module": "Module 9 - Address Resolution", "q": "After a successful ARP exchange, where is the resolved IP-to-MAC mapping stored, and is it permanent?", "choices": ["In the device's ARP cache, and entries age out over time, similar to a switch's MAC address table", "In the router's routing table, permanently", "In NVRAM, permanently", "It isn't stored anywhere; ARP must run again for every packet"], "correct": 0, "explain": "Resolved mappings go into the ARP cache and age out over time, just like a switch's MAC table entries."}, {"module": "Module 9 - Address Resolution", "q": "A host on a modern IPv6-only network needs to resolve a neighbor's IPv6 address to a MAC address. What protocol handles this, since ARP is IPv4-only?", "choices": ["NDP (Neighbor Discovery Protocol), built on ICMPv6", "DHCP", "DNS", "The same ARP protocol, unmodified"], "correct": 0, "explain": "NDP, built on ICMPv6, replaces ARP's function for IPv6."}, {"module": "Module 9 - Address Resolution", "q": "A host needs to reach a web server on a completely different network across the internet. Which MAC address does its very first frame actually target?", "choices": ["Its own default gateway's MAC address - not the web server's", "The web server's MAC address directly", "A broadcast MAC address representing the whole path", "No MAC address is needed for internet-bound traffic"], "correct": 0, "explain": "The first hop always targets the local default gateway's MAC; only the IP destination stays the web server's the whole way."}, {"module": "Module 9 - Address Resolution", "q": "What does the owning device gain from receiving an ARP request that it doesn't already have?", "choices": ["The requester's IP-to-MAC mapping, learned from the request itself, which it can use to reply and for future traffic", "A full copy of the requester's routing table", "A DNS record for the requester", "A new default gateway entry"], "correct": 0, "explain": "The owning device already knows its own mapping - what it gains from the request is the requester's mapping."}, {"module": "Module 9 - Address Resolution", "q": "A router has a route to 10.0.0.0/8 but receives a packet destined for 172.16.5.1, with no default route configured. What happens?", "choices": ["The packet is dropped, since there's no matching route and no default route to fall back on", "The router forwards it anyway using the 10.0.0.0/8 route", "The router broadcasts the packet out every interface", "The router queues the packet indefinitely"], "correct": 0, "explain": "With no matching route and no default route, an unmatched packet is simply dropped."}, {"module": "Module 9 - Address Resolution", "q": "Why do ARP entries eventually age out of a device's ARP cache instead of staying forever?", "choices": ["So the cache doesn't hold stale mappings if a device's MAC address changes or the device leaves the network", "Because IP addresses change every few seconds by design", "Because ARP cache entries are limited to exactly one per device by protocol rule", "Aging is a bug that Cisco has never addressed"], "correct": 0, "explain": "Aging keeps the cache accurate as devices' NICs or network presence change over time."}, {"module": "Module 10 - Basic Router Configuration", "q": "Which command displays the router's saved configuration exactly as it will load on the next reboot?", "choices": ["show startup-config", "show running-config", "show ip route", "show version"], "correct": 0, "explain": "show startup-config shows what's saved in NVRAM - the config a reboot will load."}, {"module": "Module 10 - Basic Router Configuration", "q": "A router's interface has a correct IP address, is cabled properly, and 'no shutdown' has been issued - but the far-end device is powered off. What will show ip interface brief report for that interface?", "choices": ["down / down", "administratively down / down", "up / up", "up / down"], "correct": 0, "explain": "A Layer 1 problem (like a powered-off far end) shows as down/down, not administratively down."}, {"module": "Module 10 - Basic Router Configuration", "q": "Which command sets the device's hostname, and from which mode must it be issued?", "choices": ["hostname <name>, from global configuration mode", "name <name>, from privileged EXEC mode", "set hostname <name>, from user EXEC mode", "hostname <name>, from interface configuration mode"], "correct": 0, "explain": "'hostname' is a global configuration mode command."}, {"module": "Module 10 - Basic Router Configuration", "q": "What happens if an administrator reloads a router without ever issuing 'copy running-config startup-config'?", "choices": ["All configuration changes made since the last save are lost", "The changes are automatically preserved regardless", "The router refuses to reload until the config is saved", "Only interface configurations are lost; passwords are preserved"], "correct": 0, "explain": "Unsaved running-config changes are lost on reload, the same as on a switch."}, {"module": "Module 10 - Basic Router Configuration", "q": "Which command would you use to view a router's full active configuration, including all interface settings and passwords in their configured form?", "choices": ["show running-config", "show ip interface brief", "show ip route", "show flash"], "correct": 0, "explain": "show running-config displays the complete active configuration."}, {"module": "Module 10 - Basic Router Configuration", "q": "A router interface is configured with 'ip address 10.1.1.1 255.255.255.0' but no 'no shutdown' has been issued yet. What is its status?", "choices": ["Administratively down, until 'no shutdown' is issued", "Up/up immediately after the IP address is set", "Down/down due to a Layer 1 problem", "It cannot be assigned an IP address without 'no shutdown' first"], "correct": 0, "explain": "Interfaces are shut down by default; 'no shutdown' activates them after addressing."}, {"module": "Module 10 - Basic Router Configuration", "q": "Which command correctly enters interface configuration mode for a router's first Gigabit interface from global configuration mode?", "choices": ["interface gigabitEthernet0/0", "configure gigabitEthernet0/0", "ip interface gigabitEthernet0/0", "line gigabitEthernet0/0"], "correct": 0, "explain": "'interface <name>' enters interface configuration mode for that specific interface."}, {"module": "Module 10 - Basic Router Configuration", "q": "Why does a router need both 'line console 0' and 'line vty 0 4' configured with passwords for a fully secured baseline?", "choices": ["Console covers local, out-of-band access; VTY covers remote access (SSH/Telnet) - both are separate access paths that each need protecting", "They are redundant - only one needs a password", "line vty 0 4 covers console access too", "Only line console 0 matters; VTY lines are never actually reachable"], "correct": 0, "explain": "Console and VTY are distinct access paths (local vs. remote), and each needs its own protection."}, {"module": "Module 10 - Basic Router Configuration", "q": "A router has directly connected routes to 192.168.1.0/24 and 192.168.2.0/24. A packet arrives destined for 192.168.3.5, and no default route exists. What does the router do?", "choices": ["Drops the packet, since 192.168.3.0/24 doesn't match any known route", "Forwards it out both directly connected interfaces", "Forwards it to whichever interface has the higher IP address", "Holds it until a matching route is manually added"], "correct": 0, "explain": "An unmatched destination with no default route is dropped - the same behavior as any router without a matching entry."}, {"module": "Module 10 - Basic Router Configuration", "q": "What is the effect of issuing 'ip address 192.168.1.1 255.255.255.0' on a router interface that already has a different IP address configured?", "choices": ["It replaces the previous IP address with the new one", "It adds a second IP address alongside the first", "It is rejected since an IP is already configured", "It has no effect until 'no shutdown' is reissued"], "correct": 0, "explain": "Re-issuing 'ip address' on an interface replaces the existing address."}, {"module": "Module 10 - Basic Router Configuration", "q": "Which of the following is NOT something a router automatically populates in its routing table without any manual configuration?", "choices": ["A static route to a remote network", "A directly connected route to a network on one of its own interfaces", "The local route for that interface's own IP", "Both directly connected and local routes together"], "correct": 0, "explain": "Static routes always require manual entry; directly connected and local routes appear automatically."}, {"module": "Module 10 - Basic Router Configuration", "q": "A student configures a router interface correctly, but forgets 'no shutdown.' What single symptom will most clearly reveal the mistake in show ip interface brief?", "choices": ["The interface shows Status as 'administratively down'", "The interface shows the wrong IP address", "The interface shows the wrong subnet mask", "The routing table shows an extra static route"], "correct": 0, "explain": "'Administratively down' is the specific, unambiguous signal that 'shutdown' (the default state) was never lifted."}];
+  const MODULE_ORDER = ["Module 1 - Networking Today", "Module 2 - Basic Switch and End Device Configuration", "Module 3 - Protocols and Models", "Module 4 - Physical Layer", "Module 5 - Number Systems", "Module 6 - Data Link Layer", "Module 7 - Ethernet Switching", "Module 8 - Network Layer", "Module 9 - Address Resolution", "Module 10 - Basic Router Configuration"];
+  const MOCK_BLUEPRINT = [4, 4, 3, 5, 4, 3, 5, 4, 3, 5];
+
+  const modGrid = document.getElementById('modGrid');
+  const qCountInput = document.getElementById('qCount');
+  const countHint = document.getElementById('countHint');
+  const startBtn = document.getElementById('startBtn');
+
+  function selectedModules(){
+    return Array.from(document.querySelectorAll('.module-check:checked')).map(cb => cb.value);
+  }
+  function availableCount(){
+    const sel = selectedModules();
+    return QUESTIONS.filter(q => sel.includes(q.module)).length;
+  }
+  function updateCountHint(){
+    const avail = availableCount();
+    countHint.textContent = avail === 0
+      ? 'Select at least one module'
+      : `of ${avail} available from your selection`;
+    qCountInput.max = String(Math.max(avail, 1));
+    if (avail > 0 && parseInt(qCountInput.value, 10) > avail) qCountInput.value = String(avail);
+    startBtn.disabled = avail === 0;
+  }
+  modGrid.addEventListener('change', updateCountHint);
+  qCountInput.addEventListener('input', () => {
+    const avail = availableCount();
+    let v = parseInt(qCountInput.value, 10);
+    if (isNaN(v) || v < 1) v = 1;
+    if (v > avail) v = avail;
+    qCountInput.value = String(v);
+  });
+  document.getElementById('selectAllBtn').addEventListener('click', () => {
+    document.querySelectorAll('.module-check').forEach(cb => cb.checked = true);
+    updateCountHint();
+  });
+  document.getElementById('selectNoneBtn').addEventListener('click', () => {
+    document.querySelectorAll('.module-check').forEach(cb => cb.checked = false);
+    updateCountHint();
+  });
+  updateCountHint();
+
+  let currentSet = [];
+  let tally = {};
+  let score = 0, answered = 0;
+
+  function shuffledCopy(arr){
+    const a = arr.slice();
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  function startTest(){
+    const sel = selectedModules();
+    if (sel.length === 0) return;
+    const n = Math.max(1, parseInt(qCountInput.value, 10) || 1);
+    const pool = QUESTIONS.filter(q => sel.includes(q.module));
+    const set = shuffledCopy(pool).slice(0, Math.min(n, pool.length));
+    const t = {};
+    set.forEach(q => {
+      if (!t[q.module]) t[q.module] = { correct: 0, total: 0 };
+      t[q.module].total++;
+    });
+    beginQuiz(set, t);
+  }
+
+  function startMockMidterm(){
+    document.querySelectorAll('.module-check').forEach(cb => cb.checked = true);
+    updateCountHint();
+    const set = [];
+    const t = {};
+    MODULE_ORDER.forEach((m, i) => {
+      const pool = QUESTIONS.filter(q => q.module === m);
+      const draw = shuffledCopy(pool).slice(0, MOCK_BLUEPRINT[i]);
+      set.push(...draw);
+      t[m] = { correct: 0, total: draw.length };
+    });
+    beginQuiz(shuffledCopy(set), t);
+  }
+
+  function beginQuiz(set, t){
+    currentSet = set;
+    tally = t;
+    score = 0; answered = 0;
+    renderQuiz();
+    updateScore();
+    updateBreakdown();
+    document.getElementById('setup').hidden = true;
+    document.getElementById('quizArea').hidden = false;
+    window.scrollTo({ top: document.getElementById('quizArea').offsetTop - 64, behavior: 'smooth' });
+  }
+
+  function renderQuiz(){
+    const quizList = document.getElementById('quizList');
+    quizList.innerHTML = '';
+    currentSet.forEach((item, qi) => {
+      const order = shuffledCopy([0, 1, 2, 3]);
+      const newCorrectPos = order.indexOf(item.correct);
+      const box = document.createElement('div');
+      box.className = 'quiz-q';
+      box.innerHTML = `<span class="modtag">${item.module}</span><p class="qtext"><span class="qnum">Q${qi + 1}.</span>${item.q}</p><div class="choices"></div><p class="explain"></p>`;
+      const choicesEl = box.querySelector('.choices');
+      order.forEach((origIdx, pos) => {
+        const b = document.createElement('button');
+        b.className = 'choice';
+        b.textContent = item.choices[origIdx];
+        b.addEventListener('click', () => {
+          if (box.dataset.done) return;
+          box.dataset.done = '1'; answered++;
+          const t = tally[item.module];
+          if (pos === newCorrectPos) { score++; t.correct++; }
+          Array.from(choicesEl.children).forEach((el, ei) => {
+            el.disabled = true;
+            if (ei === newCorrectPos) el.classList.add('correct');
+            else if (ei === pos) el.classList.add('incorrect');
+          });
+          box.querySelector('.explain').textContent = item.explain;
+          box.querySelector('.explain').classList.add('show');
+          updateScore();
+          updateBreakdown();
+        });
+        choicesEl.appendChild(b);
+      });
+      quizList.appendChild(box);
+    });
+  }
+
+  function updateScore(){
+    document.getElementById('quizScore').textContent =
+      answered === 0 ? `${currentSet.length} questions — click an answer to check yourself`
+      : `Score: ${score} / ${answered} answered` + (answered === currentSet.length ? ` — done! (${Math.round(100*score/currentSet.length)}%)` : '');
+  }
+
+  function updateBreakdown(){
+    const body = document.getElementById('breakdownBody');
+    body.innerHTML = '';
+    MODULE_ORDER.forEach(m => {
+      if (!tally[m]) return;
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${m}</td><td class="num">${tally[m].correct}</td><td class="num">${tally[m].total}</td>`;
+      body.appendChild(tr);
+    });
+  }
+
+  function backToSetup(){
+    document.getElementById('quizArea').hidden = true;
+    document.getElementById('setup').hidden = false;
+    window.scrollTo({ top: document.getElementById('setup').offsetTop - 64, behavior: 'smooth' });
+  }
+
+  startBtn.addEventListener('click', startTest);
+  document.getElementById('mockBtn').addEventListener('click', startMockMidterm);
+  document.getElementById('newTestBtn').addEventListener('click', backToSetup);
+  document.getElementById('newTestBtn2').addEventListener('click', backToSetup);
+
+  const backToTop = document.getElementById('backToTop');
+  function toggleBackToTop(){ backToTop.classList.toggle('show', window.scrollY > 480); }
+  window.addEventListener('scroll', toggleBackToTop, { passive: true });
+  toggleBackToTop();
+  backToTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+</script>
