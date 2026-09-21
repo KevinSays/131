@@ -265,7 +265,7 @@
               <text x="100" y="130" text-anchor="middle">~100m max distance</text>
               <text x="100" y="150" text-anchor="middle">Cheap, easy to install</text>
               <text x="100" y="170" text-anchor="middle">Susceptible to EMI</text>
-              <text x="100" y="190" text-anchor="middle">Gigabit speeds</text>
+              <text x="100" y="190" text-anchor="middle">1–10 Gbps (by category)</text>
             </g>
             <!-- Fiber -->
             <rect x="200" y="30" width="160" height="240" fill="var(--surface-2)" stroke="var(--border)" stroke-width="1.5"/>
@@ -290,13 +290,27 @@
               <text x="460" y="180" text-anchor="middle">Mobility</text>
               <text x="460" y="200" text-anchor="middle">Shared medium</text>
               <text x="460" y="220" text-anchor="middle">Interference-prone</text>
-              <text x="460" y="240" text-anchor="middle">Slower than wired</text>
+              <text x="460" y="240" text-anchor="middle">Variable — shared airtime</text>
             </g>
           </g>
         </svg>
         <figcaption>Three network media types — copper for short runs, fiber for long distance and high bandwidth, wireless for mobility at the cost of speed and reliability.</figcaption>
       </figure>
     </div>
+
+    <h3 style="font-family:var(--mono);font-size:1.1rem;margin:24px 0 12px;">Client/server vs. peer-to-peer</h3>
+    <p>Two roles a device can play in a network relationship — this is a Module 1 objective on its own, separate from the components diagram above.</p>
+    <div class="diagram-grid">
+      <div class="example" style="margin:0;">
+        <span class="tag">Client/server</span>
+        <p>One device (the <strong>server</strong>) provides a resource or service; others (<strong>clients</strong>) request it. Roles are fixed and often role-dedicated hardware. Web browsing, email, and file shares on a corporate network are all client/server — your laptop is always the client, the mail server is always the server.</p>
+      </div>
+      <div class="example" style="margin:0;">
+        <span class="tag">Peer-to-peer (P2P)</span>
+        <p>Every device can act as both client and server at once, with no dedicated role. Simpler to set up, no central point of failure — but no central point of control either, which is why it doesn't scale to enterprise size. File-sharing between two lab PCs with shared folders is P2P.</p>
+      </div>
+    </div>
+
   </section>
 
   <!-- ── TOPOLOGY ── -->
@@ -732,6 +746,23 @@
     </div>
 
     <div class="example">
+      <span class="tag">Rapid fire</span>
+      <h3>Which trait is at stake? (six scenarios)</h3>
+      <p>For each, name the characteristic — fault tolerance, scalability, QoS, or security — being tested.</p>
+      <details class="solution">
+        <summary>Show answers</summary>
+        <div class="solbody">
+          <p><strong>1. A campus adds a new dorm with 200 students, and the network handles it without redesigning the core.</strong> — Scalability.</p>
+          <p><strong>2. A fiber cut takes down one path between buildings, but traffic automatically reroutes over a second link with no dropped calls.</strong> — Fault tolerance.</p>
+          <p><strong>3. An attacker intercepts unencrypted login credentials on a coffee-shop Wi-Fi network.</strong> — Security (confidentiality).</p>
+          <p><strong>4. A hospital's network gives its life-support monitoring traffic priority over the break-room's streaming video.</strong> — QoS.</p>
+          <p><strong>5. A company merges with another and needs to double its user count within a month without buying all-new core hardware.</strong> — Scalability.</p>
+          <p><strong>6. A ransomware attack encrypts files on a file server, and no one — including legitimate users — can open them.</strong> — Security (availability/integrity).</p>
+        </div>
+      </details>
+    </div>
+
+    <div class="example">
       <span class="tag">Topology</span>
       <h3>Physical vs. logical</h3>
       <p>Two PCs are in adjacent offices, both plugged into the same switch. A third PC is in a different building but is on the same VLAN and IP subnet. From the perspective of IP addressing, which two PCs are "closer"?</p>
@@ -794,6 +825,7 @@
   const TERMS = [
     {t:"ACL (Access Control List)", d:"A rule set that permits or denies traffic based on criteria like source/destination address — a basic network security tool."},
     {t:"BYOD", d:"Bring Your Own Device — employees/students use personal devices on the network, trading flexibility for a harder security management problem."},
+    {t:"Client/server", d:"A network model where dedicated servers provide resources/services and clients request them. Fixed roles. Most enterprise and internet applications work this way."},
     {t:"Cable internet", d:"Wired internet access delivered over coaxial cable, typically shared bandwidth among neighborhood subscribers."},
     {t:"Cellular", d:"Wireless internet access over the mobile network (4G/5G) — mobile, works almost anywhere with coverage."},
     {t:"Cloud computing", d:"Consuming computing resources as a service rather than owning the infrastructure — public, private, hybrid, or community models."},
@@ -812,6 +844,7 @@
     {t:"LAN", d:"Local Area Network — a network in one geographic area (a home, building, or campus), typically owned and managed by one organization."},
     {t:"MAN", d:"Metropolitan Area Network — spans a city-sized area, larger than a LAN but smaller than a WAN."},
     {t:"Network media", d:"The physical or wireless path data travels — copper cabling, fiber optic, or wireless radio."},
+    {t:"Peer-to-peer (P2P)", d:"A network model where every device can act as both client and server, with no dedicated role. Simpler, no single point of failure — but no central point of control, so it doesn't scale to enterprise size."},
     {t:"QoS (Quality of Service)", d:"Prioritizing certain traffic (like a live video call) over other traffic (like a file download) when bandwidth is limited."},
     {t:"Satellite internet", d:"Wireless internet access via satellite — works almost anywhere, but with higher latency than ground-based options."},
     {t:"Scalability", d:"A network's ability to grow — supporting new users, devices, and applications — without a full redesign."},
@@ -837,7 +870,7 @@
       q:"Two buildings on the same college campus, on one network the college owns and manages, form a:",
       choices:["WAN","LAN","Extranet","MAN"],
       correct:1,
-      explain:"Single organization, single (if multi-building) site, one network they control — that's a LAN, even if it spans more than one building."
+      explain:"Single organization, single (if multi-building) site, one network they control — that's a LAN, even if it spans more than one building. (Some texts call this a CAN — campus area network — but Cisco treats it as a LAN.)"
     },
     {
       q:"Which characteristic of a reliable network is responsible for prioritizing a live video call over a background file download on the same link?",

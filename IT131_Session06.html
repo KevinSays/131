@@ -374,6 +374,16 @@
       <span class="label">The forwarding decision</span>
       A router compares a packet's destination address against every route it knows and forwards using the <strong>most specific match</strong> — the route describing the smallest, most exact slice of address space wins over a broader one. No match at all, and the packet follows the router's own default route if it has one; otherwise it's dropped, and an ICMP "destination unreachable" message goes back to the sender.
     </div>
+
+    <div class="teach-note">
+      <span class="label">"Automatic" has two conditions</span>
+      A directly connected route isn't automatic the instant a cable is plugged in — it needs an <strong>IP address configured on the interface</strong> and the interface in <strong>up/up</strong> state (both the physical line protocol and the administrative status up). Forget <code>no shutdown</code>, or plug into a dead port, and that "automatic" route simply never appears. This is the single most common troubleshooting scenario in later routing labs — worth planting here.
+    </div>
+
+    <div class="teach-note try">
+      <span class="label">Try it — host side</span>
+      Run <code>route print</code> (Windows) or <code>ip route</code> (Linux) or <code>netstat -r</code> (macOS/Linux) on your own machine. You'll see the same shape described above in miniature: a route to your local subnet, and a default route (destination <code>0.0.0.0</code>) pointing at your gateway.
+    </div>
   </section>
 
   <!-- ARP -->
@@ -403,6 +413,18 @@
       <span class="label">Try it</span>
       Open a terminal and run <code>arp -a</code> (Windows, macOS, and Linux all support it). Every row is a live IP → MAC mapping your own machine has already cached — the exact table this section just described, sitting on your own computer right now.
     </div>
+
+    <h3 style="font-family:var(--mono);font-size:1.1rem;margin:24px 0 12px;">IPv6's version: NDP</h3>
+    <p>IPv6 has no broadcast at all — so it can't reuse ARP's broadcast-request mechanism. <strong>NDP (Neighbor Discovery Protocol)</strong>, built on ICMPv6, does the equivalent job differently.</p>
+    <table class="spec">
+      <thead><tr><th></th><th>IPv4 — ARP</th><th>IPv6 — NDP</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;">Request</td><td>ARP request — broadcast to <code>FF:FF:FF:FF:FF:FF</code>, every device on the segment</td><td>Neighbor Solicitation — sent to a <strong>solicited-node multicast</strong> address, a small computed subset of devices, not everyone</td></tr>
+        <tr><td style="font-weight:600;">Reply</td><td>ARP reply — unicast back to the requester</td><td>Neighbor Advertisement — unicast back to the requester</td></tr>
+        <tr><td style="font-weight:600;">Result</td><td>IP → MAC mapping cached in the ARP table</td><td>IP → MAC mapping cached in the neighbor cache</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:.9rem;color:var(--muted);">ARP is to IPv4 as NDP's Neighbor Solicitation/Advertisement is to IPv6 — same job, but IPv6 replaces "ask literally everyone" with a targeted multicast, since broadcast doesn't exist in IPv6 at all.</p>
   </section>
 
   <!-- IMPERSONATOR CASE FILE -->
@@ -461,6 +483,20 @@
       <p class="kicker">Applied</p>
       <h2>Worked examples</h2>
       <p>Think it through before you expand the answer.</p>
+    </div>
+
+    <div class="example">
+      <span class="tag">The canonical question</span>
+      <h3>Four addresses, two hops</h3>
+      <p>PC-A (192.168.1.10/24, gateway 192.168.1.1) sends a packet to a server at 10.0.0.5, off-subnet, reachable through Router-1. Give the source MAC, destination MAC, source IP, and destination IP of the frame <strong>as it leaves PC-A</strong> — and again <strong>as it leaves Router-1's far (10.0.0.0-side) interface</strong>.</p>
+      <details class="solution">
+        <summary>Show answer</summary>
+        <div class="solbody">
+          <p><strong>Leaving PC-A:</strong> Src MAC = PC-A's own MAC. Dst MAC = Router-1's MAC (PC-A ARPs for the <em>gateway</em>, never the far-off server, since 10.0.0.5 is off-subnet). Src IP = 192.168.1.10. Dst IP = 10.0.0.5.</p>
+          <p><strong>Leaving Router-1's far interface:</strong> Src MAC = Router-1's far-interface MAC (a brand-new frame — the old one was discarded at the router). Dst MAC = the server's MAC (or the next router's, if there's another hop). Src IP = 192.168.1.10 — unchanged. Dst IP = 10.0.0.5 — unchanged.</p>
+          <p>This is the whole course's addressing story compressed into one question: MAC addressing is rebuilt hop-to-hop; IP addressing rides end-to-end untouched. If you can answer this cold, Sessions 4–6 have landed.</p>
+        </div>
+      </details>
     </div>
 
     <div class="example">

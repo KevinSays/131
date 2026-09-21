@@ -1,0 +1,629 @@
+<title>IT131 – Reading a Pcap File (Wireshark Lab)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --paper:#EDE8DD; --canvas:#D9D2C3; --ink:#1F2421; --kraft:#B08554; --kraft-dark:#664526;
+    --blue:#2F4858; --red:#A23A2E; --ticket:#F3E7E2;
+    --blue-soft:rgba(47,72,88,.08); --red-soft:rgba(162,58,46,.08);
+    --kraft-soft:rgba(176,133,84,.14); --ink-soft:rgba(31,36,33,.06);
+    --shadow:5px 5px 0 rgba(31,36,33,.16);
+    --display:'Special Elite','Courier New',monospace;
+    --sans:'IBM Plex Sans', system-ui, sans-serif;
+    --mono:'IBM Plex Mono', monospace;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth; font-size:125%;}
+  body{
+    margin:0; background:var(--canvas); color:var(--ink); font-family:var(--sans);
+    line-height:1.55; -webkit-font-smoothing:antialiased;
+    background-image:radial-gradient(rgba(31,36,33,.06) 1px, transparent 1px);
+    background-size:16px 16px;
+  }
+  ::selection{ background:var(--kraft-soft); }
+  a{ color:var(--blue); }
+  .wrap{ max-width:940px; margin:0 auto; padding:0 20px; }
+  code{ font-family:var(--mono); background:var(--ink-soft); padding:1px 6px; border-radius:2px; font-size:.9em; }
+
+  header.masthead{ padding:48px 0 30px; }
+  .eyebrow{ display:inline-block; font-family:var(--mono); font-size:.86rem; letter-spacing:.12em;
+    border:2px solid var(--blue); color:var(--blue); padding:4px 10px; transform:rotate(-2deg); background:var(--paper); }
+  h1{ font-family:var(--display); font-weight:400; font-size:clamp(1.9rem,5vw,2.9rem); letter-spacing:.01em;
+    margin:16px 0 10px; line-height:1.15; }
+  .lede{ max-width:64ch; font-size:1.02rem; line-height:1.6; opacity:.85; margin:0 0 18px; }
+  .factrow{ display:flex; flex-wrap:wrap; gap:10px; }
+  .fact{ font-family:var(--mono); font-size:.82rem; letter-spacing:.02em; background:var(--paper);
+    border:1.5px solid var(--ink); padding:.4em .8em; display:flex; gap:.5em; box-shadow:3px 3px 0 rgba(31,36,33,.14); }
+  .fact b{ color:var(--kraft-dark); font-weight:600; text-transform:uppercase; letter-spacing:.06em; font-size:.88rem; }
+
+  nav.index{ position:sticky; top:0; z-index:20; background:color-mix(in srgb, var(--canvas) 92%, transparent);
+    backdrop-filter:blur(6px); border-top:2px solid var(--ink); border-bottom:2px solid var(--ink); }
+  nav.index .wrap{ display:flex; gap:2px; overflow-x:auto; padding:8px 20px; scrollbar-width:none; }
+  nav.index .wrap::-webkit-scrollbar{ display:none; }
+  nav.index a{ font-family:var(--mono); font-weight:600; letter-spacing:.03em; font-size:.82rem; text-decoration:none;
+    color:var(--ink); opacity:.85; padding:.5em .8em; white-space:nowrap; text-transform:uppercase; border:1px solid transparent; }
+  nav.index a:hover{ opacity:1; border-color:var(--ink); background:var(--paper); }
+  nav.index a.toc-link{ color:var(--blue); opacity:1; border-right:1.5px solid var(--ink); margin-right:8px; padding-right:16px; }
+  nav.index a.toc-link:hover{ background:var(--blue-soft); border-color:var(--ink); }
+
+  section{ padding:44px 0; border-bottom:2px dashed rgba(31,36,33,.3); }
+  section:last-of-type{ border-bottom:none; }
+  .section-head{ margin-bottom:26px; max-width:70ch; }
+  .kicker{ font-family:var(--mono); font-weight:600; font-size:.9rem; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--red); margin:0 0 .4em; }
+  h2{ font-family:var(--display); font-weight:400; font-size:clamp(1.4rem,2.8vw,1.9rem); margin:0 0 .25em; letter-spacing:.005em; }
+  .section-head p{ opacity:.82; margin:.5em 0 0; }
+  h3.sub{ font-family:var(--mono); font-size:1.02rem; margin:24px 0 10px; text-transform:uppercase; letter-spacing:.04em; color:var(--kraft-dark); }
+
+  .obj-list{ display:grid; gap:10px; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); list-style:none; margin:0; padding:0; }
+  .obj-list li{ background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow); padding:14px 16px; font-size:.92rem; }
+  .obj-list li::before{ content:"▸"; color:var(--red); margin-right:.5em; font-weight:700; }
+
+  .teach-note{ margin:18px 0; padding:12px 14px; border:1.5px dashed var(--blue); background:var(--blue-soft);
+    font-family:var(--mono); font-size:.82rem; line-height:1.6; }
+  .teach-note .label{ color:var(--blue); font-weight:600; letter-spacing:.05em; text-transform:uppercase; font-size:.88rem; display:block; margin-bottom:.4em; }
+  .teach-note.warn{ border-color:var(--red); background:var(--red-soft); }
+  .teach-note.warn .label{ color:var(--red); }
+
+  .cold-open{ background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow); padding:18px 20px; margin:24px 0; }
+  .cold-open .tag{ font-family:var(--mono); font-size:.84rem; letter-spacing:.1em; color:var(--red); margin:0 0 8px; text-transform:uppercase; }
+  .cold-open p{ margin:0; font-size:.95rem; line-height:1.6; font-style:italic; }
+
+  table.spec{ width:100%; border-collapse:collapse; margin:18px 0; font-size:.86rem; }
+  table.spec th{ font-family:var(--mono); font-weight:600; text-transform:uppercase; letter-spacing:.05em; font-size:.86rem;
+    color:var(--kraft-dark); text-align:left; padding:8px 10px; border-bottom:2px solid var(--ink); }
+  table.spec td{ padding:9px 10px; border-bottom:1px dashed rgba(31,36,33,.3); vertical-align:top; }
+  table.spec tr:last-child td{ border-bottom:none; }
+  table.spec td.mono, table.spec th.mono{ font-family:var(--mono); }
+
+  .book{ margin:20px 0; background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow); }
+  .book-head{ display:flex; justify-content:space-between; align-items:baseline; padding:10px 16px;
+    border-bottom:2px dashed rgba(31,36,33,.3); font-family:var(--mono); font-size:.78rem; text-transform:uppercase; letter-spacing:.05em; color:var(--kraft-dark); }
+  .book table{ width:100%; border-collapse:collapse; font-size:.86rem; }
+  .book th{ font-family:var(--mono); font-weight:600; text-transform:uppercase; letter-spacing:.05em; font-size:.76rem;
+    color:var(--kraft-dark); text-align:left; padding:8px 16px; border-bottom:1.5px solid var(--ink); }
+  .book td{ padding:8px 16px; font-family:var(--mono); font-size:.84rem; border-bottom:1px dashed rgba(31,36,33,.25); }
+  .book tr:last-child td{ border-bottom:none; }
+  .book td.hl{ color:var(--blue); font-weight:600; }
+
+  .toolbar{ display:flex; gap:10px; align-items:center; margin-bottom:20px; flex-wrap:wrap; }
+  button.btn{ font-family:var(--mono); font-weight:600; letter-spacing:.03em; text-transform:uppercase; font-size:.9rem;
+    background:var(--paper); color:var(--ink); border:1.5px solid var(--ink); padding:.55em 1em; cursor:pointer; box-shadow:3px 3px 0 rgba(31,36,33,.14); }
+  button.btn:hover{ background:var(--kraft-soft); }
+  button.btn:focus-visible, a:focus-visible, .flashcard:focus-visible, input:focus-visible{ outline:2px solid var(--blue); outline-offset:2px; }
+  #cardProgress{ font-family:var(--mono); font-size:.85rem; opacity:.75; }
+  .card-grid{ display:grid; gap:16px; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); }
+  .flashcard{ perspective:1200px; height:190px; cursor:pointer; border:none; background:none; padding:0; font-family:inherit; text-align:left; width:100%; }
+  .flashcard-inner{ position:relative; width:100%; height:100%; transition:transform .5s cubic-bezier(.4,.2,.2,1); transform-style:preserve-3d; -webkit-transform-style:preserve-3d; will-change:transform; }
+  .flashcard.flipped .flashcard-inner{ transform:rotateY(180deg); -webkit-transform:rotateY(180deg); }
+  .flashcard-face{ position:absolute; inset:0; backface-visibility:hidden; -webkit-backface-visibility:hidden; -moz-backface-visibility:hidden; border:1.5px solid var(--ink); box-shadow:var(--shadow);
+    padding:15px; display:flex; flex-direction:column; justify-content:center; }
+  .flashcard-face.front{ background:var(--paper); transform:translateZ(.5px); }
+  .flashcard-face.back{ background:var(--ticket); transform:rotateY(180deg) translateZ(.5px); overflow-y:auto; }
+  .flashcard-face .lbl{ font-family:var(--mono); font-weight:600; letter-spacing:.1em; text-transform:uppercase; font-size:.82rem; color:var(--kraft-dark); margin-bottom:.5em; }
+  .flashcard-face.front .term{ font-family:var(--display); font-weight:400; font-size:1.05rem; letter-spacing:.01em; }
+  .flashcard-face.back .def{ font-size:.82rem; }
+  .flashcard.known .flashcard-face.front{ border-color:var(--blue); border-width:2px; }
+
+  .quiz-q{ background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow); padding:18px 20px; margin-bottom:18px; }
+  .quiz-q .qtext{ font-weight:600; margin:0 0 13px; }
+  .quiz-q .qnum{ font-family:var(--display); color:var(--red); margin-right:.5em; }
+  .choices{ display:grid; gap:8px; }
+  .choice{ text-align:left; font-family:var(--sans); font-size:.9rem; background:var(--ticket); border:1.5px solid var(--ink);
+    padding:.65em .85em; cursor:pointer; color:var(--ink); }
+  .choice:hover{ border-color:var(--blue); }
+  .choice.correct{ background:var(--blue-soft); border-color:var(--blue); border-width:2px; }
+  .choice.incorrect{ background:var(--red-soft); border-color:var(--red); border-width:2px; }
+  .choice[disabled]{ cursor:default; }
+  .explain{ margin-top:12px; font-size:.84rem; opacity:.85; border-left:3px solid var(--kraft); padding-left:12px; display:none; font-family:var(--mono); }
+  .explain.show{ display:block; }
+  #quizScore{ font-family:var(--mono); font-size:.9rem; opacity:.75; margin-bottom:16px; }
+
+  .example{ background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow); padding:20px 22px; margin-bottom:16px; }
+  .example h3{ font-family:var(--display); font-weight:400; font-size:1.15rem; margin:0 0 8px; }
+  .example .tag{ display:inline-block; font-family:var(--mono); font-weight:600; font-size:.86rem; text-transform:uppercase; letter-spacing:.07em;
+    color:var(--blue); background:var(--blue-soft); border:1px solid var(--blue); padding:.25em .6em; margin-bottom:10px; }
+  details.solution{ margin-top:12px; }
+  details.solution summary{ cursor:pointer; font-family:var(--mono); font-weight:600; letter-spacing:.03em; text-transform:uppercase;
+    font-size:.9rem; color:var(--blue); list-style:none; display:inline-flex; align-items:center; gap:.4em; }
+  details.solution summary::-webkit-details-marker{ display:none; }
+  details.solution summary::before{ content:"▸"; transition:transform .15s; }
+  details.solution[open] summary::before{ transform:rotate(90deg); }
+  details.solution .solbody{ margin-top:10px; padding:13px 15px; background:var(--ticket); font-size:.88rem; }
+
+  #glossarySearch{ width:100%; max-width:400px; font-family:var(--sans); font-size:.9rem; padding:.65em .85em;
+    border:1.5px solid var(--ink); background:var(--paper); color:var(--ink); margin-bottom:16px; }
+  .alpha-nav{ display:flex; flex-wrap:wrap; gap:4px; margin-bottom:22px; }
+  .alpha-nav a{ font-family:var(--mono); font-weight:600; font-size:.82rem; width:1.8em; height:1.8em; display:flex;
+    align-items:center; justify-content:center; border:1px solid var(--ink); text-decoration:none; color:var(--ink); opacity:.35; }
+  .alpha-nav a.has{ opacity:1; background:var(--paper); }
+  .alpha-nav a.has:hover{ border-color:var(--blue); color:var(--blue); }
+  .glossary-letter{ font-family:var(--display); font-weight:400; color:var(--red); font-size:1.1rem; margin:20px 0 6px; }
+  dl.glossary{ margin:0; }
+  dl.glossary .gitem{ border-top:1px dashed rgba(31,36,33,.35); padding:11px 0; }
+  dl.glossary dt{ font-family:var(--mono); font-weight:600; font-size:.98rem; }
+  dl.glossary dd{ margin:.3em 0 0; opacity:.8; font-size:.86rem; }
+  .gitem.hidden{ display:none; }
+
+  footer{ padding:30px 0 60px; }
+  footer p{ opacity:.65; font-size:.82rem; font-family:var(--mono); letter-spacing:.02em; }
+
+  .back-to-top{ position:fixed; bottom:22px; right:22px; z-index:40; width:50px; height:50px;
+    background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow);
+    font-family:var(--display); font-size:1.4rem; color:var(--ink); line-height:1;
+    display:flex; align-items:center; justify-content:center; padding:0; cursor:pointer; text-decoration:none;
+    opacity:0; visibility:hidden; transform:translateY(10px);
+    transition:opacity .25s ease, transform .25s ease, visibility 0s .25s; }
+  .back-to-top.show{ opacity:1; visibility:visible; transform:translateY(0); transition:opacity .25s ease, transform .25s ease, visibility 0s; }
+  .back-to-top:hover{ background:var(--blue-soft); border-color:var(--blue); color:var(--blue); }
+  .back-to-top:focus-visible{ outline:2px solid var(--blue); outline-offset:2px; }
+
+  @media print{
+    body{ background:#fff; }
+    nav.index{ display:none; }
+    .quiz-q, .example, .flashcard-face, .book{ box-shadow:none; }
+    .back-to-top{ display:none; }
+  }
+</style>
+
+<header class="masthead">
+  <div class="wrap">
+    <p class="eyebrow">IT131 · WIRESHARK LAB · FIELD NOTES</p>
+    <h1>Reading a Pcap File</h1>
+    <p class="lede">A hands-on walkthrough of Wireshark using a real capture off a laptop's Wi-Fi — 17,967 packets, roughly 18 minutes, ordinary browsing and background traffic. Every frame number below is real and traceable in the companion lab file.</p>
+    <div class="factrow">
+      <span class="fact"><b>Ties to</b> Module 3 — Protocols &amp; Models, Encapsulation</span>
+      <span class="fact"><b>Lab file</b> 131_wireshark_lab.pcapng</span>
+    </div>
+  </div>
+</header>
+
+<nav class="index" aria-label="Section index">
+  <div class="wrap">
+    <a href="index.html" class="toc-link">↩ Contents</a>
+    <a href="#overview">What's a Pcap</a>
+    <a href="#panes">Wireshark's Panes</a>
+    <a href="#walkthrough">Case Walkthrough</a>
+    <a href="#filters">Filter Cheat Sheet</a>
+    <a href="#flashcards">Flashcards</a>
+    <a href="#quiz">Quiz</a>
+    <a href="#examples">Lab Exercises</a>
+    <a href="#glossary">Glossary</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+  <!-- OVERVIEW -->
+  <section id="overview">
+    <div class="section-head">
+      <p class="kicker">What is it</p>
+      <h2>Pcap: packet capture, exactly as it crossed the wire</h2>
+      <p>Wireshark doesn't create traffic — it decodes frames a NIC already handles every second. A pcap file just records them, unsummarized, in order.</p>
+    </div>
+
+    <div class="cold-open">
+      <p class="tag">Note</p>
+      <p>The capture used throughout this page was taken with dumpcap on a laptop's <code>wlan0</code> interface doing normal things — a Teams call, some browsing, Steam running in the background. Not a special "hacking" artifact. A recording of whatever a NIC already handles every second.</p>
+    </div>
+
+    <ul class="obj-list">
+      <li><strong>.pcap</strong> — the original format: one global header, then a flat list of packet records.</li>
+      <li><strong>.pcapng</strong> — "next generation," what Wireshark writes by default now. Same idea, but each packet can carry its own metadata block.</li>
+      <li><strong>Nothing pre-decoded.</strong> Wireshark parses headers live, every time the file is opened.</li>
+      <li><strong>Ground truth.</strong> Configs and logs say what a device was <em>supposed</em> to send; a capture says what it actually put on the wire.</li>
+    </ul>
+
+    <h3 class="sub">The protocol stack in this capture</h3>
+    <p><code>Statistics → Protocol Hierarchy</code> shows every protocol found, layered exactly the way encapsulation stacks them:</p>
+    <div class="book">
+      <div class="book-head"><span>Protocol Hierarchy</span><span>17,967 frames total</span></div>
+      <table>
+        <tbody>
+          <tr><td>frame</td><td class="hl">17,967</td><td>every packet the NIC captured</td></tr>
+          <tr><td>&nbsp;&nbsp;eth</td><td class="hl">17,967</td><td>Ethernet header — wlan0 was in <strong>managed mode</strong>, so the driver hands Wireshark de-802.11'd Ethernet frames</td></tr>
+          <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;ip</td><td class="hl">17,569</td><td>—</td></tr>
+          <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;tcp</td><td class="hl">11,641</td><td>reliable, connection-oriented</td></tr>
+          <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;tls</td><td class="hl">5,744</td><td>encrypted app data — HTTPS, mostly</td></tr>
+          <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;http</td><td class="hl">30</td><td>plaintext — readable directly</td></tr>
+          <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dns</td><td class="hl">2</td><td>—</td></tr>
+          <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;udp</td><td class="hl">5,924</td><td>—</td></tr>
+          <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;quic</td><td class="hl">4,466</td><td>HTTP/3 over UDP — see the sidebar below</td></tr>
+          <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dns</td><td class="hl">918</td><td>—</td></tr>
+          <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;mdns/ssdp/stun/…</td><td class="hl">~350</td><td>device &amp; service discovery chatter</td></tr>
+          <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;ipv6</td><td class="hl">357</td><td>—</td></tr>
+          <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;arp</td><td class="hl">39</td><td>—</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="teach-note">
+      <span class="label">Read this bottom-up</span>
+      Each indent level is one layer of encapsulation peeled back: an Ethernet frame carried an IP packet, which carried a TCP segment, which carried a TLS record. This <em>is</em> Session 2's encapsulation module, made visible on real traffic.
+    </div>
+  </section>
+
+  <!-- PANES -->
+  <section id="panes">
+    <div class="section-head">
+      <p class="kicker">The interface</p>
+      <h2>Wireshark's three panes</h2>
+      <p>Every capture window is the same three panes, top to bottom. Learn the order and you can read any pcap.</p>
+    </div>
+
+    <table class="spec">
+      <thead><tr><th>Pane</th><th>What it shows</th><th>How to use it</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;">Packet List</td><td>One row per frame, in capture order, with Wireshark's auto-summary in the <code>Info</code> column.</td><td>Scan here first — color rules (below) flag protocol families before you read a single field.</td></tr>
+        <tr><td style="font-weight:600;">Packet Detail</td><td>The selected frame, decoded and nested exactly like the protocol hierarchy above — Ethernet → IP → TCP → TLS.</td><td>Expand one layer at a time. Each layer is that protocol's header fields, human-labeled.</td></tr>
+        <tr><td style="font-weight:600;">Bytes</td><td>The raw hex/ASCII of the frame.</td><td>Click any field in Packet Detail — the exact bytes behind it highlight here. Nothing is hidden.</td></tr>
+      </tbody>
+    </table>
+
+    <h3 class="sub">Default color rules</h3>
+    <table class="spec">
+      <thead><tr><th>Color</th><th>Means</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;">Light green</td><td>HTTP traffic</td></tr>
+        <tr><td style="font-weight:600;">Light blue</td><td>TCP, no errors</td></tr>
+        <tr><td style="font-weight:600;">Light yellow</td><td>UDP</td></tr>
+        <tr><td style="font-weight:600;">Lavender</td><td>TCP SYN/FIN — connection setup/teardown</td></tr>
+        <tr><td style="font-weight:600;">Dark red / pink</td><td>TCP errors — retransmits, resets, out-of-order</td></tr>
+      </tbody>
+    </table>
+    <div class="teach-note warn">
+      <span class="label">Watch for dark-red rows</span>
+      In a healthy capture they're rare. A pcap that's mostly dark red is your first clue something's wrong on the wire — packet loss, a flapping link, congestion.
+    </div>
+  </section>
+
+  <!-- WALKTHROUGH -->
+  <section id="walkthrough">
+    <div class="section-head">
+      <p class="kicker">Case walkthrough</p>
+      <h2>Four real exchanges, frame by frame</h2>
+      <p>Frame numbers below match <code>131_wireshark_lab.pcapng</code> — a 143-packet teaching slice cut from the full capture with <code>dhcp || arp || http || tcp.stream eq 3 || dns.qry.name=="teams.cloud.microsoft" || dns.qry.name=="s-0005.dual-s-msedge.net"</code>. Open it and follow along.</p>
+    </div>
+
+    <h3 class="sub">1 · ARP — "who has this IP?"</h3>
+    <p>Before any IP packet can leave the laptop for its default gateway, the OS needs the gateway's MAC address. ARP asks on the local segment — a Layer 2 broadcast, no IP header required.</p>
+    <table class="spec">
+      <tr><th>Frame</th><th>Src MAC</th><th>Question / Answer</th></tr>
+      <tr><td class="mono">36</td><td class="mono">e4:55:a8:1c:58:8c</td><td>who-has 10.209.108.92? Tell 10.128.128.128</td></tr>
+      <tr><td class="mono">37</td><td class="mono">00:72:ee:af:39:f3</td><td>is-at 00:72:ee:af:39:f3 — reply</td></tr>
+    </table>
+
+    <h3 class="sub">2 · DHCP — lease renewal, not a fresh lease</h3>
+    <p>Textbook DHCP is four steps — Discover, Offer, Request, Ack (DORA). This capture only shows two, because the laptop already had a lease when capture started; this is a <strong>renewal</strong>, not a new lease.</p>
+    <table class="spec">
+      <tr><th>Frame</th><th>Message</th><th>What's happening</th></tr>
+      <tr><td class="mono">61</td><td>DHCP Request</td><td>Client asks the server to extend its current lease — no Discover/Offer needed, it already knows the server.</td></tr>
+      <tr><td class="mono">62</td><td>DHCP ACK</td><td>Server confirms — same IP, fresh lease timer.</td></tr>
+    </table>
+    <div class="teach-note">
+      <span class="label">Worth knowing</span>
+      DORA only happens once per lease lifetime. Most DHCP traffic you'll ever capture on a running network is this two-step renewal.
+    </div>
+
+    <h3 class="sub">3 · DNS — name to address</h3>
+    <table class="spec">
+      <tr><th>Frame</th><th>Direction</th><th>Query</th><th>Answer</th></tr>
+      <tr><td class="mono">1</td><td>query</td><td class="mono">teams.cloud.microsoft</td><td>—</td></tr>
+      <tr><td class="mono">4</td><td>response</td><td class="mono">teams.cloud.microsoft</td><td class="mono">52.123.128.14, 52.123.129.14</td></tr>
+    </table>
+    <p>Frame 9 (below) connects to <code>52.123.129.14</code> — one of the two addresses this DNS answer just handed back.</p>
+
+    <h3 class="sub">4 · TCP handshake → TLS 1.3 — one stream, start to finish</h3>
+    <p><code>tcp.stream eq 0</code> in the lab file:</p>
+    <table class="spec">
+      <tr><th>Frame</th><th>t (s)</th><th>Direction</th><th>Flags / Info</th></tr>
+      <tr><td class="mono">3</td><td class="mono">0.000</td><td>Client → Server</td><td class="mono">[SYN] Seq=0</td></tr>
+      <tr><td class="mono">7</td><td class="mono">0.034</td><td>Server → Client</td><td class="mono">[SYN, ACK] Seq=0 Ack=1</td></tr>
+      <tr><td class="mono">8</td><td class="mono">0.034</td><td>Client → Server</td><td class="mono">[ACK] Seq=1 Ack=1</td></tr>
+      <tr><td class="mono">9</td><td class="mono">0.035</td><td>Client → Server</td><td>TLS <strong>Client Hello</strong> — SNI = teams.cloud.microsoft (plaintext, readable)</td></tr>
+      <tr><td class="mono">12</td><td class="mono">0.060</td><td>Server → Client</td><td>TLS <strong>Server Hello</strong>, Change Cipher Spec, Application Data</td></tr>
+      <tr><td class="mono">14–17</td><td class="mono">0.061</td><td>Client → Server</td><td>Change Cipher Spec, then Application Data — everything from here is encrypted</td></tr>
+    </table>
+    <div class="teach-note">
+      <span class="label">The one plaintext field that matters most</span>
+      Server Name Indication (SNI) in the Client Hello. Even though the rest of the session is encrypted, SNI names the hostname you connected to — exactly how this capture's DNS-name list was reconstructed without decrypting anything.
+    </div>
+    <div class="teach-note warn">
+      <span class="label">Sidebar — where did HTTP/3 go?</span>
+      4,466 frames here are QUIC — HTTP/3 running directly over UDP/443, not TCP. Filter <code>tcp.port==443</code> expecting "all the HTTPS" and you'll miss most of it. Try <code>quic</code> and compare frame counts.
+    </div>
+  </section>
+
+  <!-- FILTERS -->
+  <section id="filters">
+    <div class="section-head">
+      <p class="kicker">Reference</p>
+      <h2>Filter cheat sheet</h2>
+      <p>Display filters (top bar, green when valid) — not capture filters, which are set before recording starts.</p>
+    </div>
+    <table class="spec">
+      <thead><tr><th>Filter</th><th>Shows</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">arp</td><td>Address resolution only</td></tr>
+        <tr><td class="mono">dhcp</td><td>DHCP requests/offers/acks/renewals</td></tr>
+        <tr><td class="mono">dns</td><td>All DNS queries and responses</td></tr>
+        <tr><td class="mono">tcp.flags.syn==1</td><td>Every connection attempt (SYN packets)</td></tr>
+        <tr><td class="mono">tcp.stream eq N</td><td>Every packet in one TCP conversation — right-click → Follow → TCP Stream to get N automatically</td></tr>
+        <tr><td class="mono">tls.handshake.extensions_server_name</td><td>Client Hellos — every HTTPS hostname, no decryption needed</td></tr>
+        <tr><td class="mono">http.request</td><td>Plaintext HTTP GET/POST requests, readable in full</td></tr>
+        <tr><td class="mono">quic</td><td>HTTP/3 traffic (UDP/443)</td></tr>
+        <tr><td class="mono">ip.addr==10.209.108.92</td><td>All traffic to/from one host, either direction</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- FLASHCARDS -->
+  <section id="flashcards">
+    <div class="section-head">
+      <p class="kicker">Study</p>
+      <h2>Flashcards</h2>
+      <p>Click to flip. Double-click to mark as known.</p>
+    </div>
+    <div class="toolbar">
+      <button class="btn" id="shuffleBtn">Shuffle</button>
+      <button class="btn" id="resetKnownBtn">Reset progress</button>
+      <span id="cardProgress"></span>
+    </div>
+    <div class="card-grid" id="cardGrid"></div>
+  </section>
+
+  <!-- QUIZ -->
+  <section id="quiz">
+    <div class="section-head">
+      <p class="kicker">Check yourself</p>
+      <h2>Sample questions</h2>
+      <p>Pick an answer to see if you're right.</p>
+    </div>
+    <div id="quizScore"></div>
+    <div id="quizList"></div>
+    <button class="btn" id="resetQuizBtn">Reset quiz</button>
+  </section>
+
+  <!-- EXAMPLES -->
+  <section id="examples">
+    <div class="section-head">
+      <p class="kicker">Applied</p>
+      <h2>Lab exercises</h2>
+      <p>Open <code>131_wireshark_lab.pcapng</code> in Wireshark and work through these before checking the answer.</p>
+    </div>
+
+    <div class="example">
+      <span class="tag">HTTP</span>
+      <h3>Read the plaintext request</h3>
+      <p>Apply <code>http.request</code>. Find the request to <code>ping.archlinux.org</code>, expand the Detail pane, and read the full plaintext request. Then find its response and note the <code>Content-Type</code>.</p>
+      <details class="solution">
+        <summary>Show answer</summary>
+        <div class="solbody">
+          <p>Frame 34 is <code>GET /nm-check.txt HTTP/1.1</code> to <code>ping.archlinux.org</code>. Frame 35 is the response — <code>HTTP/1.1 200 OK</code>, <code>text/plain</code>. This pair is exactly what SSH/TLS exist to prevent from being readable — here it's fully visible because HTTP carries no encryption at all.</p>
+        </div>
+      </details>
+    </div>
+
+    <div class="example">
+      <span class="tag">TLS</span>
+      <h3>Find another SNI</h3>
+      <p>Apply <code>tls.handshake.extensions_server_name</code>. Pick a Client Hello that isn't the Teams example from the walkthrough above. What hostname does it reveal?</p>
+      <details class="solution">
+        <summary>Show answer</summary>
+        <div class="solbody">
+          <p>Answers vary by which frame is picked — the lab file also contains Client Hellos naming other Microsoft/Teams-related hosts. The point of the exercise: SNI makes every HTTPS destination visible without decrypting a single byte of the session that follows.</p>
+        </div>
+      </details>
+    </div>
+
+    <div class="example">
+      <span class="tag">TCP streams</span>
+      <h3>Confirm the stream index</h3>
+      <p>Right-click any TCP packet → <strong>Follow → TCP Stream</strong>. Confirm the stream number matches what the Detail pane's TCP layer reports under <code>[Stream index]</code>.</p>
+      <details class="solution">
+        <summary>Show answer</summary>
+        <div class="solbody">
+          <p>They always match — "Follow TCP Stream" is just a filtered view (<code>tcp.stream eq N</code>) built from that same field. It's the fastest way to isolate one conversation out of thousands of packets without typing the filter by hand.</p>
+        </div>
+      </details>
+    </div>
+
+    <div class="example">
+      <span class="tag">QUIC vs. TLS</span>
+      <h3>Which protocol actually carried more?</h3>
+      <p>Apply <code>quic</code>, note the frame count. Apply <code>tls</code>, note that count. Which protocol carried more of this capture's encrypted traffic?</p>
+      <details class="solution">
+        <summary>Show answer</summary>
+        <div class="solbody">
+          <p>Neither is a fair comparison of "HTTPS traffic" on its own — QUIC (4,466 frames) is HTTP/3-over-UDP, and TLS (5,744 frames) here is mostly TLS-over-TCP for older/non-QUIC connections. Together they show that a modern capture's "encrypted web traffic" splits across two different transport protocols, not just TCP/443.</p>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <!-- GLOSSARY -->
+  <section id="glossary">
+    <div class="section-head">
+      <p class="kicker">Reference</p>
+      <h2>Glossary &amp; index</h2>
+      <p>Every term from this lab, searchable and indexed A–Z.</p>
+    </div>
+    <input type="text" id="glossarySearch" placeholder="Search terms…" aria-label="Search glossary">
+    <div class="alpha-nav" id="alphaNav"></div>
+    <dl class="glossary" id="glossaryList"></dl>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>IT131 · CCNA: Introduction to Networks · Wireshark lab — companion file: 131_wireshark_lab.pcapng.</p>
+  </div>
+</footer>
+
+<button id="backToTop" class="back-to-top" aria-label="Back to top" title="Back to top">↑</button>
+
+<script>
+  const TERMS = [
+    {t:"ARP (Address Resolution Protocol)", d:"Resolves a known IP address to a MAC address on the local segment via broadcast request/unicast reply. Seen at frames 36–37 in the lab file."},
+    {t:"Capture filter", d:"A filter applied before recording starts, limiting which packets are captured at all. Contrast with a display filter, applied after capture to a file already recorded."},
+    {t:"DHCP renewal", d:"A two-step Request/ACK exchange extending an existing lease, as opposed to the four-step Discover/Offer/Request/Ack (DORA) sequence used to obtain a brand-new lease."},
+    {t:"Display filter", d:"A filter typed into Wireshark's top bar, applied to packets already captured — turns green when syntactically valid. Examples: arp, tcp.stream eq 0, http.request."},
+    {t:"Follow TCP Stream", d:"A Wireshark feature that isolates every packet in one TCP conversation — equivalent to applying tcp.stream eq N, where N is read from the Detail pane's [Stream index] field."},
+    {t:"pcap / pcapng", d:"File formats storing captured network traffic exactly as it crossed an interface — unsummarized, in order, with a timestamp per frame. pcapng ('next generation') adds per-packet metadata blocks; it's Wireshark's current default."},
+    {t:"Packet Detail pane", d:"Wireshark's middle pane — the selected frame decoded and nested by protocol layer (Ethernet → IP → TCP → TLS, etc.), mirroring the protocol hierarchy."},
+    {t:"Packet List pane", d:"Wireshark's top pane — one row per frame in capture order, with an auto-generated summary in the Info column and color-coded by protocol/state."},
+    {t:"Protocol Hierarchy", d:"Statistics → Protocol Hierarchy — a tree showing every protocol found in a capture and how many frames/bytes belong to each, nested by encapsulation layer."},
+    {t:"QUIC", d:"A transport protocol running over UDP, carrying HTTP/3. Increasingly outnumbers TLS-over-TCP in real captures — filtering only tcp.port==443 will miss it entirely."},
+    {t:"SNI (Server Name Indication)", d:"A plaintext field in a TLS Client Hello naming the hostname being connected to. The one readable part of an otherwise-encrypted TLS session — reveals every HTTPS destination without decryption."},
+    {t:"tcp.stream", d:"A Wireshark-assigned index number identifying one TCP conversation within a capture, independent of source/destination port reuse across different connections."},
+    {t:"Wireshark color rules", d:"Default row coloring in the Packet List pane by protocol/state — light green for HTTP, light blue for clean TCP, light yellow for UDP, lavender for SYN/FIN, dark red/pink for TCP errors (retransmits, resets, out-of-order)."},
+  ];
+
+  const QUIZ = [
+    {
+      q:"What does a pcap file actually contain?",
+      choices:["A summary report generated by Wireshark","Raw captured frames, unsummarized, with a timestamp on each","Only the packets Wireshark judged interesting","A live network connection"],
+      correct:1,
+      explain:"A pcap stores frames exactly as a NIC saw them, in order, with nothing pre-decoded — Wireshark parses headers live every time the file opens."
+    },
+    {
+      q:"Why does this capture show only a two-step DHCP exchange instead of the full four-step DORA?",
+      choices:["The capture is corrupted","The laptop already had a lease — this is a renewal, not a new lease","DHCP only uses two steps on Wi-Fi","The DHCP server doesn't support Discover/Offer"],
+      correct:1,
+      explain:"DORA (Discover/Offer/Request/Ack) only happens once per lease lifetime. A device that already has a lease renews it with just Request/ACK."
+    },
+    {
+      q:"Which field in a TLS Client Hello reveals the destination hostname without decrypting anything?",
+      choices:["The TCP source port","SNI (Server Name Indication)","The IP TTL","The Ethernet Type field"],
+      correct:1,
+      explain:"SNI is sent in plaintext as part of the Client Hello, even though everything after the handshake is encrypted."
+    },
+    {
+      q:"A student filters tcp.port==443 expecting to see 'all the HTTPS traffic.' What might they miss?",
+      choices:["Nothing — that filter catches everything HTTPS-related","QUIC traffic, which runs HTTP/3 over UDP/443, not TCP","DNS traffic","ARP traffic"],
+      correct:1,
+      explain:"QUIC (HTTP/3) runs over UDP, not TCP — a TCP-only filter misses it entirely, and in many modern captures QUIC outnumbers TLS-over-TCP."
+    },
+    {
+      q:"What's the fastest way to isolate every packet belonging to one TCP conversation?",
+      choices:["Manually scroll through the whole capture","Right-click a packet → Follow → TCP Stream","Delete every other packet","Filter by ip.addr only"],
+      correct:1,
+      explain:"Follow TCP Stream applies tcp.stream eq N automatically, using the stream index Wireshark already assigned that conversation."
+    },
+    {
+      q:"In the Packet List pane, what does a mostly dark-red capture usually indicate?",
+      choices:["Nothing unusual — dark red just means UDP","TCP problems — retransmits, resets, or out-of-order segments","The capture is encrypted","A DNS misconfiguration"],
+      correct:1,
+      explain:"Dark red/pink rows flag TCP errors. A healthy capture has very few of them; a capture that's mostly dark red points to packet loss, a flapping link, or congestion."
+    },
+  ];
+
+  const grid = document.getElementById('cardGrid');
+  TERMS.forEach((item, i) => {
+    const card = document.createElement('button');
+    card.className = 'flashcard';
+    card.setAttribute('aria-label', 'Flashcard: ' + item.t + '. Press to flip.');
+    card.dataset.i = i;
+    card.innerHTML = `
+      <div class="flashcard-inner">
+        <div class="flashcard-face front"><div class="lbl">Term</div><div class="term">${item.t}</div></div>
+        <div class="flashcard-face back"><div class="lbl">Definition</div><div class="def">${item.d}</div></div>
+      </div>`;
+    card.addEventListener('click', () => card.classList.toggle('flipped'));
+    card.addEventListener('dblclick', () => { card.classList.toggle('known'); updateProgress(); });
+    grid.appendChild(card);
+  });
+  function updateProgress(){
+    const known = document.querySelectorAll('.flashcard.known').length;
+    document.getElementById('cardProgress').textContent = `${known} / ${TERMS.length} marked known (double-click a card to mark it)`;
+  }
+  updateProgress();
+  document.getElementById('shuffleBtn').addEventListener('click', () => {
+    const cards = Array.from(grid.children);
+    cards.sort(() => Math.random() - 0.5);
+    cards.forEach(c => { c.classList.remove('flipped'); grid.appendChild(c); });
+  });
+  document.getElementById('resetKnownBtn').addEventListener('click', () => {
+    document.querySelectorAll('.flashcard.known').forEach(c => c.classList.remove('known'));
+    updateProgress();
+  });
+
+  const quizList = document.getElementById('quizList');
+  let score = 0, answered = 0;
+  function renderQuiz(){
+    quizList.innerHTML = ''; score = 0; answered = 0;
+    QUIZ.forEach((item, qi) => {
+      const box = document.createElement('div');
+      box.className = 'quiz-q';
+      box.innerHTML = `<p class="qtext"><span class="qnum">Q${qi+1}.</span>${item.q}</p><div class="choices"></div><p class="explain"></p>`;
+      const choicesEl = box.querySelector('.choices');
+      item.choices.forEach((c, ci) => {
+        const b = document.createElement('button');
+        b.className = 'choice'; b.textContent = c;
+        b.addEventListener('click', () => {
+          if (box.dataset.done) return;
+          box.dataset.done = '1'; answered++;
+          if (ci === item.correct) score++;
+          Array.from(choicesEl.children).forEach((el, ei) => {
+            el.disabled = true;
+            if (ei === item.correct) el.classList.add('correct');
+            else if (ei === ci) el.classList.add('incorrect');
+          });
+          box.querySelector('.explain').textContent = item.explain;
+          box.querySelector('.explain').classList.add('show');
+          updateScore();
+        });
+        choicesEl.appendChild(b);
+      });
+      quizList.appendChild(box);
+    });
+    updateScore();
+  }
+  function updateScore(){
+    document.getElementById('quizScore').textContent =
+      answered === 0 ? `${QUIZ.length} questions — click an answer to check yourself` : `Score: ${score} / ${answered} answered`;
+  }
+  renderQuiz();
+  document.getElementById('resetQuizBtn').addEventListener('click', renderQuiz);
+
+  const glossaryList = document.getElementById('glossaryList');
+  const alphaNav = document.getElementById('alphaNav');
+  const letters = [...new Set(TERMS.map(t => t.t[0].toUpperCase()))];
+  'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').forEach(L => {
+    const a = document.createElement('a');
+    a.textContent = L;
+    if (letters.includes(L)) { a.href = '#g-' + L; a.className = 'has'; }
+    else { a.href = 'javascript:void(0)'; }
+    alphaNav.appendChild(a);
+  });
+  let currentLetter = '';
+  TERMS.forEach(item => {
+    const L = item.t[0].toUpperCase();
+    if (L !== currentLetter) {
+      currentLetter = L;
+      const h = document.createElement('div');
+      h.className = 'glossary-letter'; h.id = 'g-' + L; h.textContent = L;
+      glossaryList.appendChild(h);
+    }
+    const wrap = document.createElement('div');
+    wrap.className = 'gitem';
+    wrap.innerHTML = `<dt>${item.t}</dt><dd>${item.d}</dd>`;
+    wrap.dataset.search = (item.t + ' ' + item.d).toLowerCase();
+    glossaryList.appendChild(wrap);
+  });
+  document.getElementById('glossarySearch').addEventListener('input', (e) => {
+    const q = e.target.value.toLowerCase().trim();
+    document.querySelectorAll('.gitem').forEach(el => {
+      el.classList.toggle('hidden', q && !el.dataset.search.includes(q));
+    });
+  });
+
+  const backToTop = document.getElementById('backToTop');
+  function toggleBackToTop(){ backToTop.classList.toggle('show', window.scrollY > 480); }
+  window.addEventListener('scroll', toggleBackToTop, {passive:true});
+  toggleBackToTop();
+  backToTop.addEventListener('click', () => window.scrollTo({top:0, behavior:'smooth'}));
+</script>
