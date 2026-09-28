@@ -109,6 +109,29 @@
   details.solution[open] summary::before{ transform:rotate(90deg); }
   details.solution .solbody{ margin-top:10px; padding:13px 15px; background:var(--ticket); font-size:.88rem; }
 
+  /* ANALOGIES */
+  .analogy{ margin:20px 0; padding:14px 16px 14px 58px; background:var(--kraft-soft); border:1.5px solid var(--kraft-dark); position:relative; font-size:.9rem; }
+  .analogy::before{ content:"≈"; position:absolute; left:16px; top:6px; font-family:var(--display); font-size:2rem; color:var(--kraft-dark); }
+  .analogy .label{ display:block; font-family:var(--mono); font-weight:600; font-size:.78rem; letter-spacing:.08em; text-transform:uppercase; color:var(--kraft-dark); margin-bottom:.35em; }
+  .analogy p{ margin:0 0 .5em; } .analogy p:last-child{ margin:0; }
+  .analogy .limit{ font-size:.82rem; opacity:.8; font-style:italic; }
+
+  /* SLICER + EXAMPLE BANK */
+  .slicer{ background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow); padding:18px 20px; margin:18px 0; }
+  .slice-row{ display:flex; border:1.5px solid var(--ink); min-height:64px; margin:12px 0 6px; }
+  .slice{ flex:1 1 0; border:none; border-right:1px solid var(--ink); font-family:var(--mono); font-size:.62rem; padding:3px 2px; text-align:center;
+    cursor:pointer; min-width:0; overflow:hidden; background:var(--ticket); color:var(--ink); display:flex; flex-direction:column; justify-content:space-between; }
+  .slice:last-child{ border-right:none; }
+  .slice:nth-child(even){ background:var(--net); }
+  .slice.hit{ background:var(--red); color:var(--paper); }
+  .slice.sel{ outline:3px solid var(--blue); outline-offset:-3px; }
+  .slice:focus-visible{ outline:3px solid var(--blue); outline-offset:-3px; }
+  .bank{ display:grid; gap:12px; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); }
+  .bank .example{ margin:0; padding:14px 16px; }
+  .bank .example h3{ font-family:var(--mono); font-size:1rem; font-weight:700; margin:0; }
+  .bank .example .tag{ font-size:.72rem; margin-bottom:6px; }
+  .bank ol.steps{ font-size:.82rem; }
+
   /* BINARY + BIT DISPLAYS */
   pre.bits{ font-family:var(--mono); font-size:.84rem; background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow);
     padding:14px 16px; overflow-x:auto; line-height:1.7; margin:18px 0; }
@@ -154,10 +177,11 @@
   .res-grid span{ font-family:var(--mono); font-size:.95rem; font-weight:600; overflow-wrap:anywhere; }
 
   /* PRACTICE */
-  .mode-tabs{ display:flex; flex-wrap:wrap; gap:0; margin-bottom:18px; border:1.5px solid var(--ink); background:var(--paper); width:fit-content; max-width:100%; }
-  .mode-tabs button{ font-family:var(--mono); font-weight:600; font-size:.78rem; letter-spacing:.04em; text-transform:uppercase; padding:.6em .9em;
-    background:transparent; border:none; border-right:1.5px solid var(--ink); cursor:pointer; color:var(--ink); }
-  .mode-tabs button:last-child{ border-right:none; }
+  .mode-tabs{ display:flex; flex-wrap:wrap; gap:6px; margin-bottom:18px; }
+  .mode-tabs button{ font-family:var(--mono); font-weight:600; font-size:.76rem; letter-spacing:.04em; text-transform:uppercase; padding:.55em .8em;
+    background:var(--paper); border:1.5px solid var(--ink); cursor:pointer; color:var(--ink); }
+  .mode-tabs button .lvl{ opacity:.6; font-weight:500; margin-left:.35em; }
+  .mode-tabs button.active .lvl{ opacity:.8; }
   .mode-tabs button.active{ background:var(--ink); color:var(--paper); }
   .drill{ background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow); padding:20px 22px; }
   .drill[hidden]{ display:none; }
@@ -179,6 +203,10 @@
   ul.needs{ list-style:none; padding:0; margin:0 0 14px; display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:8px; }
   ul.needs li{ background:var(--ticket); border:1px solid var(--ink); padding:8px 12px; font-size:.88rem; }
   ul.needs li b{ font-family:var(--mono); }
+  .vlsm-in input.txt{ width:100%; min-width:8.5em; }
+  .vlsm-in td.res{ font-family:var(--mono); font-size:.78rem; }
+  .vlsm-in td.res.ok{ color:var(--blue); font-weight:600; } .vlsm-in td.res.bad{ color:var(--red); }
+  .choice-row{ display:flex; flex-wrap:wrap; gap:10px; margin-bottom:14px; }
 
   /* ADDRESS MAPS */
   .mapbar{ display:flex; border:1.5px solid var(--ink); margin:14px 0 6px; min-height:58px; background:var(--ticket); }
@@ -276,7 +304,7 @@
     <div class="factrow">
       <span class="fact"><b>Ties to</b> Module 11 — IPv4 Addressing · Module 12 — IPv6 Addressing</span>
       <span class="fact"><b>Builds on</b> Module 5 — Number Systems</span>
-      <span class="fact"><b>Practice</b> 5 drills, new problems every time</span>
+      <span class="fact"><b>Practice</b> 8 drills, new problems every time</span>
     </div>
   </div>
 </header>
@@ -323,6 +351,27 @@
       <li><strong>Organization.</strong> When each floor, building, or department gets its own block, an address alone tells you where a device is.</li>
       <li><strong>Less waste.</strong> Sizing each subnet to what it actually needs (VLSM) conserves a limited IPv4 supply.</li>
     </ul>
+
+    <h3 class="sub">The whole idea as a neighborhood</h3>
+    <p>Keep this picture in your head for the whole guide. Every term on this page has a place in it.</p>
+    <div class="table-scroll">
+      <table class="spec">
+        <thead><tr><th>Networking term</th><th>In the neighborhood</th></tr></thead>
+        <tbody>
+          <tr><td class="b">IP address</td><td>A full street address: <em>Elm Street, house 77</em></td></tr>
+          <tr><td class="b">Network portion</td><td>The street name. Everyone on the street shares it.</td></tr>
+          <tr><td class="b">Host portion</td><td>The house number. Unique on that street.</td></tr>
+          <tr><td class="b">Subnet mask / prefix</td><td>The rule for where the street name stops and the house number starts</td></tr>
+          <tr><td class="b">Network address</td><td>The street sign. It names the street, and nobody lives in it.</td></tr>
+          <tr><td class="b">Broadcast address</td><td>The street's loudspeaker. One announcement reaches every house.</td></tr>
+          <tr><td class="b">Default gateway (router)</td><td>The post office at the end of the street. Anything addressed to another street goes there.</td></tr>
+          <tr><td class="b">Subnetting</td><td>Splitting one long street into several shorter, separately named streets</td></tr>
+          <tr><td class="b">Block size</td><td>How many house numbers each new street gets</td></tr>
+          <tr><td class="b">VLSM</td><td>Giving busy streets more house numbers and cul-de-sacs fewer, instead of making every street the same length</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="limit" style="font-size:.84rem; opacity:.8; font-style:italic;">Where the picture breaks: real streets can have any number of houses. Subnets always come in powers of two (4, 8, 16, 32…), because they're carved out with bits.</p>
 
     <h3 class="sub">Six questions nearly every subnetting problem asks</h3>
     <p>For an address and prefix such as <code>172.16.45.200/20</code>, you should be able to write down all six:</p>
@@ -396,6 +445,12 @@
     <h3 class="sub">Binary → decimal: add up the 1s</h3>
     <p><code>11000000</code> has 1s in the 128 and 64 places, so 128 + 64 = <strong>192</strong>. <code>01001101</code> has 1s in the 64, 8, 4, and 1 places, so 64 + 8 + 4 + 1 = <strong>77</strong>.</p>
 
+    <div class="analogy">
+      <span class="label">Think of it like light switches</span>
+      <p>An octet is a row of 8 light switches, each labeled with its wattage: 128, 64, 32, 16, 8, 4, 2, 1. Flip some on, and the octet's value is the total wattage. To make 172, you flip on 128, 32, 8, and 4, because those add to 172. That's all binary conversion is: choosing which switches to turn on.</p>
+      <p class="limit">Each switch is worth double the one to its right, so there's exactly one way to make any number from 0 to 255.</p>
+    </div>
+
     <div class="bit-widget" id="bitWidget">
       <p style="margin:0 0 12px; font-family:var(--mono); font-size:.8rem; text-transform:uppercase; letter-spacing:.06em; color:var(--kraft-dark); font-weight:600;">Try it: click bits, or type a number from 0 to 255</p>
       <div class="bit-row" id="bitRow"></div>
@@ -454,9 +509,14 @@
 <span class="lbl">Mask  AND </span>11111111.11111111.11111111.11000000   255.255.255.192
 <span class="lbl">          </span>───────────────────────────────────
 <span class="lbl">Network = </span><span class="n">11000000.10101000.00001010.01</span><span class="h">000000</span>   192.168.10.64</pre>
+    <div class="analogy">
+      <span class="label">Why it's called a "mask": painter's tape</span>
+      <p>Before painting, you cover the parts of a wall you want to keep with masking tape. A subnet mask works the same way, just inverted. Where the mask has a <strong>1</strong>, the tape has a gap and the address bit shows through. Where the mask has a <strong>0</strong>, the tape covers the bit and it comes out 0. Peel the tape off and what's left is the network address, with the host part blanked out.</p>
+    </div>
     <div class="teach-note">
       <span class="label">Where you've seen this before (Session 6)</span>
-      Before sending a packet, a host ANDs its own address with its mask and then ANDs the destination address with the same mask. If the two results match, the destination is on the local network and the host ARPs for it directly. If they differ, the packet goes to the <strong>default gateway</strong>. Subnetting decides which of those two paths every packet takes.
+      Before sending a packet, a host ANDs its own address with its mask and then ANDs the destination address with that same mask, its own. A host never knows the destination's mask. If the two results match, the destination is on the local network and the host ARPs for it directly. If they differ, the packet goes to the <strong>default gateway</strong>. Subnetting decides which of those two paths every packet takes.<br><br>
+      In the neighborhood picture: if the letter is for your own street, you walk it over yourself. If it's for any other street, you drop it at the post office.
     </div>
 
     <h3 class="sub">Every subnet has three kinds of address</h3>
@@ -471,6 +531,27 @@
       </table>
     </div>
     <p>So a subnet with <em>h</em> host bits has 2<sup>h</sup> total addresses and <strong>2<sup>h</sup> − 2 usable hosts</strong>. For a /26: 2⁶ = 64 total, 62 usable.</p>
+    <div class="analogy">
+      <span class="label">Why "− 2": the hotel floor</span>
+      <p>Picture a subnet as one floor of a hotel with 64 rooms, numbered 0 to 63. Room 0 isn't a room at all: it's the sign by the elevator that says which floor you're on (the network address). The last room holds the floor's PA system, which talks to every room at once (the broadcast address). Guests can only book the 62 rooms in between.</p>
+      <p class="limit">Every subnet loses exactly those two, no matter its size. A /30 with 4 addresses keeps 2 for hosts, and a /20 with 4,096 keeps 4,094.</p>
+    </div>
+
+    <h3 class="sub">Network, broadcast, or host? Six examples</h3>
+    <p>Only the <strong>host bits</strong> decide, never how the last octet looks. Work out the range first, then check where the address sits in it.</p>
+    <div class="table-scroll">
+      <table class="spec">
+        <thead><tr><th>Address</th><th>Subnet range</th><th>Verdict</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">192.168.1.64/26</td><td class="mono">.64 – .127</td><td class="b">Network</td><td>First address of the block (host bits all 0)</td></tr>
+          <tr><td class="mono">192.168.1.127/26</td><td class="mono">.64 – .127</td><td class="b">Broadcast</td><td>Last address of the block (host bits all 1)</td></tr>
+          <tr><td class="mono">192.168.1.100/27</td><td class="mono">.96 – .127</td><td class="b">Host</td><td>Strictly between .96 and .127</td></tr>
+          <tr><td class="mono">10.0.0.255/23</td><td class="mono">10.0.0.0 – 10.0.1.255</td><td class="b">Host</td><td>Ends in .255 but sits in the middle of the range</td></tr>
+          <tr><td class="mono">172.16.4.0/22</td><td class="mono">172.16.4.0 – 172.16.7.255</td><td class="b">Network</td><td>4 is a multiple of the block size (4), and the 4th octet is 0</td></tr>
+          <tr><td class="mono">172.16.6.0/22</td><td class="mono">172.16.4.0 – 172.16.7.255</td><td class="b">Host</td><td>Ends in .0, but 6 isn't a multiple of 4. It's inside the range.</td></tr>
+        </tbody>
+      </table>
+    </div>
     <div class="teach-note">
       <span class="label">Convention, not a rule</span>
       Most networks give the router's LAN interface (the default gateway) the <strong>first</strong> usable address, <code>.65</code> here. Some use the last one. Either works as long as the hosts' gateway setting matches.
@@ -495,12 +576,12 @@
     </div>
 
     <h3 class="sub">Legacy classes (history, but still tested)</h3>
-    <p>Before 1993, the first octet alone set the mask. That scheme, <strong>classful addressing</strong>, has been replaced by <strong>CIDR</strong> (Classless Inter-Domain Routing), where any prefix length is allowed. You still need to recognize the classes, because the exam and older documentation refer to them.</p>
+    <p>Before 1993, the first octet set a network's size (its default mask). That scheme, <strong>classful addressing</strong>, has been replaced by <strong>CIDR</strong> (Classless Inter-Domain Routing), where any prefix length is allowed. You still need to recognize the classes, because the exam and older documentation refer to them.</p>
     <div class="table-scroll">
       <table class="spec">
         <thead><tr><th>Class</th><th>First octet</th><th>First bits</th><th>Default mask</th><th>Use</th></tr></thead>
         <tbody>
-          <tr><td class="b">A</td><td class="mono">1 – 127*</td><td class="mono">0…</td><td class="mono">/8 · 255.0.0.0</td><td>Huge networks</td></tr>
+          <tr><td class="b">A</td><td class="mono">0 – 127*</td><td class="mono">0…</td><td class="mono">/8 · 255.0.0.0</td><td>Huge networks</td></tr>
           <tr><td class="b">B</td><td class="mono">128 – 191</td><td class="mono">10…</td><td class="mono">/16 · 255.255.0.0</td><td>Medium networks</td></tr>
           <tr><td class="b">C</td><td class="mono">192 – 223</td><td class="mono">110…</td><td class="mono">/24 · 255.255.255.0</td><td>Small networks</td></tr>
           <tr><td class="b">D</td><td class="mono">224 – 239</td><td class="mono">1110…</td><td>—</td><td>Multicast</td></tr>
@@ -538,7 +619,7 @@
       The block size is the place value of the <strong>last network bit</strong>. A /26 mask ends <code>11000000</code> in the 4th octet. Its last 1 sits in the 64s place, so subnets step by 64: .0, .64, .128, .192. That's the reason 256 − mask value always equals the block size.
     </div>
 
-    <h3 class="sub">Hosts needed → smallest prefix that fits</h3>
+    <h3 class="sub">Hosts needed → smallest subnet (longest prefix) that fits</h3>
     <div class="table-scroll">
       <table class="spec chart">
         <thead><tr><th>Hosts needed</th><th>Host bits</th><th>Prefix</th><th>Mask</th><th>Usable hosts</th></tr></thead>
@@ -559,7 +640,7 @@
     </div>
 
     <h3 class="sub">Every prefix, /8 to /32</h3>
-    <p>Generated by the same code that runs the calculator. Use it to check your work, not as something to memorize. For /8, /16, and /24, "1 in the 3rd octet" means consecutive /24s step by one in the 3rd octet (192.168.1.0, 192.168.2.0, …). That's the same thing as a block of 256 in the 4th octet, the way The Method's step 2 describes octet boundaries.</p>
+    <p>Generated by the same code that runs the calculator. Use it to check your work, not as something to memorize. For /8, /16, and /24, the table shows a block of 1 in the last network octet. For example, /24's "1 (3rd octet)" means consecutive /24s step by one in the 3rd octet (192.168.1.0, 192.168.2.0, …). That's the same thing as a block of 256 in the 4th octet, the way The Method's step 2 describes octet boundaries.</p>
     <div class="table-scroll">
       <table class="spec chart" id="prefixTable">
         <thead><tr><th>Prefix</th><th>Subnet mask</th><th>Block size</th><th>Host bits</th><th>Total addresses</th><th>Usable hosts</th></tr></thead>
@@ -583,12 +664,33 @@
     <h3 class="sub">Six steps, every time</h3>
     <ol class="path">
       <li><strong>Get the mask.</strong> Turn the prefix into a dotted mask using the chart.</li>
-      <li><strong>Find the interesting octet.</strong> It's the octet where the mask is <em>not</em> 255. (It's usually neither 255 nor 0. On an octet boundary like /24, it's the octet right after the 255s.)</li>
+      <li><strong>Find the interesting octet.</strong> It's the first octet, reading left to right, where the mask is <em>not</em> 255. (It's usually neither 255 nor 0. On an octet boundary like /24, it's the octet right after the 255s.)</li>
       <li><strong>Block size = 256 − mask value</strong> in that octet. This is the "magic number."</li>
       <li><strong>Count by the block size</strong> from 0. The network value is the largest multiple that's ≤ the address's value in that octet. Octets to the left copy across, and octets to the right become <strong>0</strong>.</li>
       <li><strong>Broadcast = next network − 1.</strong> In the interesting octet: network + block − 1. Octets to the right become <strong>255</strong>.</li>
       <li><strong>First host = network + 1, last host = broadcast − 1</strong> (applied to the last octet). Hosts = 2<sup>h</sup> − 2.</li>
     </ol>
+
+    <div class="analogy">
+      <span class="label">Block size is a ruler</span>
+      <p>Think of the interesting octet as a ruler from 0 to 255, with a tick mark every <em>block-size</em> units. For a /26, the marks are at 0, 64, 128, and 192. To place an address, find the mark at or just below its number: that's the <strong>network</strong>. The next mark, minus one, is the <strong>broadcast</strong>. For .77, the mark below is 64 and the next is 128, so the subnet runs .64 to .127.</p>
+      <p class="limit">It's the same thing you do when you ask which inch a 3¾-inch measurement falls in. Here the "inches" are just 64 units wide.</p>
+    </div>
+
+    <h3 class="sub">See it: the subnet slicer</h3>
+    <p>Drag the slider to cut <code>192.168.10.0/24</code> into smaller subnets, then type a host number to see which slice it lands in. Click any slice to see its range. Watch how each notch of the slider doubles the slices and halves their size.</p>
+    <div class="slicer">
+      <div class="calc-in">
+        <label for="slPrefix">Prefix <span id="slPrefixVal">/26</span></label>
+        <input id="slPrefix" type="range" min="24" max="30" value="26" aria-label="Prefix length for the slicer">
+        <label for="slHost">Address 192.168.10.</label>
+        <input class="txt" id="slHost" type="number" min="0" max="255" value="77" style="width:6em" aria-label="Last octet of the address">
+      </div>
+      <div id="slSummary" class="answer-row"></div>
+      <div class="slice-row" id="slRow"></div>
+      <div class="map-scale"><span>.0</span><span>.64</span><span>.128</span><span>.192</span><span>.255</span></div>
+      <div id="slDetail" class="feedback" style="margin-top:12px;"></div>
+    </div>
 
     <h3 class="sub">Worked examples</h3>
 
@@ -654,6 +756,10 @@
       <div class="answer-row"><span><b>Net</b>10.32.0.0</span><span><b>Bcast</b>10.63.255.255</span><span><b>First</b>10.32.0.1</span><span><b>Last</b>10.63.255.254</span><span><b>Hosts</b>2,097,150</span></div>
     </div>
 
+    <h3 class="sub">Example bank: 14 more, across every octet</h3>
+    <p>Cover the answer, work it on paper, then open it. The steps are generated by the same code as the calculator, so they follow the same six steps every time.</p>
+    <div class="bank" id="exampleBank"></div>
+
     <h3 class="sub">Your turn</h3>
     <p>Work these on paper, then check. The <a href="#practice">Practice</a> section generates unlimited problems like these.</p>
 
@@ -714,10 +820,10 @@
       <li><strong>Determine the number of subnets you need.</strong></li>
       <li><strong>Write out your host bits.</strong> For a /24, that's the last octet: <code>00000000</code>.</li>
       <li><strong>Determine how many bits to borrow</strong> to get the number of subnets you need: the smallest <em>n</em> where 2ⁿ ≥ subnets needed. (2ⁿ = number of subnets, <em>n</em> = bits borrowed.)</li>
-      <li><strong>Turn on the borrowed bits</strong> (set them to 1, from the left) and find the decimal value of the octet(s).</li>
-      <li><strong>Figure the new subnet mask</strong> by adding the decimal value from step 4 to the default subnet mask.</li>
-      <li><strong>Find the value of the lowest-order bit turned on</strong> (in each octet). This is your subnet variable, the block size.</li>
-      <li><strong>Use the variable from step 6 to find the subnet ranges.</strong> Count up by it: each subnet starts where the last one ended.</li>
+      <li><strong>Turn on the borrowed bits</strong> (set them to 1, starting with the first host bit right after the existing network bits) and find the decimal value of the octet(s).</li>
+      <li><strong>Figure the new subnet mask</strong> by adding the decimal value from step 4 to the original (given) subnet mask. The original mask is the classful default only when you start from a /8, /16, or /24.</li>
+      <li><strong>Find the value of the lowest-order bit turned on</strong> in the new mask (the last borrowed bit). This is your subnet variable, the block size, and you count by it in the octet where that bit sits.</li>
+      <li><strong>Use the variable from step 6 to find the subnet ranges.</strong> Count up by it: each subnet starts one address after the previous subnet's broadcast.</li>
     </ol>
     <p style="font-size:.88rem; opacity:.85;">Then, for any subnet: <strong>2ʰ − 2 = usable hosts per subnet</strong>, where <em>h</em> is the number of host bits left.</p>
 
@@ -729,7 +835,7 @@
         <li>Host bits (4th octet): <code>00000000</code>.</li>
         <li>2² = 4 is too few, and 2³ = 8 is enough. Borrow <strong>3</strong> bits.</li>
         <li>Turn on 3 bits: <code>11100000</code> = 128 + 64 + 32 = <strong>224</strong>.</li>
-        <li>Default mask 255.255.255.0 with 224 added to the last octet gives <code>255.255.255.224</code> (/27).</li>
+        <li>Original mask 255.255.255.0 with 224 added to the last octet gives <code>255.255.255.224</code> (/27).</li>
         <li>The lowest-order bit turned on in <code>11100000</code> is the 32s place, so the variable is <strong>32</strong>.</li>
         <li>Count by 32 to get 8 subnets. 5 host bits remain, so 2⁵ − 2 = <strong>30</strong> hosts each:</li>
       </ol>
@@ -759,14 +865,34 @@
         <li>Host bits (3rd and 4th octets): <code>00000000.00000000</code>.</li>
         <li>2⁶ = 64 is too few, and 2⁷ = 128 is enough. Borrow <strong>7</strong> bits.</li>
         <li>Turn on 7 bits: <code>11111110.00000000</code>. The 3rd octet becomes 128+64+32+16+8+4+2 = <strong>254</strong>.</li>
-        <li>Default mask 255.255.0.0 with 254 added to the 3rd octet gives <code>255.255.254.0</code> (/23).</li>
+        <li>Original mask 255.255.0.0 with 254 added to the 3rd octet gives <code>255.255.254.0</code> (/23).</li>
         <li>The lowest-order bit turned on is the 2s place <em>in the 3rd octet</em>, so the variable is <strong>2</strong>, counted in the 3rd octet.</li>
         <li>Count by 2 in the 3rd octet: <code>172.16.0.0</code> – <code>172.16.1.255</code>, then <code>172.16.2.0</code> – <code>172.16.3.255</code>, and so on. The 75th subnet (#74) is <code>172.16.148.0/23</code>. 9 host bits remain, so 2⁹ − 2 = <strong>510</strong> hosts each.</li>
+      </ol>
+    </div>
+    <div class="example">
+      <span class="tag hard">7 steps · not starting from a default mask</span>
+      <h3>172.16.16.0/20 needs 4 subnets</h3>
+      <ol class="steps">
+        <li>Subnets needed: <strong>4</strong>.</li>
+        <li>The original mask is /20 = <code>255.255.240.0</code>. In the 3rd octet that's <code>1111</code><code>0000</code>: the first 4 bits are already network, and the host bits start at the 5th bit.</li>
+        <li>2² = 4 is enough. Borrow <strong>2</strong> bits.</li>
+        <li>Turn on the 2 bits right after the existing network bits: <code>0000</code><strong><code>11</code></strong><code>00</code> = 8 + 4 = <strong>12</strong>. (Not 128 + 64. The borrowed bits start where the host bits start, not at the left edge of the octet.)</li>
+        <li>Original mask 255.255.<strong>240</strong>.0 with 12 added to the 3rd octet: 240 + 12 = 252, giving <code>255.255.252.0</code> (/22). Adding 12 to the <em>classful default</em> (255.255.0.0) would give 255.255.12.0, which isn't a valid mask. That's why step 5 says the original mask.</li>
+        <li>The lowest-order bit turned on is the 4s place in the 3rd octet, so the variable is <strong>4</strong>.</li>
+        <li>Count by 4 in the 3rd octet, starting from 16: <code>172.16.16.0/22</code>, <code>172.16.20.0/22</code>, <code>172.16.24.0/22</code>, <code>172.16.28.0/22</code>. The last broadcast is <code>172.16.31.255</code>, which is also the end of the original /20. 10 host bits remain, so 2¹⁰ − 2 = <strong>1,022</strong> hosts each.</li>
       </ol>
     </div>
     <div class="teach-note">
       <span class="label">Same answer, two routes</span>
       Step 6's "lowest-order bit turned on" is exactly the block size from <a href="#method">The Method</a>. The last 1 in <code>11100000</code> is worth 32, and 256 − 224 = 32. Use whichever way of finding it sticks for you.
+    </div>
+
+    <div class="analogy">
+      <span class="label">Borrowing bits is slicing a pizza</span>
+      <p>Each borrowed bit is one more cut through every slice. With no cuts you have 1 pizza. One cut gives 2 halves. Cut every piece again and you have 4 quarters, then 8, then 16. The number of slices <strong>doubles</strong> with each cut, and each slice is <strong>half</strong> the size it was.</p>
+      <p>That's also why you can't order exactly 6 subnets. Cutting only ever gives you 2, 4, 8, 16… so you round <em>up</em> to the next power of two (8) and keep the extras as spares.</p>
+      <p class="limit">Where it breaks: pizza slices don't lose anything, but every subnet gives up 2 addresses (network and broadcast). The more slices you cut, the more total addresses that costs.</p>
     </div>
 
     <h3 class="sub">The subnet ladder: 192.168.10.0/24, split further at each step</h3>
@@ -833,9 +959,20 @@
         <li>They run <code>10.0.0.0/22</code>, <code>10.0.4.0/22</code>, <code>10.0.8.0/22</code>, … <code>10.0.252.0/22</code>, then roll over to <code>10.1.0.0/22</code> (subnet #64), and so on up to <code>10.255.252.0/22</code>.</li>
       </ol>
     </div>
+    <div class="example">
+      <span class="tag">Design 4 · both requirements</span>
+      <h3>192.168.1.0/24 needs 5 subnets, each with at least 20 hosts</h3>
+      <ol class="steps">
+        <li><strong>Subnets:</strong> 2² = 4 is too few, and 2³ = 8 is enough. Borrow 3 bits, so the prefix must be <strong>/27 or longer</strong>.</li>
+        <li><strong>Hosts:</strong> 2⁴ − 2 = 14 is too few, and 2⁵ − 2 = 30 is enough. Keep at least 5 host bits, so the prefix must be <strong>/27 or shorter</strong>.</li>
+        <li>Only one prefix satisfies both: <strong>/27</strong> (255.255.255.224). That gives 8 subnets of 30 hosts: .0, .32, .64, .96, .128, .160, .192, .224.</li>
+        <li>Sanity check: with 6 subnets of 40 hosts instead, subnets would need /27 or longer and hosts would need /26 or shorter. No prefix does both, so a single /24 can't meet that requirement with equal-size subnets.</li>
+      </ol>
+    </div>
+
     <div class="teach-note">
       <span class="label">Hosts first, or subnets first?</span>
-      When a problem gives both ("at least 8 subnets with 25 hosts each"), work out each requirement separately and check that they fit together. For a /24: 8 subnets needs /27, and 25 hosts needs /27 (30 hosts), so both are satisfied. If the two requirements need different prefixes, check whether any single prefix satisfies both. If none does, the block is too small.
+      When a problem gives both ("at least 8 subnets with 25 hosts each"), work out each requirement separately and check that they fit together. For a /24: 8 subnets needs /27, and 25 hosts needs /27 (30 hosts), so both are satisfied. The subnet count sets the shortest prefix you can use, and the host count sets the longest. Any prefix from one to the other works. If the subnet count needs a longer prefix than the host count allows, the block is too small.
     </div>
   </section>
 
@@ -863,12 +1000,19 @@
     </div>
     <p>With one mask for everything, the biggest need (100 hosts) forces /25 on every subnet. A /24 holds only <strong>two</strong> /25s, and you need seven subnets. It fails. VLSM uses the same /24 and fits all seven, with room to spare.</p>
 
+    <div class="analogy">
+      <span class="label">VLSM is loading a moving truck</span>
+      <p>Movers put the couch and fridge in first, then boxes, then shove the small stuff into the gaps. Load the shoeboxes first and the couch won't fit, even though the total volume would have. VLSM is the same: <strong>biggest subnets first</strong>, smallest last.</p>
+      <p>There's one extra rule trucks don't have: every subnet has to park on a line painted for its size. A /28 (16 addresses) can only start at .0, .16, .32, and so on, like a bus that can only use a bus bay. Going largest-first puts every subnet on a valid line automatically.</p>
+    </div>
+
     <h3 class="sub">The three VLSM rules</h3>
     <ol class="path">
       <li><strong>Sort largest to smallest.</strong> Allocate the biggest subnet first, from the start of the block.</li>
       <li><strong>Start each subnet on a multiple of its own block size.</strong> Going largest-first makes this happen automatically.</li>
       <li><strong>Allocate contiguously.</strong> Each subnet starts right after the previous broadcast. WAN /30s go last.</li>
     </ol>
+    <p style="font-size:.86rem;">ITN describes the same idea as <strong>subnetting a subnet</strong>: split the block into equal subnets for the LANs, then take one unused subnet and split it again (for example, a /27 into eight /30s for WAN links). Largest-first gives the same kind of result, so expect to see both framings on the exam.</p>
 
     <h3 class="sub">The allocation</h3>
     <div class="table-scroll">
@@ -906,6 +1050,26 @@
     <div class="teach-note warn">
       <span class="label">The off-by-one trap in this example</span>
       31 hosts <em>looks</em> like a /27 job, but 2⁵ − 2 = <strong>30</strong>, one short, so it needs a /26. The same happens with 15: 2⁴ − 2 = 14 is one short, so it needs a /27. Only the 6 fits exactly (2³ − 2 = 6, a /29). The −2 for network and broadcast is exactly what these numbers are chosen to test.
+    </div>
+
+    <h3 class="sub">Example 3: VLSM that crosses into the 3rd octet</h3>
+    <p><code>172.16.0.0/22</code> (1,024 addresses: 172.16.0.0 – 172.16.3.255) needs a 300-host LAN, a 200-host LAN, a 60-host LAN, and 2 WAN links.</p>
+    <div class="table-scroll">
+      <table class="spec">
+        <thead><tr><th>Segment</th><th>Need</th><th>Prefix (usable)</th><th>Network</th><th>Host range</th><th>Broadcast</th></tr></thead>
+        <tbody>
+          <tr><td class="b">LAN A</td><td class="mono">300</td><td class="mono">/23 (510)</td><td class="mono">172.16.0.0</td><td class="mono">172.16.0.1 – 172.16.1.254</td><td class="mono">172.16.1.255</td></tr>
+          <tr><td class="b">LAN B</td><td class="mono">200</td><td class="mono">/24 (254)</td><td class="mono">172.16.2.0</td><td class="mono">172.16.2.1 – 172.16.2.254</td><td class="mono">172.16.2.255</td></tr>
+          <tr><td class="b">LAN C</td><td class="mono">60</td><td class="mono">/26 (62)</td><td class="mono">172.16.3.0</td><td class="mono">172.16.3.1 – 172.16.3.62</td><td class="mono">172.16.3.63</td></tr>
+          <tr><td class="b">WAN 1</td><td class="mono">2</td><td class="mono">/30 (2)</td><td class="mono">172.16.3.64</td><td class="mono">172.16.3.65 – 172.16.3.66</td><td class="mono">172.16.3.67</td></tr>
+          <tr><td class="b">WAN 2</td><td class="mono">2</td><td class="mono">/30 (2)</td><td class="mono">172.16.3.68</td><td class="mono">172.16.3.69 – 172.16.3.70</td><td class="mono">172.16.3.71</td></tr>
+          <tr><td style="opacity:.7;">free</td><td></td><td></td><td class="mono">172.16.3.72</td><td colspan="2" style="opacity:.7;">through 172.16.3.255, in one block</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="teach-note">
+      <span class="label">Two things to notice</span>
+      300 hosts needs a /23, so LAN A spans <em>two</em> 3rd-octet values (.0 and .1), and <code>172.16.0.255</code> and <code>172.16.1.0</code> are ordinary hosts inside it. Once the big blocks are placed, the small ones all fit inside the last /24 (172.16.3.x).
     </div>
 
     <div class="teach-note warn">
@@ -953,6 +1117,10 @@
       <li><strong>Subnet ID</strong> — the 4th hextet, 16 bits. 2¹⁶ = <strong>65,536</strong> subnets per /48.</li>
       <li><strong>Interface ID</strong> — the last 64 bits. Every LAN is a <strong>/64</strong>. That's 2⁶⁴ addresses per subnet, far more than you'll ever need.</li>
     </ul>
+    <div class="analogy">
+      <span class="label">A /48 is a whole office tower</span>
+      <p>Your ISP hands you an entire building (the /48). It has 65,536 floors, numbered 0000 to ffff (the subnet ID), and each floor has more rooms than you could ever fill (the 64-bit interface ID). Subnetting IPv6 is just choosing which floor each department gets. Nobody measures floors to see if a department fits, because every floor is enormous.</p>
+    </div>
 
     <h3 class="sub">Subnetting a /48: just count in hex</h3>
     <p>Given <code>2001:db8:acad::/48</code>, each subnet increments the 4th hextet. The only real skill is counting in hexadecimal:</p>
@@ -976,6 +1144,25 @@
       <span class="label">Hex trap</span>
       After 9 comes <strong>a</strong>, not 10. <code>:10:</code> in a subnet ID is <strong>sixteen</strong>. Also note that the first subnet, number 0, compresses to <code>2001:db8:acad::/64</code>. That's correct, not a typo.
     </div>
+    <div class="analogy">
+      <span class="label">Hex counting is an odometer with 16 digits</span>
+      <p>A car's odometer wheel shows 0–9 and then rolls over. A hex wheel shows 0–9, then <strong>a b c d e f</strong>, and only <em>then</em> rolls over to 10. So <code>f</code> is fifteen, <code>10</code> is sixteen, <code>1f</code> is thirty-one, and <code>20</code> is thirty-two. Each hex digit is worth 16× the one to its right, just as each decimal digit is worth 10×.</p>
+    </div>
+
+    <h3 class="sub">Reading the subnet out of an address</h3>
+    <p>The reverse skill: given an address, which subnet is it on? Read the 4th hextet and convert it from hex.</p>
+    <div class="table-scroll">
+      <table class="spec">
+        <thead><tr><th>Address</th><th>Subnet ID (4th hextet)</th><th>Subnet # (decimal)</th><th>Its /64 prefix</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">2001:db8:acad:12::5</td><td class="mono">0012</td><td class="mono">1×16 + 2 = 18</td><td class="mono">2001:db8:acad:12::/64</td></tr>
+          <tr><td class="mono">2001:db8:acad:a:1::1</td><td class="mono">000a</td><td class="mono">10</td><td class="mono">2001:db8:acad:a::/64</td></tr>
+          <tr><td class="mono">2001:db8:acad:100::99</td><td class="mono">0100</td><td class="mono">1×256 = 256</td><td class="mono">2001:db8:acad:100::/64</td></tr>
+          <tr><td class="mono">2001:db8:acad::1</td><td class="mono">0000</td><td class="mono">0</td><td class="mono">2001:db8:acad::/64</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="font-size:.84rem; opacity:.8;">Careful with the second row: <code>2001:db8:acad:a:1::1</code>. The <code>:1:</code> after the <code>a</code> is the start of the interface ID, not part of the subnet. Only the 4th hextet is the subnet ID.</p>
 
     <h3 class="sub">The same office, in IPv6</h3>
     <p>Compare this with the VLSM table above. With a <code>2001:db8:acad::/48</code>, every segment gets its own /64 regardless of size:</p>
@@ -993,7 +1180,7 @@
     </div>
     <div class="teach-note">
       <span class="label">What's different from IPv4</span>
-      IPv6 has no broadcast address, since multicast does that job, so there's no "−2." No one sizes a LAN smaller than /64, because standard address autoconfiguration assumes /64. Finally, IPv6 was designed so that subnets aren't scarce: a /48 alone provides 65,536 LANs.
+      IPv6 has no broadcast address, since multicast does that job, so there's no "−2." LANs aren't sized smaller than /64, because SLAAC needs a 64-bit interface ID. Finally, IPv6 was designed so that subnets aren't scarce: a /48 alone provides 65,536 LANs.
     </div>
   </section>
 
@@ -1020,19 +1207,55 @@
     <div class="section-head">
       <p class="kicker">Drill</p>
       <h2>Practice drills</h2>
-      <p>Each drill generates a new random problem every time. Work it on paper first, type your answers, and press <strong>Check</strong>. A wrong answer shows the full worked solution, not just a red X.</p>
+      <p>Each drill generates a new random problem every time. Work it on paper first, type your answers, and press <strong>Check</strong>. A wrong answer shows the full worked solution, not just a red X. Enter checks your answer; press Enter again for the next problem.</p>
     </div>
 
+    <div class="teach-note">
+      <span class="label">Suggested order</span>
+      Warm up with <strong>Quick-fire</strong> until binary and masks feel automatic. Then do <strong>Net / Bcast / Host?</strong> and <strong>Find the Six</strong> until you can solve any address. Move on to <strong>7 Steps</strong> and <strong>Size It</strong> for design, then <strong>Same Subnet?</strong>, <strong>VLSM Plan</strong>, and <strong>IPv6</strong>. The number on each tab is its level.
+    </div>
     <div class="mode-tabs" role="tablist" aria-label="Drill type">
-      <button role="tab" data-mode="six" class="active" aria-selected="true">Find the Six</button>
-      <button role="tab" data-mode="size" aria-selected="false">Size It</button>
-      <button role="tab" data-mode="same" aria-selected="false">Same Subnet?</button>
-      <button role="tab" data-mode="v6" aria-selected="false">IPv6 Subnet ID</button>
-      <button role="tab" data-mode="vlsm" aria-selected="false">VLSM Plan</button>
+      <button role="tab" data-mode="quick" class="active" aria-selected="true">Quick-fire<span class="lvl">1</span></button>
+      <button role="tab" data-mode="cls" aria-selected="false">Net / Bcast / Host?<span class="lvl">2</span></button>
+      <button role="tab" data-mode="six" aria-selected="false">Find the Six<span class="lvl">2</span></button>
+      <button role="tab" data-mode="seven" aria-selected="false">7 Steps<span class="lvl">3</span></button>
+      <button role="tab" data-mode="size" aria-selected="false">Size It<span class="lvl">3</span></button>
+      <button role="tab" data-mode="same" aria-selected="false">Same Subnet?<span class="lvl">3</span></button>
+      <button role="tab" data-mode="vlsm" aria-selected="false">VLSM Plan<span class="lvl">4</span></button>
+      <button role="tab" data-mode="v6" aria-selected="false">IPv6 Subnet ID<span class="lvl">4</span></button>
+    </div>
+
+    <!-- QUICK-FIRE -->
+    <div class="drill" id="drill-quick">
+      <p class="prompt" id="quickQ"></p>
+      <div class="fields">
+        <label>Your answer<input class="txt" id="quickIn" spellcheck="false" autocomplete="off"></label>
+      </div>
+      <div class="drill-bar">
+        <button class="btn primary" id="quickCheck">Check</button>
+        <button class="btn" id="quickNew">Next</button>
+        <span class="scoreline" id="quickScore"></span>
+      </div>
+      <div class="feedback" id="quickFb" hidden></div>
+    </div>
+
+    <!-- NET / BCAST / HOST -->
+    <div class="drill" id="drill-cls" hidden>
+      <p class="prompt">What is <span class="q" id="clsQ"></span>?</p>
+      <div class="choice-row">
+        <button class="btn" data-ans="net">Network address</button>
+        <button class="btn" data-ans="bc">Broadcast address</button>
+        <button class="btn" data-ans="host">Usable host</button>
+      </div>
+      <div class="drill-bar">
+        <button class="btn" id="clsNew">Next</button>
+        <span class="scoreline" id="clsScore"></span>
+      </div>
+      <div class="feedback" id="clsFb" hidden></div>
     </div>
 
     <!-- FIND THE SIX -->
-    <div class="drill" id="drill-six">
+    <div class="drill" id="drill-six" hidden>
       <div class="settings">
         <label>Difficulty
           <select class="txt" id="sixLevel">
@@ -1058,6 +1281,26 @@
         <span class="scoreline" id="sixScore"></span>
       </div>
       <div class="feedback" id="sixFb" hidden></div>
+    </div>
+
+    <!-- 7 STEPS -->
+    <div class="drill" id="drill-seven" hidden>
+      <p class="prompt">Network <span class="q" id="sevenBase"></span> needs <span class="q" id="sevenN"></span> subnets. Work the 7 holy steps.</p>
+      <div class="fields">
+        <label>Step 3 · bits to borrow<input class="txt" data-k="bits" spellcheck="false" autocomplete="off" inputmode="numeric"></label>
+        <label>Step 5 · new subnet mask<input class="txt" data-k="mask" spellcheck="false" autocomplete="off"></label>
+        <label>Step 6 · subnet variable<input class="txt" data-k="var" spellcheck="false" autocomplete="off" inputmode="numeric"></label>
+        <label>Usable hosts per subnet<input class="txt" data-k="hosts" spellcheck="false" autocomplete="off" inputmode="numeric"></label>
+        <label>Step 7 · 2nd subnet's network<input class="txt" data-k="sub1" spellcheck="false" autocomplete="off"></label>
+        <label>Step 7 · last subnet's network<input class="txt" data-k="last" spellcheck="false" autocomplete="off"></label>
+      </div>
+      <div class="drill-bar">
+        <button class="btn primary" id="sevenCheck">Check</button>
+        <button class="btn" id="sevenShow">Show solution</button>
+        <button class="btn" id="sevenNew">New problem</button>
+        <span class="scoreline" id="sevenScore"></span>
+      </div>
+      <div class="feedback" id="sevenFb" hidden></div>
     </div>
 
     <!-- SIZE IT -->
@@ -1110,10 +1353,18 @@
     <div class="drill" id="drill-vlsm" hidden>
       <p class="prompt">You've been given <span class="q" id="vlsmBase"></span>. Build a VLSM plan for these segments, listed here in no particular order:</p>
       <ul class="needs" id="vlsmNeeds"></ul>
-      <p style="font-size:.86rem; opacity:.85; margin:0 0 14px;">On paper, write each segment's prefix, network address, host range, and broadcast. Then reveal the answer key and compare.</p>
+      <p style="font-size:.86rem; opacity:.85; margin:0 0 10px;">Fill in a prefix and network address for every segment, then press <strong>Check my plan</strong>. Any plan with no overlaps and correct sizes is accepted, even if it doesn't match the answer key's order. You can type a network as just its last octet, like <code>.64</code>.</p>
+      <div class="table-scroll">
+        <table class="spec vlsm-in">
+          <thead><tr><th>Segment</th><th>Hosts</th><th>Prefix</th><th>Network address</th><th>Result</th></tr></thead>
+          <tbody id="vlsmRows"></tbody>
+        </table>
+      </div>
       <div class="drill-bar">
-        <button class="btn primary" id="vlsmShow">Reveal plan</button>
+        <button class="btn primary" id="vlsmCheck">Check my plan</button>
+        <button class="btn" id="vlsmShow">Reveal answer key</button>
         <button class="btn" id="vlsmNew">New scenario</button>
+        <span class="scoreline" id="vlsmScore"></span>
       </div>
       <div class="feedback" id="vlsmFb" hidden></div>
     </div>
@@ -1132,7 +1383,7 @@
         <tbody>
           <tr><td class="mono">1</td><td><strong>Forgetting −2 on hosts.</strong> Saying a /26 holds 64 hosts.</td><td>Total addresses = 2ʰ. <em>Usable</em> = 2ʰ − 2.</td></tr>
           <tr><td class="mono">2</td><td><strong>Subtracting 2 from subnets.</strong> Saying 3 borrowed bits give 6 subnets.</td><td>Subnets = 2ⁿ. The −2 is for hosts only.</td></tr>
-          <tr><td class="mono">3</td><td><strong>Wrong interesting octet.</strong> Applying a /20's block size of 16 to the 4th octet.</td><td>The prefix row on the chart tells you the octet: /17–/24 → 3rd octet.</td></tr>
+          <tr><td class="mono">3</td><td><strong>Wrong interesting octet.</strong> Applying a /20's block size of 16 to the 4th octet.</td><td>The prefix row on the chart tells you the octet: /17–/23 → 3rd octet (/24 is an octet boundary).</td></tr>
           <tr><td class="mono">4</td><td><strong>Using the mask value as the block size.</strong> "Mask 240, so subnets go up by 240."</td><td>Block = 256 − mask value = 16.</td></tr>
           <tr><td class="mono">5</td><td><strong>Octets to the right of the interesting octet.</strong> Writing 172.16.45.255 as the broadcast for 172.16.45.200/20.</td><td>To the right: network gets 0s, broadcast gets 255s. Always.</td></tr>
           <tr><td class="mono">6</td><td><strong>Assigning the network or broadcast address to a host.</strong></td><td>Check that the address isn't all-0s or all-1s in the host bits.</td></tr>
@@ -1307,7 +1558,7 @@
       steps.push(`Count by ${s.block} in the ${ORD[s.io]} octet (${start > 0 ? '…, ' : ''}${mults.join(', ')}${more}). The address has <strong>${ipO[s.io]}</strong> there, which falls in ${nv}–${nv + s.block - 1}. (Shortcut: ${ipO[s.io]} ÷ ${s.block}, rounded down, × ${s.block} = ${nv}.)`);
       const right = s.io < 3;
       steps.push(`Network: octets to the left copy across, the ${ORD[s.io]} octet becomes ${nv}${right ? ', and every octet to its right becomes 0' : ''} → <code>${intToIp(s.net)}</code>.`);
-      steps.push(`Broadcast: ${nv} + ${s.block} − 1 = ${bv} in the ${ORD[s.io]} octet${right ? ', and every octet to its right becomes 255' : ''} → <code>${intToIp(s.bc)}</code>. (That's one less than the next network.)`);
+      if (s.p !== 31) steps.push(`Broadcast: ${nv} + ${s.block} − 1 = ${bv} in the ${ORD[s.io]} octet${right ? ', and every octet to its right becomes 255' : ''} → <code>${intToIp(s.bc)}</code>. (That's one less than the next network.)`);
     }
     if (s.p === 31){
       steps.push('A /31 has only two addresses. On point-to-point links, RFC 3021 lets both be used. ITN uses /30 for these links.');
@@ -1397,6 +1648,59 @@
   ], 0);
   document.getElementById('vlsmMap2').innerHTML = mapBar(CLASS_VLSM);
 
+  /* ---- subnet slicer ---- */
+  (function(){
+    const rng = document.getElementById('slPrefix'), host = document.getElementById('slHost');
+    const row = document.getElementById('slRow'), det = document.getElementById('slDetail'), sum = document.getElementById('slSummary');
+    const BASE = ipToInt('192.168.10.0');
+    let sel = null;
+    function detail(i, p, why){
+      const s = subnet(BASE + i * 2 ** (32 - p), p);
+      det.innerHTML = `<p style="margin:0 0 6px; font-weight:600;">${why}</p>Slice #${i}: network <code>${intToIp(s.net)}/${p}</code> · hosts <code>.${octet(s.first, 3)}</code> – <code>.${octet(s.last, 3)}</code> · broadcast <code>.${octet(s.bc, 3)}</code>`;
+    }
+    function render(){
+      const p = Number(rng.value), size = 2 ** (32 - p), n = 256 / size;
+      document.getElementById('slPrefixVal').textContent = '/' + p;
+      const h = Math.max(0, Math.min(255, Number(host.value) | 0));
+      const hit = Math.floor(h / size);
+      const s0 = subnet(0, p);
+      sum.innerHTML = `<span><b>Mask</b>${intToIp(s0.mask)}</span><span><b>Block</b>${p === 24 ? 256 : s0.block}</span><span><b>Subnets</b>${n}</span><span><b>Hosts each</b>${s0.hosts}</span>`;
+      row.innerHTML = '';
+      for (let i = 0; i < n; i++){
+        const b = document.createElement('button');
+        b.className = 'slice' + (i === hit ? ' hit' : '') + (i === sel ? ' sel' : '');
+        b.title = `192.168.10.${i * size}/${p}`;
+        b.setAttribute('aria-label', `Subnet ${i}: 192.168.10.${i * size}/${p}`);
+        if (n <= 16) b.innerHTML = `<span>.${i * size}</span><span>.${i * size + size - 1}</span>`;
+        b.addEventListener('click', () => { sel = i; render(); detail(i, p, `You picked slice #${i}.`); });
+        row.appendChild(b);
+      }
+      const s = subnet(BASE + h, p);
+      const role = h === octet(s.net, 3) ? ' It\'s the <strong>network address</strong> of its slice, so a host can\'t use it.' : h === octet(s.bc, 3) ? ' It\'s the <strong>broadcast address</strong> of its slice, so a host can\'t use it.' : ' It\'s a usable host.';
+      if (sel === null || sel >= n) detail(hit, p, `.${h} lands in slice #${hit} (${h} ÷ ${size} = ${(h / size).toFixed(2).replace(/\.00$/, '')}, rounded down).${role}`);
+    }
+    rng.addEventListener('input', () => { sel = null; render(); });
+    host.addEventListener('input', () => { sel = null; render(); });
+    render();
+  })();
+
+  /* ---- example bank ---- */
+  (function(){
+    const BANK = [
+      ['192.168.5.33', 27, '4th octet'], ['10.10.10.200', 28, '4th octet'], ['172.16.1.9', 29, '4th octet'], ['192.168.100.250', 30, '4th octet'],
+      ['10.4.77.12', 19, '3rd octet'], ['172.18.130.1', 21, '3rd octet'], ['192.168.37.200', 23, '3rd octet'], ['10.200.15.15', 18, '3rd octet'],
+      ['10.130.5.5', 9, '2nd octet'], ['172.23.9.9', 12, '2nd octet'], ['10.77.0.1', 14, '2nd octet'], ['44.201.3.3', 10, '2nd octet'],
+      ['10.1.2.3', 16, 'octet boundary'], ['172.30.8.1', 24, 'octet boundary'],
+    ];
+    document.getElementById('exampleBank').innerHTML = BANK.map(([a, p, tag]) => {
+      const s = subnet(ipToInt(a), p);
+      return `<div class="example"><span class="tag${tag === '2nd octet' ? ' hard' : ''}">${tag}</span><h3>${a} /${p}</h3>
+        <details class="solution"><summary>Show answer</summary><div class="solbody">
+          <div class="answer-row" style="margin-top:0;"><span><b>Net</b>${intToIp(s.net)}</span><span><b>Bcast</b>${intToIp(s.bc)}</span><span><b>Hosts</b>${fmt(s.hosts)}</span></div>
+          <ol class="steps">${explainSteps(s).map(x => `<li>${x}</li>`).join('')}</ol></div></details></div>`;
+    }).join('');
+  })();
+
   /* ---- calculator ---- */
   (function(){
     const inp = document.getElementById('calcIp'), rng = document.getElementById('calcPrefix'), out = document.getElementById('calcOut');
@@ -1432,6 +1736,7 @@ ${line('Broadcast', s.bc, intToIp(s.bc) + '   ← host bits all 1')}</pre>
           <div><b>Block size</b><span>${s.p % 8 === 0 ? '1 in ' + ORD[s.p / 8 - 1] : s.block + ' in ' + ORD[s.io]} octet</span></div>
           <div><b>Address type · class</b><span>${addrType(s.ip)} · ${legacyClass(s.ip)}</span></div>
         </div>
+        ${s.p >= 31 ? '<div class="teach-note"><span class="label">* /31 and /32</span>A /31 has no separate network or broadcast address, so both addresses are usable on point-to-point links (RFC 3021). ITN uses /30 for those links. A /32 is a single address, used for loopbacks and host routes.</div>' : ''}
         ${s.ip === s.net && s.p < 31 ? '<div class="teach-note warn"><span class="label">Heads up</span>This is the network address itself. It can\'t be assigned to a host.</div>' : ''}
         ${s.ip === s.bc && s.p < 31 ? '<div class="teach-note warn"><span class="label">Heads up</span>This is the broadcast address. It can\'t be assigned to a host.</div>' : ''}
         <h3 class="sub" style="margin-top:18px;">Worked the long way</h3>
@@ -1477,6 +1782,160 @@ ${line('Broadcast', s.bc, intToIp(s.bc) + '   ← host bits all 1')}</pre>
     return ipToInt(v);
   }
 
+  // Enter = check, Enter again = next problem
+  function enterFlow(inputs, fb, check, next){
+    inputs.forEach(i => i.addEventListener('keydown', e => {
+      if (e.key !== 'Enter') return;
+      e.preventDefault();
+      if (!fb.hidden && fb.classList.contains('good')) next(); else check();
+    }));
+  }
+  function binWhy(v){
+    const on = [128, 64, 32, 16, 8, 4, 2, 1].filter(x => v & x);
+    return `${v} = ${on.length ? on.join(' + ') : '0'} → ${v.toString(2).padStart(8, '0')}. (Switches on: ${on.length ? on.join(', ') : 'none'}.)`;
+  }
+
+  // Quick-fire
+  (function(){
+    const fb = document.getElementById('quickFb'), inp = document.getElementById('quickIn');
+    const sc = score('quickScore'); let prob;
+    const TYPES = [
+      () => { const v = rnd(0, 255), b = v.toString(2).padStart(8, '0');
+        return { q: `Convert <span class="q">${v}</span> to 8-bit binary.`, ok: x => x.replace(/[\s.]/g, '') === b, ans: b, why: binWhy(v) }; },
+      () => { const v = rnd(0, 255), b = v.toString(2).padStart(8, '0');
+        return { q: `Convert <span class="q">${b}</span> to decimal.`, ok: x => clean(x) !== '' && Number(clean(x)) === v, ans: String(v), why: binWhy(v) }; },
+      () => { const p = rnd(8, 30), m = maskInt(p), k = Math.floor(p / 8);
+        return { q: `Write the subnet mask for <span class="q">/${p}</span>.`, ok: x => ipToInt(clean(x)) === m, ans: intToIp(m),
+          why: `/${p} = ${k} full octet${k > 1 ? 's' : ''} of 255 (8 bits each)${p % 8 ? `, then ${p % 8} more bit${p % 8 > 1 ? 's' : ''} on in the ${ORD[k]} octet = ${octet(m, k)}` : ''}. The rest is 0.` }; },
+      () => { const p = rnd(8, 30), m = maskInt(p), k = Math.floor(p / 8);
+        return { q: `What prefix length is <span class="q">${intToIp(m)}</span>?`, ok: x => Number(clean(x).replace('/', '')) === p, ans: '/' + p,
+          why: `Count the 1s: ${k} octet${k > 1 ? 's' : ''} of 255 = ${8 * k}${p % 8 ? `, plus ${octet(m, k)} = ${(octet(m, k)).toString(2)} = ${p % 8} more` : ''}. Total /${p}.` }; },
+      () => { let p; do { p = rnd(9, 30); } while (p % 8 === 0); const s = subnet(0, p);
+        return { q: `What is the block size (magic number) for <span class="q">/${p}</span>? (Just the number.)`, ok: x => Number(clean(x)) === s.block, ans: String(s.block),
+          why: `/${p} → mask value ${s.maskOct} in the ${ORD[s.io]} octet. 256 − ${s.maskOct} = ${s.block}, counted in the ${ORD[s.io]} octet.` }; },
+      () => { const p = rnd(16, 30), s = subnet(0, p);
+        return { q: `How many usable hosts does a <span class="q">/${p}</span> hold?`, ok: x => clean(x) !== '' && Number(clean(x)) === s.hosts, ans: fmt(s.hosts),
+          why: `32 − ${p} = ${32 - p} host bits. 2<sup>${32 - p}</sup> − 2 = ${fmt(s.hosts)}.` }; },
+      () => { const h = rnd(2, 12), need = rnd(Math.max(1, 2 ** (h - 1) - 1), 2 ** h - 2), p = prefixForHosts(need);
+        return { q: `Smallest prefix for a subnet of <span class="q">${fmt(need)}</span> hosts?`, ok: x => Number(clean(x).replace('/', '')) === p, ans: '/' + p,
+          why: `2<sup>${32 - p - 1}</sup> − 2 = ${fmt(2 ** (32 - p - 1) - 2)} is too small, and 2<sup>${32 - p}</sup> − 2 = ${fmt(2 ** (32 - p) - 2)} fits. So ${32 - p} host bits → /${p}.` }; },
+    ];
+    function gen(){
+      prob = pick(TYPES)();
+      document.getElementById('quickQ').innerHTML = prob.q;
+      inp.value = ''; inp.classList.remove('ok', 'bad'); fb.hidden = true; inp.focus({ preventScroll: true });
+    }
+    function check(){
+      if (!inp.value.trim()){ feedback(fb, null, 'Type an answer first'); return; }
+      const ok = prob.ok(inp.value.trim());
+      inp.classList.toggle('ok', ok); inp.classList.toggle('bad', !ok);
+      tally(sc, prob, ok);
+      feedback(fb, ok, ok ? 'Correct' : `Answer: ${prob.ans}`, `<p style="margin:0;">${prob.why}</p>${ok ? '<p style="margin:6px 0 0; opacity:.7;">Press Enter for the next one.</p>' : ''}`);
+    }
+    document.getElementById('quickCheck').addEventListener('click', check);
+    document.getElementById('quickNew').addEventListener('click', gen);
+    enterFlow([inp], fb, check, gen);
+    prob = pick(TYPES)(); document.getElementById('quickQ').innerHTML = prob.q;
+  })();
+
+  // Net / Bcast / Host?
+  (function(){
+    const fb = document.getElementById('clsFb'), sc = score('clsScore'); let prob;
+    const NAMES = { net: 'the network address', bc: 'the broadcast address', host: 'a usable host' };
+    function gen(){
+      const p = rnd(17, 30);
+      let s; do { s = subnet(randomIp(), p); } while (octet(s.net, 0) === 0);
+      const type = pick(['net', 'bc', 'host']);
+      let ip, trick = false;
+      if (type === 'net') ip = s.net;
+      else if (type === 'bc') ip = s.bc;
+      else if (s.total >= 512 && Math.random() < 0.6){
+        // a host that ends in .0 or .255 but is not the network or broadcast
+        const k = rnd(1, s.total / 256 - 1);
+        ip = Math.random() < 0.5 ? s.net + 256 * k : s.net + 256 * k - 1; trick = true;
+      } else ip = s.net + rnd(1, s.total - 2);
+      prob = { s, ip, type, trick };
+      document.getElementById('clsQ').textContent = `${intToIp(ip)}/${p}`;
+      fb.hidden = true;
+      document.querySelectorAll('#drill-cls [data-ans]').forEach(b => b.classList.remove('primary'));
+    }
+    function answer(a){
+      const { s, ip, type, trick } = prob, ok = a === type;
+      tally(sc, prob, ok);
+      document.querySelectorAll('#drill-cls [data-ans]').forEach(b => b.classList.toggle('primary', b.dataset.ans === type));
+      feedback(fb, ok, ok ? 'Correct' : `It's ${NAMES[type]}`, `<ol class="steps">
+        <li>/${s.p} → block size ${s.p % 8 === 0 ? '1 in the ' + ORD[s.p / 8 - 1] : s.block + ' in the ' + ORD[s.io]} octet.</li>
+        <li>The subnet runs <code>${intToIp(s.net)}</code> (network) to <code>${intToIp(s.bc)}</code> (broadcast).</li>
+        <li><code>${intToIp(ip)}</code> is ${type === 'net' ? 'the first address, with host bits all 0' : type === 'bc' ? 'the last address, with host bits all 1' : 'strictly between them, so it\'s a usable host'}.${trick ? ' It ends in .' + octet(ip, 3) + ', but that doesn\'t matter here: in a /' + s.p + ', the host bits span more than the last octet.' : ''}</li></ol>`);
+    }
+    document.querySelectorAll('#drill-cls [data-ans]').forEach(b => b.addEventListener('click', () => answer(b.dataset.ans)));
+    document.getElementById('clsNew').addEventListener('click', gen);
+    gen();
+  })();
+
+  // 7 Steps
+  (function(){
+    const drill = document.getElementById('drill-seven'), fb = document.getElementById('sevenFb');
+    const inputs = [...drill.querySelectorAll('input[data-k]')];
+    const sc = score('sevenScore'); let prob;
+    function gen(){
+      let base, start, n;
+      const r = Math.random();
+      if (r < 0.4){ base = ipToInt(`192.168.${rnd(0, 255)}.0`); start = 24; n = rnd(1, 6); }
+      else if (r < 0.7){ base = ipToInt(`172.${rnd(16, 31)}.0.0`); start = 16; n = rnd(2, 8); }
+      else { start = pick([19, 20, 21, 22, 25, 26]); n = rnd(1, Math.min(4, 30 - start)); base = subnet(ipToInt(`10.${rnd(0, 255)}.${rnd(0, 255)}.0`), start).net; }
+      const need = n === 1 ? 2 : rnd(2 ** (n - 1) + 1, 2 ** n);
+      const p = start + n, s = subnet(base, p);
+      const varOct = p % 8 === 0 ? p / 8 - 1 : s.io, variable = p % 8 === 0 ? 1 : s.block;
+      prob = { base, start, n, need, p, s, varOct, variable,
+        sub1: base + s.total, last: base + (2 ** n - 1) * s.total };
+      document.getElementById('sevenBase').textContent = `${intToIp(base)}/${start}`;
+      document.getElementById('sevenN').textContent = need;
+      inputs.forEach(i => { i.value = ''; i.classList.remove('ok', 'bad'); });
+      fb.hidden = true;
+    }
+    function solution(){
+      const { base, start, n, need, p, s, varOct, variable } = prob;
+      const borrowed = (maskInt(p) ^ maskInt(start)) >>> 0;
+      const octs = [0, 1, 2, 3].filter(i => octet(borrowed, i));
+      const bitsTxt = octs.map(i => `${ORD[i]} octet <code>${octet(borrowed, i).toString(2).padStart(8, '0')}</code> = <strong>${octet(borrowed, i)}</strong>`).join('; ');
+      const addTxt = octs.map(i => `${octet(maskInt(start), i)} + ${octet(borrowed, i)} = ${octet(s.mask, i)} in the ${ORD[i]} octet`).join(', ');
+      const classful = start % 8 === 0;
+      const listed = Math.min(2 ** n, 3);
+      const firsts = Array.from({ length: listed }, (_, i) => intToIp(base + i * s.total));
+      return `<ol class="steps">
+        <li>Subnets needed: <strong>${need}</strong>.</li>
+        <li>Host bits: the ${32 - start} bits after /${start}${classful ? '' : ` (the original mask is <code>${intToIp(maskInt(start))}</code>, so the host bits start partway through the ${ORD[Math.floor(start / 8)]} octet)`}.</li>
+        <li>${n > 1 ? `2<sup>${n - 1}</sup> = ${2 ** (n - 1)} is too few, and ` : ''}2<sup>${n}</sup> = ${2 ** n} is enough. Borrow <strong>${n}</strong> bit${n > 1 ? 's' : ''}.</li>
+        <li>Turn on the ${n} host bit${n > 1 ? 's' : ''} right after the network bits: ${bitsTxt}.</li>
+        <li>Original mask <code>${intToIp(maskInt(start))}</code>, adding ${addTxt}, gives <code>${intToIp(s.mask)}</code> (/${p}).</li>
+        <li>The lowest-order bit turned on is worth <strong>${variable}</strong>, in the ${ORD[varOct]} octet. That's the subnet variable.</li>
+        <li>Count by ${variable} in the ${ORD[varOct]} octet (${firsts.map(x => `<code>${x}</code>`).join(', ')}${2 ** n > listed ? ', …' : ''}). The 2nd subnet is <code>${intToIp(prob.sub1)}</code>, and the last (#${2 ** n - 1}) is <code>${intToIp(prob.last)}</code>. Each has 2<sup>${32 - p}</sup> − 2 = <strong>${fmt(s.hosts)}</strong> usable hosts.</li></ol>`;
+    }
+    function check(){
+      const want = { bits: prob.n, mask: prob.s.mask, var: prob.variable, hosts: prob.s.hosts, sub1: prob.sub1, last: prob.last };
+      let right = 0, blank = 0;
+      inputs.forEach(i => {
+        const k = i.dataset.k, v = i.value;
+        if (!v.trim()){ blank++; i.classList.remove('ok', 'bad'); return; }
+        const got = (k === 'mask') ? parsePrefixOrMask(v) : (k === 'sub1' || k === 'last') ? ipToInt(clean(v)) : Number(clean(v));
+        const ok = got === want[k];
+        i.classList.toggle('ok', ok); i.classList.toggle('bad', !ok);
+        if (ok) right++;
+      });
+      if (blank === inputs.length){ feedback(fb, null, 'Fill in at least one field first'); return; }
+      const all = right === inputs.length;
+      tally(sc, prob, all);
+      if (all) feedback(fb, true, 'Correct — all seven steps check out', '<p style="margin:0;">Press Enter or <strong>New problem</strong> for another.</p>');
+      else feedback(fb, false, `${right} of ${inputs.length} correct`, solution());
+    }
+    document.getElementById('sevenCheck').addEventListener('click', check);
+    document.getElementById('sevenShow').addEventListener('click', () => { tally(sc, prob, false); feedback(fb, null, 'Solution', solution()); });
+    document.getElementById('sevenNew').addEventListener('click', gen);
+    enterFlow(inputs, fb, check, gen);
+    gen();
+  })();
+
   // Find the Six
   (function(){
     const drill = document.getElementById('drill-six'), fb = document.getElementById('sixFb');
@@ -1514,7 +1973,7 @@ ${line('Broadcast', s.bc, intToIp(s.bc) + '   ← host bits all 1')}</pre>
       else feedback(fb, false, `${right} of ${inputs.length} correct`, solution(s));
     }
     document.getElementById('sixCheck').addEventListener('click', check);
-    inputs.forEach(i => i.addEventListener('keydown', e => { if (e.key === 'Enter') check(); }));
+    enterFlow(inputs, fb, check, gen);
     document.getElementById('sixShow').addEventListener('click', () => { tally(sc, prob, false); feedback(fb, null, 'Solution', solution(prob.s)); });
     document.getElementById('sixNew').addEventListener('click', gen);
     document.getElementById('sixLevel').addEventListener('change', gen);
@@ -1559,7 +2018,7 @@ ${line('Broadcast', s.bc, intToIp(s.bc) + '   ← host bits all 1')}</pre>
       else feedback(fb, false, `${right} of ${inputs.length} correct`, solution());
     }
     document.getElementById('sizeCheck').addEventListener('click', check);
-    inputs.forEach(i => i.addEventListener('keydown', e => { if (e.key === 'Enter') check(); }));
+    enterFlow(inputs, fb, check, gen);
     document.getElementById('sizeShow').addEventListener('click', () => { tally(sc, prob, false); feedback(fb, null, 'Solution', solution()); });
     document.getElementById('sizeNew').addEventListener('click', gen);
     gen();
@@ -1641,7 +2100,7 @@ ${line('Broadcast', s.bc, intToIp(s.bc) + '   ← host bits all 1')}</pre>
       else feedback(fb, false, 'Not quite', hint + solution());
     }
     document.getElementById('v6Check').addEventListener('click', check);
-    inp.addEventListener('keydown', e => { if (e.key === 'Enter') check(); });
+    enterFlow([inp], fb, check, gen);
     document.getElementById('v6Show').addEventListener('click', () => { tally(sc, prob, false); feedback(fb, null, 'Solution', solution()); });
     document.getElementById('v6New').addEventListener('click', gen);
     gen();
@@ -1667,7 +2126,45 @@ ${line('Broadcast', s.bc, intToIp(s.bc) + '   ← host bits all 1')}</pre>
       document.getElementById('vlsmBase').textContent = base + '/24';
       document.getElementById('vlsmNeeds').innerHTML = needs.map(n => `<li>${n.name}: <b>${n.hosts}</b> hosts</li>`).join('')
         + `<li>${wan} point-to-point WAN link${wan > 1 ? 's' : ''}: <b>2</b> hosts${wan > 1 ? ' each' : ''}</li>`;
+      prob.rows = [...needs, ...Array.from({ length: wan }, (_, i) => ({ name: 'WAN ' + (i + 1), hosts: 2 }))];
+      document.getElementById('vlsmRows').innerHTML = prob.rows.map((r, i) => `<tr data-i="${i}"><td class="b">${r.name}</td><td class="mono">${r.hosts}</td>
+        <td><input class="txt" data-f="p" placeholder="/__" spellcheck="false" autocomplete="off" aria-label="${r.name} prefix"></td>
+        <td><input class="txt" data-f="net" placeholder=".__ or full address" spellcheck="false" autocomplete="off" aria-label="${r.name} network address"></td>
+        <td class="res"></td></tr>`).join('');
       fb.hidden = true;
+    }
+    function checkPlan(){
+      const base = ipToInt(prob.base), trs = [...document.querySelectorAll('#vlsmRows tr')];
+      const parsed = trs.map((tr, i) => {
+        const r = prob.rows[i], pv = tr.querySelector('[data-f=p]').value.trim(), nv = tr.querySelector('[data-f=net]').value.trim();
+        const p = /^\/?\s*\d{1,2}$/.test(pv) ? Number(pv.replace('/', '')) : null;
+        const net = /^\.\d{1,3}$/.test(nv) ? ipToInt(intToIp(base).replace(/\.0$/, nv)) : ipToInt(nv);
+        return { r, tr, p, net, pv, nv };
+      });
+      let good = 0;
+      parsed.forEach((x, i) => {
+        const res = x.tr.querySelector('.res'), fit = prefixForHosts(x.r.hosts);
+        let msg = '';
+        if (!x.pv || !x.nv) msg = 'fill in both';
+        else if (x.p === null || x.p > 32) msg = 'prefix should look like /26';
+        else if (x.p !== fit) msg = x.p > fit ? `/${x.p} holds only ${fmt(subnet(0, x.p).hosts)} hosts` : `/${x.p} works but is bigger than needed (use /${fit})`;
+        else if (x.net === null) msg = 'not a valid address';
+        else if ((x.net & maskInt(24)) >>> 0 !== base) msg = `outside ${prob.base}/24`;
+        else if (subnet(x.net, x.p).net !== x.net) msg = `not a /${x.p} boundary (must be a multiple of ${subnet(0, x.p).block})`;
+        else {
+          const me = subnet(x.net, x.p);
+          const clash = parsed.find((y, j) => j !== i && y.p === prefixForHosts(y.r.hosts) && y.net !== null && (() => { const o = subnet(y.net, y.p); return o.net === y.net && me.net <= o.bc && o.net <= me.bc; })());
+          if (clash) msg = `overlaps ${clash.r.name}`;
+        }
+        res.textContent = msg ? '✗ ' + msg : `✓ .${octet(x.net, 3)}–.${octet(subnet(x.net, x.p).bc, 3)}`;
+        res.className = 'res ' + (msg ? 'bad' : 'ok');
+        if (!msg) good++;
+      });
+      const all = good === parsed.length;
+      tally(vsc, prob, all);
+      feedback(fb, all, all ? 'Valid plan — correct sizes, no overlaps' : `${good} of ${parsed.length} rows valid`,
+        all ? '<p style="margin:0;">Compare with the answer key if you like. Largest-first is one valid layout, and yours may differ and still be right.</p>'
+            : '<p style="margin:0;">Fix the rows marked ✗. Stuck? Sort the segments largest first and start at .0.</p>');
     }
     function reveal(){
       const rows = prob.plan.map(r => `<tr><td class="b">${r.name}</td><td class="mono">${r.hosts}</td><td class="mono">/${r.p} (${fmt(r.s.hosts)})</td><td class="mono">${intToIp(r.s.net)}</td><td class="mono">.${octet(r.s.first, 3)} – .${octet(r.s.last, 3)}</td><td class="mono">.${octet(r.s.bc, 3)}</td></tr>`).join('');
@@ -1678,7 +2175,9 @@ ${line('Broadcast', s.bc, intToIp(s.bc) + '   ← host bits all 1')}</pre>
         ${mapBar(prob.plan)}
         <p style="margin:10px 0 0; font-size:.84rem;">Used ${used} of 256 addresses; ${256 - used} free for growth, starting at <code>${intToIp(ipToInt(prob.base) + used)}</code>.</p>`);
     }
-    document.getElementById('vlsmShow').addEventListener('click', reveal);
+    const vsc = score('vlsmScore');
+    document.getElementById('vlsmCheck').addEventListener('click', checkPlan);
+    document.getElementById('vlsmShow').addEventListener('click', () => { tally(vsc, prob, false); reveal(); });
     document.getElementById('vlsmNew').addEventListener('click', gen);
     gen();
   })();
@@ -1698,15 +2197,15 @@ ${line('Broadcast', s.bc, intToIp(s.bc) + '   ← host bits all 1')}</pre>
     {t:"Block size (magic number)", d:"256 minus the mask value in the interesting octet. Subnets start at multiples of it. For mask 255.255.255.224, the block size is 32: .0, .32, .64…"},
     {t:"Borrowing bits", d:"Converting host bits into subnet bits by lengthening the prefix. Each borrowed bit doubles the number of subnets and roughly halves the hosts per subnet."},
     {t:"Broadcast address", d:"The last address in a subnet, with all host bits set to 1. A packet sent to it reaches every host on the subnet. It can't be assigned to a host."},
-    {t:"CIDR", d:"Classless Inter-Domain Routing. Any prefix length is allowed (/1–/32), written in slash notation. Replaced the fixed Class A/B/C masks in 1993."},
-    {t:"Classful addressing", d:"The legacy scheme where the first octet set the mask: Class A 1–126 (/8), B 128–191 (/16), C 192–223 (/24), D 224–239 multicast, E 240–255 reserved."},
+    {t:"CIDR", d:"Classless Inter-Domain Routing. Any prefix length is allowed (/0–/32), written in slash notation. Replaced the fixed Class A/B/C masks in 1993."},
+    {t:"Classful addressing", d:"The legacy scheme where the first octet set the mask: Class A 0–127 (/8; 1–126 usable), B 128–191 (/16), C 192–223 (/24), D 224–239 multicast, E 240–255 reserved."},
     {t:"Default gateway", d:"The router interface a host sends to when a destination is not on its own subnet. By convention it's usually the first usable address of the subnet."},
     {t:"Double colon (::)", d:"IPv6 compression that replaces one run of consecutive all-zero hextets. It may appear only once in an address, or the address is ambiguous."},
     {t:"Global routing prefix", d:"The leading part of an IPv6 global unicast address, commonly a /48, assigned to a site by its ISP or registry."},
     {t:"Global unicast address (GUA)", d:"A globally routable IPv6 address, the IPv6 equivalent of a public IPv4 address. Currently allocated from 2000::/3."},
     {t:"Hextet", d:"One of the eight 16-bit groups in an IPv6 address, written as up to four hex digits."},
     {t:"Host bits", d:"The bits after the prefix: 32 − prefix length. With h host bits, a subnet has 2^h total and 2^h − 2 usable addresses."},
-    {t:"Interesting octet", d:"The octet where the subnet mask isn't 255, which is where the subnet boundary falls. The block-size math happens in this octet."},
+    {t:"Interesting octet", d:"The first octet (from the left) where the subnet mask isn't 255, which is where the subnet boundary falls. The block-size math happens in this octet."},
     {t:"Interface ID", d:"The last 64 bits of an IPv6 address, identifying the device on its subnet. The host portion."},
     {t:"Leading-zero omission", d:"IPv6 rule 1: drop leading zeros in any hextet (0db8 → db8, 0000 → 0). Trailing zeros are never dropped."},
     {t:"Loopback (127.0.0.0/8)", d:"Addresses that refer to the device itself. ping 127.0.0.1 tests the local TCP/IP stack without touching the network."},
@@ -1714,7 +2213,7 @@ ${line('Broadcast', s.bc, intToIp(s.bc) + '   ← host bits all 1')}</pre>
     {t:"Octet", d:"One 8-bit group of an IPv4 address, value 0–255. Four octets make up the 32-bit address."},
     {t:"Point-to-point /30", d:"A /30 subnet (255.255.255.252) has exactly 2 usable hosts, one for each router on a WAN link. It's the size ITN uses for router-to-router links."},
     {t:"Prefix length", d:"The number of network bits, written /n. /26 means the first 26 bits are network, equivalent to mask 255.255.255.192."},
-    {t:"Private addresses (RFC 1918)", d:"10.0.0.0/8, 172.16.0.0/12 (172.16–172.31), and 192.168.0.0/16. Not routed on the internet, so NAT is needed to reach it."},
+    {t:"Private addresses (RFC 1918)", d:"10.0.0.0/8, 172.16.0.0/12 (172.16–172.31), and 192.168.0.0/16. Not routed on the internet, so NAT is needed to reach the internet."},
     {t:"Subnet ID (IPv6)", d:"The 16 bits between a /48 global routing prefix and the 64-bit interface ID: the 4th hextet. It allows 65,536 /64 subnets per site."},
     {t:"Subnet mask", d:"A 32-bit value with 1s for network bits and 0s for host bits, always contiguous 1s then 0s. Written dotted, like 255.255.255.0."},
     {t:"Subnet variable", d:"Step 6 of the 7 holy steps: the value of the lowest-order bit turned on in the new mask. It's the same number as the block size (256 − mask value). Subnets start at multiples of it."},
@@ -1733,10 +2232,10 @@ ${line('Broadcast', s.bc, intToIp(s.bc) + '   ← host bits all 1')}</pre>
     { q:"What is the broadcast address for the subnet containing 192.168.1.100/28?",
       choices:["192.168.1.111","192.168.1.255","192.168.1.127","192.168.1.103"], correct:0,
       explain:"/28 → block 16. 100 falls in 96–111. Broadcast = next network (112) − 1 = 192.168.1.111." },
-    { q:"A subnet must support 500 hosts. Which mask wastes the fewest addresses?",
+    { q:"A subnet must support 500 hosts. Which mask supports them while wasting the fewest addresses?",
       choices:["255.255.255.0","255.255.252.0","255.255.254.0","255.255.248.0"], correct:2,
       explain:"2⁹ − 2 = 510 ≥ 500, so 9 host bits → /23 → 255.255.254.0. /24 (254) is too small; /22 and /21 are bigger than needed." },
-    { q:"A LAN needs 31 hosts. What is the smallest prefix that works?",
+    { q:"A LAN needs 31 hosts. What is the longest prefix (smallest subnet) that works?",
       choices:["/27","/26","/28","/25"], correct:1,
       explain:"/27 leaves 5 host bits: 2⁵ − 2 = 30, one short. /26 leaves 6 host bits: 2⁶ − 2 = 62. The −2 for network and broadcast is the trap." },
     { q:"Using the 7 holy steps, 192.168.10.0/24 needs 6 subnets. What's the subnet variable (step 6)?",
