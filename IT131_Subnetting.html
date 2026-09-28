@@ -313,8 +313,8 @@
   <div class="wrap">
     <a href="index.html" class="toc-link">↩ Contents</a>
     <a href="#roadmap">Roadmap</a>
-    <a href="#binary">Binary</a>
     <a href="#anatomy">Anatomy</a>
+    <a href="#binary">Binary</a>
     <a href="#cheatsheet">Cheat Sheet</a>
     <a href="#method">The Method</a>
     <a href="#subnetting">Borrowing Bits</a>
@@ -392,8 +392,8 @@
 
     <h3 class="sub">The learning path</h3>
     <ol class="path">
+      <li><a href="#anatomy">Anatomy</a> — what an address is made of: network vs. host, masks, prefixes, ANDing.</li>
       <li><a href="#binary">Binary</a> — the 8 place values, and converting both ways fast.</li>
-      <li><a href="#anatomy">Anatomy</a> — network bits vs. host bits, masks, prefixes, ANDing.</li>
       <li><a href="#cheatsheet">Cheat Sheet</a> — the chart to write at the top of every exam.</li>
       <li><a href="#method">The Method</a> — the block-size (magic number) technique, worked four times.</li>
       <li><a href="#subnetting">Borrowing Bits</a> — splitting a network into N equal subnets.</li>
@@ -401,85 +401,6 @@
       <li><a href="#ipv6">IPv6</a> — the 16-bit subnet ID; far easier than IPv4.</li>
       <li><a href="#practice">Practice</a> — five drills that generate new problems every time.</li>
     </ol>
-  </section>
-
-  <!-- BINARY -->
-  <section id="binary">
-    <div class="section-head">
-      <p class="kicker">Foundation · Module 5 refresher</p>
-      <h2>Binary: the only math you need</h2>
-      <p>An IPv4 address is 32 bits, written as four 8-bit <strong>octets</strong> in dotted decimal. To subnet, you only need to be fluent with one octet at a time.</p>
-    </div>
-
-    <h3 class="sub">The eight place values</h3>
-    <div class="table-scroll">
-      <table class="spec chart">
-        <thead><tr><th>Bit position</th><th>8</th><th>7</th><th>6</th><th>5</th><th>4</th><th>3</th><th>2</th><th>1</th></tr></thead>
-        <tbody>
-          <tr><td class="b">Power of 2</td><td>2⁷</td><td>2⁶</td><td>2⁵</td><td>2⁴</td><td>2³</td><td>2²</td><td>2¹</td><td>2⁰</td></tr>
-          <tr class="hl"><td class="b">Place value</td><td>128</td><td>64</td><td>32</td><td>16</td><td>8</td><td>4</td><td>2</td><td>1</td></tr>
-        </tbody>
-      </table>
-    </div>
-    <p>All eight bits on is 128+64+32+16+8+4+2+1 = <strong>255</strong>, which is why no octet can go above 255.</p>
-
-    <h3 class="sub">Decimal → binary: the subtraction method</h3>
-    <p>Work left to right. If the place value fits in what's left, write <strong>1</strong> and subtract. If it doesn't fit, write <strong>0</strong>. Example: <code>172</code></p>
-    <div class="table-scroll">
-      <table class="spec">
-        <thead><tr><th>Place value</th><th>Fits in what's left?</th><th>Bit</th><th>Remainder</th></tr></thead>
-        <tbody>
-          <tr><td class="mono">128</td><td>172 ≥ 128 ✓</td><td class="mono b">1</td><td class="mono">44</td></tr>
-          <tr><td class="mono">64</td><td>44 &lt; 64</td><td class="mono b">0</td><td class="mono">44</td></tr>
-          <tr><td class="mono">32</td><td>44 ≥ 32 ✓</td><td class="mono b">1</td><td class="mono">12</td></tr>
-          <tr><td class="mono">16</td><td>12 &lt; 16</td><td class="mono b">0</td><td class="mono">12</td></tr>
-          <tr><td class="mono">8</td><td>12 ≥ 8 ✓</td><td class="mono b">1</td><td class="mono">4</td></tr>
-          <tr><td class="mono">4</td><td>4 ≥ 4 ✓</td><td class="mono b">1</td><td class="mono">0</td></tr>
-          <tr><td class="mono">2</td><td>0 &lt; 2</td><td class="mono b">0</td><td class="mono">0</td></tr>
-          <tr><td class="mono">1</td><td>0 &lt; 1</td><td class="mono b">0</td><td class="mono">0</td></tr>
-        </tbody>
-      </table>
-    </div>
-    <p>Read the bit column top to bottom: 172 = <code>10101100</code>.</p>
-
-    <h3 class="sub">Binary → decimal: add up the 1s</h3>
-    <p><code>11000000</code> has 1s in the 128 and 64 places, so 128 + 64 = <strong>192</strong>. <code>01001101</code> has 1s in the 64, 8, 4, and 1 places, so 64 + 8 + 4 + 1 = <strong>77</strong>.</p>
-
-    <div class="analogy">
-      <span class="label">Think of it like light switches</span>
-      <p>An octet is a row of 8 light switches, each labeled with its wattage: 128, 64, 32, 16, 8, 4, 2, 1. Flip some on, and the octet's value is the total wattage. To make 172, you flip on 128, 32, 8, and 4, because those add to 172. That's all binary conversion is: choosing which switches to turn on.</p>
-      <p class="limit">Each switch is worth double the one to its right, so there's exactly one way to make any number from 0 to 255.</p>
-    </div>
-
-    <div class="bit-widget" id="bitWidget">
-      <p style="margin:0 0 12px; font-family:var(--mono); font-size:.8rem; text-transform:uppercase; letter-spacing:.06em; color:var(--kraft-dark); font-weight:600;">Try it: click bits, or type a number from 0 to 255</p>
-      <div class="bit-row" id="bitRow"></div>
-      <div class="bit-out">
-        <label>Decimal <input class="txt" id="bitDec" type="number" min="0" max="255" value="172" aria-label="Decimal value"></label>
-        <span>Binary <strong id="bitBin">10101100</strong></span>
-        <span class="bit-sum" id="bitSum"></span>
-      </div>
-    </div>
-
-    <h3 class="sub">Two things to memorize</h3>
-    <p>All subnet mask octets are built the same way: <strong>1s fill in from the left</strong>. So a mask octet can only ever be one of nine values:</p>
-    <div class="table-scroll">
-      <table class="spec chart" style="max-width:520px;">
-        <thead><tr><th>Mask octet (binary)</th><th>Decimal</th><th>1-bits</th></tr></thead>
-        <tbody><tr><td>00000000</td><td class="b">0</td><td>0</td></tr><tr><td>10000000</td><td class="b">128</td><td>1</td></tr><tr><td>11000000</td><td class="b">192</td><td>2</td></tr><tr><td>11100000</td><td class="b">224</td><td>3</td></tr><tr><td>11110000</td><td class="b">240</td><td>4</td></tr><tr><td>11111000</td><td class="b">248</td><td>5</td></tr><tr><td>11111100</td><td class="b">252</td><td>6</td></tr><tr><td>11111110</td><td class="b">254</td><td>7</td></tr><tr><td>11111111</td><td class="b">255</td><td>8</td></tr></tbody>
-      </table>
-    </div>
-    <p>You'll also use powers of two constantly to count subnets and hosts:</p>
-    <div class="table-scroll">
-      <table class="spec chart">
-        <thead><tr><th>n</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th><th>9</th><th>10</th><th>11</th><th>12</th><th>13</th><th>14</th><th>16</th></tr></thead>
-        <tbody><tr class="hl"><td class="b">2ⁿ</td><td>2</td><td>4</td><td>8</td><td>16</td><td>32</td><td>64</td><td>128</td><td>256</td><td>512</td><td>1,024</td><td>2,048</td><td>4,096</td><td>8,192</td><td>16,384</td><td>65,536</td></tr></tbody>
-      </table>
-    </div>
-    <div class="teach-note">
-      <span class="label">Shortcut</span>
-      Each power of two is double the one before it. If you forget 2¹¹, double 1,024 and get 2,048. On an exam, write the row out once and read answers off it.
-    </div>
   </section>
 
   <!-- ANATOMY -->
@@ -497,6 +418,10 @@
       <li><strong>Host bits</strong> — whatever's left over: 32 − prefix. A /26 has 6 host bits.</li>
     </ul>
 
+    <div class="teach-note">
+      <span class="label">New to binary? Keep reading anyway</span>
+      The next few examples show addresses as 1s and 0s. You don't need to convert them yet. For now, just notice that a mask is a run of 1s followed by a run of 0s, and that the 1s mark the network part. The <a href="#binary">Binary</a> section right after this one teaches the conversion, and these examples make more sense once you've done it.
+    </div>
     <p style="margin-top:22px;">The address <code>192.168.10.77/26</code> in binary, split at the prefix boundary:</p>
     <pre class="bits"><span class="lbl">Address  </span><span class="n">11000000.10101000.00001010.01</span><span class="h">001101</span>   192.168.10.77
 <span class="lbl">Mask /26 </span><span class="n">11111111.11111111.11111111.11</span><span class="h">000000</span>   255.255.255.192
@@ -590,6 +515,85 @@
       </table>
     </div>
     <p style="font-size:.84rem; opacity:.8;">* Class A technically spans 0–127, but 0 is reserved and 127 is loopback, so usable Class A networks are 1–126.</p>
+  </section>
+
+  <!-- BINARY -->
+  <section id="binary">
+    <div class="section-head">
+      <p class="kicker">Foundation · Module 5 refresher</p>
+      <h2>Binary: the only math you need</h2>
+      <p>You just saw that the mask, ANDing, and the network/host split all work one bit at a time. This section gives you the fluency to read those bits. An IPv4 address is 32 bits, written as four 8-bit <strong>octets</strong> in dotted decimal. To subnet, you only need to be comfortable with one octet at a time.</p>
+    </div>
+
+    <h3 class="sub">The eight place values</h3>
+    <div class="table-scroll">
+      <table class="spec chart">
+        <thead><tr><th>Bit position</th><th>8</th><th>7</th><th>6</th><th>5</th><th>4</th><th>3</th><th>2</th><th>1</th></tr></thead>
+        <tbody>
+          <tr><td class="b">Power of 2</td><td>2⁷</td><td>2⁶</td><td>2⁵</td><td>2⁴</td><td>2³</td><td>2²</td><td>2¹</td><td>2⁰</td></tr>
+          <tr class="hl"><td class="b">Place value</td><td>128</td><td>64</td><td>32</td><td>16</td><td>8</td><td>4</td><td>2</td><td>1</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>All eight bits on is 128+64+32+16+8+4+2+1 = <strong>255</strong>, which is why no octet can go above 255.</p>
+
+    <h3 class="sub">Decimal → binary: the subtraction method</h3>
+    <p>Work left to right. If the place value fits in what's left, write <strong>1</strong> and subtract. If it doesn't fit, write <strong>0</strong>. Example: <code>172</code></p>
+    <div class="table-scroll">
+      <table class="spec">
+        <thead><tr><th>Place value</th><th>Fits in what's left?</th><th>Bit</th><th>Remainder</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">128</td><td>172 ≥ 128 ✓</td><td class="mono b">1</td><td class="mono">44</td></tr>
+          <tr><td class="mono">64</td><td>44 &lt; 64</td><td class="mono b">0</td><td class="mono">44</td></tr>
+          <tr><td class="mono">32</td><td>44 ≥ 32 ✓</td><td class="mono b">1</td><td class="mono">12</td></tr>
+          <tr><td class="mono">16</td><td>12 &lt; 16</td><td class="mono b">0</td><td class="mono">12</td></tr>
+          <tr><td class="mono">8</td><td>12 ≥ 8 ✓</td><td class="mono b">1</td><td class="mono">4</td></tr>
+          <tr><td class="mono">4</td><td>4 ≥ 4 ✓</td><td class="mono b">1</td><td class="mono">0</td></tr>
+          <tr><td class="mono">2</td><td>0 &lt; 2</td><td class="mono b">0</td><td class="mono">0</td></tr>
+          <tr><td class="mono">1</td><td>0 &lt; 1</td><td class="mono b">0</td><td class="mono">0</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Read the bit column top to bottom: 172 = <code>10101100</code>.</p>
+
+    <h3 class="sub">Binary → decimal: add up the 1s</h3>
+    <p><code>11000000</code> has 1s in the 128 and 64 places, so 128 + 64 = <strong>192</strong>. <code>01001101</code> has 1s in the 64, 8, 4, and 1 places, so 64 + 8 + 4 + 1 = <strong>77</strong>.</p>
+
+    <div class="analogy">
+      <span class="label">Think of it like light switches</span>
+      <p>An octet is a row of 8 light switches, each labeled with its wattage: 128, 64, 32, 16, 8, 4, 2, 1. Flip some on, and the octet's value is the total wattage. To make 172, you flip on 128, 32, 8, and 4, because those add to 172. That's all binary conversion is: choosing which switches to turn on.</p>
+      <p class="limit">Each switch is worth double the one to its right, so there's exactly one way to make any number from 0 to 255.</p>
+    </div>
+
+    <div class="bit-widget" id="bitWidget">
+      <p style="margin:0 0 12px; font-family:var(--mono); font-size:.8rem; text-transform:uppercase; letter-spacing:.06em; color:var(--kraft-dark); font-weight:600;">Try it: click bits, or type a number from 0 to 255</p>
+      <div class="bit-row" id="bitRow"></div>
+      <div class="bit-out">
+        <label>Decimal <input class="txt" id="bitDec" type="number" min="0" max="255" value="172" aria-label="Decimal value"></label>
+        <span>Binary <strong id="bitBin">10101100</strong></span>
+        <span class="bit-sum" id="bitSum"></span>
+      </div>
+    </div>
+
+    <h3 class="sub">Two things to memorize</h3>
+    <p>All subnet mask octets are built the same way: <strong>1s fill in from the left</strong>. So a mask octet can only ever be one of nine values:</p>
+    <div class="table-scroll">
+      <table class="spec chart" style="max-width:520px;">
+        <thead><tr><th>Mask octet (binary)</th><th>Decimal</th><th>1-bits</th></tr></thead>
+        <tbody><tr><td>00000000</td><td class="b">0</td><td>0</td></tr><tr><td>10000000</td><td class="b">128</td><td>1</td></tr><tr><td>11000000</td><td class="b">192</td><td>2</td></tr><tr><td>11100000</td><td class="b">224</td><td>3</td></tr><tr><td>11110000</td><td class="b">240</td><td>4</td></tr><tr><td>11111000</td><td class="b">248</td><td>5</td></tr><tr><td>11111100</td><td class="b">252</td><td>6</td></tr><tr><td>11111110</td><td class="b">254</td><td>7</td></tr><tr><td>11111111</td><td class="b">255</td><td>8</td></tr></tbody>
+      </table>
+    </div>
+    <p>You'll also use powers of two constantly to count subnets and hosts:</p>
+    <div class="table-scroll">
+      <table class="spec chart">
+        <thead><tr><th>n</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th><th>9</th><th>10</th><th>11</th><th>12</th><th>13</th><th>14</th><th>16</th></tr></thead>
+        <tbody><tr class="hl"><td class="b">2ⁿ</td><td>2</td><td>4</td><td>8</td><td>16</td><td>32</td><td>64</td><td>128</td><td>256</td><td>512</td><td>1,024</td><td>2,048</td><td>4,096</td><td>8,192</td><td>16,384</td><td>65,536</td></tr></tbody>
+      </table>
+    </div>
+    <div class="teach-note">
+      <span class="label">Shortcut</span>
+      Each power of two is double the one before it. If you forget 2¹¹, double 1,024 and get 2,048. On an exam, write the row out once and read answers off it.
+    </div>
   </section>
 
   <!-- CHEAT SHEET -->
