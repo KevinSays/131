@@ -146,6 +146,20 @@
     .scene, .cold-open, .st-block{box-shadow:none;}
     .next-time{background:#fff;color:var(--ink);border:2px solid var(--ink);}
   }
+
+  /* YOU MAY ALSO LIKE (spinoff rail) */
+  .also-like{ margin:44px 0 10px; }
+  .also-like .rail-title{ font-family:'IBM Plex Mono',monospace; font-size:0.74rem; font-weight:600; letter-spacing:0.18em; text-transform:uppercase; margin:0 0 12px; }
+  .also-like .rail{ display:grid; gap:14px; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); }
+  .also-like a.card{ display:block; text-decoration:none; color:var(--ink); background:var(--paper); border:1.5px solid var(--ink); box-shadow:5px 5px 0 rgba(31,36,33,0.16); }
+  .also-like a.card:hover{ background:#F3E7E2; }
+  .also-like .still{ background:var(--ink); color:var(--paper); padding:16px 14px 12px; }
+  .also-like .still .kind{ font-family:'IBM Plex Mono',monospace; font-size:0.62rem; letter-spacing:0.2em; opacity:0.75; display:block; margin-bottom:6px; }
+  .also-like .still .kind.villain{ color:#e59a8f; opacity:1; }
+  .also-like .still .t{ font-family:'Special Elite','Courier New',monospace; font-size:1.05rem; line-height:1.2; }
+  .also-like .blurb{ padding:10px 14px 12px; font-size:0.84rem; line-height:1.45; font-style:italic; }
+  .also-like .tags{ display:block; margin-top:6px; font-style:normal; font-family:'IBM Plex Mono',monospace; font-size:0.66rem; opacity:0.7; letter-spacing:0.04em; }
+  @media print{ .also-like{ display:none; } }
 </style>
 </head>
 <body>
@@ -299,6 +313,24 @@
     <p class="tag">NEXT TIME ON OSI COMPANY</p>
     <p>Someone on the second floor has been handing out address labels that aren't theirs. Local Dispatch's address book doesn't lie — except when it's been told to.</p>
     <p class="ep-title">EPISODE 02: THE IMPERSONATOR</p>
+  </div>
+
+  <div class="also-like">
+    <p class="rail-title">You may also like</p>
+    <div class="rail">
+      <a class="card" href="../../IT131_ZoningOffice.html">
+        <div class="still"><span class="kind">NEW SERIES · SPINOFF</span><span class="t">The Zoning Office</span></div>
+        <p class="blurb">Logistics has a back office nobody visits, until the address map starts to buckle. A rookie, a veteran Surveyor, and six episodes of subnetting.<span class="tags">Season 1 · 6 episodes · Workplace drama</span></p>
+      </a>
+      <a class="card" href="../../IT131_ZoningOffice.html#ep1">
+        <div class="still"><span class="kind villain">VILLAIN · THE ZONING OFFICE</span><span class="t">The Sprawl</span></div>
+        <p class="blurb">One network. Hundreds of devices. Every one of them shouting at once, and it only gets louder.<span class="tags">Episode 01 · Street Names and House Numbers</span></p>
+      </a>
+      <a class="card" href="../../IT131_ZoningOffice.html#ep5">
+        <div class="still"><span class="kind villain">VILLAIN · THE ZONING OFFICE</span><span class="t">The Overlap</span></div>
+        <p class="blurb">It never breaks in. It just moves in next door, onto addresses that were never its to take.<span class="tags">Episode 05 · Moving Day</span></p>
+      </a>
+    </div>
   </div>
 
   <footer>Read aloud, assign per-student, or project alongside the Wireshark walkthrough. Photocopy freely for classroom use.</footer>

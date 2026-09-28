@@ -1,0 +1,571 @@
+<title>IT131 – The Zoning Office</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --paper:#EDE8DD; --canvas:#D9D2C3; --ink:#1F2421; --kraft:#B08554; --kraft-dark:#664526;
+    --blue:#2F4858; --red:#A23A2E; --ticket:#F3E7E2;
+    --blue-soft:rgba(47,72,88,.08); --red-soft:rgba(162,58,46,.08);
+    --kraft-soft:rgba(176,133,84,.14); --ink-soft:rgba(31,36,33,.06);
+    --shadow:5px 5px 0 rgba(31,36,33,.16);
+    --display:'Special Elite','Courier New',monospace;
+    --sans:'IBM Plex Sans', system-ui, sans-serif;
+    --mono:'IBM Plex Mono', monospace;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth; font-size:125%;}
+  body{
+    margin:0; background:var(--canvas); color:var(--ink); font-family:var(--sans);
+    line-height:1.55; -webkit-font-smoothing:antialiased;
+    background-image:radial-gradient(rgba(31,36,33,.06) 1px, transparent 1px);
+    background-size:16px 16px;
+  }
+  ::selection{ background:var(--kraft-soft); }
+  a{ color:var(--blue); }
+  .wrap{ max-width:940px; margin:0 auto; padding:0 20px; }
+  code{ font-family:var(--mono); background:var(--ink-soft); padding:1px 6px; border-radius:2px; font-size:.9em; }
+
+  header.masthead{ padding:48px 0 30px; }
+  .eyebrow{ display:inline-block; font-family:var(--mono); font-size:.86rem; letter-spacing:.12em;
+    border:2px solid var(--blue); color:var(--blue); padding:4px 10px; transform:rotate(-2deg); background:var(--paper); }
+  h1{ font-family:var(--display); font-weight:400; font-size:clamp(1.9rem,5vw,2.9rem); letter-spacing:.01em;
+    margin:16px 0 10px; line-height:1.15; }
+  .lede{ max-width:64ch; font-size:1.02rem; line-height:1.6; opacity:.85; margin:0 0 18px; }
+  .factrow{ display:flex; flex-wrap:wrap; gap:10px; }
+  .fact{ font-family:var(--mono); font-size:.82rem; letter-spacing:.02em; background:var(--paper);
+    border:1.5px solid var(--ink); padding:.4em .8em; display:flex; gap:.5em; box-shadow:3px 3px 0 rgba(31,36,33,.14); }
+  .fact b{ color:var(--kraft-dark); font-weight:600; text-transform:uppercase; letter-spacing:.06em; font-size:.88rem; }
+
+  nav.index{ position:sticky; top:0; z-index:20; background:color-mix(in srgb, var(--canvas) 92%, transparent);
+    backdrop-filter:blur(6px); border-top:2px solid var(--ink); border-bottom:2px solid var(--ink); }
+  nav.index .wrap{ display:flex; gap:2px; overflow-x:auto; padding:8px 20px; scrollbar-width:none; }
+  nav.index .wrap::-webkit-scrollbar{ display:none; }
+  nav.index a{ font-family:var(--mono); font-weight:600; letter-spacing:.03em; font-size:.82rem; text-decoration:none;
+    color:var(--ink); opacity:.85; padding:.5em .8em; white-space:nowrap; text-transform:uppercase; border:1px solid transparent; }
+  nav.index a:hover{ opacity:1; border-color:var(--ink); background:var(--paper); }
+  nav.index a.toc-link{ color:var(--blue); opacity:1; border-right:1.5px solid var(--ink); margin-right:8px; padding-right:16px; }
+  nav.index a.toc-link:hover{ background:var(--blue-soft); border-color:var(--ink); }
+
+  section{ padding:44px 0; border-bottom:2px dashed rgba(31,36,33,.3); }
+  section:last-of-type{ border-bottom:none; }
+  .section-head{ margin-bottom:26px; max-width:70ch; }
+  .kicker{ font-family:var(--mono); font-weight:600; font-size:.9rem; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--red); margin:0 0 .4em; }
+  h2{ font-family:var(--display); font-weight:400; font-size:clamp(1.4rem,2.8vw,1.9rem); margin:0 0 .25em; letter-spacing:.005em; }
+  .section-head p{ opacity:.82; margin:.5em 0 0; }
+  h3.sub{ font-family:var(--mono); font-size:1.02rem; margin:24px 0 10px; text-transform:uppercase; letter-spacing:.04em; color:var(--kraft-dark); }
+
+  .obj-list{ display:grid; gap:10px; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); list-style:none; margin:0; padding:0; }
+  .obj-list li{ background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow); padding:14px 16px; font-size:.92rem; }
+  .obj-list li::before{ content:"▸"; color:var(--red); margin-right:.5em; font-weight:700; }
+
+  .teach-note{ margin:18px 0; padding:12px 14px; border:1.5px dashed var(--blue); background:var(--blue-soft);
+    font-family:var(--mono); font-size:.82rem; line-height:1.6; }
+  .teach-note .label{ color:var(--blue); font-weight:600; letter-spacing:.05em; text-transform:uppercase; font-size:.88rem; display:block; margin-bottom:.4em; }
+  .teach-note.warn{ border-color:var(--red); background:var(--red-soft); }
+  .teach-note.warn .label{ color:var(--red); }
+  .teach-note.preview{ border-color:var(--kraft-dark); background:var(--kraft-soft); }
+  .teach-note.preview .label{ color:var(--kraft-dark); }
+
+  .cold-open{ background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow); padding:18px 20px; margin:24px 0; }
+  .cold-open .tag{ font-family:var(--mono); font-size:.84rem; letter-spacing:.1em; color:var(--red); margin:0 0 8px; text-transform:uppercase; }
+  .cold-open p{ margin:0; font-size:.95rem; line-height:1.6; font-style:italic; }
+
+  /* TERMINAL BLOCKS */
+  .terminal{ background:var(--ticket); color:var(--ink); border:1.5px solid var(--ink); margin:20px 0; overflow:hidden; box-shadow:var(--shadow); }
+  .terminal-header{ background:color-mix(in srgb, var(--ticket) 80%, #fff); padding:8px 14px; border-bottom:1px solid rgba(31,36,33,.15); display:flex; align-items:center; gap:6px; }
+  .terminal-dot{ width:10px; height:10px; border-radius:50%; }
+  .terminal-dot.r{ background:var(--red); }
+  .terminal-dot.y{ background:var(--kraft-dark); }
+  .terminal-dot.g{ background:var(--blue); }
+  .terminal-title{ font-family:var(--mono); font-size:.8rem; color:var(--kraft-dark); margin-left:8px; letter-spacing:.04em; }
+  .terminal-body{ padding:14px 18px; font-family:'Courier New', Courier, monospace; font-size:.84rem; line-height:1.65; overflow-x:auto; white-space:pre-wrap; word-wrap:break-word; }
+  .terminal-body .prompt{ color:var(--blue); font-weight:700; }
+  .terminal-body .cmd{ color:var(--ink); font-weight:600; }
+  .terminal-body .comment{ color:var(--kraft-dark); font-style:italic; }
+  .terminal-body .hl{ color:var(--red); font-weight:600; }
+  .terminal-body .out{ color:var(--ink); opacity:.7; }
+
+  table.spec{ width:100%; border-collapse:collapse; margin:18px 0; font-size:.86rem; }
+  table.spec th{ font-family:var(--mono); font-weight:600; text-transform:uppercase; letter-spacing:.05em; font-size:.86rem;
+    color:var(--kraft-dark); text-align:left; padding:8px 10px; border-bottom:2px solid var(--ink); }
+  table.spec td{ padding:9px 10px; border-bottom:1px dashed rgba(31,36,33,.3); vertical-align:top; }
+  table.spec tr:last-child td{ border-bottom:none; }
+  table.spec td.mono, table.spec th.mono{ font-family:var(--mono); }
+
+  .toolbar{ display:flex; gap:10px; align-items:center; margin-bottom:20px; flex-wrap:wrap; }
+  button.btn{ font-family:var(--mono); font-weight:600; letter-spacing:.03em; text-transform:uppercase; font-size:.9rem;
+    background:var(--paper); color:var(--ink); border:1.5px solid var(--ink); padding:.55em 1em; cursor:pointer; box-shadow:3px 3px 0 rgba(31,36,33,.14); }
+  button.btn:hover{ background:var(--kraft-soft); }
+  button.btn:focus-visible, a:focus-visible, .flashcard:focus-visible, input:focus-visible{ outline:2px solid var(--blue); outline-offset:2px; }
+  #cardProgress{ font-family:var(--mono); font-size:.85rem; opacity:.75; }
+  .card-grid{ display:grid; gap:16px; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); }
+  .flashcard{ perspective:1200px; height:190px; cursor:pointer; border:none; background:none; padding:0; font-family:inherit; text-align:left; width:100%; }
+  .flashcard-inner{ position:relative; width:100%; height:100%; transition:transform .5s cubic-bezier(.4,.2,.2,1); transform-style:preserve-3d; -webkit-transform-style:preserve-3d; will-change:transform; }
+  .flashcard.flipped .flashcard-inner{ transform:rotateY(180deg); -webkit-transform:rotateY(180deg); }
+  .flashcard-face{ position:absolute; inset:0; backface-visibility:hidden; -webkit-backface-visibility:hidden; -moz-backface-visibility:hidden; border:1.5px solid var(--ink); box-shadow:var(--shadow);
+    padding:15px; display:flex; flex-direction:column; justify-content:center; }
+  .flashcard-face.front{ background:var(--paper); transform:translateZ(.5px); }
+  .flashcard-face.back{ background:var(--ticket); transform:rotateY(180deg) translateZ(.5px); overflow-y:auto; }
+  .flashcard-face .lbl{ font-family:var(--mono); font-weight:600; letter-spacing:.1em; text-transform:uppercase; font-size:.82rem; color:var(--kraft-dark); margin-bottom:.5em; }
+  .flashcard-face.front .term{ font-family:var(--display); font-weight:400; font-size:1.05rem; letter-spacing:.01em; }
+  .flashcard-face.back .def{ font-size:.82rem; }
+  .flashcard.known .flashcard-face.front{ border-color:var(--blue); border-width:2px; }
+
+  .quiz-q{ background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow); padding:18px 20px; margin-bottom:18px; }
+  .quiz-q .qtext{ font-weight:600; margin:0 0 13px; }
+  .quiz-q .qnum{ font-family:var(--display); color:var(--red); margin-right:.5em; }
+  .choices{ display:grid; gap:8px; }
+  .choice{ text-align:left; font-family:var(--sans); font-size:.9rem; background:var(--ticket); border:1.5px solid var(--ink);
+    padding:.65em .85em; cursor:pointer; color:var(--ink); }
+  .choice:hover{ border-color:var(--blue); }
+  .choice.correct{ background:var(--blue-soft); border-color:var(--blue); border-width:2px; }
+  .choice.incorrect{ background:var(--red-soft); border-color:var(--red); border-width:2px; }
+  .choice[disabled]{ cursor:default; }
+  .explain{ margin-top:12px; font-size:.84rem; opacity:.85; border-left:3px solid var(--kraft); padding-left:12px; display:none; font-family:var(--mono); }
+  .explain.show{ display:block; }
+  #quizScore{ font-family:var(--mono); font-size:.9rem; opacity:.75; margin-bottom:16px; }
+
+  .example{ background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow); padding:20px 22px; margin-bottom:16px; }
+  .example h3{ font-family:var(--display); font-weight:400; font-size:1.15rem; margin:0 0 8px; }
+  .example .tag{ display:inline-block; font-family:var(--mono); font-weight:600; font-size:.86rem; text-transform:uppercase; letter-spacing:.07em;
+    color:var(--blue); background:var(--blue-soft); border:1px solid var(--blue); padding:.25em .6em; margin-bottom:10px; }
+  details.solution{ margin-top:12px; }
+  details.solution summary{ cursor:pointer; font-family:var(--mono); font-weight:600; letter-spacing:.03em; text-transform:uppercase;
+    font-size:.9rem; color:var(--blue); list-style:none; display:inline-flex; align-items:center; gap:.4em; }
+  details.solution summary::-webkit-details-marker{ display:none; }
+  details.solution summary::before{ content:"▸"; transition:transform .15s; }
+  details.solution[open] summary::before{ transform:rotate(90deg); }
+  details.solution .solbody{ margin-top:10px; padding:13px 15px; background:var(--ticket); font-size:.88rem; }
+
+  #glossarySearch{ width:100%; max-width:400px; font-family:var(--sans); font-size:.9rem; padding:.65em .85em;
+    border:1.5px solid var(--ink); background:var(--paper); color:var(--ink); margin-bottom:16px; }
+  .alpha-nav{ display:flex; flex-wrap:wrap; gap:4px; margin-bottom:22px; }
+  .alpha-nav a{ font-family:var(--mono); font-weight:600; font-size:.82rem; width:1.8em; height:1.8em; display:flex;
+    align-items:center; justify-content:center; border:1px solid var(--ink); text-decoration:none; color:var(--ink); opacity:.35; }
+  .alpha-nav a.has{ opacity:1; background:var(--paper); }
+  .alpha-nav a.has:hover{ border-color:var(--blue); color:var(--blue); }
+  .glossary-letter{ font-family:var(--display); font-weight:400; color:var(--red); font-size:1.1rem; margin:20px 0 6px; }
+  dl.glossary{ margin:0; }
+  dl.glossary .gitem{ border-top:1px dashed rgba(31,36,33,.35); padding:11px 0; }
+  dl.glossary dt{ font-family:var(--mono); font-weight:600; font-size:.98rem; }
+  dl.glossary dd{ margin:.3em 0 0; opacity:.8; font-size:.86rem; }
+  .gitem.hidden{ display:none; }
+
+  footer{ padding:30px 0 60px; }
+  footer p{ opacity:.65; font-size:.82rem; font-family:var(--mono); letter-spacing:.02em; }
+
+  .back-to-top{ position:fixed; bottom:22px; right:22px; z-index:40; width:50px; height:50px;
+    background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow);
+    font-family:var(--display); font-size:1.4rem; color:var(--ink); line-height:1;
+    display:flex; align-items:center; justify-content:center; padding:0; cursor:pointer; text-decoration:none;
+    opacity:0; visibility:hidden; transform:translateY(10px);
+    transition:opacity .25s ease, transform .25s ease, visibility 0s .25s; }
+  .back-to-top.show{ opacity:1; visibility:visible; transform:translateY(0); transition:opacity .25s ease, transform .25s ease, visibility 0s; }
+  .back-to-top:hover{ background:var(--blue-soft); border-color:var(--blue); color:var(--blue); }
+  .back-to-top:focus-visible{ outline:2px solid var(--blue); outline-offset:2px; }
+
+  @media print{
+    body{ background:#fff; }
+    nav.index{ display:none; }
+    .quiz-q, .example, .flashcard-face, .terminal{ box-shadow:none; }
+    .back-to-top{ display:none; }
+  }
+  /* EPISODES (OSI Company house style) */
+  .ep-head h2{ font-size:clamp(1.6rem,3.2vw,2.2rem); }
+  .scene{ background:var(--paper); border-left:4px solid var(--kraft); padding:16px 20px; margin:20px 0; }
+  .scene-head{ font-family:var(--mono); font-size:.76rem; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--blue); margin:0 0 10px; }
+  .scene .narrator{ font-style:italic; opacity:.85; font-size:.9rem; line-height:1.55; margin:0 0 10px; }
+  .scene .line{ margin:10px 0 10px 18px; }
+  .scene .who{ font-family:var(--display); font-size:.88rem; display:block; margin-bottom:2px; color:var(--kraft-dark); letter-spacing:.03em; }
+  .scene .who.villain{ color:var(--red); }
+  .scene .say{ margin:0; font-size:.92rem; line-height:1.5; }
+  .scene .stage{ font-style:italic; opacity:.65; font-size:.82rem; margin:6px 0 6px 18px; }
+  .scene .teach-note{ margin:14px 0 0; }
+  .next-time{ margin:30px 0 0; padding:18px 20px; border:2px solid var(--ink); background:var(--paper); text-align:center; }
+  .next-time .tag{ font-family:var(--mono); font-size:.7rem; letter-spacing:.25em; opacity:.7; margin:0 0 8px; }
+  .next-time p{ margin:0 0 8px; font-size:.92rem; line-height:1.55; font-style:italic; }
+  .next-time .ep-title{ font-family:var(--display); font-style:normal; font-size:1.05rem; letter-spacing:.04em; margin:0; }
+  .next-time .ep-title a{ color:var(--ink); }
+  .your-turn{ margin:24px 0 0; padding:12px 16px; border:1.5px solid var(--blue); background:var(--blue-soft); display:flex; flex-wrap:wrap; gap:8px 10px; align-items:center; }
+  .your-turn .label{ font-family:var(--mono); font-size:.78rem; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:var(--blue); margin-right:6px; }
+  .your-turn a{ font-family:var(--mono); font-size:.8rem; font-weight:600; text-decoration:none; color:var(--ink); background:var(--paper); border:1.5px solid var(--ink); padding:.35em .7em; }
+  .your-turn a:hover{ background:var(--kraft-soft); }
+
+
+  table.spec td.b{ font-weight:600; }
+  .table-scroll{ overflow-x:auto; margin:18px 0; } .table-scroll table.spec{ margin:0; }
+  nav.index a.guide-link{ color:var(--blue); opacity:1; border-right:1.5px solid var(--ink); margin-right:8px; padding-right:16px; }
+
+  /* STREAMING SHELF */
+  .rating{ display:inline-flex; flex-wrap:wrap; gap:8px; font-family:var(--mono); font-size:.76rem; letter-spacing:.04em; margin:0 0 18px; }
+  .rating span{ border:1.5px solid var(--ink); padding:.15em .55em; background:var(--paper); }
+  .rating span.hot{ background:var(--red); color:var(--paper); border-color:var(--red); }
+  .shelf{ display:grid; gap:14px; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); }
+  .tile{ display:flex; flex-direction:column; text-decoration:none; color:var(--ink); background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow); }
+  .tile:hover{ background:var(--ticket); }
+  .tile .still{ background:var(--ink); color:var(--paper); padding:12px 16px 14px; min-height:96px; display:flex; flex-direction:column; justify-content:space-between; gap:8px; }
+  .tile .still .num{ font-family:var(--mono); font-size:.72rem; letter-spacing:.2em; opacity:.7; }
+  .tile .still .t{ font-family:var(--display); font-size:1.12rem; line-height:1.2; }
+  .tile .meta{ padding:12px 16px 14px; font-size:.86rem; line-height:1.45; }
+  .tile .meta .covers{ display:block; margin-top:8px; font-family:var(--mono); font-size:.72rem; color:var(--kraft-dark); }
+  .villains{ display:grid; gap:14px; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); margin-top:14px; }
+  .villain-card{ background:var(--ink); color:var(--paper); padding:16px 18px; border:1.5px solid var(--ink); box-shadow:var(--shadow); }
+  .villain-card .tag{ font-family:var(--mono); font-size:.7rem; letter-spacing:.2em; color:#e59a8f; margin:0 0 4px; }
+  .villain-card h3{ font-family:var(--display); font-weight:400; font-size:1.3rem; margin:0 0 6px; }
+  .villain-card p{ margin:0; font-size:.9rem; line-height:1.5; font-style:italic; opacity:.92; }
+  .after-ep{ margin:24px 0 0; padding:12px 16px; border:1.5px solid var(--blue); background:var(--blue-soft); display:flex; flex-wrap:wrap; gap:8px 10px; align-items:center; }
+  .after-ep .label{ font-family:var(--mono); font-size:.78rem; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:var(--blue); margin-right:6px; }
+  .after-ep a{ font-family:var(--mono); font-size:.8rem; font-weight:600; text-decoration:none; color:var(--ink); background:var(--paper); border:1.5px solid var(--ink); padding:.35em .7em; }
+  .after-ep a:hover{ background:var(--kraft-soft); }
+  @media print{ .after-ep, .shelf{ display:none; } .scene, .cold-open{ box-shadow:none; } }
+</style>
+
+<header class="masthead">
+  <div class="wrap">
+    <p class="eyebrow">IT131 · THE OSI COMPANY PRESENTS</p>
+    <h1>The Zoning Office</h1>
+    <p class="lede">A new hire in Logistics' Zoning Office learns to read, cut, and plan the company's address map, one case at a time. Six episodes of subnetting, told as a workplace drama. Read the scenes aloud in class, or watch the Rookie make the mistakes so you don't have to.</p>
+    <div class="factrow">
+      <span class="fact"><b>Season 1</b> 6 episodes</span>
+      <span class="fact"><b>Ties to</b> Modules 11 &amp; 12</span>
+      <span class="fact"><b>Companion</b> <a href="IT131_Subnetting.html">Subnetting Field Manual</a></span>
+    </div>
+  </div>
+</header>
+
+<nav class="index" aria-label="Section index">
+  <div class="wrap">
+    <a href="index.html" class="toc-link">↩ Contents</a>
+    <a href="IT131_Subnetting.html" class="guide-link">Subnetting Guide →</a>
+    <a href="#season">Episodes</a>
+    <a href="#cast">Cast</a>
+    <a href="#ep1">Ep1</a>
+    <a href="#ep2">Ep2</a>
+    <a href="#ep3">Ep3</a>
+    <a href="#ep4">Ep4</a>
+    <a href="#ep5">Ep5</a>
+    <a href="#ep6">Ep6</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+  <!-- SEASON -->
+  <section id="season">
+    <div class="section-head">
+      <p class="kicker">Now streaming</p>
+      <h2>Season 1</h2>
+      <p>Each episode is a short script: a cold open, a few scenes, and a teaching note after every scene. When it ends, jump to the full write-up in the Subnetting Field Manual, or straight into the matching drill.</p>
+    </div>
+    <div class="rating"><span class="hot">NEW SEASON</span><span>TV-G</span><span>Workplace drama</span><span>Networking</span><span>6 episodes</span></div>
+    <div class="shelf">
+      <a class="tile" href="#ep1">
+        <div class="still"><span class="num">EPISODE 01</span><span class="t">Street Names and House Numbers</span></div>
+        <div class="meta">A rookie's first day, a network that won't stop shouting, and the one line that changes everything.<span class="covers">Covers: network vs. host, the mask, ANDing, and the −2</span></div>
+      </a>
+      <a class="tile" href="#ep2">
+        <div class="still"><span class="num">EPISODE 02</span><span class="t">Eight Switches</span></div>
+        <div class="meta">Training arc. Eight switches, one panel, and nobody goes home until it's automatic.<span class="covers">Covers: binary, one octet at a time</span></div>
+      </a>
+      <a class="tile" href="#ep3">
+        <div class="still"><span class="num">EPISODE 03</span><span class="t">Where Does This Address Live?</span></div>
+        <div class="meta">One ticket. Thirty-two bits. The Surveyor only needs one octet of them.<span class="covers">Covers: analysis: the block-size method</span></div>
+      </a>
+      <a class="tile" href="#ep4">
+        <div class="still"><span class="num">EPISODE 04</span><span class="t">Cutting the Map</span></div>
+        <div class="meta">Six departments, one street, and a pair of scissors that only cut in halves.<span class="covers">Covers: design: borrowing bits and the 7 holy steps</span></div>
+      </a>
+      <a class="tile" href="#ep5">
+        <div class="still"><span class="num">EPISODE 05</span><span class="t">Moving Day</span></div>
+        <div class="meta">The branch office moves in Monday. The Overlap moved in Sunday night.<span class="covers">Covers: VLSM</span></div>
+      </a>
+      <a class="tile" href="#ep6">
+        <div class="still"><span class="num">EPISODE 06</span><span class="t">The Tower</span></div>
+        <div class="meta">Season finale. The ISP hands over 65,536 floors, and the elevator counts in hex.<span class="covers">Covers: IPv6 subnetting</span></div>
+      </a>
+    </div>
+  </section>
+
+  <!-- CAST -->
+  <section id="cast">
+    <div class="section-head">
+      <p class="kicker">The cast</p>
+      <h2>Previously, in the OSI Company…</h2>
+      <p>The Zoning Office is a desk inside Logistics, the Layer 3 department from the <a href="osi-company-teaching-kit/osi-company/osi-company-directory.html">OSI Company</a>. Same company, new office, new trouble.</p>
+    </div>
+    <div class="cold-open">
+      <p class="tag">Cold open</p>
+      <p>Third floor, Logistics. Behind the routing desk is a smaller office nobody visits until something breaks: the <strong>Zoning Office</strong>. It decides where every street line on the company's address map goes. This morning it gets a new hire, and a problem that has been growing for years.</p>
+    </div>
+    <h3 class="sub">Series regulars</h3>
+    <div class="table-scroll">
+      <table class="spec">
+        <thead><tr><th>Character</th><th>Who they are</th></tr></thead>
+        <tbody>
+          <tr><td class="b">The Rookie</td><td>New hire in the Zoning Office. Asks the questions you're thinking, and makes the mistakes you'd make, so you don't have to.</td></tr>
+          <tr><td class="b">The Surveyor</td><td>Twenty years in Zoning. Carries a ruler everywhere, and it's always the right one.</td></tr>
+          <tr><td class="b">The NOC</td><td>The network operations center, from the <a href="osi-company-teaching-kit/osi-company/osi-episode-02-script.html">OSI Company episodes</a>. Calls when something breaks.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="sub">Guest stars (the bad kind)</h3>
+    <div class="villains">
+      <div class="villain-card">
+        <p class="tag">VILLAIN · EPISODE 01</p>
+        <h3>The Sprawl</h3>
+        <p>One network. Hundreds of devices. Every one of them shouting at once, and it only gets louder.</p>
+      </div>
+      <div class="villain-card">
+        <p class="tag">VILLAIN · EPISODE 05</p>
+        <h3>The Overlap</h3>
+        <p>It never breaks in. It just moves in next door, onto addresses that were never its to take.</p>
+      </div>
+    </div>
+
+    <div class="cold-open">
+      <p class="tag">Case file ZO-01</p>
+      <p>Headquarters runs every device on one flat network, <code>192.168.10.0/24</code>. It's crowded, it's noisy, and it's wide open: the guest Wi-Fi can reach the HR servers. A new branch office opens next month with <code>192.168.50.0/24</code>. By the end of the season, the Rookie will have zoned both, and moved the company onto IPv6.</p>
+    </div>
+  </section>
+
+  <!-- EPISODE 1 -->
+  <section id="ep1">
+    <div class="section-head ep-head">
+      <p class="kicker">Episode 01</p>
+      <h2>Street Names and House Numbers</h2>
+      <p><em>A rookie's first day, a network that won't stop shouting, and the one line that changes everything.</em></p>
+    </div>
+
+    <div class="cold-open">
+      <p class="tag">Cold open</p>
+      <p>9:02 a.m. The Rookie's desk phone hasn't stopped ringing. Every printer, laptop, and phone at headquarters shares one network, and every one of them hears every ARP request and every DHCP Discover from all the others. The NOC has a name for it: <strong>The Sprawl</strong>.</p>
+    </div>
+
+    <div class="scene">
+      <p class="scene-head">Zoning Office — the address map</p>
+      <p class="narrator">The Surveyor unrolls the company address map across the desk.</p>
+      <div class="line"><span class="who">THE SURVEYOR</span><p class="say">Every address on this map has two parts. A street name and a house number.</p></div>
+      <div class="line"><span class="who">THE ROOKIE</span><p class="say">192.168.10.77. Which part is which?</p></div>
+      <div class="line"><span class="who">THE SURVEYOR</span><p class="say">Depends on the mask. The mask is the zoning line: everything to the left of it is the street, everything to the right is the house. With a /26, the first 26 bits are street.</p></div>
+      <div class="line"><span class="who">THE ROOKIE</span><p class="say">So the address doesn't know where its own line is?</p></div>
+      <div class="line"><span class="who">THE SURVEYOR</span><p class="say">Never. An address without a mask is a house number without a street.</p></div>
+      <div class="teach-note"><span class="label">Teaching note</span>The <strong>network portion</strong> (street name) is shared by every device on the subnet. The <strong>host portion</strong> (house number) is unique on it. The subnet mask, or prefix length, marks the line between them. The address alone never tells you where the line is.</div>
+    </div>
+    <div class="scene">
+      <p class="scene-head">Zoning Office — the stencil</p>
+      <p class="narrator">The Surveyor slides a cardboard stencil over an address printed in binary.</p>
+      <div class="line"><span class="who">THE SURVEYOR</span><p class="say">Every host does this before it sends anything. The stencil has a hole wherever the mask has a 1. Whatever shows through the holes is the street. Everything under the cardboard reads as zero.</p></div>
+      <div class="line"><span class="who">THE ROOKIE</span><p class="say">So the host stencils its own address, stencils the destination, and compares?</p></div>
+      <div class="line"><span class="who">THE SURVEYOR</span><p class="say">With its own stencil, both times. Same street: walk the letter over yourself. Different street: drop it at the post office.</p></div>
+      <div class="teach-note"><span class="label">Teaching note</span>That stencil is <strong>ANDing</strong>: <code>1 AND 1 = 1</code>, anything else is <code>0</code>. A host ANDs its own address and the destination with <em>its own</em> mask. If they match, the destination is local and the host ARPs for it. If not, the packet goes to the <strong>default gateway</strong>, the post office.</div>
+    </div>
+    <div class="scene">
+      <p class="scene-head">Zoning Office — two houses nobody lives in</p>
+      <div class="line"><span class="who">THE ROOKIE</span><p class="say">A /26 leaves 6 host bits. That's 64 house numbers, so 64 devices?</p></div>
+      <div class="line"><span class="who">THE SURVEYOR</span><p class="say">62. The first number on every street is the street sign: the network address. The last one is the street's loudspeaker: the broadcast address. Nobody lives in either.</p></div>
+      <div class="line"><span class="who">THE ROOKIE</span><p class="say">Every street? Even a tiny one?</p></div>
+      <div class="line"><span class="who">THE SURVEYOR</span><p class="say">Every street loses exactly two. A 4-address street keeps 2 houses. A 4,096-address street keeps 4,094.</p></div>
+      <div class="teach-note"><span class="label">Teaching note</span>Usable hosts = <strong>2<sup>h</sup> − 2</strong>, where <em>h</em> is the number of host bits. Network address: host bits all 0. Broadcast address: host bits all 1.</div>
+    </div>
+
+    <div class="after-ep"><span class="label">After the episode</span><a href="IT131_Subnetting.html#anatomy">Read the full write-up</a><a href="IT131_Subnetting.html?drill=cls#practice">Practice drill</a></div>
+    <div class="next-time">
+      <p class="tag">NEXT TIME IN THE ZONING OFFICE</p>
+      <p>The Rookie can read a street name, in decimal. The Surveyor points at a panel of eight switches on the wall and says the map only really exists in binary.</p>
+      <p class="ep-title"><a href="#ep2">EPISODE 02: EIGHT SWITCHES</a></p>
+    </div>
+  </section>
+
+  <!-- EPISODE 2 -->
+  <section id="ep2">
+    <div class="section-head ep-head">
+      <p class="kicker">Episode 02 · Training arc</p>
+      <h2>Eight Switches</h2>
+      <p><em>Training arc. Eight switches, one panel, and nobody goes home until it's automatic.</em></p>
+    </div>
+
+    <div class="cold-open">
+      <p class="tag">Cold open</p>
+      <p>The Surveyor taps a panel on the wall: eight light switches, each labeled with a wattage. "Nobody leaves the Zoning Office until they can read this panel without counting on their fingers."</p>
+    </div>
+
+    <div class="scene">
+      <p class="scene-head">Zoning Office — the switch panel</p>
+      <div class="line"><span class="who">THE SURVEYOR</span><p class="say">128, 64, 32, 16, 8, 4, 2, 1. Flip some on. The octet's value is the total wattage.</p></div>
+      <div class="line"><span class="who">THE ROOKIE</span><p class="say">172 is… 128, 32, 8, and 4. So <code>10101100</code>.</p></div>
+      <div class="line"><span class="who">THE SURVEYOR</span><p class="say">Work left to right, every time. Does this switch fit in what's left? Flip it on and subtract. Doesn't fit? Leave it off.</p></div>
+      <div class="line"><span class="who">THE ROOKIE</span><p class="say">And masks?</p></div>
+      <div class="line"><span class="who">THE SURVEYOR</span><p class="say">A mask only ever flips switches on from the left. So a mask octet can only be one of nine numbers. Learn those nine, and you'll never convert a mask again.</p></div>
+      <div class="teach-note"><span class="label">Teaching note</span>Decimal → binary: the subtraction method, left to right. Binary → decimal: add up the switches that are on. Mask octets fill with 1s from the left, so they can only be 0, 128, 192, 224, 240, 248, 252, 254, or 255. Each switch is worth double the one to its right, so there's exactly one way to make any number from 0 to 255.</div>
+    </div>
+
+    <div class="after-ep"><span class="label">After the episode</span><a href="IT131_Subnetting.html#binary">Read the full write-up</a><a href="IT131_Subnetting.html?drill=quick#practice">Practice drill</a></div>
+    <div class="next-time">
+      <p class="tag">NEXT TIME IN THE ZONING OFFICE</p>
+      <p>Ticket after ticket asks the same question: here's an address, which street is it on? The Rookie starts writing out all 32 bits. The Surveyor takes the pencil away.</p>
+      <p class="ep-title"><a href="#ep3">EPISODE 03: WHERE DOES THIS ADDRESS LIVE?</a></p>
+    </div>
+  </section>
+
+  <!-- EPISODE 3 -->
+  <section id="ep3">
+    <div class="section-head ep-head">
+      <p class="kicker">Episode 03</p>
+      <h2>Where Does This Address Live?</h2>
+      <p><em>One ticket. Thirty-two bits. The Surveyor only needs one octet of them.</em></p>
+    </div>
+
+    <div class="cold-open">
+      <p class="tag">Cold open</p>
+      <p>A ticket from the help desk: "Laptop at <code>172.16.45.200/20</code> can't reach the printer. Are they on the same subnet?" The Rookie starts writing out 32 bits. The Surveyor takes the pencil away.</p>
+    </div>
+
+    <div class="scene">
+      <p class="scene-head">Zoning Office — the ruler</p>
+      <div class="line"><span class="who">THE SURVEYOR</span><p class="say">You never need all 32 bits. Only one octet matters: the first one, reading left to right, where the mask isn't 255. That's where the zoning line crosses.</p></div>
+      <div class="line"><span class="who">THE ROOKIE</span><p class="say">A /20 is 255.255.240.0. So the third octet.</p></div>
+      <div class="line"><span class="who">THE SURVEYOR</span><p class="say">Now the ruler. 256 minus the mask value: 256 − 240 = 16. Put a tick every 16 along that octet: 0, 16, 32, 48…</p></div>
+      <div class="line"><span class="who">THE ROOKIE</span><p class="say">The address has 45 there. The tick at or below 45 is 32, and the next tick is 48.</p></div>
+      <div class="line"><span class="who">THE SURVEYOR</span><p class="say">So the street starts at 172.16.32.0 and ends one before the next tick: 172.16.47.255. Everything to the right of the line is zeros on the street sign and 255s on the loudspeaker.</p></div>
+      <div class="line"><span class="who">THE ROOKIE</span><p class="say">That's it?</p></div>
+      <div class="line"><span class="who">THE SURVEYOR</span><p class="say">That's it. Every address, every mask. Six steps.</p></div>
+      <div class="teach-note"><span class="label">Teaching note</span>The <strong>block size</strong> (magic number) = 256 − the mask value in the interesting octet. The network is the largest multiple of the block size that's ≤ the address's value there. The broadcast is the next network − 1. Octets to the right: 0 for the network, 255 for the broadcast. It's the same thing you do when you ask which inch a 3¾-inch measurement falls in, with "inches" that are 16 units wide.</div>
+    </div>
+
+    <div class="after-ep"><span class="label">After the episode</span><a href="IT131_Subnetting.html#method">Read the full write-up</a><a href="IT131_Subnetting.html?drill=six#practice">Practice drill</a></div>
+    <div class="next-time">
+      <p class="tag">NEXT TIME IN THE ZONING OFFICE</p>
+      <p>The branch manager calls. They don't have an address to look up. They have a whole network, and they want it cut into pieces.</p>
+      <p class="ep-title"><a href="#ep4">EPISODE 04: CUTTING THE MAP</a></p>
+    </div>
+  </section>
+
+  <!-- EPISODE 4 -->
+  <section id="ep4">
+    <div class="section-head ep-head">
+      <p class="kicker">Episode 04</p>
+      <h2>Cutting the Map</h2>
+      <p><em>Six departments, one street, and a pair of scissors that only cut in halves.</em></p>
+    </div>
+
+    <div class="cold-open">
+      <p class="tag">Cold open</p>
+      <p>Headquarters' flat /24 is finally getting split up. The Surveyor lays <code>192.168.10.0/24</code> on the table as one long street and hands the Rookie a pair of scissors. "Six departments. Make me six streets."</p>
+    </div>
+
+    <div class="scene">
+      <p class="scene-head">Zoning Office — every cut doubles</p>
+      <p class="narrator">The Rookie cuts the map in half. Two streets.</p>
+      <div class="line"><span class="who">THE SURVEYOR</span><p class="say">That cut cost you one host bit. You borrowed it to number streets instead of houses. Now cut every piece again.</p></div>
+      <div class="line"><span class="who">THE ROOKIE</span><p class="say">Four. Again, eight. I can't make six?</p></div>
+      <div class="line"><span class="who">THE SURVEYOR</span><p class="say">Not with bits. Cutting only ever gives you 2, 4, 8, 16. So you round up: take eight and keep two as spares. Three cuts, three borrowed bits.</p></div>
+      <div class="line"><span class="who">THE ROOKIE</span><p class="say">And every street got shorter.</p></div>
+      <div class="line"><span class="who">THE SURVEYOR</span><p class="say">Half as long with every cut. That's the whole trade: more streets, fewer houses on each.</p></div>
+      <div class="teach-note"><span class="label">Teaching note</span><em>n</em> borrowed bits give <strong>2<sup>n</sup> subnets</strong>, with no −2. The <em>h</em> host bits left give <strong>2<sup>h</sup> − 2 hosts</strong> per subnet. Where the scissors picture breaks: paper doesn't lose anything when you cut it, but every new street gives up 2 addresses, its sign and its loudspeaker.</div>
+    </div>
+    <div class="scene">
+      <p class="scene-head">Zoning Office — the holy steps</p>
+      <div class="line"><span class="who">THE ROOKIE</span><p class="say">Is there a checklist? I'm going to forget something.</p></div>
+      <div class="line"><span class="who">THE SURVEYOR</span><p class="say">Seven steps. Office tradition, so we call them the holy steps. Step five is where rookies go wrong.</p></div>
+      <div class="line"><span class="who">THE ROOKIE</span><p class="say">Why step five?</p></div>
+      <div class="line"><span class="who">THE SURVEYOR</span><p class="say">You add the borrowed bits to the mask you were <em>given</em>. Not the one you remember from the class tables. Start from a /20, and a /20 is what you add to.</p></div>
+      <div class="teach-note"><span class="label">Teaching note</span>The 7 holy steps are below, with three worked examples. The third starts from a /20, which is exactly the step-five trap. There's also a printable copy: <a href="IT131_7_Holy_Steps_of_Subnetting.pdf">The 7 Holy Steps of Subnetting (PDF)</a>.</div>
+    </div>
+
+    <div class="after-ep"><span class="label">After the episode</span><a href="IT131_Subnetting.html#subnetting">Read the full write-up</a><a href="IT131_Subnetting.html?drill=seven#practice">Practice drill</a></div>
+    <div class="next-time">
+      <p class="tag">NEXT TIME IN THE ZONING OFFICE</p>
+      <p>The branch office opens. Sales needs 100 addresses, Guest Wi-Fi needs 10, and three router links need 2 each. Equal-size streets won't fit, and <strong>The Overlap</strong> has been waiting for exactly this.</p>
+      <p class="ep-title"><a href="#ep5">EPISODE 05: MOVING DAY</a></p>
+    </div>
+  </section>
+
+  <!-- EPISODE 5 -->
+  <section id="ep5">
+    <div class="section-head ep-head">
+      <p class="kicker">Episode 05</p>
+      <h2>Moving Day</h2>
+      <p><em>The branch office moves in Monday. The Overlap moved in Sunday night.</em></p>
+    </div>
+
+    <div class="cold-open">
+      <p class="tag">Cold open</p>
+      <p>The branch office, <code>192.168.50.0/24</code>, is empty. Four departments and three router links move in on Monday. The Rookie has a plan. The plan is wrong.</p>
+    </div>
+
+    <div class="scene">
+      <p class="scene-head">Branch office — smallest first</p>
+      <p class="narrator">The Rookie zones the three router links first, at .0, .4, and .8, then puts Guest Wi-Fi right after them, at .12/28.</p>
+      <p class="stage">[The Rookie's phone rings. It's the NOC.]</p>
+      <div class="line"><span class="who">THE NOC</span><p class="say">Zoning? WAN 1 and Guest Wi-Fi are fighting over the same addresses.</p></div>
+      <div class="line"><span class="who villain">THE OVERLAP</span><p class="say">Stencil .12 with a /28 mask and you get .0. Your "Guest Wi-Fi" runs from .0 to .15, right on top of all three links. Thanks for the room.</p></div>
+      <div class="line"><span class="who">THE SURVEYOR</span><p class="say">Every lot has to start on a line painted for its size. A /28 is 16 addresses, so it can only start at .0, .16, .32… never .12.</p></div>
+      <div class="line"><span class="who">THE ROOKIE</span><p class="say">So I skip ahead to .16?</p></div>
+      <div class="line"><span class="who">THE SURVEYOR</span><p class="say">You could, and leave a hole behind you. Or you do what movers do: couch and fridge first. Biggest lot at .0, then the next biggest right after it. Every lot lands on its own line automatically, and the leftover space stays in one piece.</p></div>
+      <div class="teach-note"><span class="label">Teaching note</span>The VLSM rules: sort largest to smallest, start each subnet on a multiple of its own block size, and allocate contiguously, with the /30 WAN links last. ITN calls the same idea <strong>subnetting a subnet</strong>. The full allocation for this office is in the write-up below.</div>
+    </div>
+
+    <div class="after-ep"><span class="label">After the episode</span><a href="IT131_Subnetting.html#vlsm">Read the full write-up</a><a href="IT131_Subnetting.html?drill=vlsm#practice">Practice drill</a></div>
+    <div class="next-time">
+      <p class="tag">NEXT TIME IN THE ZONING OFFICE</p>
+      <p>The ISP calls with good news: the company has been assigned an IPv6 block. The Rookie asks how many addresses that is. The Surveyor laughs for a long time.</p>
+      <p class="ep-title"><a href="#ep6">EPISODE 06: THE TOWER</a></p>
+    </div>
+  </section>
+
+  <!-- EPISODE 6 -->
+  <section id="ep6">
+    <div class="section-head ep-head">
+      <p class="kicker">Episode 06 · Season finale</p>
+      <h2>The Tower</h2>
+      <p><em>Season finale. The ISP hands over 65,536 floors, and the elevator counts in hex.</em></p>
+    </div>
+
+    <div class="cold-open">
+      <p class="tag">Cold open</p>
+      <p>The ISP's letter says <code>2001:db8:acad::/48</code>. The Rookie reaches for the scissors. The Surveyor puts them back in the drawer.</p>
+    </div>
+
+    <div class="scene">
+      <p class="scene-head">Zoning Office — 65,536 floors</p>
+      <div class="line"><span class="who">THE SURVEYOR</span><p class="say">This isn't a street. It's a tower. 65,536 floors, and that's the subnet ID. Every floor has more rooms than you'll ever fill.</p></div>
+      <div class="line"><span class="who">THE ROOKIE</span><p class="say">So how do I size the floors?</p></div>
+      <div class="line"><span class="who">THE SURVEYOR</span><p class="say">You don't. Every floor is a /64: every department, every router link. You just choose a floor number.</p></div>
+      <div class="line"><span class="who">THE ROOKIE</span><p class="say">Floor 10 for Sales, then.</p></div>
+      <div class="line"><span class="who">THE SURVEYOR</span><p class="say">Check the elevator panel.</p></div>
+      <p class="narrator">The panel counts 7, 8, 9, a, b, c, d, e, f, 10.</p>
+      <div class="line"><span class="who">THE ROOKIE</span><p class="say">…Floor 10 is sixteen.</p></div>
+      <div class="line"><span class="who">THE SURVEYOR</span><p class="say">Ten is floor <code>a</code>. Welcome to hex.</p></div>
+      <div class="teach-note"><span class="label">Teaching note</span>The subnet ID is the 4th hextet: 16 bits, so 65,536 /64 subnets from a /48. Count it in hex, like an odometer with 16 digits per wheel: after <code>9</code> come <code>a</code>–<code>f</code>, and only then <code>10</code>, which is sixteen. <code>2001:db8:acad:a::/64</code> is subnet ten.</div>
+    </div>
+
+    <div class="after-ep"><span class="label">After the episode</span><a href="IT131_Subnetting.html#ipv6">Read the full write-up</a><a href="IT131_Subnetting.html?drill=v6#practice">Practice drill</a></div>
+    <div class="next-time">
+      <p class="tag">END OF SEASON ONE</p>
+      <p>Headquarters is zoned, the branch office moved in without a single overlap, and the company has a tower with 65,536 floors to grow into. The Rookie gets a desk drawer of their own: the Field Kit.</p>
+      <p class="ep-title"><a href="IT131_Subnetting.html#fieldkit">THE FIELD KIT →</a></p>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>IT131 · CCNA: Introduction to Networks · The Zoning Office, Season 1 — an OSI Company spinoff. Companion to the Subnetting Field Manual.</p>
+  </div>
+</footer>
+
+<button id="backToTop" class="back-to-top" aria-label="Back to top" title="Back to top">↑</button>
+
+<script>
+  const backToTop = document.getElementById('backToTop');
+  function toggleBackToTop(){ backToTop.classList.toggle('show', window.scrollY > 480); }
+  window.addEventListener('scroll', toggleBackToTop, {passive:true});
+  toggleBackToTop();
+  backToTop.addEventListener('click', () => window.scrollTo({top:0, behavior:'smooth'}));
+</script>
