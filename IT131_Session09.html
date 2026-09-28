@@ -1,0 +1,1129 @@
+<title>IT131 Session 9 – IPv6 Addressing &amp; ICMP</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --paper:#EDE8DD; --canvas:#D9D2C3; --ink:#1F2421; --kraft:#B08554; --kraft-dark:#664526;
+    --blue:#2F4858; --red:#A23A2E; --ticket:#F3E7E2;
+    --blue-soft:rgba(47,72,88,.08); --red-soft:rgba(162,58,46,.08);
+    --kraft-soft:rgba(176,133,84,.14); --ink-soft:rgba(31,36,33,.06);
+    --shadow:5px 5px 0 rgba(31,36,33,.16);
+    --display:'Special Elite','Courier New',monospace;
+    --sans:'IBM Plex Sans', system-ui, sans-serif;
+    --mono:'IBM Plex Mono', monospace;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth; font-size:125%;}
+  body{
+    margin:0; background:var(--canvas); color:var(--ink); font-family:var(--sans);
+    line-height:1.55; -webkit-font-smoothing:antialiased;
+    background-image:radial-gradient(rgba(31,36,33,.06) 1px, transparent 1px);
+    background-size:16px 16px;
+  }
+  ::selection{ background:var(--kraft-soft); }
+  a{ color:var(--blue); }
+  .wrap{ max-width:940px; margin:0 auto; padding:0 20px; }
+  code{ font-family:var(--mono); background:var(--ink-soft); padding:1px 6px; border-radius:2px; font-size:.9em; }
+
+  header.masthead{ padding:48px 0 30px; }
+  .eyebrow{ display:inline-block; font-family:var(--mono); font-size:.86rem; letter-spacing:.12em;
+    border:2px solid var(--blue); color:var(--blue); padding:4px 10px; transform:rotate(-2deg); background:var(--paper); }
+  h1{ font-family:var(--display); font-weight:400; font-size:clamp(1.9rem,5vw,2.9rem); letter-spacing:.01em;
+    margin:16px 0 10px; line-height:1.15; }
+  .lede{ max-width:64ch; font-size:1.02rem; line-height:1.6; opacity:.85; margin:0 0 18px; }
+  .factrow{ display:flex; flex-wrap:wrap; gap:10px; }
+  .fact{ font-family:var(--mono); font-size:.82rem; letter-spacing:.02em; background:var(--paper);
+    border:1.5px solid var(--ink); padding:.4em .8em; display:flex; gap:.5em; box-shadow:3px 3px 0 rgba(31,36,33,.14); }
+  .fact b{ color:var(--kraft-dark); font-weight:600; text-transform:uppercase; letter-spacing:.06em; font-size:.88rem; }
+
+  nav.index{ position:sticky; top:0; z-index:20; background:color-mix(in srgb, var(--canvas) 92%, transparent);
+    backdrop-filter:blur(6px); border-top:2px solid var(--ink); border-bottom:2px solid var(--ink); }
+  nav.index .wrap{ display:flex; gap:2px; overflow-x:auto; padding:8px 20px; scrollbar-width:none; }
+  nav.index .wrap::-webkit-scrollbar{ display:none; }
+  nav.index a{ font-family:var(--mono); font-weight:600; letter-spacing:.03em; font-size:.82rem; text-decoration:none;
+    color:var(--ink); opacity:.85; padding:.5em .8em; white-space:nowrap; text-transform:uppercase; border:1px solid transparent; }
+  nav.index a:hover{ opacity:1; border-color:var(--ink); background:var(--paper); }
+  nav.index a.toc-link{ color:var(--blue); opacity:1; border-right:1.5px solid var(--ink); margin-right:8px; padding-right:16px; }
+  nav.index a.toc-link:hover{ background:var(--blue-soft); border-color:var(--ink); }
+
+  section{ padding:44px 0; border-bottom:2px dashed rgba(31,36,33,.3); }
+  section:last-of-type{ border-bottom:none; }
+  .section-head{ margin-bottom:26px; max-width:70ch; }
+  .kicker{ font-family:var(--mono); font-weight:600; font-size:.9rem; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--red); margin:0 0 .4em; }
+  h2{ font-family:var(--display); font-weight:400; font-size:clamp(1.4rem,2.8vw,1.9rem); margin:0 0 .25em; letter-spacing:.005em; }
+  .section-head p{ opacity:.82; margin:.5em 0 0; }
+  h3.sub{ font-family:var(--mono); font-size:1.02rem; margin:24px 0 10px; text-transform:uppercase; letter-spacing:.04em; color:var(--kraft-dark); }
+
+  .obj-list{ display:grid; gap:10px; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); list-style:none; margin:0; padding:0; }
+  .obj-list li{ background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow); padding:14px 16px; font-size:.92rem; }
+  .obj-list li::before{ content:"▸"; color:var(--red); margin-right:.5em; font-weight:700; }
+
+  .teach-note{ margin:18px 0; padding:12px 14px; border:1.5px dashed var(--blue); background:var(--blue-soft);
+    font-family:var(--mono); font-size:.82rem; line-height:1.6; }
+  .teach-note .label{ color:var(--blue); font-weight:600; letter-spacing:.05em; text-transform:uppercase; font-size:.88rem; display:block; margin-bottom:.4em; }
+  .teach-note.warn{ border-color:var(--red); background:var(--red-soft); }
+  .teach-note.warn .label{ color:var(--red); }
+  .teach-note.preview{ border-color:var(--kraft-dark); background:var(--kraft-soft); }
+  .teach-note.preview .label{ color:var(--kraft-dark); }
+
+  .cold-open{ background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow); padding:18px 20px; margin:24px 0; }
+  .cold-open .tag{ font-family:var(--mono); font-size:.84rem; letter-spacing:.1em; color:var(--red); margin:0 0 8px; text-transform:uppercase; }
+  .cold-open p{ margin:0; font-size:.95rem; line-height:1.6; font-style:italic; }
+
+  /* TERMINAL BLOCKS */
+  .terminal{ background:var(--ticket); color:var(--ink); border:1.5px solid var(--ink); margin:20px 0; overflow:hidden; box-shadow:var(--shadow); }
+  .terminal-header{ background:color-mix(in srgb, var(--ticket) 80%, #fff); padding:8px 14px; border-bottom:1px solid rgba(31,36,33,.15); display:flex; align-items:center; gap:6px; }
+  .terminal-dot{ width:10px; height:10px; border-radius:50%; }
+  .terminal-dot.r{ background:var(--red); }
+  .terminal-dot.y{ background:var(--kraft-dark); }
+  .terminal-dot.g{ background:var(--blue); }
+  .terminal-title{ font-family:var(--mono); font-size:.8rem; color:var(--kraft-dark); margin-left:8px; letter-spacing:.04em; }
+  .terminal-body{ padding:14px 18px; font-family:'Courier New', Courier, monospace; font-size:.84rem; line-height:1.65; overflow-x:auto; white-space:pre-wrap; word-wrap:break-word; }
+  .terminal-body .prompt{ color:var(--blue); font-weight:700; }
+  .terminal-body .cmd{ color:var(--ink); font-weight:600; }
+  .terminal-body .comment{ color:var(--kraft-dark); font-style:italic; }
+  .terminal-body .hl{ color:var(--red); font-weight:600; }
+  .terminal-body .out{ color:var(--ink); opacity:.7; }
+
+  table.spec{ width:100%; border-collapse:collapse; margin:18px 0; font-size:.86rem; }
+  table.spec th{ font-family:var(--mono); font-weight:600; text-transform:uppercase; letter-spacing:.05em; font-size:.86rem;
+    color:var(--kraft-dark); text-align:left; padding:8px 10px; border-bottom:2px solid var(--ink); }
+  table.spec td{ padding:9px 10px; border-bottom:1px dashed rgba(31,36,33,.3); vertical-align:top; }
+  table.spec tr:last-child td{ border-bottom:none; }
+  table.spec td.mono, table.spec th.mono{ font-family:var(--mono); }
+
+  .toolbar{ display:flex; gap:10px; align-items:center; margin-bottom:20px; flex-wrap:wrap; }
+  button.btn{ font-family:var(--mono); font-weight:600; letter-spacing:.03em; text-transform:uppercase; font-size:.9rem;
+    background:var(--paper); color:var(--ink); border:1.5px solid var(--ink); padding:.55em 1em; cursor:pointer; box-shadow:3px 3px 0 rgba(31,36,33,.14); }
+  button.btn:hover{ background:var(--kraft-soft); }
+  button.btn:focus-visible, a:focus-visible, .flashcard:focus-visible, input:focus-visible{ outline:2px solid var(--blue); outline-offset:2px; }
+  #cardProgress{ font-family:var(--mono); font-size:.85rem; opacity:.75; }
+  .card-grid{ display:grid; gap:16px; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); }
+  .flashcard{ perspective:1200px; height:190px; cursor:pointer; border:none; background:none; padding:0; font-family:inherit; text-align:left; width:100%; }
+  .flashcard-inner{ position:relative; width:100%; height:100%; transition:transform .5s cubic-bezier(.4,.2,.2,1); transform-style:preserve-3d; -webkit-transform-style:preserve-3d; will-change:transform; }
+  .flashcard.flipped .flashcard-inner{ transform:rotateY(180deg); -webkit-transform:rotateY(180deg); }
+  .flashcard-face{ position:absolute; inset:0; backface-visibility:hidden; -webkit-backface-visibility:hidden; -moz-backface-visibility:hidden; border:1.5px solid var(--ink); box-shadow:var(--shadow);
+    padding:15px; display:flex; flex-direction:column; justify-content:center; }
+  .flashcard-face.front{ background:var(--paper); transform:translateZ(.5px); }
+  .flashcard-face.back{ background:var(--ticket); transform:rotateY(180deg) translateZ(.5px); overflow-y:auto; }
+  .flashcard-face .lbl{ font-family:var(--mono); font-weight:600; letter-spacing:.1em; text-transform:uppercase; font-size:.82rem; color:var(--kraft-dark); margin-bottom:.5em; }
+  .flashcard-face.front .term{ font-family:var(--display); font-weight:400; font-size:1.05rem; letter-spacing:.01em; }
+  .flashcard-face.back .def{ font-size:.82rem; }
+  .flashcard.known .flashcard-face.front{ border-color:var(--blue); border-width:2px; }
+
+  .quiz-q{ background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow); padding:18px 20px; margin-bottom:18px; }
+  .quiz-q .qtext{ font-weight:600; margin:0 0 13px; }
+  .quiz-q .qnum{ font-family:var(--display); color:var(--red); margin-right:.5em; }
+  .choices{ display:grid; gap:8px; }
+  .choice{ text-align:left; font-family:var(--sans); font-size:.9rem; background:var(--ticket); border:1.5px solid var(--ink);
+    padding:.65em .85em; cursor:pointer; color:var(--ink); }
+  .choice:hover{ border-color:var(--blue); }
+  .choice.correct{ background:var(--blue-soft); border-color:var(--blue); border-width:2px; }
+  .choice.incorrect{ background:var(--red-soft); border-color:var(--red); border-width:2px; }
+  .choice[disabled]{ cursor:default; }
+  .explain{ margin-top:12px; font-size:.84rem; opacity:.85; border-left:3px solid var(--kraft); padding-left:12px; display:none; font-family:var(--mono); }
+  .explain.show{ display:block; }
+  #quizScore{ font-family:var(--mono); font-size:.9rem; opacity:.75; margin-bottom:16px; }
+
+  .example{ background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow); padding:20px 22px; margin-bottom:16px; }
+  .example h3{ font-family:var(--display); font-weight:400; font-size:1.15rem; margin:0 0 8px; }
+  .example .tag{ display:inline-block; font-family:var(--mono); font-weight:600; font-size:.86rem; text-transform:uppercase; letter-spacing:.07em;
+    color:var(--blue); background:var(--blue-soft); border:1px solid var(--blue); padding:.25em .6em; margin-bottom:10px; }
+  details.solution{ margin-top:12px; }
+  details.solution summary{ cursor:pointer; font-family:var(--mono); font-weight:600; letter-spacing:.03em; text-transform:uppercase;
+    font-size:.9rem; color:var(--blue); list-style:none; display:inline-flex; align-items:center; gap:.4em; }
+  details.solution summary::-webkit-details-marker{ display:none; }
+  details.solution summary::before{ content:"▸"; transition:transform .15s; }
+  details.solution[open] summary::before{ transform:rotate(90deg); }
+  details.solution .solbody{ margin-top:10px; padding:13px 15px; background:var(--ticket); font-size:.88rem; }
+
+  #glossarySearch{ width:100%; max-width:400px; font-family:var(--sans); font-size:.9rem; padding:.65em .85em;
+    border:1.5px solid var(--ink); background:var(--paper); color:var(--ink); margin-bottom:16px; }
+  .alpha-nav{ display:flex; flex-wrap:wrap; gap:4px; margin-bottom:22px; }
+  .alpha-nav a{ font-family:var(--mono); font-weight:600; font-size:.82rem; width:1.8em; height:1.8em; display:flex;
+    align-items:center; justify-content:center; border:1px solid var(--ink); text-decoration:none; color:var(--ink); opacity:.35; }
+  .alpha-nav a.has{ opacity:1; background:var(--paper); }
+  .alpha-nav a.has:hover{ border-color:var(--blue); color:var(--blue); }
+  .glossary-letter{ font-family:var(--display); font-weight:400; color:var(--red); font-size:1.1rem; margin:20px 0 6px; }
+  dl.glossary{ margin:0; }
+  dl.glossary .gitem{ border-top:1px dashed rgba(31,36,33,.35); padding:11px 0; }
+  dl.glossary dt{ font-family:var(--mono); font-weight:600; font-size:.98rem; }
+  dl.glossary dd{ margin:.3em 0 0; opacity:.8; font-size:.86rem; }
+  .gitem.hidden{ display:none; }
+
+  footer{ padding:30px 0 60px; }
+  footer p{ opacity:.65; font-size:.82rem; font-family:var(--mono); letter-spacing:.02em; }
+
+  .back-to-top{ position:fixed; bottom:22px; right:22px; z-index:40; width:50px; height:50px;
+    background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow);
+    font-family:var(--display); font-size:1.4rem; color:var(--ink); line-height:1;
+    display:flex; align-items:center; justify-content:center; padding:0; cursor:pointer; text-decoration:none;
+    opacity:0; visibility:hidden; transform:translateY(10px);
+    transition:opacity .25s ease, transform .25s ease, visibility 0s .25s; }
+  .back-to-top.show{ opacity:1; visibility:visible; transform:translateY(0); transition:opacity .25s ease, transform .25s ease, visibility 0s; }
+  .back-to-top:hover{ background:var(--blue-soft); border-color:var(--blue); color:var(--blue); }
+  .back-to-top:focus-visible{ outline:2px solid var(--blue); outline-offset:2px; }
+
+  @media print{
+    body{ background:#fff; }
+    nav.index{ display:none; }
+    .quiz-q, .example, .flashcard-face, .terminal{ box-shadow:none; }
+    .back-to-top{ display:none; }
+  }
+
+  /* INTERACTIVE TOOLS */
+  .tool{ background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow); padding:16px 18px; margin:20px 0; }
+  .tool-title{ margin:0 0 10px; font-family:var(--mono); font-weight:600; font-size:.8rem; letter-spacing:.06em; text-transform:uppercase; color:var(--kraft-dark); }
+  .tool-in{ display:flex; flex-wrap:wrap; gap:10px; margin-bottom:12px; }
+  .tool-in input.txt{ flex:1 1 16em; min-width:0; font-family:var(--mono); font-size:.9rem; padding:.5em .7em; border:1.5px solid var(--ink); background:var(--ticket); color:var(--ink); }
+  .tool-out .row{ display:grid; grid-template-columns:9.5em 1fr; gap:10px; padding:6px 0; border-top:1px dashed rgba(31,36,33,.3); font-size:.86rem; align-items:baseline; }
+  .tool-out .row b{ font-family:var(--mono); font-size:.74rem; text-transform:uppercase; letter-spacing:.05em; color:var(--kraft-dark); }
+  .tool-out code{ overflow-wrap:anywhere; }
+  .tool-out .bad{ color:var(--red); font-family:var(--mono); font-size:.84rem; margin:0; }
+  @media (max-width:560px){ .tool-out .row{ grid-template-columns:1fr; gap:2px; } }
+</style>
+
+<header class="masthead">
+  <div class="wrap">
+    <p class="eyebrow">IT131 · SESSION 09 · FIELD NOTES</p>
+    <h1>IPv6 Addressing &amp; ICMP</h1>
+    <p class="lede">Last week Logistics' IPv4 address book turned out to be full. The public pool is gone, and NAT has been patching the gap for twenty years. This week Logistics gets a new address book so large nobody has to ration it, plus the tool it's always used to report trouble: ICMP, the protocol behind ping and traceroute.</p>
+    <div class="factrow">
+      <span class="fact"><b>New material</b> Module 12 — IPv6 Addressing</span>
+      <span class="fact"><b>New material</b> Module 13 — ICMP</span>
+      <span class="fact"><b>Checkpoint</b> Module Quiz — IP Addressing (Modules 11–13)</span>
+    </div>
+  </div>
+</header>
+
+<nav class="index" aria-label="Section index">
+  <div class="wrap">
+    <a href="index.html" class="toc-link">↩ Contents</a>
+    <a href="#overview">Overview</a>
+    <a href="#why">Why IPv6</a>
+    <a href="#format">Writing IPv6</a>
+    <a href="#types">Address Types</a>
+    <a href="#static">Static Config</a>
+    <a href="#dynamic">SLAAC &amp; DHCPv6</a>
+    <a href="#eui64">EUI-64</a>
+    <a href="#multicast">Multicast</a>
+    <a href="#subnet6">Subnetting</a>
+    <a href="#icmp">ICMP</a>
+    <a href="#tests">Ping &amp; Traceroute</a>
+    <a href="#mistakes">Common Mistakes</a>
+    <a href="#checkpoint">Checkpoint</a>
+    <a href="#flashcards">Flashcards</a>
+    <a href="#quiz">Quiz</a>
+    <a href="#examples">Examples</a>
+    <a href="#glossary">Glossary</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+  <!-- OVERVIEW -->
+  <section id="overview">
+    <div class="section-head">
+      <p class="kicker">Modules 12 &amp; 13</p>
+      <h2>What Session 9 covers</h2>
+      <p>Two modules and a checkpoint. Module 12 is IPv6 addressing: how to write it, what the address types are, and how devices get one. Module 13 is ICMP: the messages that report problems, and the two tests you'll run for the rest of your career, ping and traceroute.</p>
+    </div>
+    <ul class="obj-list">
+      <li>Explain why IPv6 is needed and the three ways IPv4 and IPv6 coexist</li>
+      <li>Write IPv6 addresses in full and compressed form</li>
+      <li>Identify GUA, link-local, unique local, and multicast addresses</li>
+      <li>Configure static IPv6 addresses on a router, and explain <code>ipv6 unicast-routing</code></li>
+      <li>Explain SLAAC, SLAAC + stateless DHCPv6, and stateful DHCPv6</li>
+      <li>Build an EUI-64 interface ID and a solicited-node multicast address</li>
+      <li>Describe ICMPv4/v6 messages, including ICMPv6's RS, RA, NS, and NA</li>
+      <li>Use ping and traceroute to locate a problem</li>
+    </ul>
+    <div class="teach-note">
+      <span class="label">Topology used on this page</span>
+      The same two routers as Session 7, now running IPv4 and IPv6 at the same time (dual stack). R1's LAN is <code>192.168.10.0/24</code> and <code>2001:db8:acad:1::/64</code>. The R1–R2 link is <code>10.0.0.0/30</code> and <code>2001:db8:acad:ff01::/64</code>. R2's LAN is <code>192.168.20.0/24</code> and <code>2001:db8:acad:2::/64</code>.
+    </div>
+  </section>
+
+  <!-- WHY IPV6 -->
+  <section id="why">
+    <div class="section-head">
+      <p class="kicker">Module 12 · 12.1</p>
+      <h2>Why IPv6 exists</h2>
+      <p>IPv4 has about 4.3 billion addresses, and the free pool ran out years ago. Internet growth, the problems NAT causes, and billions of IoT devices all need more. IPv6 has 128-bit addresses: about 340 undecillion (3.4 × 10³⁸).</p>
+    </div>
+    <h3 class="sub">Three ways IPv4 and IPv6 coexist</h3>
+    <p>The internet can't switch over in one night, so ITN names three migration techniques. The goal is native IPv6 everywhere. The other two are only for where it's needed.</p>
+    <table class="spec">
+      <thead><tr><th>Technique</th><th>How it works</th><th>Think of it as</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;">Dual stack</td><td>Devices run IPv4 and IPv6 at the same time, each with its own address.</td><td>Speaking two languages</td></tr>
+        <tr><td style="font-weight:600;">Tunneling</td><td>An IPv6 packet is carried inside an IPv4 packet across an IPv4-only network.</td><td>A letter mailed inside another envelope</td></tr>
+        <tr><td style="font-weight:600;">Translation (NAT64)</td><td>A device translates between IPv6 and IPv4, so an IPv6-only host can reach an IPv4-only one.</td><td>An interpreter</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- REPRESENTATION -->
+  <section id="format">
+    <div class="section-head">
+      <p class="kicker">Module 12 · 12.2</p>
+      <h2>Writing an IPv6 address</h2>
+      <p>128 bits written as eight <strong>hextets</strong> (16 bits, 4 hex digits each) separated by colons. Hex isn't case-sensitive. Two rules shorten the address.</p>
+    </div>
+    <table class="spec">
+      <thead><tr><th>Rule</th><th>What it does</th><th>Watch out</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;">1 · Omit leading zeros</td><td>Drop zeros at the <em>front</em> of any hextet: <code>0db8</code> → <code>db8</code>, <code>0000</code> → <code>0</code>.</td><td>Never trailing zeros. <code>0200</code> becomes <code>200</code>, not <code>2</code>.</td></tr>
+        <tr><td style="font-weight:600;">2 · Double colon</td><td>Replace <strong>one</strong> run of consecutive all-zero hextets with <code>::</code>.</td><td>Only once per address. Two would make it impossible to tell how many zeros each one hides.</td></tr>
+      </tbody>
+    </table>
+    <div class="teach-note">
+      <span class="label">ITN's own example</span>
+      <code>2001:0db8:0000:1111:0000:0000:0000:0200</code> → rule 1 → <code>2001:db8:0:1111:0:0:0:200</code> → rule 2 → <code>2001:db8:0:1111::200</code>. The single <code>0</code> in the 3rd hextet can't join the <code>::</code>, because it isn't next to the longer run.
+    </div>
+
+    <div class="tool">
+      <p class="tool-title">Try it: compress or expand any IPv6 address</p>
+      <div class="tool-in">
+        <input class="txt" id="v6In" value="2001:0db8:0000:1111:0000:0000:0000:0200" spellcheck="false" autocomplete="off" aria-label="IPv6 address">
+      </div>
+      <div id="v6Out" class="tool-out"></div>
+    </div>
+  </section>
+
+  <!-- ADDRESS TYPES -->
+  <section id="types">
+    <div class="section-head">
+      <p class="kicker">Module 12 · 12.3</p>
+      <h2>IPv6 address types</h2>
+      <p>Three categories: <strong>unicast</strong> (one device), <strong>multicast</strong> (a group), and <strong>anycast</strong> (one address on several devices, delivered to the nearest). There is <strong>no broadcast</strong> in IPv6. The all-nodes multicast group, <code>ff02::1</code>, does that job.</p>
+    </div>
+    <table class="spec">
+      <thead><tr><th>Type</th><th>Range</th><th>What it's for</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;">Global unicast (GUA)</td><td class="mono">2000::/3</td><td>Globally unique and routable on the internet, like a public IPv4 address. Today's GUAs start with a <code>2</code> or <code>3</code>.</td></tr>
+        <tr><td style="font-weight:600;">Link-local (LLA)</td><td class="mono">fe80::/10</td><td>Only valid on one link, and never routed. <strong>Every IPv6 interface must have one</strong>, and a device creates it automatically. Routers use LLAs to talk to their neighbors, and a host's default gateway is normally the router's LLA.</td></tr>
+        <tr><td style="font-weight:600;">Unique local (ULA)</td><td class="mono">fc00::/7</td><td>For internal use, somewhat like RFC 1918, but not meant to be hidden behind NAT. Rarely used.</td></tr>
+        <tr><td style="font-weight:600;">Multicast</td><td class="mono">ff00::/8</td><td>A group of devices. Only ever a destination, never a source.</td></tr>
+        <tr><td style="font-weight:600;">Loopback</td><td class="mono">::1</td><td>The device itself, like 127.0.0.1. <code>ping ::1</code> tests the local IPv6 stack (Module 13).</td></tr>
+      </tbody>
+    </table>
+
+    <h3 class="sub">Structure of a GUA</h3>
+    <div class="terminal">
+      <div class="terminal-header"><span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span><span class="terminal-title">2001:db8:acad:1::10/64, split into its three parts</span></div>
+      <div class="terminal-body"><span class="hl">2001:0db8:acad</span>:<span class="prompt">0001</span>:<span class="comment">0000:0000:0000:0010</span>
+└─── 48 bits ──┘ └16┘ └────── 64 bits ──────┘
+ Global routing  Subnet     Interface ID
+ prefix (ISP)    ID         (the host part)</div>
+    </div>
+    <p>The ISP assigns the global routing prefix, usually a /48. The 16-bit subnet ID is yours to number, which gives 65,536 subnets. The 64-bit interface ID identifies the device. A <strong>/64</strong> is recommended for every LAN, because SLAAC (below) needs a 64-bit interface ID.</p>
+  </section>
+
+  <!-- STATIC CONFIG -->
+  <section id="static">
+    <div class="section-head">
+      <p class="kicker">Module 12 · 12.4</p>
+      <h2>Static configuration on a router</h2>
+      <p>This builds on Session 7's R1 config: same interfaces, now with IPv6 added alongside IPv4.</p>
+    </div>
+    <table class="spec">
+      <thead><tr><th>Router</th><th>Interface</th><th>IPv4</th><th>IPv6 GUA</th><th>Link-local</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">R1</td><td class="mono">G0/0/1 (LAN-A)</td><td class="mono">192.168.10.1/24</td><td class="mono">2001:db8:acad:1::1/64</td><td class="mono">fe80::1</td></tr>
+        <tr><td class="mono">R1</td><td class="mono">G0/0/0 (to R2)</td><td class="mono">10.0.0.1/30</td><td class="mono">2001:db8:acad:ff01::1/64</td><td class="mono">fe80::1</td></tr>
+        <tr><td class="mono">R2</td><td class="mono">G0/0/0 (to R1)</td><td class="mono">10.0.0.2/30</td><td class="mono">2001:db8:acad:ff01::2/64</td><td class="mono">fe80::2</td></tr>
+        <tr><td class="mono">R2</td><td class="mono">G0/0/1 (LAN-B)</td><td class="mono">192.168.20.1/24</td><td class="mono">2001:db8:acad:2::1/64</td><td class="mono">fe80::2</td></tr>
+      </tbody>
+    </table>
+    <div class="terminal">
+      <div class="terminal-header"><span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span><span class="terminal-title">R1: add IPv6</span></div>
+      <div class="terminal-body"><span class="prompt">R1(config)#</span> <span class="hl">ipv6 unicast-routing</span>
+<span class="comment">! GLOBAL config. Makes R1 an IPv6 router: it forwards IPv6 between
+! interfaces, sends Router Advertisements, and joins ff02::2.</span>
+<span class="prompt">R1(config)#</span> <span class="cmd">interface gigabitethernet 0/0/1</span>
+<span class="prompt">R1(config-if)#</span> <span class="hl">ipv6 address 2001:db8:acad:1::1/64</span>
+<span class="prompt">R1(config-if)#</span> <span class="hl">ipv6 address fe80::1 link-local</span>
+<span class="prompt">R1(config-if)#</span> <span class="cmd">no shutdown</span>
+<span class="prompt">R1(config-if)#</span> <span class="cmd">exit</span>
+<span class="prompt">R1(config)#</span> <span class="cmd">interface gigabitethernet 0/0/0</span>
+<span class="prompt">R1(config-if)#</span> <span class="hl">ipv6 address 2001:db8:acad:ff01::1/64</span>
+<span class="prompt">R1(config-if)#</span> <span class="hl">ipv6 address fe80::1 link-local</span>
+<span class="prompt">R1(config-if)#</span> <span class="cmd">no shutdown</span>
+<span class="prompt">R1(config-if)#</span> <span class="cmd">end</span>
+<span class="comment">! no shutdown is redundant if Session 7 already enabled these ports,
+! but it's harmless and ITN always shows it.</span></div>
+    </div>
+
+    <div class="teach-note warn">
+      <span class="label">The #1 reason "IPv6 doesn't work" in Packet Tracer</span>
+      <code>ip routing</code> is <strong>on</strong> by default. <code>ipv6 unicast-routing</code> is <strong>off</strong> by default. Without it, R1's interfaces still take their addresses, but R1 acts like an IPv6 <em>host</em>: it won't forward IPv6, and it won't send Router Advertisements. PCs on LAN-A using SLAAC then get <strong>no global address and no default gateway</strong>, only their own fe80:: address.
+    </div>
+
+    <div class="teach-note">
+      <span class="label">Same fe80::1 on two interfaces?</span>
+      That's legal. A link-local address only has to be unique on its own link, and each interface is a different link. ITN says using a different LLA on each interface is common practice, and either choice works. Giving the router an easy LLA like <code>fe80::1</code> makes it a memorable default gateway.
+    </div>
+
+    <h3 class="sub">Verifying</h3>
+    <div class="terminal">
+      <div class="terminal-header"><span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span><span class="terminal-title">R1# show ipv6 interface brief</span></div>
+      <div class="terminal-body"><span class="prompt">R1#</span> <span class="cmd">show ipv6 interface brief</span>
+<span class="out">GigabitEthernet0/0/0   [up/up]
+    FE80::1
+    2001:DB8:ACAD:FF01::1
+GigabitEthernet0/0/1   [up/up]
+    FE80::1
+    2001:DB8:ACAD:1::1</span></div>
+    </div>
+    <p style="font-size:.88rem;">The link-local address is listed first, then the GUA. IOS displays addresses in uppercase and compressed. Other interfaces on the router show as <code>[administratively down/down]</code> and <code>unassigned</code>, trimmed here. <code>show ip interface brief</code> doesn't show IPv6 at all.</p>
+    <div class="terminal">
+      <div class="terminal-header"><span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span><span class="terminal-title">R1# show ipv6 route (legend shortened)</span></div>
+      <div class="terminal-body"><span class="prompt">R1#</span> <span class="cmd">show ipv6 route</span>
+<span class="out">IPv6 Routing Table - default - 5 entries
+Codes: C - Connected, L - Local, S - Static, ...
+C   2001:DB8:ACAD:1::/64 [0/0]
+     via GigabitEthernet0/0/1, directly connected
+L   2001:DB8:ACAD:1::1/128 [0/0]
+     via GigabitEthernet0/0/1, receive
+C   2001:DB8:ACAD:FF01::/64 [0/0]
+     via GigabitEthernet0/0/0, directly connected
+L   2001:DB8:ACAD:FF01::1/128 [0/0]
+     via GigabitEthernet0/0/0, receive
+L   FF00::/8 [0/0]
+     via Null0, receive</span></div>
+    </div>
+    <ul class="obj-list">
+      <li><strong>Same C + L pattern as IPv4</strong> (Session 7): a C route for the /64, and an L route for the router's own address, which is a <strong>/128</strong> instead of a /32.</li>
+      <li><strong>Link-local addresses never appear</strong> in the routing table, because they're never routed.</li>
+      <li><strong><code>L FF00::/8 via Null0</code></strong> is added automatically for the multicast range. Nobody configured it.</li>
+      <li>Reaching LAN-B would need a static IPv6 route, which is CCNA 2 material, the same as the IPv4 static routes in Session 7.</li>
+    </ul>
+  </section>
+
+  <!-- DYNAMIC -->
+  <section id="dynamic">
+    <div class="section-head">
+      <p class="kicker">Module 12 · 12.5 – 12.6</p>
+      <h2>Dynamic addressing: SLAAC and DHCPv6</h2>
+      <p>Hosts usually don't get IPv6 addresses typed in by hand. They ask the router, using two ICMPv6 messages.</p>
+    </div>
+    <table class="spec">
+      <thead><tr><th>Message</th><th>Direction</th><th>What it does</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;">Router Solicitation (RS)</td><td>Host → all routers (<code>ff02::2</code>)</td><td>"Is there a router here? Tell me how to get an address." A booting host sends one right away, so it doesn't have to wait.</td></tr>
+        <tr><td style="font-weight:600;">Router Advertisement (RA)</td><td>Router → all nodes (<code>ff02::1</code>)</td><td>Carries the prefix, the prefix length, and which method to use. The router's LLA, the RA's source address, becomes the host's default gateway. Routers send RAs every 200 seconds, and immediately in reply to an RS.</td></tr>
+      </tbody>
+    </table>
+
+    <h3 class="sub">The three methods</h3>
+    <table class="spec">
+      <thead><tr><th>Method</th><th>Host's GUA comes from</th><th>DNS and other info</th><th>Default gateway</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;">1 · SLAAC only</td><td>The RA's prefix plus an interface ID the host makes itself</td><td>The RA</td><td>Router's LLA, from the RA</td></tr>
+        <tr><td style="font-weight:600;">2 · SLAAC + stateless DHCPv6</td><td>SLAAC, as above</td><td>A <strong>stateless</strong> DHCPv6 server</td><td>Router's LLA, from the RA</td></tr>
+        <tr><td style="font-weight:600;">3 · Stateful DHCPv6</td><td>A <strong>stateful</strong> DHCPv6 server, which keeps track of who has which address</td><td>The DHCPv6 server</td><td>Router's LLA, <strong>still from the RA</strong></td></tr>
+      </tbody>
+    </table>
+    <div class="teach-note warn">
+      <span class="label">The testable nuance</span>
+      Even with stateful DHCPv6, the default gateway <strong>always</strong> comes from the router's RA. DHCPv6 never provides a gateway. That's a real difference from DHCPv4.
+    </div>
+    <div class="teach-note preview">
+      <span class="label">Preview, not on this checkpoint: the RA flags (CCNA 2)</span>
+      The RA signals which method to use with three flags: <strong>A</strong> (use SLAAC), <strong>O</strong> (get Other info from stateless DHCPv6), and <strong>M</strong> (Managed, meaning stateful DHCPv6). The commands that set them, such as <code>ipv6 nd other-config-flag</code> and <code>ipv6 nd managed-config-flag</code>, are CCNA 2 (SRWE Module 8) material. ITN only asks you to know the three methods by name and what each provides.
+    </div>
+
+    <h3 class="sub">What a SLAAC host shows</h3>
+    <div class="terminal">
+      <div class="terminal-header"><span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span><span class="terminal-title">PC-A (Windows 10/11, dual stack): ipconfig</span></div>
+      <div class="terminal-body"><span class="prompt">C:\&gt;</span> <span class="cmd">ipconfig</span>
+<span class="out">Ethernet adapter Ethernet:
+
+   Connection-specific DNS Suffix  . :
+   IPv6 Address. . . . . . . . . . . : 2001:db8:acad:1:3c1a:9b2f:6d4e:8a71
+   Temporary IPv6 Address. . . . . . : 2001:db8:acad:1:c49d:12e5:77a0:b3f2
+   Link-local IPv6 Address . . . . . : fe80::a5d0:61c4:2e9b:17f3%12
+   IPv4 Address. . . . . . . . . . . : 192.168.10.10
+   Subnet Mask . . . . . . . . . . . : 255.255.255.0
+   Default Gateway . . . . . . . . . : </span><span class="hl">fe80::1%12</span><span class="out">
+                                       192.168.10.1</span></div>
+    </div>
+    <ul class="obj-list">
+      <li><strong>The prefix <code>2001:db8:acad:1</code></strong> came from R1's RA. The rest is the interface ID the PC made itself.</li>
+      <li><strong><code>%12</code> is a zone ID</strong>, the PC's own number for that network interface. It isn't part of the address, and the number varies from PC to PC. It's needed because every link uses fe80::, so the PC has to say which interface it means.</li>
+      <li><strong>Temporary IPv6 Address</strong> is a privacy address. It changes periodically and is used for outgoing connections.</li>
+      <li><strong>Default Gateway</strong> shows R1's <em>link-local</em> address. That's normal and correct.</li>
+    </ul>
+    <p style="font-size:.86rem; opacity:.85;">The interface ID values above are just examples. Windows generates random interface IDs, which it has done since Vista. Packet Tracer PCs show a simpler format, using EUI-64 interface IDs built from the PC's MAC address.</p>
+
+    <h3 class="sub">Duplicate Address Detection (DAD)</h3>
+    <p>Before using a new address, a host checks that nobody else already has it. It sends a Neighbor Solicitation <em>asking for its own address</em>. If a Neighbor Advertisement comes back, someone already owns it. It works like ARPing for your own IP.</p>
+
+    <h3 class="sub">Link-local addresses are automatic</h3>
+    <p>Every IPv6 interface creates its own LLA: <code>fe80::</code> plus an interface ID, either EUI-64 or random. Windows uses the same method it uses for its SLAAC address. A <strong>Cisco router creates an EUI-64 LLA automatically</strong> the moment an interface gets a GUA, unless you set one with the <code>link-local</code> keyword, as above.</p>
+  </section>
+
+  <!-- EUI-64 -->
+  <section id="eui64">
+    <div class="section-head">
+      <p class="kicker">Module 12 · 12.5 – 12.6</p>
+      <h2>EUI-64: an interface ID from a MAC address</h2>
+      <p>A MAC address is 48 bits, and an interface ID needs 64. EUI-64 stretches the MAC and flips one bit.</p>
+    </div>
+    <table class="spec">
+      <thead><tr><th>Step</th><th>Do this</th><th>MAC fc:99:47:75:ce:e0</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">1</td><td>Split the MAC in half</td><td class="mono">fc:99:47 | 75:ce:e0</td></tr>
+        <tr><td class="mono">2</td><td>Insert <code>ff:fe</code> in the middle, making 64 bits</td><td class="mono">fc:99:47:<strong>ff:fe</strong>:75:ce:e0</td></tr>
+        <tr><td class="mono">3</td><td>Flip the <strong>7th bit</strong> of the first byte</td><td class="mono">fc = 1111 11<strong>0</strong>0 → 1111 11<strong>1</strong>0 = <strong>fe</strong></td></tr>
+        <tr><td class="mono">4</td><td>Group into hextets: that's the interface ID</td><td class="mono">fe99:47ff:fe75:cee0</td></tr>
+        <tr><td class="mono">5</td><td>Add a prefix</td><td class="mono">fe80::fe99:47ff:fe75:cee0<br>2001:db8:acad:1:fe99:47ff:fe75:cee0</td></tr>
+      </tbody>
+    </table>
+    <div class="teach-note">
+      <span class="label">Shortcut for the flip</span>
+      Flipping the 7th bit means adding or subtracting 2 in the first hex byte. In practice, change only the <em>second</em> hex digit: <code>0→2</code>, <code>2→0</code>, <code>4→6</code>, <code>c→e</code>, <code>e→c</code>, and so on. So <code>fc→fe</code>, <code>00→02</code>, and <code>70→72</code>. ITN's router example checks out: MAC <code>7079.b392.3640</code> gives <code>FE80::7279:B3FF:FE92:3640</code>.
+    </div>
+    <div class="teach-note warn">
+      <span class="label">Heads up: one ITN slide gets this wrong</span>
+      ITN's Windows EUI-64 <code>ipconfig</code> example shows <code>fe80::<strong>fc</strong>99:47ff:fe75:cee0</code>, which skips the flip. Its own EUI-64 process slide, using the same MAC, correctly gives <code>fe99…</code>. Trust the process. The correct answer is <code>fe99:47ff:fe75:cee0</code>. Also, the bit is <em>flipped</em>, not "set to 1": a MAC that already has it set goes from 1 to 0.
+    </div>
+    <p><strong>Spotting EUI-64:</strong> an EUI-64 interface ID always has <code>ff:fe</code> in the middle, so you can read the MAC back out of the address. That's the privacy problem: the device can be tracked across networks. It's why Windows uses <strong>random</strong> interface IDs instead.</p>
+
+    <div class="tool">
+      <p class="tool-title">Try it: MAC → EUI-64 → addresses</p>
+      <div class="tool-in">
+        <input class="txt" id="macIn" value="fc:99:47:75:ce:e0" spellcheck="false" autocomplete="off" aria-label="MAC address">
+        <input class="txt" id="pfxIn" value="2001:db8:acad:1" spellcheck="false" autocomplete="off" aria-label="64-bit prefix" style="max-width:14em;">
+      </div>
+      <div id="euiOut" class="tool-out"></div>
+    </div>
+  </section>
+
+  <!-- MULTICAST -->
+  <section id="multicast">
+    <div class="section-head">
+      <p class="kicker">Module 12 · 12.7</p>
+      <h2>IPv6 multicast</h2>
+      <p>All multicast addresses sit in <code>ff00::/8</code>. ITN covers two kinds: well-known groups, and solicited-node groups.</p>
+    </div>
+    <table class="spec">
+      <thead><tr><th>Address</th><th>Group</th><th>Who's in it</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">ff02::1</td><td style="font-weight:600;">All-nodes</td><td>Every IPv6 device on the link. It takes the place of broadcast, and periodic RAs are sent here.</td></tr>
+        <tr><td class="mono">ff02::2</td><td style="font-weight:600;">All-routers</td><td>Every IPv6 router on the link. A router joins once <code>ipv6 unicast-routing</code> is on, and RSs are sent here.</td></tr>
+      </tbody>
+    </table>
+    <h3 class="sub">Solicited-node multicast</h3>
+    <p>IPv6 has no ARP broadcast. To find a neighbor's MAC address, a device sends a Neighbor Solicitation to a small multicast group that, in practice, only the target is in. The group is built from the <strong>target</strong> address: <code>ff02::1:ff</code> followed by the <strong>last 24 bits</strong> (last 6 hex digits) of that address.</p>
+    <table class="spec">
+      <thead><tr><th>Target address</th><th>Last 24 bits</th><th>Solicited-node group</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">2001:db8:acad:1::10</td><td class="mono">00:0010</td><td class="mono">ff02::1:ff00:10</td></tr>
+        <tr><td class="mono">2001:db8:acad:1:fe99:47ff:fe75:cee0</td><td class="mono">75:cee0</td><td class="mono">ff02::1:ff75:cee0</td></tr>
+        <tr><td class="mono">fe80::fe99:47ff:fe75:cee0</td><td class="mono">75:cee0</td><td class="mono">ff02::1:ff75:cee0 (same group)</td></tr>
+        <tr><td class="mono">2001:db8:acad:1::1 and fe80::1</td><td class="mono">00:0001</td><td class="mono">ff02::1:ff00:1</td></tr>
+      </tbody>
+    </table>
+    <div class="teach-note">
+      <span class="label">Why bother</span>
+      The NIC can tell from the destination MAC whether a frame is for a group it joined, and it drops everything else in hardware. So a solicited-node message acts like "a broadcast only the probable owner hears." Session 6 compared NDP with ARP. This is the mechanism behind that comparison. DAD uses the same trick, just targeting the host's own address.
+    </div>
+  </section>
+
+  <!-- SUBNETTING -->
+  <section id="subnet6">
+    <div class="section-head">
+      <p class="kicker">Module 12 · 12.8</p>
+      <h2>Subnetting an IPv6 network</h2>
+      <p>IPv6 was designed for subnetting. There's a dedicated subnet ID field, so you never borrow host bits.</p>
+    </div>
+    <p>Given <code>2001:db8:acad::/48</code>, the 16-bit subnet ID gives <strong>65,536</strong> /64 subnets. You count up the fourth hextet in hex (<code>:0::</code>, <code>:1::</code>, … <code>:9::</code>, <code>:a::</code>, … <code>:ffff::</code>), and the prefix and interface ID stay untouched. Every LAN <em>and every point-to-point link</em> gets its own /64. The waste doesn't matter: there are 65,536 subnets to spend, a /64 on every link keeps the plan simple, and on LANs it keeps SLAAC working.</p>
+    <div class="teach-note">
+      <span class="label">Full treatment and practice</span>
+      The <a href="IT131_Subnetting.html#ipv6">Subnetting Field Manual's IPv6 section</a> has the hex-counting table, how to read a subnet out of an address, and an IPv6 subnet-ID drill. Watch the classic trap: subnet <em>ten</em> is <code>:a:</code>, and <code>:10:</code> is sixteen.
+    </div>
+  </section>
+
+  <!-- ICMP -->
+  <section id="icmp">
+    <div class="section-head">
+      <p class="kicker">Module 13 · 13.1</p>
+      <h2>ICMP messages</h2>
+      <p>IP delivers packets but never says what went wrong. ICMP is how devices report problems and test reachability. ICMPv4 serves IPv4. ICMPv6 serves IPv6 and does much more.</p>
+    </div>
+    <div class="cold-open">
+      <p class="tag">In the OSI Company</p>
+      <p>ICMP is Logistics' incident desk. When a shipment can't be delivered, it sends back a report saying why: no route to that part of town, the address doesn't exist, or the package ran out of hops. It rides directly inside IP, with no TCP or UDP and no port numbers.</p>
+    </div>
+    <h3 class="sub">Messages in both ICMPv4 and ICMPv6</h3>
+    <table class="spec">
+      <thead><tr><th>Message</th><th>What it means</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;">Echo Request / Echo Reply</td><td>"Are you there?" / "Yes." This is ping.</td></tr>
+        <tr><td style="font-weight:600;">Destination Unreachable</td><td>A router or host couldn't deliver the packet. A code says why (below).</td></tr>
+        <tr><td style="font-weight:600;">Time Exceeded</td><td>The packet's TTL (IPv4) or Hop Limit (IPv6) reached 0, so a router dropped it. This is what traceroute relies on.</td></tr>
+      </tbody>
+    </table>
+    <table class="spec">
+      <thead><tr><th>Code</th><th>ICMPv4 Destination Unreachable</th><th>ICMPv6 Destination Unreachable</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">0</td><td>Net unreachable</td><td>No route to destination</td></tr>
+        <tr><td class="mono">1</td><td>Host unreachable</td><td>Communication administratively prohibited (e.g., a firewall)</td></tr>
+        <tr><td class="mono">2</td><td>Protocol unreachable</td><td>Beyond scope of the source address</td></tr>
+        <tr><td class="mono">3</td><td>Port unreachable</td><td>Address unreachable</td></tr>
+        <tr><td class="mono">4</td><td>(not covered in ITN)</td><td>Port unreachable</td></tr>
+      </tbody>
+    </table>
+    <h3 class="sub">ICMPv6-only: Neighbor Discovery</h3>
+    <table class="spec">
+      <thead><tr><th>Message</th><th>Between</th><th>Used for</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;">Router Solicitation (RS)</td><td>Host → routers</td><td>Asking for an RA</td></tr>
+        <tr><td style="font-weight:600;">Router Advertisement (RA)</td><td>Router → hosts</td><td>Prefix, method, and default gateway (SLAAC)</td></tr>
+        <tr><td style="font-weight:600;">Neighbor Solicitation (NS)</td><td>Device → device</td><td>Address resolution (the IPv6 version of an ARP request), and DAD</td></tr>
+        <tr><td style="font-weight:600;">Neighbor Advertisement (NA)</td><td>Device → device</td><td>The reply to an NS, carrying the MAC address</td></tr>
+      </tbody>
+    </table>
+    <div class="teach-note warn">
+      <span class="label">Don't block all ICMP</span>
+      ICMPv4 is often filtered for security, and that's workable. In IPv6, RS, RA, NS, and NA <em>are</em> ICMPv6. Block ICMPv6 entirely and hosts can't get addresses or find their neighbors.
+    </div>
+  </section>
+
+  <!-- PING & TRACEROUTE -->
+  <section id="tests">
+    <div class="section-head">
+      <p class="kicker">Module 13 · 13.2</p>
+      <h2>Ping and traceroute</h2>
+      <p>Ping asks "can I reach it?" Traceroute asks "which way does it go, and where does it stop?"</p>
+    </div>
+
+    <h3 class="sub">The ping ladder: test from the inside out</h3>
+    <table class="spec">
+      <thead><tr><th>Step</th><th>Command</th><th>If it works</th><th>If it fails</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">1</td><td class="mono">ping 127.0.0.1<br>ping ::1</td><td>The host's IPv4/IPv6 stack is installed and working.</td><td>TCP/IP isn't working on the host. This tests nothing on the NIC, cable, or network, because the packet never leaves the host.</td></tr>
+        <tr><td class="mono">2</td><td class="mono">ping 192.168.10.1<br><span style="opacity:.7">(default gateway)</span></td><td>The host, its local network, and the router's interface all work.</td><td>The problem is between the host and the router. Ping another host on the same LAN to narrow it down.</td></tr>
+        <tr><td class="mono">3</td><td class="mono">ping 192.168.20.10<br><span style="opacity:.7">(remote host)</span></td><td>Routing works <strong>in both directions</strong>.</td><td>A routing problem, or the remote side is filtering ICMP. Run traceroute to find where it stops.</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:.88rem;">On a Cisco router it's common for the <em>first</em> ping to time out while ARP (or ND) resolves the address (you'll see <code>.!!!!</code> below). Windows usually doesn't lose it. One lost reply at the start isn't a fault.</p>
+
+    <h3 class="sub">Reading Windows ping output</h3>
+    <div class="terminal">
+      <div class="terminal-header"><span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span><span class="terminal-title">Success</span></div>
+      <div class="terminal-body"><span class="prompt">C:\&gt;</span> <span class="cmd">ping 192.168.10.1</span>
+<span class="out">Pinging 192.168.10.1 with 32 bytes of data:
+Reply from 192.168.10.1: bytes=32 time&lt;1ms TTL=255
+Reply from 192.168.10.1: bytes=32 time&lt;1ms TTL=255
+Reply from 192.168.10.1: bytes=32 time&lt;1ms TTL=255
+Reply from 192.168.10.1: bytes=32 time&lt;1ms TTL=255
+
+Ping statistics for 192.168.10.1:
+    Packets: Sent = 4, Received = 4, Lost = 0 (0% loss),</span></div>
+    </div>
+    <div class="terminal">
+      <div class="terminal-header"><span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span><span class="terminal-title">Failure A: silence</span></div>
+      <div class="terminal-body"><span class="prompt">C:\&gt;</span> <span class="cmd">ping 192.168.20.10</span>
+<span class="out">Pinging 192.168.20.10 with 32 bytes of data:
+</span><span class="hl">Request timed out.
+Request timed out.
+Request timed out.
+Request timed out.</span><span class="out">
+
+Ping statistics for 192.168.20.10:
+    Packets: Sent = 4, Received = 0, Lost = 4 (100% loss),</span></div>
+    </div>
+    <div class="terminal">
+      <div class="terminal-header"><span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span><span class="terminal-title">Failure B: an explicit "no"</span></div>
+      <div class="terminal-body"><span class="prompt">C:\&gt;</span> <span class="cmd">ping 192.168.10.50</span>
+<span class="out">Pinging 192.168.10.50 with 32 bytes of data:
+</span><span class="hl">Reply from 192.168.10.10: Destination host unreachable.</span><span class="out">
+Reply from 192.168.10.10: Destination host unreachable.
+Reply from 192.168.10.10: Destination host unreachable.
+Reply from 192.168.10.10: Destination host unreachable.
+
+Ping statistics for 192.168.10.50:
+    Packets: Sent = 4, Received = 4, Lost = 0 (0% loss),</span></div>
+    </div>
+    <table class="spec">
+      <thead><tr><th>Output</th><th>What actually happened</th><th>Common causes</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;">Request timed out.</td><td><strong>Silence.</strong> The request went out, and nothing came back in time.</td><td>The target is off or firewalled (Windows Firewall blocks ping by default), a link is down, or <strong>the reply has no route home</strong>, like Session 7's one-sided static route.</td></tr>
+        <tr><td style="font-weight:600;">Reply from <em>your own IP</em>: Destination host unreachable.</td><td>Your PC never sent the ping. It tried ARP (or ND) and got no answer.</td><td>The target doesn't exist on your LAN, or, for an off-subnet ping, your <strong>default gateway</strong> didn't answer ARP.</td></tr>
+        <tr><td style="font-weight:600;">Reply from <em>a router's IP</em>: Destination host/net unreachable.</td><td>That router sent back an ICMP Destination Unreachable.</td><td><strong>Net unreachable:</strong> that router has no route to the destination network. <strong>Host unreachable:</strong> the router reached the destination's network but couldn't deliver to the host (usually its ARP went unanswered). Either way, the "Reply from" address tells you <strong>which</strong> router gave up.</td></tr>
+      </tbody>
+    </table>
+    <div class="teach-note warn">
+      <span class="label">The 0% loss trap</span>
+      Windows counts "Destination host unreachable" lines as <strong>received</strong>, so the summary says <code>0% loss</code> even though nothing was reached. Always read the lines themselves, especially the "Reply from" address.
+    </div>
+    <div class="teach-note">
+      <span class="label">TTL=255 isn't a hop count</span>
+      The <code>TTL=</code> in a reply is the TTL left in the <em>reply packet</em>. Cisco routers start replies at 255, Windows at 128, and Linux at 64. You can sometimes guess what answered from it, but it doesn't tell you how many hops away the target is.
+    </div>
+
+    <h3 class="sub">Ping from a router</h3>
+    <div class="terminal">
+      <div class="terminal-header"><span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span><span class="terminal-title">IOS ping</span></div>
+      <div class="terminal-body"><span class="prompt">R1#</span> <span class="cmd">ping 192.168.20.10</span>
+<span class="out">Type escape sequence to abort.
+Sending 5, 100-byte ICMP Echos to 192.168.20.10, timeout is 2 seconds:
+</span><span class="hl">.!!!!</span><span class="out">
+Success rate is 80 percent (4/5), round-trip min/avg/max = 1/1/2 ms</span>
+
+<span class="prompt">R2#</span> <span class="cmd">ping 172.16.1.1</span>
+<span class="out">Type escape sequence to abort.
+Sending 5, 100-byte ICMP Echos to 172.16.1.1, timeout is 2 seconds:
+</span><span class="hl">U.U.U</span><span class="out">
+Success rate is 0 percent (0/5)</span></div>
+    </div>
+    <table class="spec">
+      <thead><tr><th class="mono">Symbol</th><th>Meaning</th></tr></thead>
+      <tbody>
+        <tr><td class="mono" style="font-weight:600;">!</td><td>Echo reply received</td></tr>
+        <tr><td class="mono" style="font-weight:600;">.</td><td>Timed out waiting for a reply</td></tr>
+        <tr><td class="mono" style="font-weight:600;">U</td><td>A router along the path sent back Destination Unreachable</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:.88rem;">IOS sends <strong>5</strong> echoes, and Windows sends <strong>4</strong>. The <code>.</code> at the start of <code>.!!!!</code> is normal: the first packet was dropped while ARP resolved the address. <code>U.U.U</code> alternates because routers rate-limit how often they send unreachables. <em>These IOS symbols are formally taught in Module 17, but you'll see them in labs now.</em></p>
+
+    <h3 class="sub">How traceroute works</h3>
+    <ol class="obj-list" style="list-style:none;">
+      <li><strong>1.</strong> Send probes with TTL (or Hop Limit) = <strong>1</strong>. The first router drops them and sends back <strong>Time Exceeded</strong>. That router is hop 1.</li>
+      <li><strong>2.</strong> Send with TTL = 2. They expire one router further on. That's hop 2.</li>
+      <li><strong>3.</strong> Keep going until the destination itself replies, or the limit (30 by default) is hit. Three probes are sent per hop, which gives the three time columns.</li>
+    </ol>
+    <div class="terminal">
+      <div class="terminal-header"><span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span><span class="terminal-title">PC-A traces to PC-B</span></div>
+      <div class="terminal-body"><span class="prompt">C:\&gt;</span> <span class="cmd">tracert 192.168.20.10</span>
+<span class="out">Tracing route to 192.168.20.10 over a maximum of 30 hops
+
+  1    &lt;1 ms    &lt;1 ms    &lt;1 ms  192.168.10.1
+  2     1 ms     1 ms     1 ms  10.0.0.2
+  3     2 ms     1 ms     1 ms  192.168.20.10
+
+Trace complete.</span></div>
+    </div>
+    <div class="terminal">
+      <div class="terminal-header"><span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span><span class="terminal-title">A hop that doesn't answer, but still forwards</span></div>
+      <div class="terminal-body"><span class="out">  1    &lt;1 ms    &lt;1 ms    &lt;1 ms  192.168.10.1
+</span><span class="hl">  2     *        *        *     Request timed out.</span><span class="out">
+  3     2 ms     1 ms     1 ms  192.168.20.10
+
+Trace complete.</span></div>
+    </div>
+    <ul class="obj-list">
+      <li><strong>Each hop shows the interface that sent the Time Exceeded,</strong> usually the one facing you. Hop 2 is R2's <code>10.0.0.2</code>, not its LAN address.</li>
+      <li><strong>A <code>*</code> hop followed by answering hops</strong> means that router forwards fine but is configured not to reply. That's common on the real internet.</li>
+      <li><strong>A broken path</strong> answers for a few hops, then shows <code>* * * Request timed out.</code> all the way to hop 30. The problem is just after the last hop that answered. Press Ctrl-C to stop it.</li>
+      <li><strong>The last hop replies differently.</strong> Windows <code>tracert</code> sends ICMP echoes, so the destination sends an Echo Reply. Cisco IOS <code>traceroute</code> sends UDP to an unused port, so the destination replies Port Unreachable. <em>(Module 17 detail.)</em></li>
+    </ul>
+  </section>
+
+  <!-- MISTAKES -->
+  <section id="mistakes">
+    <div class="section-head">
+      <p class="kicker">Watch for this</p>
+      <h2>Common Module 12–13 mistakes</h2>
+      <p>These come up every semester.</p>
+    </div>
+    <ul class="obj-list">
+      <li>Saying IPv6 has a broadcast address. It doesn't. <code>ff02::1</code> does that job.</li>
+      <li>Using <code>::</code> twice, or dropping <em>trailing</em> zeros (<code>0200</code> → <code>2</code> is wrong; it's <code>200</code>).</li>
+      <li>Forgetting <code>ipv6 unicast-routing</code>. Hosts then get no global address and no gateway.</li>
+      <li>Leaving off <code>/64</code>, or leaving off the <code>link-local</code> keyword, in the <code>ipv6 address</code> command.</li>
+      <li>Thinking the gateway must be the router's global address. The router's LLA is normal and is best practice.</li>
+      <li>Treating the <code>%12</code> zone ID as part of the address.</li>
+      <li>Thinking DHCPv6 provides the default gateway. The gateway always comes from the RA.</li>
+      <li>EUI-64: forgetting the 7th-bit flip, flipping the wrong bit (<code>fc→fd</code>), or putting <code>fffe</code> in the wrong place.</li>
+      <li>Solicited-node: using the last 32 bits instead of 24, or building it from the sender's address instead of the target's.</li>
+      <li>Thinking a loopback ping tests the NIC or cable. It only tests the local stack.</li>
+      <li>Reading "Destination host unreachable … 0% loss" as a success.</li>
+      <li>Thinking a failed ping means the host is down. It could be a firewall, or a missing <em>return</em> route.</li>
+      <li>Reading a <code>*</code> hop in tracert as "that router is down" when later hops still answer.</li>
+    </ul>
+  </section>
+
+  <!-- CHECKPOINT -->
+  <section id="checkpoint">
+    <div class="section-head">
+      <p class="kicker">Module Quiz — IP Addressing</p>
+      <h2>Checkpoint: Modules 11–13</h2>
+      <p>This week's checkpoint covers Session 8 and this session together. If you can do these cold, you're ready.</p>
+    </div>
+    <ul class="obj-list">
+      <li><strong>Module 11:</strong> find the network, broadcast, host range, and host count for any IPv4 address. Drill it with <a href="IT131_Subnetting.html#practice">Find the Six</a>.</li>
+      <li><strong>Module 11:</strong> subnet a block for a number of subnets or hosts, and build a VLSM plan (<a href="IT131_Session08.html">Session 8</a>, and the <a href="IT131_7_Holy_Steps_of_Subnetting.pdf">7 holy steps</a>).</li>
+      <li><strong>Module 12:</strong> compress and expand IPv6 addresses, name the address types, and give a /64 for a subnet number.</li>
+      <li><strong>Module 12:</strong> SLAAC vs. stateless vs. stateful DHCPv6, EUI-64, and solicited-node addresses.</li>
+      <li><strong>Module 13:</strong> what each ICMP message means, the ping ladder, and how to read ping and tracert output.</li>
+    </ul>
+  </section>
+
+  <!-- FLASHCARDS -->
+  <section id="flashcards">
+    <div class="section-head">
+      <p class="kicker">Study</p>
+      <h2>Flashcards</h2>
+      <p>Click to flip. Double-click to mark as known.</p>
+    </div>
+    <div class="toolbar">
+      <button class="btn" id="shuffleBtn">Shuffle</button>
+      <button class="btn" id="resetKnownBtn">Reset progress</button>
+      <span id="cardProgress"></span>
+    </div>
+    <div class="card-grid" id="cardGrid"></div>
+  </section>
+
+  <!-- QUIZ -->
+  <section id="quiz">
+    <div class="section-head">
+      <p class="kicker">Check yourself</p>
+      <h2>Sample questions</h2>
+      <p>Pick an answer to see if you're right. Same style as the module quiz.</p>
+    </div>
+    <div id="quizScore"></div>
+    <div id="quizList"></div>
+    <button class="btn" id="resetQuizBtn">Reset quiz</button>
+  </section>
+
+  <!-- EXAMPLES -->
+  <section id="examples">
+    <div class="section-head">
+      <p class="kicker">Applied</p>
+      <h2>Worked examples</h2>
+      <p>Think it through before you expand the answer.</p>
+    </div>
+
+    <div class="example">
+      <span class="tag">Compression</span>
+      <h3>Shorten it as far as the rules allow</h3>
+      <p><code>2001:0db8:0000:0000:00a0:0000:0000:0001</code></p>
+      <details class="solution"><summary>Show answer</summary><div class="solbody">
+        <p>Rule 1 gives <code>2001:db8:0:0:a0:0:0:1</code>. There are two runs of two zero hextets, and <code>::</code> can replace only one of them. By convention, use it on the first (leftmost) run of equal length: <code>2001:db8::a0:0:0:1</code>. Note that <code>a0</code> keeps its trailing zero.</p>
+      </div></details>
+    </div>
+
+    <div class="example">
+      <span class="tag">EUI-64</span>
+      <h3>Build the link-local address</h3>
+      <p>A router interface has MAC <code>00:1b:2c:3d:4e:5f</code> and no static LLA. What link-local address does IOS create?</p>
+      <details class="solution"><summary>Show answer</summary><div class="solbody">
+        <p>Split: <code>00:1b:2c | 3d:4e:5f</code>. Insert <code>ff:fe</code>: <code>00:1b:2c:ff:fe:3d:4e:5f</code>. Flip the 7th bit: <code>00</code> → <code>02</code>. The interface ID is <code>021b:2cff:fe3d:4e5f</code>, so the LLA is <code>fe80::21b:2cff:fe3d:4e5f</code>. The leading zero of <code>021b</code> drops under rule 1.</p>
+      </div></details>
+    </div>
+
+    <div class="example">
+      <span class="tag">SLAAC</span>
+      <h3>No global address on the PCs</h3>
+      <p>R1's G0/0/1 has <code>2001:db8:acad:1::1/64</code> and is up/up. PCs on that LAN are set to get IPv6 automatically, but <code>ipconfig</code> shows only an <code>fe80::</code> address and no IPv6 default gateway. What's missing?</p>
+      <details class="solution"><summary>Show answer</summary><div class="solbody">
+        <p><code>ipv6 unicast-routing</code> in global config. Without it, R1 doesn't send Router Advertisements, so the PCs never learn the prefix or the gateway. They only have the link-local address they create for themselves.</p>
+      </div></details>
+    </div>
+
+    <div class="example">
+      <span class="tag">Ping</span>
+      <h3>Which failure is which?</h3>
+      <p>PC-A (<code>192.168.10.10</code>) has its default gateway set to <code>192.168.10.254</code>, but the router is actually <code>.1</code>. PC-A pings <code>192.168.20.10</code>. What output do you expect, and why?</p>
+      <details class="solution"><summary>Show answer</summary><div class="solbody">
+        <p><code>Reply from 192.168.10.10: Destination host unreachable.</code>, repeated. The target is off-subnet, so PC-A ARPs for its gateway, <code>.254</code>. Nothing answers, so the PC never sends the ping and reports the failure itself, from its <strong>own</strong> address. The summary will even say 0% loss.</p>
+      </div></details>
+    </div>
+
+    <div class="example">
+      <span class="tag">Traceroute</span>
+      <h3>Where did it stop?</h3>
+      <p><code>tracert 192.168.20.10</code> from PC-A shows hop 1 <code>192.168.10.1</code>, then <code>* * * Request timed out.</code> on every hop up to 30. PC-A can ping its gateway. Where should you look?</p>
+      <details class="solution"><summary>Show answer</summary><div class="solbody">
+        <p>Look at R2 first, especially its route back to 192.168.10.0/24. R1 answered hop 1, so the LAN and R1 are fine. R1 also has a working route onward: with no route, or with the R1–R2 link down (its static route via 10.0.0.2 would drop out of the table), R1 would answer with <em>Destination net unreachable</em> from <code>192.168.10.1</code> instead of staying silent. Silence at hop 2 usually means R2 receives the probes but can't send its Time Exceeded replies home. That's Session 7's one-sided static route. A router set not to answer would be the other explanation, but then later hops would still answer.</p>
+      </div></details>
+    </div>
+
+    <div class="example">
+      <span class="tag">Solicited-node</span>
+      <h3>Which group does the NS go to?</h3>
+      <p>R2 needs PC-B's MAC. PC-B's address is <code>2001:db8:acad:2::a:b5</code>. What's the destination of R2's Neighbor Solicitation?</p>
+      <details class="solution"><summary>Show answer</summary><div class="solbody">
+        <p>Expand the last two hextets: <code>000a:00b5</code>. The last 24 bits are <code>0a:00b5</code>. The group is <code>ff02::1:ff0a:b5</code>. It's built from the <strong>target</strong> (PC-B), not from R2.</p>
+      </div></details>
+    </div>
+  </section>
+
+  <!-- GLOSSARY -->
+  <section id="glossary">
+    <div class="section-head">
+      <p class="kicker">Reference</p>
+      <h2>Glossary &amp; index</h2>
+      <p>Every term from this session, searchable and indexed A–Z.</p>
+    </div>
+    <input type="text" id="glossarySearch" placeholder="Search terms…" aria-label="Search glossary">
+    <div class="alpha-nav" id="alphaNav"></div>
+    <dl class="glossary" id="glossaryList"></dl>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>IT131 · CCNA: Introduction to Networks · Session 9 reference — companion: Subnetting Field Manual.</p>
+  </div>
+</footer>
+
+<button id="backToTop" class="back-to-top" aria-label="Back to top" title="Back to top">↑</button>
+
+<script>
+  /* ---- IPv6 helpers ---- */
+  function expand6(str){
+    let s = String(str).trim().toLowerCase().replace(/%.*$/, '').replace(/\/\d{1,3}$/, '');
+    if (!/^[0-9a-f:]+$/.test(s)) return null;
+    const halves = s.split('::');
+    if (halves.length > 2) return null;
+    const L = halves[0] ? halves[0].split(':') : [];
+    const R = halves.length === 2 && halves[1] ? halves[1].split(':') : [];
+    let parts;
+    if (halves.length === 1) parts = L;
+    else { const fill = 8 - L.length - R.length; if (fill < 1) return null; parts = [...L, ...Array(fill).fill('0'), ...R]; }
+    if (parts.length !== 8 || parts.some(h => !/^[0-9a-f]{1,4}$/.test(h))) return null;
+    return parts.map(h => h.padStart(4, '0'));
+  }
+  function compress6(parts){
+    const short = parts.map(h => h.replace(/^0+(?=.)/, ''));
+    let best = -1, bestLen = 1;
+    for (let i = 0; i < 8; i++){
+      let j = i; while (j < 8 && short[j] === '0') j++;
+      if (j - i > bestLen){ best = i; bestLen = j - i; }
+      if (j > i) i = j - 1;
+    }
+    if (best < 0) return short.join(':');
+    return short.slice(0, best).join(':') + '::' + short.slice(best + bestLen).join(':');
+  }
+  function solicited(parts){
+    const a = parts[6].slice(2), b = parts[7];
+    return compress6(['ff02', '0', '0', '0', '0', '1', 'ff' + a, b].map(h => h.padStart(4, '0')));
+  }
+  function eui64(mac){
+    const hex = String(mac).toLowerCase().replace(/[^0-9a-f]/g, '');
+    if (hex.length !== 12 || !/^[0-9a-f:.\-\s]+$/i.test(String(mac).trim())) return null;
+    const b = hex.match(/../g);
+    const flipped = (parseInt(b[0], 16) ^ 0x02).toString(16).padStart(2, '0');
+    return { b, flipped, iid: [flipped + b[1], b[2] + 'ff', 'fe' + b[3], b[4] + b[5]] };
+  }
+
+  (function(){
+    const inp = document.getElementById('v6In'), out = document.getElementById('v6Out');
+    function render(){
+      const p = expand6(inp.value);
+      if (!p){ out.innerHTML = '<p class="bad">Not a valid IPv6 address. Check for two <code>::</code>, a hextet longer than 4 digits, or a non-hex character.</p>'; return; }
+      out.innerHTML = `<div class="row"><b>Full</b><code>${p.join(':')}</code></div>
+        <div class="row"><b>Rule 1 only</b><code>${p.map(h => h.replace(/^0+(?=.)/, '')).join(':')}</code></div>
+        <div class="row"><b>Compressed</b><code>${compress6(p)}</code></div>`;
+    }
+    inp.addEventListener('input', render); render();
+  })();
+
+  (function(){
+    const mac = document.getElementById('macIn'), pfx = document.getElementById('pfxIn'), out = document.getElementById('euiOut');
+    function render(){
+      const e = eui64(mac.value);
+      if (!e){ out.innerHTML = '<p class="bad">Enter a 48-bit MAC, like fc:99:47:75:ce:e0, fc-99-47-75-ce-e0, or fc99.4775.cee0.</p>'; return; }
+      const bin = x => parseInt(x, 16).toString(2).padStart(8, '0');
+      const lla = expand6('fe80::' + e.iid.join(':'));
+      let gua = null;
+      const pp = pfx.value.trim().replace(/::?$/, '');
+      const pparts = pp.split(':');
+      if (pparts.length === 4 && pparts.every(h => /^[0-9a-f]{1,4}$/i.test(h))) gua = expand6(pp + ':' + e.iid.join(':'));
+      out.innerHTML = `<div class="row"><b>1 · Split</b><code>${e.b.slice(0, 3).join(':')} | ${e.b.slice(3).join(':')}</code></div>
+        <div class="row"><b>2 · Insert ff:fe</b><code>${e.b.slice(0, 3).join(':')}:ff:fe:${e.b.slice(3).join(':')}</code></div>
+        <div class="row"><b>3 · Flip bit 7</b><code>${e.b[0]} = ${bin(e.b[0]).slice(0, 4)} ${bin(e.b[0]).slice(4)} → ${bin(e.flipped).slice(0, 4)} ${bin(e.flipped).slice(4)} = ${e.flipped}</code></div>
+        <div class="row"><b>4 · Interface ID</b><code>${e.iid.join(':')}</code></div>
+        <div class="row"><b>Link-local</b><code>${compress6(lla)}</code></div>
+        ${gua ? `<div class="row"><b>GUA</b><code>${compress6(gua)}</code></div>` : '<div class="row"><b>GUA</b><span class="bad">Enter a 64-bit prefix (4 hextets), like 2001:db8:acad:1</span></div>'}
+        <div class="row"><b>Solicited-node</b><code>${solicited(lla)}</code></div>`;
+    }
+    mac.addEventListener('input', render); pfx.addEventListener('input', render); render();
+  })();
+
+  const TERMS = [
+    {t:"Anycast", d:"One IPv6 unicast address assigned to several devices. Traffic is routed to the nearest one."},
+    {t:"Destination Unreachable", d:"An ICMP message saying a packet couldn't be delivered. ICMPv4 codes: 0 net, 1 host, 2 protocol, 3 port unreachable. ICMPv6: 0 no route, 1 administratively prohibited, 2 beyond scope, 3 address unreachable, 4 port unreachable."},
+    {t:"Double colon (::)", d:"IPv6 compression that replaces one run of consecutive all-zero hextets. It can appear only once in an address."},
+    {t:"Dual stack", d:"Running IPv4 and IPv6 on the same device at the same time. The preferred coexistence method."},
+    {t:"Duplicate Address Detection (DAD)", d:"Before using an IPv6 address, a host sends a Neighbor Solicitation for its own address. A Neighbor Advertisement in reply means the address is already taken."},
+    {t:"Echo Request / Echo Reply", d:"The ICMP messages ping uses: 'are you there?' and 'yes.'"},
+    {t:"EUI-64", d:"Building a 64-bit interface ID from a 48-bit MAC: split the MAC, insert ff:fe, and flip the 7th bit of the first byte. fc:99:47:75:ce:e0 becomes fe99:47ff:fe75:cee0."},
+    {t:"GUA (Global Unicast Address)", d:"A globally unique, internet-routable IPv6 address, currently from 2000::/3. Structure: global routing prefix + subnet ID + interface ID."},
+    {t:"Hextet", d:"One of the eight 16-bit groups of an IPv6 address, written as up to 4 hex digits."},
+    {t:"ICMP", d:"Internet Control Message Protocol. It reports delivery problems and tests reachability, riding directly inside IP with no ports. ICMPv6 also handles Neighbor Discovery."},
+    {t:"Interface ID", d:"The last 64 bits of an IPv6 address, identifying the device on its subnet. Made with EUI-64 or randomly."},
+    {t:"ipv6 unicast-routing", d:"Global config command that makes a Cisco router an IPv6 router: it forwards IPv6, sends RAs, and joins ff02::2. Off by default, unlike ip routing."},
+    {t:"Link-local address (LLA)", d:"An fe80::/10 address valid only on one link and never routed. Every IPv6 interface has one, and a host's default gateway is usually the router's LLA."},
+    {t:"Neighbor Advertisement (NA)", d:"The ICMPv6 reply to a Neighbor Solicitation, carrying the device's MAC address. Also used to signal that an address is taken during DAD."},
+    {t:"Neighbor Solicitation (NS)", d:"ICMPv6 message asking for a neighbor's MAC address (the IPv6 version of an ARP request), sent to the target's solicited-node group. Also used for DAD."},
+    {t:"Ping", d:"Tests reachability with ICMP Echo Request/Reply. Windows sends 4 echoes, IOS sends 5. IOS symbols: ! reply, . timeout, U unreachable."},
+    {t:"Router Advertisement (RA)", d:"ICMPv6 message from a router with the prefix, prefix length, and addressing method. Its source (the router's LLA) becomes the host's default gateway. Sent every 200 seconds and in reply to an RS."},
+    {t:"Router Solicitation (RS)", d:"ICMPv6 message a host sends to ff02::2 asking routers to send an RA right away."},
+    {t:"SLAAC", d:"Stateless Address Autoconfiguration. A host builds its own GUA from the RA's prefix plus an interface ID it generates. No server keeps track of addresses."},
+    {t:"Solicited-node multicast", d:"ff02::1:ff plus the last 24 bits of an IPv6 address. Neighbor Solicitations go here, so in practice only the target device processes them."},
+    {t:"Stateful DHCPv6", d:"A DHCPv6 server assigns the host's address and other info and tracks which host has which address. The default gateway still comes from the RA."},
+    {t:"Stateless DHCPv6", d:"The host gets its address from SLAAC and only other info (like DNS) from a DHCPv6 server, which doesn't track addresses."},
+    {t:"Time Exceeded", d:"ICMP message a router sends when a packet's TTL (IPv4) or Hop Limit (IPv6) reaches 0. Traceroute is built on it."},
+    {t:"Traceroute (tracert)", d:"Maps the path to a destination by sending probes with TTL 1, 2, 3… and recording which router returns Time Exceeded at each step."},
+    {t:"Translation (NAT64)", d:"A coexistence method that translates between IPv6 and IPv4, so IPv6-only devices can reach IPv4-only ones."},
+    {t:"Tunneling", d:"A coexistence method that carries IPv6 packets inside IPv4 packets across an IPv4-only network."},
+    {t:"Unique local address (ULA)", d:"fc00::/7. For internal use, somewhat like RFC 1918 private addresses, but not meant to be hidden behind NAT."},
+    {t:"Zone ID", d:"The %n after a link-local address in Windows output (e.g., fe80::1%12). The host's local interface number, not part of the address."},
+  ];
+
+  const QUIZ = [
+    { q:"Which is the fully compressed (shortest valid) form of 2001:0db8:0000:1111:0000:0000:0000:0200?",
+      choices:["2001:db8::1111::200","2001:db8:0:1111::200","2001:db8:0:1111::2","2001:db8::1111:0:0:0:200"], correct:1,
+      explain:"Drop leading zeros in each hextet (0200 → 200, never 2), then use :: once, on the longest run of zeros. 2001:db8::1111:0:0:0:200 is legal but not fully compressed, because it spends :: on the one-hextet run." },
+    { q:"What replaces broadcast in IPv6?",
+      choices:["Anycast to ff02::2","The all-nodes multicast group ff02::1","The link-local address fe80::1","IPv6 still uses 255.255.255.255"], correct:1,
+      explain:"IPv6 has no broadcast. ff02::1 reaches every IPv6 device on the link." },
+    { q:"Which address type starts with fe80 and must exist on every IPv6 interface?",
+      choices:["Global unicast","Unique local","Link-local","Multicast"], correct:2,
+      explain:"Link-local addresses (fe80::/10) are required on every IPv6 interface and are never routed." },
+    { q:"PCs on a LAN get only an fe80:: address and no IPv6 gateway. The router's interface has a GUA and is up/up. What's missing?",
+      choices:["ipv6 enable","ipv6 unicast-routing","ip routing","no shutdown"], correct:1,
+      explain:"Without ipv6 unicast-routing, the router doesn't send RAs, so hosts never learn the prefix or the gateway." },
+    { q:"With stateful DHCPv6, where does a host get its default gateway?",
+      choices:["From the DHCPv6 server","From the router's RA","It must be configured manually","From DNS"], correct:1,
+      explain:"DHCPv6 never provides a default gateway. It always comes from the router's Router Advertisement." },
+    { q:"What is the EUI-64 interface ID for MAC fc:99:47:75:ce:e0?",
+      choices:["fc99:47ff:fe75:cee0","fe99:47ff:fe75:cee0","fc99:47fe:ff75:cee0","fd99:47ff:fe75:cee0"], correct:1,
+      explain:"Insert ff:fe in the middle, then flip the 7th bit of the first byte: fc (1111 1100) becomes fe (1111 1110)." },
+    { q:"What is the solicited-node multicast address for 2001:db8:acad:1::10?",
+      choices:["ff02::1:ff00:10","ff02::1:10","ff02::2:ff00:10","ff02::1:ffac:10"], correct:0,
+      explain:"ff02::1:ff plus the last 24 bits of the address (00:0010) gives ff02::1:ff00:10." },
+    { q:"A user can ping 127.0.0.1 successfully. What does that prove?",
+      choices:["The NIC and cable work","The default gateway is reachable","The host's TCP/IP stack is working","DNS is working"], correct:2,
+      explain:"A loopback ping never leaves the host. It proves the local stack works, and nothing about the network." },
+    { q:"A PC shows 'Reply from 192.168.10.10: Destination host unreachable.' where 192.168.10.10 is its own address. What happened?",
+      choices:["The target replied with an error","The PC couldn't resolve the next hop's MAC with ARP, so it never sent the ping","A router had no route","The ping succeeded"], correct:1,
+      explain:"When the 'Reply from' address is your own, your PC generated the message. It never got an ARP answer from the target or the gateway." },
+    { q:"How does traceroute discover each router along a path?",
+      choices:["It asks DNS for each hop","It sends probes with increasing TTL and records who returns Time Exceeded","It reads each router's routing table","It uses ARP at each hop"], correct:1,
+      explain:"TTL 1 expires at hop 1, TTL 2 at hop 2, and so on. Each router that drops a probe returns ICMP Time Exceeded, revealing its address." },
+    { q:"In IOS ping output, what does U mean?",
+      choices:["Unknown packet type","A router along the path sent back Destination Unreachable","The reply was received","The interface is up"], correct:1,
+      explain:"! = reply received, . = timed out, U = a Destination Unreachable came back." },
+    { q:"Which ICMPv6 message does a host send to check that nobody else is using its new address?",
+      choices:["Router Solicitation","Neighbor Solicitation for its own address","Echo Request to ff02::1","Router Advertisement"], correct:1,
+      explain:"Duplicate Address Detection: an NS for your own address. If an NA comes back, the address is already taken." },
+  ];
+
+  const grid = document.getElementById('cardGrid');
+  TERMS.forEach((item, i) => {
+    const card = document.createElement('button');
+    card.className = 'flashcard';
+    card.setAttribute('aria-label', 'Flashcard: ' + item.t + '. Press to flip.');
+    card.dataset.i = i;
+    card.innerHTML = `
+      <div class="flashcard-inner">
+        <div class="flashcard-face front"><div class="lbl">Term</div><div class="term">${item.t}</div></div>
+        <div class="flashcard-face back"><div class="lbl">Definition</div><div class="def">${item.d}</div></div>
+      </div>`;
+    card.addEventListener('click', () => card.classList.toggle('flipped'));
+    card.addEventListener('dblclick', () => { card.classList.toggle('known'); updateProgress(); });
+    grid.appendChild(card);
+  });
+  function updateProgress(){
+    const known = document.querySelectorAll('.flashcard.known').length;
+    document.getElementById('cardProgress').textContent = `${known} / ${TERMS.length} marked known (double-click a card to mark it)`;
+  }
+  updateProgress();
+  document.getElementById('shuffleBtn').addEventListener('click', () => {
+    const cards = Array.from(grid.children);
+    cards.sort(() => Math.random() - 0.5);
+    cards.forEach(c => { c.classList.remove('flipped'); grid.appendChild(c); });
+  });
+  document.getElementById('resetKnownBtn').addEventListener('click', () => {
+    document.querySelectorAll('.flashcard.known').forEach(c => c.classList.remove('known'));
+    updateProgress();
+  });
+
+  const quizList = document.getElementById('quizList');
+  let score = 0, answered = 0;
+  function renderQuiz(){
+    quizList.innerHTML = ''; score = 0; answered = 0;
+    QUIZ.forEach((item, qi) => {
+      const box = document.createElement('div');
+      box.className = 'quiz-q';
+      box.innerHTML = `<p class="qtext"><span class="qnum">Q${qi+1}.</span>${item.q}</p><div class="choices"></div><p class="explain"></p>`;
+      const choicesEl = box.querySelector('.choices');
+      item.choices.forEach((c, ci) => {
+        const b = document.createElement('button');
+        b.className = 'choice'; b.textContent = c;
+        b.addEventListener('click', () => {
+          if (box.dataset.done) return;
+          box.dataset.done = '1'; answered++;
+          if (ci === item.correct) score++;
+          Array.from(choicesEl.children).forEach((el, ei) => {
+            el.disabled = true;
+            if (ei === item.correct) el.classList.add('correct');
+            else if (ei === ci) el.classList.add('incorrect');
+          });
+          box.querySelector('.explain').textContent = item.explain;
+          box.querySelector('.explain').classList.add('show');
+          updateScore();
+        });
+        choicesEl.appendChild(b);
+      });
+      quizList.appendChild(box);
+    });
+    updateScore();
+  }
+  function updateScore(){
+    document.getElementById('quizScore').textContent =
+      answered === 0 ? `${QUIZ.length} questions — click an answer to check yourself` : `Score: ${score} / ${answered} answered`;
+  }
+  renderQuiz();
+  document.getElementById('resetQuizBtn').addEventListener('click', renderQuiz);
+
+  const glossaryList = document.getElementById('glossaryList');
+  const alphaNav = document.getElementById('alphaNav');
+  const letters = [...new Set(TERMS.map(t => t.t[0].toUpperCase()))];
+  'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').forEach(L => {
+    const a = document.createElement('a');
+    a.textContent = L;
+    if (letters.includes(L)) { a.href = '#g-' + L; a.className = 'has'; }
+    else { a.href = 'javascript:void(0)'; }
+    alphaNav.appendChild(a);
+  });
+  let currentLetter = '';
+  TERMS.forEach(item => {
+    const L = item.t[0].toUpperCase();
+    if (L !== currentLetter) {
+      currentLetter = L;
+      const h = document.createElement('div');
+      h.className = 'glossary-letter'; h.id = 'g-' + L; h.textContent = L;
+      glossaryList.appendChild(h);
+    }
+    const wrap = document.createElement('div');
+    wrap.className = 'gitem';
+    wrap.innerHTML = `<dt>${item.t}</dt><dd>${item.d}</dd>`;
+    wrap.dataset.search = (item.t + ' ' + item.d).toLowerCase();
+    glossaryList.appendChild(wrap);
+  });
+  document.getElementById('glossarySearch').addEventListener('input', (e) => {
+    const q = e.target.value.toLowerCase().trim();
+    document.querySelectorAll('.gitem').forEach(el => {
+      el.classList.toggle('hidden', q && !el.dataset.search.includes(q));
+    });
+  });
+
+  const backToTop = document.getElementById('backToTop');
+  function toggleBackToTop(){ backToTop.classList.toggle('show', window.scrollY > 480); }
+  window.addEventListener('scroll', toggleBackToTop, {passive:true});
+  toggleBackToTop();
+  backToTop.addEventListener('click', () => window.scrollTo({top:0, behavior:'smooth'}));
+</script>

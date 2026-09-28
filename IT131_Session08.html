@@ -1,0 +1,761 @@
+<title>IT131 Session 8 – IPv4 Addressing &amp; Subnetting</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --paper:#EDE8DD; --canvas:#D9D2C3; --ink:#1F2421; --kraft:#B08554; --kraft-dark:#664526;
+    --blue:#2F4858; --red:#A23A2E; --ticket:#F3E7E2;
+    --blue-soft:rgba(47,72,88,.08); --red-soft:rgba(162,58,46,.08);
+    --kraft-soft:rgba(176,133,84,.14); --ink-soft:rgba(31,36,33,.06);
+    --shadow:5px 5px 0 rgba(31,36,33,.16);
+    --display:'Special Elite','Courier New',monospace;
+    --sans:'IBM Plex Sans', system-ui, sans-serif;
+    --mono:'IBM Plex Mono', monospace;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth; font-size:125%;}
+  body{
+    margin:0; background:var(--canvas); color:var(--ink); font-family:var(--sans);
+    line-height:1.55; -webkit-font-smoothing:antialiased;
+    background-image:radial-gradient(rgba(31,36,33,.06) 1px, transparent 1px);
+    background-size:16px 16px;
+  }
+  ::selection{ background:var(--kraft-soft); }
+  a{ color:var(--blue); }
+  .wrap{ max-width:940px; margin:0 auto; padding:0 20px; }
+  code{ font-family:var(--mono); background:var(--ink-soft); padding:1px 6px; border-radius:2px; font-size:.9em; }
+
+  header.masthead{ padding:48px 0 30px; }
+  .eyebrow{ display:inline-block; font-family:var(--mono); font-size:.86rem; letter-spacing:.12em;
+    border:2px solid var(--blue); color:var(--blue); padding:4px 10px; transform:rotate(-2deg); background:var(--paper); }
+  h1{ font-family:var(--display); font-weight:400; font-size:clamp(1.9rem,5vw,2.9rem); letter-spacing:.01em;
+    margin:16px 0 10px; line-height:1.15; }
+  .lede{ max-width:64ch; font-size:1.02rem; line-height:1.6; opacity:.85; margin:0 0 18px; }
+  .factrow{ display:flex; flex-wrap:wrap; gap:10px; }
+  .fact{ font-family:var(--mono); font-size:.82rem; letter-spacing:.02em; background:var(--paper);
+    border:1.5px solid var(--ink); padding:.4em .8em; display:flex; gap:.5em; box-shadow:3px 3px 0 rgba(31,36,33,.14); }
+  .fact b{ color:var(--kraft-dark); font-weight:600; text-transform:uppercase; letter-spacing:.06em; font-size:.88rem; }
+
+  nav.index{ position:sticky; top:0; z-index:20; background:color-mix(in srgb, var(--canvas) 92%, transparent);
+    backdrop-filter:blur(6px); border-top:2px solid var(--ink); border-bottom:2px solid var(--ink); }
+  nav.index .wrap{ display:flex; gap:2px; overflow-x:auto; padding:8px 20px; scrollbar-width:none; }
+  nav.index .wrap::-webkit-scrollbar{ display:none; }
+  nav.index a{ font-family:var(--mono); font-weight:600; letter-spacing:.03em; font-size:.82rem; text-decoration:none;
+    color:var(--ink); opacity:.85; padding:.5em .8em; white-space:nowrap; text-transform:uppercase; border:1px solid transparent; }
+  nav.index a:hover{ opacity:1; border-color:var(--ink); background:var(--paper); }
+  nav.index a.toc-link{ color:var(--blue); opacity:1; border-right:1.5px solid var(--ink); margin-right:8px; padding-right:16px; }
+  nav.index a.toc-link:hover{ background:var(--blue-soft); border-color:var(--ink); }
+
+  section{ padding:44px 0; border-bottom:2px dashed rgba(31,36,33,.3); }
+  section:last-of-type{ border-bottom:none; }
+  .section-head{ margin-bottom:26px; max-width:70ch; }
+  .kicker{ font-family:var(--mono); font-weight:600; font-size:.9rem; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--red); margin:0 0 .4em; }
+  h2{ font-family:var(--display); font-weight:400; font-size:clamp(1.4rem,2.8vw,1.9rem); margin:0 0 .25em; letter-spacing:.005em; }
+  .section-head p{ opacity:.82; margin:.5em 0 0; }
+  h3.sub{ font-family:var(--mono); font-size:1.02rem; margin:24px 0 10px; text-transform:uppercase; letter-spacing:.04em; color:var(--kraft-dark); }
+
+  .obj-list{ display:grid; gap:10px; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); list-style:none; margin:0; padding:0; }
+  .obj-list li{ background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow); padding:14px 16px; font-size:.92rem; }
+  .obj-list li::before{ content:"▸"; color:var(--red); margin-right:.5em; font-weight:700; }
+
+  .teach-note{ margin:18px 0; padding:12px 14px; border:1.5px dashed var(--blue); background:var(--blue-soft);
+    font-family:var(--mono); font-size:.82rem; line-height:1.6; }
+  .teach-note .label{ color:var(--blue); font-weight:600; letter-spacing:.05em; text-transform:uppercase; font-size:.88rem; display:block; margin-bottom:.4em; }
+  .teach-note.warn{ border-color:var(--red); background:var(--red-soft); }
+  .teach-note.warn .label{ color:var(--red); }
+  .teach-note.preview{ border-color:var(--kraft-dark); background:var(--kraft-soft); }
+  .teach-note.preview .label{ color:var(--kraft-dark); }
+
+  .cold-open{ background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow); padding:18px 20px; margin:24px 0; }
+  .cold-open .tag{ font-family:var(--mono); font-size:.84rem; letter-spacing:.1em; color:var(--red); margin:0 0 8px; text-transform:uppercase; }
+  .cold-open p{ margin:0; font-size:.95rem; line-height:1.6; font-style:italic; }
+
+  /* TERMINAL BLOCKS */
+  .terminal{ background:var(--ticket); color:var(--ink); border:1.5px solid var(--ink); margin:20px 0; overflow:hidden; box-shadow:var(--shadow); }
+  .terminal-header{ background:color-mix(in srgb, var(--ticket) 80%, #fff); padding:8px 14px; border-bottom:1px solid rgba(31,36,33,.15); display:flex; align-items:center; gap:6px; }
+  .terminal-dot{ width:10px; height:10px; border-radius:50%; }
+  .terminal-dot.r{ background:var(--red); }
+  .terminal-dot.y{ background:var(--kraft-dark); }
+  .terminal-dot.g{ background:var(--blue); }
+  .terminal-title{ font-family:var(--mono); font-size:.8rem; color:var(--kraft-dark); margin-left:8px; letter-spacing:.04em; }
+  .terminal-body{ padding:14px 18px; font-family:'Courier New', Courier, monospace; font-size:.84rem; line-height:1.65; overflow-x:auto; white-space:pre-wrap; word-wrap:break-word; }
+  .terminal-body .prompt{ color:var(--blue); font-weight:700; }
+  .terminal-body .cmd{ color:var(--ink); font-weight:600; }
+  .terminal-body .comment{ color:var(--kraft-dark); font-style:italic; }
+  .terminal-body .hl{ color:var(--red); font-weight:600; }
+  .terminal-body .out{ color:var(--ink); opacity:.7; }
+
+  table.spec{ width:100%; border-collapse:collapse; margin:18px 0; font-size:.86rem; }
+  table.spec th{ font-family:var(--mono); font-weight:600; text-transform:uppercase; letter-spacing:.05em; font-size:.86rem;
+    color:var(--kraft-dark); text-align:left; padding:8px 10px; border-bottom:2px solid var(--ink); }
+  table.spec td{ padding:9px 10px; border-bottom:1px dashed rgba(31,36,33,.3); vertical-align:top; }
+  table.spec tr:last-child td{ border-bottom:none; }
+  table.spec td.mono, table.spec th.mono{ font-family:var(--mono); }
+
+  .toolbar{ display:flex; gap:10px; align-items:center; margin-bottom:20px; flex-wrap:wrap; }
+  button.btn{ font-family:var(--mono); font-weight:600; letter-spacing:.03em; text-transform:uppercase; font-size:.9rem;
+    background:var(--paper); color:var(--ink); border:1.5px solid var(--ink); padding:.55em 1em; cursor:pointer; box-shadow:3px 3px 0 rgba(31,36,33,.14); }
+  button.btn:hover{ background:var(--kraft-soft); }
+  button.btn:focus-visible, a:focus-visible, .flashcard:focus-visible, input:focus-visible{ outline:2px solid var(--blue); outline-offset:2px; }
+  #cardProgress{ font-family:var(--mono); font-size:.85rem; opacity:.75; }
+  .card-grid{ display:grid; gap:16px; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); }
+  .flashcard{ perspective:1200px; height:190px; cursor:pointer; border:none; background:none; padding:0; font-family:inherit; text-align:left; width:100%; }
+  .flashcard-inner{ position:relative; width:100%; height:100%; transition:transform .5s cubic-bezier(.4,.2,.2,1); transform-style:preserve-3d; -webkit-transform-style:preserve-3d; will-change:transform; }
+  .flashcard.flipped .flashcard-inner{ transform:rotateY(180deg); -webkit-transform:rotateY(180deg); }
+  .flashcard-face{ position:absolute; inset:0; backface-visibility:hidden; -webkit-backface-visibility:hidden; -moz-backface-visibility:hidden; border:1.5px solid var(--ink); box-shadow:var(--shadow);
+    padding:15px; display:flex; flex-direction:column; justify-content:center; }
+  .flashcard-face.front{ background:var(--paper); transform:translateZ(.5px); }
+  .flashcard-face.back{ background:var(--ticket); transform:rotateY(180deg) translateZ(.5px); overflow-y:auto; }
+  .flashcard-face .lbl{ font-family:var(--mono); font-weight:600; letter-spacing:.1em; text-transform:uppercase; font-size:.82rem; color:var(--kraft-dark); margin-bottom:.5em; }
+  .flashcard-face.front .term{ font-family:var(--display); font-weight:400; font-size:1.05rem; letter-spacing:.01em; }
+  .flashcard-face.back .def{ font-size:.82rem; }
+  .flashcard.known .flashcard-face.front{ border-color:var(--blue); border-width:2px; }
+
+  .quiz-q{ background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow); padding:18px 20px; margin-bottom:18px; }
+  .quiz-q .qtext{ font-weight:600; margin:0 0 13px; }
+  .quiz-q .qnum{ font-family:var(--display); color:var(--red); margin-right:.5em; }
+  .choices{ display:grid; gap:8px; }
+  .choice{ text-align:left; font-family:var(--sans); font-size:.9rem; background:var(--ticket); border:1.5px solid var(--ink);
+    padding:.65em .85em; cursor:pointer; color:var(--ink); }
+  .choice:hover{ border-color:var(--blue); }
+  .choice.correct{ background:var(--blue-soft); border-color:var(--blue); border-width:2px; }
+  .choice.incorrect{ background:var(--red-soft); border-color:var(--red); border-width:2px; }
+  .choice[disabled]{ cursor:default; }
+  .explain{ margin-top:12px; font-size:.84rem; opacity:.85; border-left:3px solid var(--kraft); padding-left:12px; display:none; font-family:var(--mono); }
+  .explain.show{ display:block; }
+  #quizScore{ font-family:var(--mono); font-size:.9rem; opacity:.75; margin-bottom:16px; }
+
+  .example{ background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow); padding:20px 22px; margin-bottom:16px; }
+  .example h3{ font-family:var(--display); font-weight:400; font-size:1.15rem; margin:0 0 8px; }
+  .example .tag{ display:inline-block; font-family:var(--mono); font-weight:600; font-size:.86rem; text-transform:uppercase; letter-spacing:.07em;
+    color:var(--blue); background:var(--blue-soft); border:1px solid var(--blue); padding:.25em .6em; margin-bottom:10px; }
+  details.solution{ margin-top:12px; }
+  details.solution summary{ cursor:pointer; font-family:var(--mono); font-weight:600; letter-spacing:.03em; text-transform:uppercase;
+    font-size:.9rem; color:var(--blue); list-style:none; display:inline-flex; align-items:center; gap:.4em; }
+  details.solution summary::-webkit-details-marker{ display:none; }
+  details.solution summary::before{ content:"▸"; transition:transform .15s; }
+  details.solution[open] summary::before{ transform:rotate(90deg); }
+  details.solution .solbody{ margin-top:10px; padding:13px 15px; background:var(--ticket); font-size:.88rem; }
+
+  #glossarySearch{ width:100%; max-width:400px; font-family:var(--sans); font-size:.9rem; padding:.65em .85em;
+    border:1.5px solid var(--ink); background:var(--paper); color:var(--ink); margin-bottom:16px; }
+  .alpha-nav{ display:flex; flex-wrap:wrap; gap:4px; margin-bottom:22px; }
+  .alpha-nav a{ font-family:var(--mono); font-weight:600; font-size:.82rem; width:1.8em; height:1.8em; display:flex;
+    align-items:center; justify-content:center; border:1px solid var(--ink); text-decoration:none; color:var(--ink); opacity:.35; }
+  .alpha-nav a.has{ opacity:1; background:var(--paper); }
+  .alpha-nav a.has:hover{ border-color:var(--blue); color:var(--blue); }
+  .glossary-letter{ font-family:var(--display); font-weight:400; color:var(--red); font-size:1.1rem; margin:20px 0 6px; }
+  dl.glossary{ margin:0; }
+  dl.glossary .gitem{ border-top:1px dashed rgba(31,36,33,.35); padding:11px 0; }
+  dl.glossary dt{ font-family:var(--mono); font-weight:600; font-size:.98rem; }
+  dl.glossary dd{ margin:.3em 0 0; opacity:.8; font-size:.86rem; }
+  .gitem.hidden{ display:none; }
+
+  footer{ padding:30px 0 60px; }
+  footer p{ opacity:.65; font-size:.82rem; font-family:var(--mono); letter-spacing:.02em; }
+
+  .back-to-top{ position:fixed; bottom:22px; right:22px; z-index:40; width:50px; height:50px;
+    background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow);
+    font-family:var(--display); font-size:1.4rem; color:var(--ink); line-height:1;
+    display:flex; align-items:center; justify-content:center; padding:0; cursor:pointer; text-decoration:none;
+    opacity:0; visibility:hidden; transform:translateY(10px);
+    transition:opacity .25s ease, transform .25s ease, visibility 0s .25s; }
+  .back-to-top.show{ opacity:1; visibility:visible; transform:translateY(0); transition:opacity .25s ease, transform .25s ease, visibility 0s; }
+  .back-to-top:hover{ background:var(--blue-soft); border-color:var(--blue); color:var(--blue); }
+  .back-to-top:focus-visible{ outline:2px solid var(--blue); outline-offset:2px; }
+
+  @media print{
+    body{ background:#fff; }
+    nav.index{ display:none; }
+    .quiz-q, .example, .flashcard-face, .terminal{ box-shadow:none; }
+    .back-to-top{ display:none; }
+  }
+</style>
+
+<header class="masthead">
+  <div class="wrap">
+    <p class="eyebrow">IT131 · SESSION 08 · FIELD NOTES</p>
+    <h1>IPv4 Addressing &amp; Subnetting</h1>
+    <p class="lede">Session 6 introduced Logistics, the department that reads a packet's destination and picks the route. This week we open Logistics' address book: how every IPv4 address is built, which addresses are off-limits, who hands them out, and how one network gets carved into many. Most of the course's math is in this session.</p>
+    <div class="factrow">
+      <span class="fact"><b>New material</b> Module 11 — IPv4 Addressing</span>
+      <span class="fact"><b>Practice</b> <a href="IT131_Subnetting.html">Subnetting Field Manual</a></span>
+      <span class="fact"><b>Handout</b> <a href="IT131_7_Holy_Steps_of_Subnetting.pdf">7 Holy Steps (PDF)</a></span>
+    </div>
+  </div>
+</header>
+
+<nav class="index" aria-label="Section index">
+  <div class="wrap">
+    <a href="index.html" class="toc-link">↩ Contents</a>
+    <a href="#overview">Overview</a>
+    <a href="#structure">Address Structure</a>
+    <a href="#cast">Uni/Broad/Multicast</a>
+    <a href="#types">Address Types</a>
+    <a href="#segmentation">Segmentation</a>
+    <a href="#subnetting">Subnetting</a>
+    <a href="#design">VLSM &amp; Design</a>
+    <a href="#mistakes">Common Mistakes</a>
+    <a href="#flashcards">Flashcards</a>
+    <a href="#quiz">Quiz</a>
+    <a href="#examples">Examples</a>
+    <a href="#glossary">Glossary</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+  <!-- OVERVIEW -->
+  <section id="overview">
+    <div class="section-head">
+      <p class="kicker">Module 11</p>
+      <h2>What Session 8 covers</h2>
+      <p>Module 11 is the longest module in ITN, and it has two halves. The first half is vocabulary: what the parts of an address are called, and which addresses are special. The second half is a skill: subnetting. You learn the vocabulary by reading. You learn the skill by doing problems.</p>
+    </div>
+    <ul class="obj-list">
+      <li>Describe the structure of an IPv4 address: network portion, host portion, subnet mask, prefix length</li>
+      <li>Tell unicast, broadcast, and multicast apart, including directed vs. limited broadcast</li>
+      <li>Recognize public, private, and special-use addresses, and explain legacy classful addressing</li>
+      <li>Explain why networks are segmented and how subnetting reduces broadcast traffic</li>
+      <li>Subnet a /24, /16, or /8 network to meet a subnet or host requirement</li>
+      <li>Build a VLSM plan, and follow a structured addressing plan when assigning device addresses</li>
+    </ul>
+    <div class="teach-note">
+      <span class="label">Where the practice lives</span>
+      This page is the lecture recap. The practice is on its own page: the <a href="IT131_Subnetting.html">Subnetting Field Manual</a>. It has a step-by-step calculator, a visual subnet slicer, and eight drills that generate new problems every time. The class method is also printed as a one-page handout, <a href="IT131_7_Holy_Steps_of_Subnetting.pdf">The 7 Holy Steps of Subnetting (PDF)</a>. Read a section here, then drill it there.
+    </div>
+  </section>
+
+  <!-- STRUCTURE -->
+  <section id="structure">
+    <div class="section-head">
+      <p class="kicker">Module 11 · 11.1</p>
+      <h2>IPv4 address structure</h2>
+      <p>An IPv4 address is 32 bits, written as four decimal octets. Every address is split into two parts, and the subnet mask says where the split is.</p>
+    </div>
+
+    <div class="cold-open">
+      <p class="tag">Think of it like</p>
+      <p>A street address. The <strong>network portion</strong> is the street name, which every house on the street shares. The <strong>host portion</strong> is the house number, which is unique on that street. The <strong>subnet mask</strong> is the rule for where the street name stops and the house number starts. Logistics only ever reads the street name. Getting the packet to the right house is Local Dispatch's job, using ARP (Session 6).</p>
+    </div>
+
+    <table class="spec">
+      <thead><tr><th>Term</th><th>What it is</th><th>Example</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;">Subnet mask</td><td>32 bits: 1s mark network bits and 0s mark host bits. The 1s are always contiguous and always come first.</td><td class="mono">255.255.255.0</td></tr>
+        <tr><td style="font-weight:600;">Prefix length</td><td>The number of 1s in the mask, written after a slash.</td><td class="mono">/24</td></tr>
+        <tr><td style="font-weight:600;">Network address</td><td>Host bits all 0. It names the network and can't be given to a device.</td><td class="mono">192.168.10.0</td></tr>
+        <tr><td style="font-weight:600;">Host addresses</td><td>Everything between the network and broadcast addresses. These are the only ones you assign.</td><td class="mono">.1 – .254</td></tr>
+        <tr><td style="font-weight:600;">Broadcast address</td><td>Host bits all 1. It reaches every host on the network and can't be given to a device.</td><td class="mono">192.168.10.255</td></tr>
+      </tbody>
+    </table>
+
+    <h3 class="sub">ANDing: how a device finds the network portion</h3>
+    <p>A device ANDs an address with its mask, bit by bit. <code>1 AND 1 = 1</code>, and every other combination gives <code>0</code>. The result is the network address. Before sending, a host does this for its own address and for the destination, <em>using its own mask for both</em>. If the results match, the destination is local and the host ARPs for it directly. If they differ, the packet goes to the default gateway. This is the decision Session 6's ARP section depended on.</p>
+    <div class="terminal">
+      <div class="terminal-header">
+        <span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span>
+        <span class="terminal-title">192.168.10.77/26, ANDed with its mask</span>
+      </div>
+      <div class="terminal-body"><span class="comment">  Address   </span>11000000.10101000.00001010.01001101   <span class="out">192.168.10.77</span>
+<span class="comment">  Mask  AND </span>11111111.11111111.11111111.11000000   <span class="out">255.255.255.192</span>
+<span class="comment">  ─────────────────────────────────────────────</span>
+<span class="comment">  Network   </span><span class="hl">11000000.10101000.00001010.01000000</span>   <span class="hl">192.168.10.64</span></div>
+    </div>
+    <div class="teach-note">
+      <span class="label">Hosts per network</span>
+      With <em>h</em> host bits, a network has 2<sup>h</sup> total addresses and <strong>2<sup>h</sup> − 2</strong> usable ones. The two you lose are the network address and the broadcast address. A /24 has 8 host bits: 256 − 2 = 254 hosts. The guide's <a href="IT131_Subnetting.html#anatomy">Anatomy</a> and <a href="IT131_Subnetting.html#binary">Binary</a> sections walk through this more slowly if you need them.
+    </div>
+  </section>
+
+  <!-- UNICAST / BROADCAST / MULTICAST -->
+  <section id="cast">
+    <div class="section-head">
+      <p class="kicker">Module 11 · 11.2</p>
+      <h2>Unicast, broadcast, and multicast</h2>
+      <p>Three ways to address a packet: to one device, to every device, or to a group that asked to listen.</p>
+    </div>
+    <table class="spec">
+      <thead><tr><th>Type</th><th>Who receives it</th><th>Addresses</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;">Unicast</td><td>Exactly one device. Most traffic is unicast.</td><td>Any host address. The <em>source</em> address of every packet is always unicast.</td></tr>
+        <tr><td style="font-weight:600;">Broadcast</td><td>Every device on the network</td><td>A <strong>limited broadcast</strong>, <code>255.255.255.255</code>, reaches the local network only. A <strong>directed broadcast</strong>, such as <code>172.16.4.255</code> for 172.16.4.0/24, is aimed at every host on one specific network.</td></tr>
+        <tr><td style="font-weight:600;">Multicast</td><td>Only devices that joined the group (multicast clients)</td><td><code>224.0.0.0</code> – <code>239.255.255.255</code>. Routing protocols use it: for example, OSPF uses 224.0.0.5.</td></tr>
+      </tbody>
+    </table>
+    <div class="teach-note">
+      <span class="label">Routers stop broadcasts</span>
+      Routers don't forward limited broadcasts, and by default they don't forward directed broadcasts either. That's why a router is the edge of a <strong>broadcast domain</strong>, and it's the whole reason segmentation (below) works. Switches forward broadcasts out every port except the one they arrived on, so adding switches doesn't shrink a broadcast domain.
+    </div>
+  </section>
+
+  <!-- ADDRESS TYPES -->
+  <section id="types">
+    <div class="section-head">
+      <p class="kicker">Module 11 · 11.3</p>
+      <h2>Types of IPv4 addresses</h2>
+      <p>Not every address can be used everywhere. Some are private, some are reserved for special jobs, and the rest are public addresses handed out through a chain of registries.</p>
+    </div>
+
+    <h3 class="sub">Public vs. private</h3>
+    <p><strong>Private addresses</strong> (RFC 1918) are free for anyone to use inside a network, but internet routers won't route them. To reach the internet, a private address is translated to a public one by <strong>NAT</strong> (Network Address Translation), usually on the edge router. That's how every home network can use 192.168.1.x at the same time. <strong>Public addresses</strong> are globally unique and routable on the internet.</p>
+    <table class="spec">
+      <thead><tr><th>Private block</th><th>Range</th><th>Remember</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">10.0.0.0/8</td><td class="mono">10.0.0.0 – 10.255.255.255</td><td>One huge block</td></tr>
+        <tr><td class="mono">172.16.0.0/12</td><td class="mono">172.16.0.0 – 172.31.255.255</td><td>Stops at <strong>172.31</strong>. 172.32.x.x is public.</td></tr>
+        <tr><td class="mono">192.168.0.0/16</td><td class="mono">192.168.0.0 – 192.168.255.255</td><td>The home-network block</td></tr>
+      </tbody>
+    </table>
+
+    <h3 class="sub">Special-use addresses</h3>
+    <table class="spec">
+      <thead><tr><th>Address</th><th>Name</th><th>What it's for</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">127.0.0.0/8</td><td style="font-weight:600;">Loopback</td><td>The device itself. <code>ping 127.0.0.1</code> tests the local TCP/IP stack without touching the network. It's the first step of Session 9's troubleshooting ladder.</td></tr>
+        <tr><td class="mono">169.254.0.0/16</td><td style="font-weight:600;">Link-local (APIPA)</td><td>Windows gives itself one of these when no DHCP server answers. If you see it in <code>ipconfig</code>, it usually means DHCP failed.</td></tr>
+      </tbody>
+    </table>
+
+    <h3 class="sub">Legacy classful addressing</h3>
+    <p>Before 1993, the first octet set a network's size. That scheme wasted enormous numbers of addresses: a company that needed 300 hosts couldn't use a Class C (254 hosts), so it got a Class B with 65,534. It was replaced by <strong>classless addressing (CIDR)</strong>, where any prefix length is allowed. You still need the classes, because the exam and older documentation refer to them.</p>
+    <table class="spec">
+      <thead><tr><th>Class</th><th>First octet</th><th>Default mask</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;">A</td><td class="mono">0 – 127</td><td class="mono">/8</td><td>1–126 usable. 0 is reserved and 127 is loopback.</td></tr>
+        <tr><td style="font-weight:600;">B</td><td class="mono">128 – 191</td><td class="mono">/16</td><td></td></tr>
+        <tr><td style="font-weight:600;">C</td><td class="mono">192 – 223</td><td class="mono">/24</td><td></td></tr>
+        <tr><td style="font-weight:600;">D</td><td class="mono">224 – 239</td><td>—</td><td>Multicast</td></tr>
+        <tr><td style="font-weight:600;">E</td><td class="mono">240 – 255</td><td>—</td><td>Experimental / reserved</td></tr>
+      </tbody>
+    </table>
+
+    <h3 class="sub">Who hands out public addresses</h3>
+    <p><strong>IANA</strong> (Internet Assigned Numbers Authority) manages the whole IPv4 space. It allocates large blocks to five <strong>Regional Internet Registries (RIRs)</strong>, which allocate to ISPs and large organizations, which assign to customers.</p>
+    <table class="spec">
+      <thead><tr><th>RIR</th><th>Region</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">ARIN</td><td>North America (including us)</td></tr>
+        <tr><td class="mono">LACNIC</td><td>Latin America and parts of the Caribbean</td></tr>
+        <tr><td class="mono">RIPE NCC</td><td>Europe, the Middle East, and Central Asia</td></tr>
+        <tr><td class="mono">APNIC</td><td>Asia-Pacific</td></tr>
+        <tr><td class="mono">AFRINIC</td><td>Africa</td></tr>
+      </tbody>
+    </table>
+    <div class="teach-note">
+      <span class="label">Why this matters next week</span>
+      The free pool of public IPv4 addresses has run out. NAT and private addressing stretched IPv4 much further than anyone planned, but they're a workaround, not a fix. The real fix is IPv6, which is Session 9.
+    </div>
+  </section>
+
+  <!-- SEGMENTATION -->
+  <section id="segmentation">
+    <div class="section-head">
+      <p class="kicker">Module 11 · 11.4</p>
+      <h2>Network segmentation</h2>
+      <p>Why split a network at all? Because one big broadcast domain gets slow and hard to secure.</p>
+    </div>
+    <ul class="obj-list">
+      <li><strong>Broadcasts reach everyone.</strong> Every ARP request and DHCP Discover goes to every host in the broadcast domain. With a few thousand hosts, that constant noise slows the network and every device on it.</li>
+      <li><strong>Routers are the boundary.</strong> Subnetting puts each group of hosts in its own broadcast domain, and a router interface connects each one to the rest of the network.</li>
+      <li><strong>Security.</strong> Traffic between subnets has to go through a router, and a router can filter it. Guest Wi-Fi never needs to reach the HR servers.</li>
+      <li><strong>Containment.</strong> When a device misbehaves and floods broadcasts, only its own subnet feels it.</li>
+    </ul>
+    <h3 class="sub">Common ways to divide a network</h3>
+    <table class="spec">
+      <thead><tr><th>Divide by</th><th>Example</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;">Location</td><td>One subnet per floor or per building</td></tr>
+        <tr><td style="font-weight:600;">Group or function</td><td>Engineering, Accounting, and Sales each get a subnet</td></tr>
+        <tr><td style="font-weight:600;">Device type</td><td>Printers, servers, IP phones, and guest devices each get a subnet</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- SUBNETTING -->
+  <section id="subnetting">
+    <div class="section-head">
+      <p class="kicker">Module 11 · 11.5 – 11.7</p>
+      <h2>Subnetting</h2>
+      <p>Subnetting means borrowing bits from the host portion and using them as subnet bits. You end up with more networks, and fewer hosts in each.</p>
+    </div>
+
+    <h3 class="sub">The two formulas</h3>
+    <table class="spec">
+      <thead><tr><th>You want…</th><th>Formula</th><th>Where the bits come from</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;">Number of subnets</td><td class="mono">2ⁿ</td><td><em>n</em> = bits borrowed</td></tr>
+        <tr><td style="font-weight:600;">Usable hosts per subnet</td><td class="mono">2ʰ − 2</td><td><em>h</em> = host bits left over</td></tr>
+      </tbody>
+    </table>
+    <div class="teach-note warn">
+      <span class="label">The −2 is for hosts only</span>
+      Borrowing 3 bits gives 2³ = <strong>8</strong> subnets, not 6. ITN counts every subnet, including the first (subnet zero) and the last. The −2 applies only to hosts, because it removes each subnet's network and broadcast address.
+    </div>
+
+    <h3 class="sub">The class method: the 7 holy steps</h3>
+    <ol class="obj-list" style="list-style:none;">
+      <li><strong>1.</strong> Determine the number of needed subnets.</li>
+      <li><strong>2.</strong> Write out your host bits.</li>
+      <li><strong>3.</strong> Determine how many bits to borrow: 2ⁿ ≥ subnets needed.</li>
+      <li><strong>4.</strong> Turn on the borrowed bits, starting right after the existing network bits, and find the decimal value.</li>
+      <li><strong>5.</strong> Add that value to the <em>original</em> mask to get the new mask.</li>
+      <li><strong>6.</strong> Find the lowest-order bit turned on in the new mask. That's the subnet variable.</li>
+      <li><strong>7.</strong> Count by the variable to list each subnet's range.</li>
+    </ol>
+    <p style="font-size:.88rem;">Printable copy: <a href="IT131_7_Holy_Steps_of_Subnetting.pdf">7 Holy Steps of Subnetting (PDF)</a>. Three fully worked examples, including one that doesn't start from a default mask, are in the guide's <a href="IT131_Subnetting.html#subnetting">Borrowing Bits</a> section.</p>
+
+    <h3 class="sub">Subnetting on and across octet boundaries</h3>
+    <p>ITN works through subnetting a /24, then a /16, then a /8. The method is the same each time. What changes is which octet the new boundary lands in.</p>
+    <table class="spec">
+      <thead><tr><th>Start with</th><th>Need</th><th>Borrow</th><th>New prefix / mask</th><th>Subnets</th><th>Hosts each</th><th>Counts by</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">192.168.10.0/24</td><td>4 subnets</td><td class="mono">2</td><td class="mono">/26 · 255.255.255.192</td><td class="mono">4</td><td class="mono">62</td><td class="mono">64 in the 4th octet</td></tr>
+        <tr><td class="mono">172.16.0.0/16</td><td>100 subnets</td><td class="mono">7</td><td class="mono">/23 · 255.255.254.0</td><td class="mono">128</td><td class="mono">510</td><td class="mono">2 in the 3rd octet</td></tr>
+        <tr><td class="mono">10.0.0.0/8</td><td>1,000 subnets</td><td class="mono">10</td><td class="mono">/18 · 255.255.192.0</td><td class="mono">1,024</td><td class="mono">16,382</td><td class="mono">64 in the 3rd octet</td></tr>
+      </tbody>
+    </table>
+
+    <h3 class="sub">Subnetting to meet requirements</h3>
+    <p>Every design balances two needs that pull against each other. More subnets means fewer hosts in each, and more hosts means fewer subnets.</p>
+    <ul class="obj-list">
+      <li><strong>Number of hosts per subnet.</strong> Size for the <em>biggest</em> subnet's host count, plus growth.</li>
+      <li><strong>Number of subnets.</strong> Borrow enough bits for every segment you need, plus growth.</li>
+      <li><strong>Private address space</strong> (like 10.0.0.0/8) is plentiful, so you can afford generous subnets.</li>
+      <li><strong>Public address space</strong> is scarce and expensive, so you size it tightly and waste as little as possible. That's what VLSM is for.</li>
+    </ul>
+  </section>
+
+  <!-- VLSM & DESIGN -->
+  <section id="design">
+    <div class="section-head">
+      <p class="kicker">Module 11 · 11.8 – 11.9</p>
+      <h2>VLSM and structured design</h2>
+      <p>Fixed-size subnets waste addresses whenever the segments are different sizes. VLSM fixes that, and a structured plan decides which address each device gets.</p>
+    </div>
+
+    <h3 class="sub">VLSM in one paragraph</h3>
+    <p><strong>Variable Length Subnet Masking</strong> gives each segment the smallest subnet that fits it. ITN describes it as <strong>subnetting a subnet</strong>: split the block into subnets for the LANs, then take one unused subnet and split it again, for example a /27 into eight /30s for point-to-point WAN links. Working largest-first gives the same kind of result. A point-to-point link needs only 2 addresses, one per router, so ITN uses a <strong>/30</strong> for it. A /24 spent on a two-router link wastes 252 addresses.</p>
+    <p style="font-size:.88rem;">Worked VLSM plans, including your class example (31, 15, and 6 hosts from 192.168.10.0/24), are in the guide's <a href="IT131_Subnetting.html#vlsm">VLSM</a> section. It also has a drill that checks a plan you type in.</p>
+
+    <h3 class="sub">Structured design: which device gets which address</h3>
+    <p>An addressing plan decides <em>before</em> deployment which addresses are handed out by DHCP and which are set by hand. A good plan prevents duplicate addresses, makes it easy to provide and control access, and makes security and performance monitoring possible, because every address has a known owner. The rule of thumb: anything other devices need to find at a known address gets a static address.</p>
+    <table class="spec">
+      <thead><tr><th>Device</th><th>Assignment</th><th>Why</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;">End devices (PCs, laptops, phones)</td><td>DHCP</td><td>Too many to set by hand, and they come and go.</td></tr>
+        <tr><td style="font-weight:600;">Servers and peripherals (printers)</td><td>Static</td><td>Clients need to find them at a predictable address.</td></tr>
+        <tr><td style="font-weight:600;">Internet-facing servers</td><td>Static public address</td><td>The outside world has to reach them.</td></tr>
+        <tr><td style="font-weight:600;">Intermediary devices (switch management, APs)</td><td>Static</td><td>So administrators can always reach them to manage them.</td></tr>
+        <tr><td style="font-weight:600;">Router interface (default gateway)</td><td>Static: the lowest or the highest usable address, used the same way in every subnet across the organization</td><td>Every host's gateway setting points at it, and a consistent rule means nobody has to look it up.</td></tr>
+      </tbody>
+    </table>
+    <div class="teach-note">
+      <span class="label">A typical /24 plan (a convention, not a rule)</span>
+      For 192.168.10.0/24, one common layout is: <code>.1</code> for the router, <code>.2–.19</code> for switches and APs, <code>.20–.49</code> for servers and printers, and <code>.50–.254</code> for the DHCP pool. The exact ranges vary between organizations. What matters is that the plan is written down and followed, so two devices never end up with the same address.
+    </div>
+  </section>
+
+  <!-- COMMON MISTAKES -->
+  <section id="mistakes">
+    <div class="section-head">
+      <p class="kicker">Watch for this</p>
+      <h2>The most common Module 11 mistakes</h2>
+      <p>Nearly every wrong answer on this module comes from one of these.</p>
+    </div>
+    <ul class="obj-list">
+      <li>Forgetting the −2 on hosts: saying a /26 holds 64 hosts. It holds 62.</li>
+      <li>Subtracting 2 from subnets: saying 3 borrowed bits give 6 subnets. They give 8.</li>
+      <li>Applying the block size to the wrong octet. For /17 through /23, the boundary is in the 3rd octet.</li>
+      <li>Writing a broadcast like 172.16.45.255 for 172.16.45.200/20. The octets to the right of the boundary become 255, and the boundary octet changes too, so the answer is 172.16.47.255.</li>
+      <li>Assigning a network or broadcast address to a host or a router interface. IOS rejects it ("Bad mask"), so the address never gets applied (Session 7).</li>
+      <li>Treating every .0 or .255 address as special. In a /23, x.x.1.0 can be an ordinary host.</li>
+      <li>Thinking 172.32.x.x is private. The private range stops at 172.31.</li>
+      <li>Adding borrowed bits to the <em>default</em> mask instead of the original mask (7 holy steps, step 5).</li>
+      <li>Allocating VLSM subnets smallest-first, so they land off their boundaries and overlap.</li>
+    </ul>
+  </section>
+
+  <!-- FLASHCARDS -->
+  <section id="flashcards">
+    <div class="section-head">
+      <p class="kicker">Study</p>
+      <h2>Flashcards</h2>
+      <p>Click to flip. Double-click to mark as known.</p>
+    </div>
+    <div class="toolbar">
+      <button class="btn" id="shuffleBtn">Shuffle</button>
+      <button class="btn" id="resetKnownBtn">Reset progress</button>
+      <span id="cardProgress"></span>
+    </div>
+    <div class="card-grid" id="cardGrid"></div>
+  </section>
+
+  <!-- QUIZ -->
+  <section id="quiz">
+    <div class="section-head">
+      <p class="kicker">Check yourself</p>
+      <h2>Sample questions</h2>
+      <p>Pick an answer to see if you're right. Same style as the module quiz. For unlimited subnetting practice, use the <a href="IT131_Subnetting.html#practice">guide's drills</a>.</p>
+    </div>
+    <div id="quizScore"></div>
+    <div id="quizList"></div>
+    <button class="btn" id="resetQuizBtn">Reset quiz</button>
+  </section>
+
+  <!-- EXAMPLES -->
+  <section id="examples">
+    <div class="section-head">
+      <p class="kicker">Applied</p>
+      <h2>Worked examples</h2>
+      <p>Think it through before you expand the answer.</p>
+    </div>
+
+    <div class="example">
+      <span class="tag">The six answers</span>
+      <h3>172.16.45.200/20</h3>
+      <p>Find the subnet mask, network address, broadcast address, first and last usable host, and the number of usable hosts.</p>
+      <details class="solution">
+        <summary>Show answer</summary>
+        <div class="solbody">
+          <p>/20 → mask <code>255.255.240.0</code>. The interesting octet is the 3rd, with mask value 240, so the block size is 256 − 240 = 16. Counting by 16 in the 3rd octet (0, 16, 32, 48), 45 falls in 32–47. Network <code>172.16.32.0</code>, broadcast <code>172.16.47.255</code>, hosts <code>172.16.32.1</code> – <code>172.16.47.254</code>, and 2¹² − 2 = <strong>4,094</strong> usable.</p>
+        </div>
+      </details>
+    </div>
+
+    <div class="example">
+      <span class="tag">7 holy steps</span>
+      <h3>192.168.10.0/24 needs 6 subnets</h3>
+      <p>Work the steps. What's the new mask, the subnet variable, the number of hosts per subnet, and the network address of the 3rd subnet?</p>
+      <details class="solution">
+        <summary>Show answer</summary>
+        <div class="solbody">
+          <p>2² = 4 is too few and 2³ = 8 is enough, so borrow 3 bits. <code>11100000</code> = 224, added to the original mask gives <code>255.255.255.224</code> (/27). The lowest bit turned on is 32, so that's the variable. Subnets are .0, .32, .64, … and the 3rd is <code>192.168.10.64/27</code>. 5 host bits remain, so each subnet has 2⁵ − 2 = <strong>30</strong> hosts.</p>
+        </div>
+      </details>
+    </div>
+
+    <div class="example">
+      <span class="tag">Same network?</span>
+      <h3>Will PC A ARP for PC B, or for the gateway?</h3>
+      <p>PC A is <code>192.168.5.62/26</code>. PC B is <code>192.168.5.65/26</code>. They're plugged into the same switch.</p>
+      <details class="solution">
+        <summary>Show answer</summary>
+        <div class="solbody">
+          <p>For a /26 the block size is 64, so subnets start at .0, .64, .128, and .192. PC A is in <code>192.168.5.0/26</code> and PC B is in <code>192.168.5.64/26</code>. The ANDed results differ, so PC A treats PC B as remote and ARPs for its <strong>default gateway</strong>. Sharing a switch doesn't matter. Only the network portion does.</p>
+        </div>
+      </details>
+    </div>
+
+    <div class="example">
+      <span class="tag">Address types</span>
+      <h3>What kind of address is it?</h3>
+      <p>Classify each one: <code>172.20.1.1</code>, <code>172.40.1.1</code>, <code>169.254.33.7</code>, <code>127.0.0.1</code>, <code>224.0.0.5</code>.</p>
+      <details class="solution">
+        <summary>Show answer</summary>
+        <div class="solbody">
+          <p><code>172.20.1.1</code>: private (inside 172.16–172.31). <code>172.40.1.1</code>: public (outside that range). <code>169.254.33.7</code>: link-local/APIPA, meaning the host didn't get a DHCP address. <code>127.0.0.1</code>: loopback. <code>224.0.0.5</code>: multicast (OSPF routers).</p>
+        </div>
+      </details>
+    </div>
+
+    <div class="example">
+      <span class="tag">VLSM</span>
+      <h3>The point-to-point link</h3>
+      <p>A designer has used 192.168.50.0/24 for three LANs and has only 192.168.50.240/28 left. There are three router-to-router links to address. What should they do?</p>
+      <details class="solution">
+        <summary>Show answer</summary>
+        <div class="solbody">
+          <p>Subnet the subnet. A /28 (16 addresses) splits into four <strong>/30</strong>s: <code>.240</code>, <code>.244</code>, <code>.248</code>, and <code>.252</code>. Each has exactly 2 usable addresses, one for each router. Three links use three of them, and one /30 is left as a spare.</p>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <!-- GLOSSARY -->
+  <section id="glossary">
+    <div class="section-head">
+      <p class="kicker">Reference</p>
+      <h2>Glossary &amp; index</h2>
+      <p>Every term from this session, searchable and indexed A–Z.</p>
+    </div>
+    <input type="text" id="glossarySearch" placeholder="Search terms…" aria-label="Search glossary">
+    <div class="alpha-nav" id="alphaNav"></div>
+    <dl class="glossary" id="glossaryList"></dl>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>IT131 · CCNA: Introduction to Networks · Session 8 reference — companion: Subnetting Field Manual.</p>
+  </div>
+</footer>
+
+<button id="backToTop" class="back-to-top" aria-label="Back to top" title="Back to top">↑</button>
+
+<script>
+  const TERMS = [
+    {t:"ANDing", d:"A bitwise AND of an address and a subnet mask (1 AND 1 = 1, anything else = 0). The result is the network address. Hosts use it to decide whether a destination is local or must go to the default gateway."},
+    {t:"APIPA (169.254.0.0/16)", d:"The link-local range a Windows host assigns itself when no DHCP server answers. Seeing one usually means DHCP failed."},
+    {t:"Broadcast address", d:"The last address in a network, with all host bits set to 1. A packet sent to it reaches every host on that network. It can't be assigned to a device."},
+    {t:"Broadcast domain", d:"The set of devices that receive each other's broadcasts. Switches extend a broadcast domain; routers end it. Subnetting creates smaller broadcast domains."},
+    {t:"CIDR", d:"Classless Inter-Domain Routing. It replaced classful addressing in 1993 and allows any prefix length (/0–/32)."},
+    {t:"Classful addressing", d:"The legacy scheme where the first octet set a network's size: A 0–127 (/8, 1–126 usable), B 128–191 (/16), C 192–223 (/24), D 224–239 multicast, E 240–255 reserved."},
+    {t:"Directed broadcast", d:"A broadcast aimed at every host on one specific remote network, for example 172.16.4.255 for 172.16.4.0/24. Routers don't forward directed broadcasts by default."},
+    {t:"IANA", d:"Internet Assigned Numbers Authority. It manages the IP address space and allocates blocks to the five Regional Internet Registries."},
+    {t:"Limited broadcast", d:"255.255.255.255. It reaches every host on the local network only. Routers never forward it."},
+    {t:"Loopback (127.0.0.0/8)", d:"Addresses that refer to the device itself. ping 127.0.0.1 tests the local TCP/IP stack."},
+    {t:"Multicast", d:"Traffic sent to a group of devices that joined that group, using 224.0.0.0–239.255.255.255. Routing protocols like OSPF use it."},
+    {t:"NAT", d:"Network Address Translation. It translates private addresses to a public address, usually on the edge router, so private hosts can reach the internet."},
+    {t:"Network address", d:"The first address in a network, with all host bits set to 0. It identifies the network itself and can't be assigned to a device."},
+    {t:"Prefix length", d:"The number of network bits in an address, written as /n. /24 is the same as mask 255.255.255.0."},
+    {t:"Private address (RFC 1918)", d:"10.0.0.0/8, 172.16.0.0/12 (172.16–172.31), and 192.168.0.0/16. Free to use internally, not routed on the internet."},
+    {t:"Public address", d:"A globally unique, internet-routable address, allocated through IANA, an RIR, and an ISP."},
+    {t:"RIR", d:"Regional Internet Registry. There are five: ARIN, LACNIC, RIPE NCC, APNIC, and AFRINIC. They receive blocks from IANA and allocate them to ISPs and organizations in their region."},
+    {t:"Subnet mask", d:"A 32-bit value with 1s for the network bits and 0s for the host bits, always contiguous 1s followed by 0s."},
+    {t:"Subnetting", d:"Borrowing host bits to create more, smaller networks. n borrowed bits give 2^n subnets; h remaining host bits give 2^h − 2 usable hosts each."},
+    {t:"Unicast", d:"Traffic from one device to exactly one device. The source address of any packet is always unicast."},
+    {t:"VLSM", d:"Variable Length Subnet Masking. Different prefix lengths within one block, so each segment gets the smallest subnet that fits. ITN frames it as 'subnetting a subnet.'"},
+  ];
+
+  const QUIZ = [
+    { q:"How many usable host addresses does a /27 network provide?",
+      choices:["32","30","62","14"], correct:1,
+      explain:"5 host bits: 2⁵ = 32 total, minus the network and broadcast addresses = 30." },
+    { q:"What is the network address of 172.16.45.200/20?",
+      choices:["172.16.45.0","172.16.32.0","172.16.0.0","172.16.40.0"], correct:1,
+      explain:"Block size 16 in the 3rd octet. 45 falls in 32–47, so the network is 172.16.32.0." },
+    { q:"Which address is a private (RFC 1918) address?",
+      choices:["172.32.5.1","192.169.1.1","172.30.200.9","11.0.0.1"], correct:2,
+      explain:"172.16.0.0/12 covers 172.16.x.x through 172.31.x.x. 172.30.200.9 is inside it. 172.32 and 192.169 are just outside their private blocks." },
+    { q:"A host sends a packet to 255.255.255.255. Who receives it?",
+      choices:["Every host on the internet","Every host on the local network; routers don't forward it","Only the default gateway","Only hosts that joined the group"], correct:1,
+      explain:"That's a limited broadcast. It stays on the local network, because routers never forward it." },
+    { q:"A Windows PC shows the address 169.254.12.40 in ipconfig. What's the most likely cause?",
+      choices:["It has a public address","It couldn't reach a DHCP server","It's using a loopback address","It's configured for multicast"], correct:1,
+      explain:"169.254.0.0/16 is APIPA. Windows assigns one to itself when no DHCP server answers." },
+    { q:"You borrow 3 bits from a /24. How many subnets, and how many usable hosts in each?",
+      choices:["6 subnets, 30 hosts","8 subnets, 32 hosts","8 subnets, 30 hosts","6 subnets, 32 hosts"], correct:2,
+      explain:"2³ = 8 subnets (no −2 for subnets). /27 leaves 5 host bits: 2⁵ − 2 = 30." },
+    { q:"Which device should normally receive its address from DHCP?",
+      choices:["The router's LAN interface","A network printer","An employee's laptop","A web server"], correct:2,
+      explain:"End devices use DHCP. Routers, servers, printers, and managed switches get static addresses so other devices can find them." },
+    { q:"Why does ITN use a /30 for a point-to-point link between two routers?",
+      choices:["It has exactly 2 usable addresses, one per router","Routers require a /30","It allows broadcasts across the link","A /30 is the default for serial links"], correct:0,
+      explain:"A /30 has 4 addresses: network, 2 usable, broadcast. That's exactly enough for the two router interfaces, with no waste." },
+    { q:"Which device marks the edge of a broadcast domain?",
+      choices:["Hub","Switch","Router","Access point"], correct:2,
+      explain:"Routers don't forward broadcasts, so each router interface is the edge of a broadcast domain. Switches and hubs forward broadcasts out every port except the incoming one." },
+  ];
+
+  const grid = document.getElementById('cardGrid');
+  TERMS.forEach((item, i) => {
+    const card = document.createElement('button');
+    card.className = 'flashcard';
+    card.setAttribute('aria-label', 'Flashcard: ' + item.t + '. Press to flip.');
+    card.dataset.i = i;
+    card.innerHTML = `
+      <div class="flashcard-inner">
+        <div class="flashcard-face front"><div class="lbl">Term</div><div class="term">${item.t}</div></div>
+        <div class="flashcard-face back"><div class="lbl">Definition</div><div class="def">${item.d}</div></div>
+      </div>`;
+    card.addEventListener('click', () => card.classList.toggle('flipped'));
+    card.addEventListener('dblclick', () => { card.classList.toggle('known'); updateProgress(); });
+    grid.appendChild(card);
+  });
+  function updateProgress(){
+    const known = document.querySelectorAll('.flashcard.known').length;
+    document.getElementById('cardProgress').textContent = `${known} / ${TERMS.length} marked known (double-click a card to mark it)`;
+  }
+  updateProgress();
+  document.getElementById('shuffleBtn').addEventListener('click', () => {
+    const cards = Array.from(grid.children);
+    cards.sort(() => Math.random() - 0.5);
+    cards.forEach(c => { c.classList.remove('flipped'); grid.appendChild(c); });
+  });
+  document.getElementById('resetKnownBtn').addEventListener('click', () => {
+    document.querySelectorAll('.flashcard.known').forEach(c => c.classList.remove('known'));
+    updateProgress();
+  });
+
+  const quizList = document.getElementById('quizList');
+  let score = 0, answered = 0;
+  function renderQuiz(){
+    quizList.innerHTML = ''; score = 0; answered = 0;
+    QUIZ.forEach((item, qi) => {
+      const box = document.createElement('div');
+      box.className = 'quiz-q';
+      box.innerHTML = `<p class="qtext"><span class="qnum">Q${qi+1}.</span>${item.q}</p><div class="choices"></div><p class="explain"></p>`;
+      const choicesEl = box.querySelector('.choices');
+      item.choices.forEach((c, ci) => {
+        const b = document.createElement('button');
+        b.className = 'choice'; b.textContent = c;
+        b.addEventListener('click', () => {
+          if (box.dataset.done) return;
+          box.dataset.done = '1'; answered++;
+          if (ci === item.correct) score++;
+          Array.from(choicesEl.children).forEach((el, ei) => {
+            el.disabled = true;
+            if (ei === item.correct) el.classList.add('correct');
+            else if (ei === ci) el.classList.add('incorrect');
+          });
+          box.querySelector('.explain').textContent = item.explain;
+          box.querySelector('.explain').classList.add('show');
+          updateScore();
+        });
+        choicesEl.appendChild(b);
+      });
+      quizList.appendChild(box);
+    });
+    updateScore();
+  }
+  function updateScore(){
+    document.getElementById('quizScore').textContent =
+      answered === 0 ? `${QUIZ.length} questions — click an answer to check yourself` : `Score: ${score} / ${answered} answered`;
+  }
+  renderQuiz();
+  document.getElementById('resetQuizBtn').addEventListener('click', renderQuiz);
+
+  const glossaryList = document.getElementById('glossaryList');
+  const alphaNav = document.getElementById('alphaNav');
+  const letters = [...new Set(TERMS.map(t => t.t[0].toUpperCase()))];
+  'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').forEach(L => {
+    const a = document.createElement('a');
+    a.textContent = L;
+    if (letters.includes(L)) { a.href = '#g-' + L; a.className = 'has'; }
+    else { a.href = 'javascript:void(0)'; }
+    alphaNav.appendChild(a);
+  });
+  let currentLetter = '';
+  TERMS.forEach(item => {
+    const L = item.t[0].toUpperCase();
+    if (L !== currentLetter) {
+      currentLetter = L;
+      const h = document.createElement('div');
+      h.className = 'glossary-letter'; h.id = 'g-' + L; h.textContent = L;
+      glossaryList.appendChild(h);
+    }
+    const wrap = document.createElement('div');
+    wrap.className = 'gitem';
+    wrap.innerHTML = `<dt>${item.t}</dt><dd>${item.d}</dd>`;
+    wrap.dataset.search = (item.t + ' ' + item.d).toLowerCase();
+    glossaryList.appendChild(wrap);
+  });
+  document.getElementById('glossarySearch').addEventListener('input', (e) => {
+    const q = e.target.value.toLowerCase().trim();
+    document.querySelectorAll('.gitem').forEach(el => {
+      el.classList.toggle('hidden', q && !el.dataset.search.includes(q));
+    });
+  });
+
+  const backToTop = document.getElementById('backToTop');
+  function toggleBackToTop(){ backToTop.classList.toggle('show', window.scrollY > 480); }
+  window.addEventListener('scroll', toggleBackToTop, {passive:true});
+  toggleBackToTop();
+  backToTop.addEventListener('click', () => window.scrollTo({top:0, behavior:'smooth'}));
+</script>

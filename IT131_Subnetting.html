@@ -494,7 +494,7 @@
           <tr><td class="mono">169.254.0.0/16</td><td class="b">Link-local (APIPA)</td><td>Windows assigns itself one of these when DHCP fails. Seeing it usually means "no DHCP server answered."</td></tr>
           <tr><td class="mono">0.0.0.0/8</td><td class="b">"This network"</td><td><code>0.0.0.0</code> means "no address yet" (a DHCP client's source address). In a route, <code>0.0.0.0/0</code> is the default route.</td></tr>
           <tr><td class="mono">255.255.255.255</td><td class="b">Limited broadcast</td><td>Every host on the local segment. Routers never forward it.</td></tr>
-          <tr><td class="mono">192.0.2.0/24</td><td class="b">TEST-NET-1</td><td>Reserved for documentation and examples, like <code>2001:db8::/32</code> in IPv6.</td></tr>
+          <tr><td class="mono">192.0.2.0/24</td><td class="b">TEST-NET-1</td><td>Reserved for documentation and examples, like <code>2001:db8::/32</code> in IPv6. <em>(Reference only; not on the ITN exam.)</em></td></tr>
           <tr><td class="mono">224.0.0.0/4</td><td class="b">Multicast</td><td>224–239 in the first octet. One sender, a group of receivers. Never assigned to a host as its own address.</td></tr>
         </tbody>
       </table>
@@ -819,7 +819,7 @@
     <p>Every bit you borrow <strong>doubles</strong> the number of subnets and roughly <strong>halves</strong> the hosts in each one. That trade-off is the whole design decision.</p>
 
     <h3 class="sub">The 7 holy steps of subnetting (the class method)</h3>
-    <p>The same math as the formulas above, run as a checklist. Use it for "I need N subnets" problems.</p>
+    <p>The same math as the formulas above, run as a checklist. Use it for "I need N subnets" problems. Printable one-page copy: <a href="IT131_7_Holy_Steps_of_Subnetting.pdf">The 7 Holy Steps of Subnetting (PDF)</a>.</p>
     <ol class="path">
       <li><strong>Determine the number of subnets you need.</strong></li>
       <li><strong>Write out your host bits.</strong> For a /24, that's the last octet: <code>00000000</code>.</li>
