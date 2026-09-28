@@ -708,6 +708,67 @@
     </div>
     <p>Every bit you borrow <strong>doubles</strong> the number of subnets and roughly <strong>halves</strong> the hosts in each one. That trade-off is the whole design decision.</p>
 
+    <h3 class="sub">The 7 holy steps of subnetting (the class method)</h3>
+    <p>The same math as the formulas above, run as a checklist. Use it for "I need N subnets" problems.</p>
+    <ol class="path">
+      <li><strong>Determine the number of subnets you need.</strong></li>
+      <li><strong>Write out your host bits.</strong> For a /24, that's the last octet: <code>00000000</code>.</li>
+      <li><strong>Determine how many bits to borrow</strong> to get the number of subnets you need: the smallest <em>n</em> where 2ⁿ ≥ subnets needed. (2ⁿ = number of subnets, <em>n</em> = bits borrowed.)</li>
+      <li><strong>Turn on the borrowed bits</strong> (set them to 1, from the left) and find the decimal value of the octet(s).</li>
+      <li><strong>Figure the new subnet mask</strong> by adding the decimal value from step 4 to the default subnet mask.</li>
+      <li><strong>Find the value of the lowest-order bit turned on</strong> (in each octet). This is your subnet variable, the block size.</li>
+      <li><strong>Use the variable from step 6 to find the subnet ranges.</strong> Count up by it: each subnet starts where the last one ended.</li>
+    </ol>
+    <p style="font-size:.88rem; opacity:.85;">Then, for any subnet: <strong>2ʰ − 2 = usable hosts per subnet</strong>, where <em>h</em> is the number of host bits left.</p>
+
+    <div class="example">
+      <span class="tag">7 steps · worked</span>
+      <h3>192.168.10.0/24 needs 6 subnets</h3>
+      <ol class="steps">
+        <li>Subnets needed: <strong>6</strong>.</li>
+        <li>Host bits (4th octet): <code>00000000</code>.</li>
+        <li>2² = 4 is too few, and 2³ = 8 is enough. Borrow <strong>3</strong> bits.</li>
+        <li>Turn on 3 bits: <code>11100000</code> = 128 + 64 + 32 = <strong>224</strong>.</li>
+        <li>Default mask 255.255.255.0 with 224 added to the last octet gives <code>255.255.255.224</code> (/27).</li>
+        <li>The lowest-order bit turned on in <code>11100000</code> is the 32s place, so the variable is <strong>32</strong>.</li>
+        <li>Count by 32 to get 8 subnets. 5 host bits remain, so 2⁵ − 2 = <strong>30</strong> hosts each:</li>
+      </ol>
+      <div class="table-scroll">
+        <table class="spec">
+          <thead><tr><th>#</th><th>Network</th><th>Host range</th><th>Broadcast</th></tr></thead>
+          <tbody>
+            <tr><td class="mono">0</td><td class="mono">192.168.10.0/27</td><td class="mono">.1 – .30</td><td class="mono">.31</td></tr>
+            <tr><td class="mono">1</td><td class="mono">192.168.10.32/27</td><td class="mono">.33 – .62</td><td class="mono">.63</td></tr>
+            <tr><td class="mono">2</td><td class="mono">192.168.10.64/27</td><td class="mono">.65 – .94</td><td class="mono">.95</td></tr>
+            <tr><td class="mono">3</td><td class="mono">192.168.10.96/27</td><td class="mono">.97 – .126</td><td class="mono">.127</td></tr>
+            <tr><td class="mono">4</td><td class="mono">192.168.10.128/27</td><td class="mono">.129 – .158</td><td class="mono">.159</td></tr>
+            <tr><td class="mono">5</td><td class="mono">192.168.10.160/27</td><td class="mono">.161 – .190</td><td class="mono">.191</td></tr>
+            <tr><td class="mono">6</td><td class="mono">192.168.10.192/27</td><td class="mono">.193 – .222</td><td class="mono">.223</td></tr>
+            <tr><td class="mono">7</td><td class="mono">192.168.10.224/27</td><td class="mono">.225 – .254</td><td class="mono">.255</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="font-size:.86rem; margin:8px 0 0;">You needed 6 and got 8. The 2 spares are room to grow.</p>
+    </div>
+
+    <div class="example">
+      <span class="tag hard">7 steps · across an octet</span>
+      <h3>172.16.0.0/16 needs 75 subnets</h3>
+      <ol class="steps">
+        <li>Subnets needed: <strong>75</strong>.</li>
+        <li>Host bits (3rd and 4th octets): <code>00000000.00000000</code>.</li>
+        <li>2⁶ = 64 is too few, and 2⁷ = 128 is enough. Borrow <strong>7</strong> bits.</li>
+        <li>Turn on 7 bits: <code>11111110.00000000</code>. The 3rd octet becomes 128+64+32+16+8+4+2 = <strong>254</strong>.</li>
+        <li>Default mask 255.255.0.0 with 254 added to the 3rd octet gives <code>255.255.254.0</code> (/23).</li>
+        <li>The lowest-order bit turned on is the 2s place <em>in the 3rd octet</em>, so the variable is <strong>2</strong>, counted in the 3rd octet.</li>
+        <li>Count by 2 in the 3rd octet: <code>172.16.0.0</code> – <code>172.16.1.255</code>, then <code>172.16.2.0</code> – <code>172.16.3.255</code>, and so on. The 75th subnet (#74) is <code>172.16.148.0/23</code>. 9 host bits remain, so 2⁹ − 2 = <strong>510</strong> hosts each.</li>
+      </ol>
+    </div>
+    <div class="teach-note">
+      <span class="label">Same answer, two routes</span>
+      Step 6's "lowest-order bit turned on" is exactly the block size from <a href="#method">The Method</a>. The last 1 in <code>11100000</code> is worth 32, and 256 − 224 = 32. Use whichever way of finding it sticks for you.
+    </div>
+
     <h3 class="sub">The subnet ladder: 192.168.10.0/24, split further at each step</h3>
     <div class="ladder" id="ladder"></div>
     <p style="font-size:.84rem; opacity:.8;">Each row borrows one more bit. Every block splits cleanly into two, and every subnet starts on a multiple of its own block size. VLSM depends on that alignment.</p>
@@ -827,6 +888,25 @@
     </div>
     <p style="margin-bottom:0;">The same allocation, drawn to scale across the /24:</p>
     <div id="vlsmMap"></div>
+
+    <h3 class="sub">Class example: 31, 15, and 6 hosts</h3>
+    <p>From the "holy steps" handout: <code>192.168.10.0/24</code>, three LANs needing <strong>31</strong>, <strong>15</strong>, and <strong>6</strong> hosts. Size each one with 2ʰ − 2, largest first:</p>
+    <div class="table-scroll">
+      <table class="spec">
+        <thead><tr><th>Need</th><th>Host bits (H)</th><th>Prefix</th><th>Network</th><th>Host range</th><th>Broadcast</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">31</td><td class="mono">6 (2⁶−2 = 62)</td><td class="mono">/26</td><td class="mono">192.168.10.0</td><td class="mono">.1 – .62</td><td class="mono">.63</td></tr>
+          <tr><td class="mono">15</td><td class="mono">5 (2⁵−2 = 30)</td><td class="mono">/27</td><td class="mono">192.168.10.64</td><td class="mono">.65 – .94</td><td class="mono">.95</td></tr>
+          <tr><td class="mono">6</td><td class="mono">3 (2³−2 = 6)</td><td class="mono">/29</td><td class="mono">192.168.10.96</td><td class="mono">.97 – .102</td><td class="mono">.103</td></tr>
+          <tr><td style="opacity:.7;">next free</td><td></td><td></td><td class="mono">192.168.10.104</td><td colspan="2" style="opacity:.7;">everything from here on is unallocated</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div id="vlsmMap2"></div>
+    <div class="teach-note warn">
+      <span class="label">The off-by-one trap in this example</span>
+      31 hosts <em>looks</em> like a /27 job, but 2⁵ − 2 = <strong>30</strong>, one short, so it needs a /26. The same happens with 15: 2⁴ − 2 = 14 is one short, so it needs a /27. Only the 6 fits exactly (2³ − 2 = 6, a /29). The −2 for network and broadcast is exactly what these numbers are chosen to test.
+    </div>
 
     <div class="teach-note warn">
       <span class="label">What goes wrong if you go smallest-first</span>
@@ -1301,13 +1381,21 @@
     });
     if (used < 256) html += `<div class="seg free" style="flex:${256 - used} 1 0" title="Unused: ${256 - used} addresses"></div>`;
     html += '</div><div class="map-scale"><span>.0</span><span>.64</span><span>.128</span><span>.192</span><span>.255</span></div>';
-    html += `<p style="font-size:.78rem; opacity:.75; margin:6px 0 0;">Dark gray slivers are the /30 WAN links${used < 256 ? '; hatched space is unused' : ''}. Hover a block for its address.</p>`;
+    const notes = [];
+    if (plan.some(r => r.wan)) notes.push('Dark gray slivers are the /30 WAN links');
+    if (used < 256) notes.push('hatched space is unused');
+    notes.push('hover a block for its address');
+    html += `<p style="font-size:.78rem; opacity:.75; margin:6px 0 0;">${notes.join('; ').replace(/^./, c => c.toUpperCase())}.</p>`;
     return html;
   }
   const EXAMPLE_VLSM = vlsmPlan(ipToInt('192.168.50.0'), [
     { name: 'Sales', hosts: 100 }, { name: 'Engineering', hosts: 50 }, { name: 'HR', hosts: 25 }, { name: 'Guest', hosts: 10 }
   ], 3);
   document.getElementById('vlsmMap').innerHTML = mapBar(EXAMPLE_VLSM);
+  const CLASS_VLSM = vlsmPlan(ipToInt('192.168.10.0'), [
+    { name: '31 hosts', hosts: 31 }, { name: '15 hosts', hosts: 15 }, { name: '6 hosts', hosts: 6 }
+  ], 0);
+  document.getElementById('vlsmMap2').innerHTML = mapBar(CLASS_VLSM);
 
   /* ---- calculator ---- */
   (function(){
@@ -1629,6 +1717,7 @@ ${line('Broadcast', s.bc, intToIp(s.bc) + '   ← host bits all 1')}</pre>
     {t:"Private addresses (RFC 1918)", d:"10.0.0.0/8, 172.16.0.0/12 (172.16–172.31), and 192.168.0.0/16. Not routed on the internet, so NAT is needed to reach it."},
     {t:"Subnet ID (IPv6)", d:"The 16 bits between a /48 global routing prefix and the 64-bit interface ID: the 4th hextet. It allows 65,536 /64 subnets per site."},
     {t:"Subnet mask", d:"A 32-bit value with 1s for network bits and 0s for host bits, always contiguous 1s then 0s. Written dotted, like 255.255.255.0."},
+    {t:"Subnet variable", d:"Step 6 of the 7 holy steps: the value of the lowest-order bit turned on in the new mask. It's the same number as the block size (256 − mask value). Subnets start at multiples of it."},
     {t:"Subnet zero", d:"The first subnet (all subnet bits 0). Once avoided, now fully usable, which is why the subnet count is 2^n, not 2^n − 2."},
     {t:"Usable host range", d:"Every address between the network and broadcast addresses: network + 1 through broadcast − 1. These can be assigned to devices."},
     {t:"VLSM", d:"Variable Length Subnet Masking. Using different prefix lengths within one address block so each subnet is sized to its need. Allocate largest first."},
@@ -1647,6 +1736,12 @@ ${line('Broadcast', s.bc, intToIp(s.bc) + '   ← host bits all 1')}</pre>
     { q:"A subnet must support 500 hosts. Which mask wastes the fewest addresses?",
       choices:["255.255.255.0","255.255.252.0","255.255.254.0","255.255.248.0"], correct:2,
       explain:"2⁹ − 2 = 510 ≥ 500, so 9 host bits → /23 → 255.255.254.0. /24 (254) is too small; /22 and /21 are bigger than needed." },
+    { q:"A LAN needs 31 hosts. What is the smallest prefix that works?",
+      choices:["/27","/26","/28","/25"], correct:1,
+      explain:"/27 leaves 5 host bits: 2⁵ − 2 = 30, one short. /26 leaves 6 host bits: 2⁶ − 2 = 62. The −2 for network and broadcast is the trap." },
+    { q:"Using the 7 holy steps, 192.168.10.0/24 needs 6 subnets. What's the subnet variable (step 6)?",
+      choices:["6","8","32","224"], correct:2,
+      explain:"2³ = 8 ≥ 6, so borrow 3 bits: 11100000 = 224, mask 255.255.255.224. The lowest-order bit turned on is the 32s place, so subnets step by 32." },
     { q:"You borrow 3 bits from a /24 network. How many subnets do you get, and how many usable hosts in each?",
       choices:["6 subnets, 30 hosts","8 subnets, 32 hosts","6 subnets, 32 hosts","8 subnets, 30 hosts"], correct:3,
       explain:"Subnets = 2³ = 8 (no −2 for subnets). New prefix /27 leaves 5 host bits: 2⁵ − 2 = 30 usable hosts." },
