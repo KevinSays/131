@@ -61,6 +61,15 @@ The Flood (DoS/DDoS, L4) · The Forger (IP spoofing, L3) · The Impersonator
 **Recurring defender:** The NOC — introduced in Episode 02, monitors ARP
 tables/switch logs across departments, first response to any incident.
 
+## Spinoff: The Zoning Office
+
+`../../IT131_ZoningOffice.html` is a six-episode subnetting series set in a
+Zoning Office desk inside Logistics (L3). Its cast is the Rookie, the
+Surveyor, and the NOC. Its villains are **The Sprawl** (one giant broadcast
+domain) and **The Overlap** (overlapping subnets). Every file in this kit
+ends with a "You may also like" rail linking to it. The two villains are
+not yet on the Security Bulletin board.
+
 ## Open threads
 
 - Episode 02 has no show-and-tell yet — natural pairing is a live
