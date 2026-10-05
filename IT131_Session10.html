@@ -1,0 +1,1261 @@
+<title>IT131 Session 10 – Transport &amp; Application Layers</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --paper:#EDE8DD; --canvas:#D9D2C3; --ink:#1F2421; --kraft:#B08554; --kraft-dark:#664526;
+    --blue:#2F4858; --red:#A23A2E; --ticket:#F3E7E2;
+    --blue-soft:rgba(47,72,88,.08); --red-soft:rgba(162,58,46,.08);
+    --kraft-soft:rgba(176,133,84,.14); --ink-soft:rgba(31,36,33,.06);
+    --shadow:5px 5px 0 rgba(31,36,33,.16);
+    --display:'Special Elite','Courier New',monospace;
+    --sans:'IBM Plex Sans', system-ui, sans-serif;
+    --mono:'IBM Plex Mono', monospace;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth; font-size:125%;}
+  body{
+    margin:0; background:var(--canvas); color:var(--ink); font-family:var(--sans);
+    line-height:1.55; -webkit-font-smoothing:antialiased;
+    background-image:radial-gradient(rgba(31,36,33,.06) 1px, transparent 1px);
+    background-size:16px 16px;
+  }
+  ::selection{ background:var(--kraft-soft); }
+  a{ color:var(--blue); }
+  .wrap{ max-width:940px; margin:0 auto; padding:0 20px; }
+  code{ font-family:var(--mono); background:var(--ink-soft); padding:1px 6px; border-radius:2px; font-size:.9em; }
+
+  header.masthead{ padding:48px 0 30px; }
+  .eyebrow{ display:inline-block; font-family:var(--mono); font-size:.86rem; letter-spacing:.12em;
+    border:2px solid var(--blue); color:var(--blue); padding:4px 10px; transform:rotate(-2deg); background:var(--paper); }
+  h1{ font-family:var(--display); font-weight:400; font-size:clamp(1.9rem,5vw,2.9rem); letter-spacing:.01em;
+    margin:16px 0 10px; line-height:1.15; }
+  .lede{ max-width:64ch; font-size:1.02rem; line-height:1.6; opacity:.85; margin:0 0 18px; }
+  .factrow{ display:flex; flex-wrap:wrap; gap:10px; }
+  .fact{ font-family:var(--mono); font-size:.82rem; letter-spacing:.02em; background:var(--paper);
+    border:1.5px solid var(--ink); padding:.4em .8em; display:flex; gap:.5em; box-shadow:3px 3px 0 rgba(31,36,33,.14); }
+  .fact b{ color:var(--kraft-dark); font-weight:600; text-transform:uppercase; letter-spacing:.06em; font-size:.88rem; }
+
+  nav.index{ position:sticky; top:0; z-index:20; background:color-mix(in srgb, var(--canvas) 92%, transparent);
+    backdrop-filter:blur(6px); border-top:2px solid var(--ink); border-bottom:2px solid var(--ink); }
+  nav.index .wrap{ display:flex; gap:2px; overflow-x:auto; padding:8px 20px; scrollbar-width:none; }
+  nav.index .wrap::-webkit-scrollbar{ display:none; }
+  nav.index a{ font-family:var(--mono); font-weight:600; letter-spacing:.03em; font-size:.82rem; text-decoration:none;
+    color:var(--ink); opacity:.85; padding:.5em .8em; white-space:nowrap; text-transform:uppercase; border:1px solid transparent; }
+  nav.index a:hover{ opacity:1; border-color:var(--ink); background:var(--paper); }
+  nav.index a.toc-link{ color:var(--blue); opacity:1; border-right:1.5px solid var(--ink); margin-right:8px; padding-right:16px; }
+  nav.index a.toc-link:hover{ background:var(--blue-soft); border-color:var(--ink); }
+
+  section{ padding:44px 0; border-bottom:2px dashed rgba(31,36,33,.3); }
+  section:last-of-type{ border-bottom:none; }
+  .section-head{ margin-bottom:26px; max-width:70ch; }
+  .kicker{ font-family:var(--mono); font-weight:600; font-size:.9rem; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--red); margin:0 0 .4em; }
+  h2{ font-family:var(--display); font-weight:400; font-size:clamp(1.4rem,2.8vw,1.9rem); margin:0 0 .25em; letter-spacing:.005em; }
+  .section-head p{ opacity:.82; margin:.5em 0 0; }
+  h3.sub{ font-family:var(--mono); font-size:1.02rem; margin:24px 0 10px; text-transform:uppercase; letter-spacing:.04em; color:var(--kraft-dark); }
+
+  .obj-list{ display:grid; gap:10px; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); list-style:none; margin:0; padding:0; }
+  .obj-list li{ background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow); padding:14px 16px; font-size:.92rem; }
+  .obj-list li::before{ content:"▸"; color:var(--red); margin-right:.5em; font-weight:700; }
+
+  .teach-note{ margin:18px 0; padding:12px 14px; border:1.5px dashed var(--blue); background:var(--blue-soft);
+    font-family:var(--mono); font-size:.82rem; line-height:1.6; }
+  .teach-note .label{ color:var(--blue); font-weight:600; letter-spacing:.05em; text-transform:uppercase; font-size:.88rem; display:block; margin-bottom:.4em; }
+  .teach-note.warn{ border-color:var(--red); background:var(--red-soft); }
+  .teach-note.warn .label{ color:var(--red); }
+  .teach-note.preview{ border-color:var(--kraft-dark); background:var(--kraft-soft); }
+  .teach-note.preview .label{ color:var(--kraft-dark); }
+
+  .cold-open{ background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow); padding:18px 20px; margin:24px 0; }
+  .cold-open .tag{ font-family:var(--mono); font-size:.84rem; letter-spacing:.1em; color:var(--red); margin:0 0 8px; text-transform:uppercase; }
+  .cold-open p{ margin:0; font-size:.95rem; line-height:1.6; font-style:italic; }
+
+  /* TERMINAL BLOCKS */
+  .terminal{ background:var(--ticket); color:var(--ink); border:1.5px solid var(--ink); margin:20px 0; overflow:hidden; box-shadow:var(--shadow); }
+  .terminal-header{ background:color-mix(in srgb, var(--ticket) 80%, #fff); padding:8px 14px; border-bottom:1px solid rgba(31,36,33,.15); display:flex; align-items:center; gap:6px; }
+  .terminal-dot{ width:10px; height:10px; border-radius:50%; }
+  .terminal-dot.r{ background:var(--red); }
+  .terminal-dot.y{ background:var(--kraft-dark); }
+  .terminal-dot.g{ background:var(--blue); }
+  .terminal-title{ font-family:var(--mono); font-size:.8rem; color:var(--kraft-dark); margin-left:8px; letter-spacing:.04em; }
+  .terminal-body{ padding:14px 18px; font-family:'Courier New', Courier, monospace; font-size:.84rem; line-height:1.65; overflow-x:auto; white-space:pre-wrap; word-wrap:break-word; }
+  .terminal-body .prompt{ color:var(--blue); font-weight:700; }
+  .terminal-body .cmd{ color:var(--ink); font-weight:600; }
+  .terminal-body .comment{ color:var(--kraft-dark); font-style:italic; }
+  .terminal-body .hl{ color:var(--red); font-weight:600; }
+  .terminal-body .out{ color:var(--ink); opacity:.7; }
+
+  table.spec{ width:100%; border-collapse:collapse; margin:18px 0; font-size:.86rem; }
+  table.spec th{ font-family:var(--mono); font-weight:600; text-transform:uppercase; letter-spacing:.05em; font-size:.86rem;
+    color:var(--kraft-dark); text-align:left; padding:8px 10px; border-bottom:2px solid var(--ink); }
+  table.spec td{ padding:9px 10px; border-bottom:1px dashed rgba(31,36,33,.3); vertical-align:top; }
+  table.spec tr:last-child td{ border-bottom:none; }
+  table.spec td.mono, table.spec th.mono{ font-family:var(--mono); }
+
+  .toolbar{ display:flex; gap:10px; align-items:center; margin-bottom:20px; flex-wrap:wrap; }
+  button.btn{ font-family:var(--mono); font-weight:600; letter-spacing:.03em; text-transform:uppercase; font-size:.9rem;
+    background:var(--paper); color:var(--ink); border:1.5px solid var(--ink); padding:.55em 1em; cursor:pointer; box-shadow:3px 3px 0 rgba(31,36,33,.14); }
+  button.btn:hover{ background:var(--kraft-soft); }
+  button.btn:focus-visible, a:focus-visible, .flashcard:focus-visible, input:focus-visible{ outline:2px solid var(--blue); outline-offset:2px; }
+  #cardProgress{ font-family:var(--mono); font-size:.85rem; opacity:.75; }
+  .card-grid{ display:grid; gap:16px; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); }
+  .flashcard{ perspective:1200px; height:190px; cursor:pointer; border:none; background:none; padding:0; font-family:inherit; text-align:left; width:100%; }
+  .flashcard-inner{ position:relative; width:100%; height:100%; transition:transform .5s cubic-bezier(.4,.2,.2,1); transform-style:preserve-3d; -webkit-transform-style:preserve-3d; will-change:transform; }
+  .flashcard.flipped .flashcard-inner{ transform:rotateY(180deg); -webkit-transform:rotateY(180deg); }
+  .flashcard-face{ position:absolute; inset:0; backface-visibility:hidden; -webkit-backface-visibility:hidden; -moz-backface-visibility:hidden; border:1.5px solid var(--ink); box-shadow:var(--shadow);
+    padding:15px; display:flex; flex-direction:column; justify-content:center; }
+  .flashcard-face.front{ background:var(--paper); transform:translateZ(.5px); }
+  .flashcard-face.back{ background:var(--ticket); transform:rotateY(180deg) translateZ(.5px); overflow-y:auto; }
+  .flashcard-face .lbl{ font-family:var(--mono); font-weight:600; letter-spacing:.1em; text-transform:uppercase; font-size:.82rem; color:var(--kraft-dark); margin-bottom:.5em; }
+  .flashcard-face.front .term{ font-family:var(--display); font-weight:400; font-size:1.05rem; letter-spacing:.01em; }
+  .flashcard-face.back .def{ font-size:.82rem; }
+  .flashcard.known .flashcard-face.front{ border-color:var(--blue); border-width:2px; }
+
+  .quiz-q{ background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow); padding:18px 20px; margin-bottom:18px; }
+  .quiz-q .qtext{ font-weight:600; margin:0 0 13px; }
+  .quiz-q .qnum{ font-family:var(--display); color:var(--red); margin-right:.5em; }
+  .choices{ display:grid; gap:8px; }
+  .choice{ text-align:left; font-family:var(--sans); font-size:.9rem; background:var(--ticket); border:1.5px solid var(--ink);
+    padding:.65em .85em; cursor:pointer; color:var(--ink); }
+  .choice:hover{ border-color:var(--blue); }
+  .choice.correct{ background:var(--blue-soft); border-color:var(--blue); border-width:2px; }
+  .choice.incorrect{ background:var(--red-soft); border-color:var(--red); border-width:2px; }
+  .choice[disabled]{ cursor:default; }
+  .explain{ margin-top:12px; font-size:.84rem; opacity:.85; border-left:3px solid var(--kraft); padding-left:12px; display:none; font-family:var(--mono); }
+  .explain.show{ display:block; }
+  #quizScore{ font-family:var(--mono); font-size:.9rem; opacity:.75; margin-bottom:16px; }
+
+  .example{ background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow); padding:20px 22px; margin-bottom:16px; }
+  .example h3{ font-family:var(--display); font-weight:400; font-size:1.15rem; margin:0 0 8px; }
+  .example .tag{ display:inline-block; font-family:var(--mono); font-weight:600; font-size:.86rem; text-transform:uppercase; letter-spacing:.07em;
+    color:var(--blue); background:var(--blue-soft); border:1px solid var(--blue); padding:.25em .6em; margin-bottom:10px; }
+  details.solution{ margin-top:12px; }
+  details.solution summary{ cursor:pointer; font-family:var(--mono); font-weight:600; letter-spacing:.03em; text-transform:uppercase;
+    font-size:.9rem; color:var(--blue); list-style:none; display:inline-flex; align-items:center; gap:.4em; }
+  details.solution summary::-webkit-details-marker{ display:none; }
+  details.solution summary::before{ content:"▸"; transition:transform .15s; }
+  details.solution[open] summary::before{ transform:rotate(90deg); }
+  details.solution .solbody{ margin-top:10px; padding:13px 15px; background:var(--ticket); font-size:.88rem; }
+
+  #glossarySearch{ width:100%; max-width:400px; font-family:var(--sans); font-size:.9rem; padding:.65em .85em;
+    border:1.5px solid var(--ink); background:var(--paper); color:var(--ink); margin-bottom:16px; }
+  .alpha-nav{ display:flex; flex-wrap:wrap; gap:4px; margin-bottom:22px; }
+  .alpha-nav a{ font-family:var(--mono); font-weight:600; font-size:.82rem; width:1.8em; height:1.8em; display:flex;
+    align-items:center; justify-content:center; border:1px solid var(--ink); text-decoration:none; color:var(--ink); opacity:.35; }
+  .alpha-nav a.has{ opacity:1; background:var(--paper); }
+  .alpha-nav a.has:hover{ border-color:var(--blue); color:var(--blue); }
+  .glossary-letter{ font-family:var(--display); font-weight:400; color:var(--red); font-size:1.1rem; margin:20px 0 6px; }
+  dl.glossary{ margin:0; }
+  dl.glossary .gitem{ border-top:1px dashed rgba(31,36,33,.35); padding:11px 0; }
+  dl.glossary dt{ font-family:var(--mono); font-weight:600; font-size:.98rem; }
+  dl.glossary dd{ margin:.3em 0 0; opacity:.8; font-size:.86rem; }
+  .gitem.hidden{ display:none; }
+
+  footer{ padding:30px 0 60px; }
+  footer p{ opacity:.65; font-size:.82rem; font-family:var(--mono); letter-spacing:.02em; }
+
+  .back-to-top{ position:fixed; bottom:22px; right:22px; z-index:40; width:50px; height:50px;
+    background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow);
+    font-family:var(--display); font-size:1.4rem; color:var(--ink); line-height:1;
+    display:flex; align-items:center; justify-content:center; padding:0; cursor:pointer; text-decoration:none;
+    opacity:0; visibility:hidden; transform:translateY(10px);
+    transition:opacity .25s ease, transform .25s ease, visibility 0s .25s; }
+  .back-to-top.show{ opacity:1; visibility:visible; transform:translateY(0); transition:opacity .25s ease, transform .25s ease, visibility 0s; }
+  .back-to-top:hover{ background:var(--blue-soft); border-color:var(--blue); color:var(--blue); }
+  .back-to-top:focus-visible{ outline:2px solid var(--blue); outline-offset:2px; }
+
+  @media print{
+    body{ background:#fff; }
+    nav.index{ display:none; }
+    .quiz-q, .example, .flashcard-face, .terminal{ box-shadow:none; }
+    .back-to-top{ display:none; }
+  }
+
+  /* INTERACTIVE TOOLS */
+  .tool{ background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow); padding:16px 18px; margin:20px 0; }
+  .tool-title{ margin:0 0 10px; font-family:var(--mono); font-weight:600; font-size:.8rem; letter-spacing:.06em; text-transform:uppercase; color:var(--kraft-dark); }
+  .tool-in{ display:flex; flex-wrap:wrap; gap:10px; margin-bottom:12px; }
+  .tool-in input.txt{ flex:1 1 16em; min-width:0; font-family:var(--mono); font-size:.9rem; padding:.5em .7em; border:1.5px solid var(--ink); background:var(--ticket); color:var(--ink); }
+  .tool-out .row{ display:grid; grid-template-columns:9.5em 1fr; gap:10px; padding:6px 0; border-top:1px dashed rgba(31,36,33,.3); font-size:.86rem; align-items:baseline; }
+  .tool-out .row b{ font-family:var(--mono); font-size:.74rem; text-transform:uppercase; letter-spacing:.05em; color:var(--kraft-dark); }
+  .tool-out code{ overflow-wrap:anywhere; }
+  .tool-out .bad{ color:var(--red); font-family:var(--mono); font-size:.84rem; margin:0; }
+  @media (max-width:560px){ .tool-out .row{ grid-template-columns:1fr; gap:2px; } }
+  .tool-in label.mini{ display:flex; flex-direction:column; gap:3px; font-family:var(--mono); font-size:.72rem; text-transform:uppercase; letter-spacing:.05em; color:var(--kraft-dark); }
+  .tool-in input.txt.num{ flex:none; width:8.5em; }
+  @media (max-width:640px){ table.spec{ display:block; overflow-x:auto; } .terminal-body{ white-space:pre; word-wrap:normal; } }
+</style>
+
+<header class="masthead">
+  <div class="wrap">
+    <p class="eyebrow">IT131 · SESSION 10 · FIELD NOTES</p>
+    <h1>Transport &amp; Application Layers</h1>
+    <p class="lede">Logistics can now get a packet to any address on the planet. But a PC runs a browser, an email client, and a DNS lookup all at once, so which program gets which package? This week we go up two floors: Shipping &amp; Receiving (Layer 4), which numbers, tracks, and re-sends parcels, and the Front Desk (Layer 7), where the protocols you actually use every day live.</p>
+    <div class="factrow">
+      <span class="fact"><b>New material</b> Module 14 — Transport Layer</span>
+      <span class="fact"><b>New material</b> Module 15 — Application Layer</span>
+      <span class="fact"><b>Next week</b> Module Quiz — Network Application Communications (14–15)</span>
+    </div>
+  </div>
+</header>
+
+<nav class="index" aria-label="Section index">
+  <div class="wrap">
+    <a href="index.html" class="toc-link">↩ Contents</a>
+    <a href="#overview">Overview</a>
+    <a href="#role">Transport Role</a>
+    <a href="#tcpudp">TCP vs UDP</a>
+    <a href="#ports">Ports &amp; Sockets</a>
+    <a href="#handshake">Handshake</a>
+    <a href="#reliability">Reliability</a>
+    <a href="#udp">UDP in Action</a>
+    <a href="#applayer">Upper Layers</a>
+    <a href="#p2p">Client-Server &amp; P2P</a>
+    <a href="#webmail">Web &amp; Email</a>
+    <a href="#dnsdhcp">DNS &amp; DHCP</a>
+    <a href="#files">File Sharing</a>
+    <a href="#mistakes">Common Mistakes</a>
+    <a href="#checkpoint">Checkpoint</a>
+    <a href="#flashcards">Flashcards</a>
+    <a href="#quiz">Quiz</a>
+    <a href="#examples">Examples</a>
+    <a href="#glossary">Glossary</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+  <!-- OVERVIEW -->
+  <section id="overview">
+    <div class="section-head">
+      <p class="kicker">Modules 14 &amp; 15</p>
+      <h2>What Session 10 covers</h2>
+      <p>Two modules. Module 14 is the transport layer: TCP, UDP, port numbers, and how TCP sets up, tracks, and tears down a conversation. Module 15 is the application layer: the protocols behind the web, email, name lookups, automatic addressing, and file sharing. Next week's checkpoint quiz covers both.</p>
+    </div>
+    <div class="cold-open">
+      <p class="tag">Cold open · Shipping &amp; Receiving, Floor 4</p>
+      <p>Logistics drops off a pallet with three hundred boxes, all addressed to the same building. "Same building," says the Shipping clerk, "but which office?" She checks the labels. Desk 80 is the web team, desk 53 is the directory desk, and desk 49712 is a temp who started this morning. Some boxes are marked <em>signature required</em>, so she numbers them, waits for receipts, and re-sends anything that never got signed for. Others are marked <em>just drop it off</em>. Those go out fast with no receipts. Those two delivery styles are TCP and UDP.</p>
+    </div>
+    <ul class="obj-list">
+      <li>Explain what the transport layer does: tracking conversations, segmenting, and multiplexing</li>
+      <li>Compare TCP and UDP, and pick the right one for an application</li>
+      <li>Describe the TCP and UDP headers and TCP's six control flags</li>
+      <li>Use port number ranges, sockets, socket pairs, and <code>netstat</code></li>
+      <li>Walk through the three-way handshake and four-step termination with SEQ/ACK numbers</li>
+      <li>Explain retransmission, window size, MSS, and congestion avoidance</li>
+      <li>Compare client-server and peer-to-peer networks</li>
+      <li>Explain HTTP/HTTPS, SMTP/POP3/IMAP, DNS, DHCP, FTP, and SMB</li>
+    </ul>
+    <div class="teach-note">
+      <span class="label">Topology used on this page</span>
+      The same two routers as Sessions 7–9. PC-A is <code>192.168.10.10</code> on R1's LAN (<code>192.168.10.0/24</code>). PC-B is <code>192.168.20.10</code> on R2's LAN (<code>192.168.20.0/24</code>). New this week: <strong>SRV1</strong> at <code>192.168.20.100</code> on R2's LAN. It's a web server (TCP 80 and 443) and the internal DNS server for the zone <code>it131.example</code>.
+    </div>
+  </section>
+
+  <!-- ROLE -->
+  <section id="role">
+    <div class="section-head">
+      <p class="kicker">Module 14 · 14.1</p>
+      <h2>What the transport layer does</h2>
+      <p>The network layer gets a packet to the right <em>host</em>. The transport layer gets the data to the right <em>application</em> on that host, and decides how carefully to deliver it.</p>
+    </div>
+    <table class="spec">
+      <thead><tr><th>Job</th><th>What it means</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;">Track individual conversations</td><td>A host may have many applications talking at once. Each conversation is tracked separately.</td></tr>
+        <tr><td style="font-weight:600;">Segment and reassemble data</td><td>Big application data is split into pieces small enough to send, then put back together at the other end.</td></tr>
+        <tr><td style="font-weight:600;">Add header information</td><td>Port numbers (and, for TCP, sequence numbers and more) so the receiver knows where each piece belongs.</td></tr>
+        <tr><td style="font-weight:600;">Identify the application</td><td>The <strong>port number</strong> says which application the data is for.</td></tr>
+        <tr><td style="font-weight:600;">Conversation multiplexing</td><td>Segments from many conversations are interleaved on the same link, so one big download doesn't block everything else.</td></tr>
+      </tbody>
+    </table>
+    <p>The two transport protocols are <strong>TCP</strong> and <strong>UDP</strong>. Neither is "better": ITN's phrase is <em>the right protocol for the right application</em>.</p>
+  </section>
+
+  <!-- TCP VS UDP -->
+  <section id="tcpudp">
+    <div class="section-head">
+      <p class="kicker">Module 14 · 14.2–14.3</p>
+      <h2>TCP vs. UDP</h2>
+      <p>TCP is signature-required delivery: it tracks every byte. UDP is "just drop it off": fast, with almost no overhead.</p>
+    </div>
+    <table class="spec">
+      <thead><tr><th></th><th>TCP</th><th>UDP</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;">Connection</td><td>Connection-oriented: a three-way handshake before any data</td><td>Connectionless: no setup</td></tr>
+        <tr><td style="font-weight:600;">Reliability</td><td>Acknowledgments and retransmission</td><td>Best effort: no ACKs, no retransmission</td></tr>
+        <tr><td style="font-weight:600;">Ordering</td><td>Same-order delivery, using sequence numbers</td><td>No resequencing. Data is reassembled in the order it arrives.</td></tr>
+        <tr><td style="font-weight:600;">Flow control</td><td>Yes (window size)</td><td>No</td></tr>
+        <tr><td style="font-weight:600;">State</td><td>Stateful: tracks the session</td><td>Stateless</td></tr>
+        <tr><td style="font-weight:600;">Header</td><td>20 bytes minimum</td><td>8 bytes, fixed</td></tr>
+        <tr><td style="font-weight:600;">PDU name</td><td>Segment</td><td>Datagram</td></tr>
+        <tr><td style="font-weight:600;">Typical apps</td><td>HTTP, HTTPS, FTP, SMTP, POP3, IMAP, SSH, Telnet</td><td>DHCP, DNS queries, SNMP, TFTP, VoIP, video streaming and conferencing</td></tr>
+      </tbody>
+    </table>
+    <div class="teach-note">
+      <span class="label">UDP isn't "broken TCP"</span>
+      A voice call would rather lose a tenth of a second of audio than pause while it waits for a retransmission, because by then the moment has passed. And an application that needs reliability over UDP can build its own. TFTP does exactly that, with simple acknowledgments of its own.
+    </div>
+
+    <h3 class="sub">The TCP header (10 fields)</h3>
+    <div class="terminal">
+      <div class="terminal-header"><span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span><span class="terminal-title">TCP header, 32 bits per row</span></div>
+      <div class="terminal-body">bit 0              16                31
++-----------------+-----------------+
+| Source Port     | Dest. Port      |
++-----------------+-----------------+
+|      <span class="hl">Sequence Number (32)</span>         |
++-----------------------------------+
+|   <span class="hl">Acknowledgment Number (32)</span>      |
++------+------+-----+---------------+
+|HdrLen| Rsvd |<span class="prompt">Flags</span>| <span class="prompt">Window Size</span>   |
+| (4)  | (6)  | (6) | (16)          |
++------+------+-----+---------------+
+| Checksum (16)   | Urgent (16)     |
++-----------------+-----------------+
+|     Options (if any) + Data       |</div>
+    </div>
+    <table class="spec">
+      <thead><tr><th>Field</th><th>What it's for</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;">Source / Destination Port</td><td>Which application sent it, and which should receive it.</td></tr>
+        <tr><td style="font-weight:600;">Sequence Number</td><td>Number of the first data byte in this segment. Used to put data back in order.</td></tr>
+        <tr><td style="font-weight:600;">Acknowledgment Number</td><td>The <strong>next byte expected</strong> from the other side.</td></tr>
+        <tr><td style="font-weight:600;">Header Length</td><td>Length of the TCP header (also called data offset).</td></tr>
+        <tr><td style="font-weight:600;">Reserved</td><td>Reserved for future use.</td></tr>
+        <tr><td style="font-weight:600;">Control Bits</td><td>The flags: URG, ACK, PSH, RST, SYN, FIN (see <a href="#handshake">the handshake section</a>).</td></tr>
+        <tr><td style="font-weight:600;">Window Size</td><td>How many bytes the receiver can accept at one time. This is flow control.</td></tr>
+        <tr><td style="font-weight:600;">Checksum</td><td>Error check on the header and data.</td></tr>
+        <tr><td style="font-weight:600;">Urgent</td><td>Marks urgent data, used with the URG flag.</td></tr>
+      </tbody>
+    </table>
+    <div class="teach-note preview">
+      <span class="label">Footnote: modern TCP has 8 flags</span>
+      ITN draws 6 reserved bits and 6 flags, which is the original 1981 layout. Current TCP uses 4 reserved bits and adds two congestion flags (CWR, ECE), and Wireshark will show them. For the exam, answer <strong>6 flags</strong>.
+    </div>
+
+    <h3 class="sub">The UDP header (4 fields, 8 bytes)</h3>
+    <div class="terminal">
+      <div class="terminal-header"><span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span><span class="terminal-title">UDP header: that's the whole thing</span></div>
+      <div class="terminal-body">bit 0              16                31
++-----------------+-----------------+
+| Source Port     | Dest. Port      |
++-----------------+-----------------+
+| Length          | Checksum        |
++-----------------+-----------------+
+|              Data                 |</div>
+    </div>
+    <p>No sequence numbers, no acknowledgments, no window. That's where the low overhead comes from.</p>
+  </section>
+
+  <!-- PORTS -->
+  <section id="ports">
+    <div class="section-head">
+      <p class="kicker">Module 14 · 14.4</p>
+      <h2>Port numbers, sockets, and netstat</h2>
+      <p>The IP address gets the data to the building. The port number gets it to the right desk.</p>
+    </div>
+    <table class="spec">
+      <thead><tr><th>Range</th><th>Name</th><th>Used for</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">0 – 1023</td><td style="font-weight:600;">Well-known ports</td><td>Common server services, like HTTP 80 and DNS 53.</td></tr>
+        <tr><td class="mono">1024 – 49151</td><td style="font-weight:600;">Registered ports</td><td>Assigned by IANA to specific applications on request.</td></tr>
+        <tr><td class="mono">49152 – 65535</td><td style="font-weight:600;">Private and/or dynamic ports</td><td>Picked on the fly as a <strong>client's source port</strong>. Also called ephemeral ports.</td></tr>
+      </tbody>
+    </table>
+
+    <h3 class="sub">Well-known ports to memorize</h3>
+    <table class="spec">
+      <thead><tr><th class="mono">Port</th><th>Protocol</th><th>Transport</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">20</td><td>FTP data</td><td>TCP</td></tr>
+        <tr><td class="mono">21</td><td>FTP control</td><td>TCP</td></tr>
+        <tr><td class="mono">22</td><td>SSH</td><td>TCP</td></tr>
+        <tr><td class="mono">23</td><td>Telnet</td><td>TCP</td></tr>
+        <tr><td class="mono">25</td><td>SMTP</td><td>TCP</td></tr>
+        <tr><td class="mono">53</td><td>DNS</td><td><strong>UDP and TCP</strong></td></tr>
+        <tr><td class="mono">67 / 68</td><td>DHCPv4 server / client</td><td>UDP</td></tr>
+        <tr><td class="mono">69</td><td>TFTP</td><td>UDP</td></tr>
+        <tr><td class="mono">80</td><td>HTTP</td><td>TCP</td></tr>
+        <tr><td class="mono">110</td><td>POP3</td><td>TCP</td></tr>
+        <tr><td class="mono">143</td><td>IMAP</td><td>TCP</td></tr>
+        <tr><td class="mono">161</td><td>SNMP</td><td>UDP</td></tr>
+        <tr><td class="mono">443</td><td>HTTPS</td><td>TCP</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:.88rem;">DNS uses UDP for ordinary lookups and TCP for zone transfers between servers and for very large responses. ITN just says "both". (The when-each detail is enrichment.)</p>
+
+    <div class="tool">
+      <p class="tool-title">Try it: look up a port or a protocol</p>
+      <div class="tool-in">
+        <input class="txt" id="portIn" value="443" spellcheck="false" autocomplete="off" aria-label="Port number or protocol name">
+      </div>
+      <div id="portOut" class="tool-out"></div>
+    </div>
+
+    <h3 class="sub">Sockets and socket pairs</h3>
+    <ul class="obj-list">
+      <li><strong>Socket</strong> = IP address + port, e.g. <code>192.168.10.10:49712</code>.</li>
+      <li><strong>Socket pair</strong> = source socket + destination socket. It identifies one conversation, uniquely.</li>
+    </ul>
+    <p>PC-A opens two browser tabs to SRV1's web page. They are two different conversations:</p>
+    <div class="terminal">
+      <div class="terminal-header"><span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span><span class="terminal-title">Three socket pairs from PC-A</span></div>
+      <div class="terminal-body"><span class="comment">tab 1</span>   192.168.10.10:<span class="hl">49712</span>  ↔  192.168.20.100:80
+<span class="comment">tab 2</span>   192.168.10.10:<span class="hl">49713</span>  ↔  192.168.20.100:80
+<span class="comment">SSH</span>     192.168.10.10:<span class="hl">49731</span>  ↔  192.168.10.1:22</div>
+    </div>
+    <p>The server's socket is the same for both tabs. SRV1 tells them apart by the client's <strong>source port</strong>. That's multiplexing in action.</p>
+
+    <h3 class="sub">netstat: see your connections</h3>
+    <div class="terminal">
+      <div class="terminal-header"><span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span><span class="terminal-title">PC-A · netstat (names resolved)</span></div>
+      <div class="terminal-body"><span class="prompt">C:\Users\student&gt;</span> <span class="cmd">netstat</span>
+<span class="out">
+Active Connections
+
+  Proto  Local Address          Foreign Address        State
+  TCP    192.168.10.10:49712    srv1:http              ESTABLISHED
+  TCP    192.168.10.10:49713    srv1:http              TIME_WAIT
+  TCP    192.168.10.10:49720    srv1:https             ESTABLISHED
+  TCP    192.168.10.10:49731    192.168.10.1:ssh       ESTABLISHED</span></div>
+    </div>
+    <div class="terminal">
+      <div class="terminal-header"><span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span><span class="terminal-title">PC-A · netstat -an (numeric, and all, including listeners)</span></div>
+      <div class="terminal-body"><span class="prompt">C:\Users\student&gt;</span> <span class="cmd">netstat -an</span>
+<span class="out">
+Active Connections
+
+  Proto  Local Address          Foreign Address        State
+  TCP    0.0.0.0:135            0.0.0.0:0              LISTENING
+  TCP    0.0.0.0:445            0.0.0.0:0              LISTENING
+  TCP    192.168.10.10:139      0.0.0.0:0              LISTENING
+</span><span class="hl">  TCP    192.168.10.10:49712    192.168.20.100:80      ESTABLISHED</span><span class="out">
+  TCP    192.168.10.10:49713    192.168.20.100:80      TIME_WAIT
+  TCP    192.168.10.10:49720    192.168.20.100:443     ESTABLISHED
+  TCP    192.168.10.10:49731    192.168.10.1:22        ESTABLISHED
+  UDP    0.0.0.0:123            *:*
+  UDP    192.168.10.10:137      *:*</span></div>
+    </div>
+    <table class="spec">
+      <thead><tr><th>What you see</th><th>What it means</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;">Local / Foreign Address</td><td>PC-A's socket, and the remote socket. PC-A's ports are all 49152+, picked by Windows. The server ports (80, 443, 22) are well-known.</td></tr>
+        <tr><td style="font-weight:600;">ESTABLISHED</td><td>Handshake done; the connection is open.</td></tr>
+        <tr><td style="font-weight:600;">LISTENING</td><td>A local service waiting for connections. <code>0.0.0.0</code> means "on every local address". Only shows with <code>-a</code>.</td></tr>
+        <tr><td style="font-weight:600;">TIME_WAIT</td><td>Recently closed. PC-A sent the first FIN, so it holds the socket briefly in case late segments arrive. <strong>Normal</strong>; it clears on its own.</td></tr>
+        <tr><td style="font-weight:600;">UDP rows: no state, <code>*:*</code></td><td>UDP is connectionless, so there's no connection to describe.</td></tr>
+      </tbody>
+    </table>
+    <div class="teach-note">
+      <span class="label">ITN's netstat screenshot is old</span>
+      The course's netstat example shows source ports like <code>3126</code>. That's the pre-Vista range (1025–5000). Current Windows uses 49152–65535, which is what you'll see in lab. Plain <code>netstat</code> and <code>-n</code> are in ITN. The <code>-a</code> flag and the state names other than ESTABLISHED are light enrichment.
+    </div>
+  </section>
+
+  <!-- HANDSHAKE -->
+  <section id="handshake">
+    <div class="section-head">
+      <p class="kicker">Module 14 · 14.5</p>
+      <h2>Opening and closing a TCP connection</h2>
+      <p>Before TCP sends a single byte of data, the two hosts shake hands. When they're done, each side says goodbye separately.</p>
+    </div>
+
+    <h3 class="sub">The six control flags</h3>
+    <table class="spec">
+      <thead><tr><th class="mono">Flag</th><th>Meaning</th></tr></thead>
+      <tbody>
+        <tr><td class="mono" style="font-weight:600;">URG</td><td>The Urgent field is significant</td></tr>
+        <tr><td class="mono" style="font-weight:600;">ACK</td><td>The Acknowledgment field is significant. Set on every segment after the first SYN.</td></tr>
+        <tr><td class="mono" style="font-weight:600;">PSH</td><td>Push: hand this data to the application now</td></tr>
+        <tr><td class="mono" style="font-weight:600;">RST</td><td>Reset the connection (error, refused, or timeout)</td></tr>
+        <tr><td class="mono" style="font-weight:600;">SYN</td><td>Synchronize sequence numbers: used to open a connection</td></tr>
+        <tr><td class="mono" style="font-weight:600;">FIN</td><td>No more data from the sender: used to close</td></tr>
+      </tbody>
+    </table>
+
+    <h3 class="sub">Three-way handshake</h3>
+    <p>PC-A (<code>192.168.10.10:49712</code>) connects to SRV1 (<code>192.168.20.100:80</code>). Numbers are <strong>relative</strong>, as Wireshark shows them: each side's starting number is shown as 0.</p>
+    <table class="spec">
+      <thead><tr><th>#</th><th>Direction</th><th>Flags</th><th class="mono">SEQ</th><th class="mono">ACK</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">1</td><td>PC-A → SRV1</td><td class="mono">SYN</td><td class="mono">0</td><td class="mono">—</td></tr>
+        <tr><td class="mono">2</td><td>SRV1 → PC-A</td><td class="mono">SYN, ACK</td><td class="mono">0</td><td class="mono">1</td></tr>
+        <tr><td class="mono">3</td><td>PC-A → SRV1</td><td class="mono">ACK</td><td class="mono">1</td><td class="mono">1</td></tr>
+      </tbody>
+    </table>
+    <p>ITN gives the handshake three jobs:</p>
+    <ol class="obj-list" style="list-style:none;">
+      <li><strong>1.</strong> It establishes that the destination device is present on the network.</li>
+      <li><strong>2.</strong> It verifies that the destination has an active service accepting requests on that port.</li>
+      <li><strong>3.</strong> It tells the destination that the source intends to set up a session on that port.</li>
+    </ol>
+    <div class="teach-note">
+      <span class="label">The three rules that make the numbers work</span>
+      <strong>1.</strong> ACK = the <em>next byte expected</em> = received SEQ + data length.<br>
+      <strong>2.</strong> SYN and FIN each use up <strong>one</strong> sequence number, even though they carry no data. That's why the ACK to a SYN is ISN + 1.<br>
+      <strong>3.</strong> A pure ACK (no data) does <strong>not</strong> move the sender's sequence number forward.
+    </div>
+    <p style="font-size:.88rem;">Real starting numbers (ISNs) are random 32-bit values like <code>2,814,005,331</code>. Relative numbering just subtracts them. The pattern is what matters, not the starting value.</p>
+
+    <h3 class="sub">Four-step termination</h3>
+    <p>Continuing the same connection after PC-A sent 400 bytes and SRV1 sent 2,920:</p>
+    <table class="spec">
+      <thead><tr><th>#</th><th>Direction</th><th>Flags</th><th class="mono">SEQ</th><th class="mono">ACK</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">1</td><td>PC-A → SRV1</td><td class="mono">FIN, ACK</td><td class="mono">401</td><td class="mono">2921</td></tr>
+        <tr><td class="mono">2</td><td>SRV1 → PC-A</td><td class="mono">ACK</td><td class="mono">2921</td><td class="mono">402</td></tr>
+        <tr><td class="mono">3</td><td>SRV1 → PC-A</td><td class="mono">FIN, ACK</td><td class="mono">2921</td><td class="mono">402</td></tr>
+        <tr><td class="mono">4</td><td>PC-A → SRV1</td><td class="mono">ACK</td><td class="mono">402</td><td class="mono">2922</td></tr>
+      </tbody>
+    </table>
+    <p>The client sends FIN, the server ACKs, the server sends its own FIN, and the client ACKs. Each direction closes on its own. Notice the FIN uses up one number: 401 → 402, 2921 → 2922.</p>
+    <div class="teach-note">
+      <span class="label">Wireshark often shows three, not four</span>
+      If the server has nothing left to send, it combines steps 2 and 3 into a single FIN, ACK. The exam answer is still <strong>four steps</strong>.
+    </div>
+
+    <div class="tool">
+      <p class="tool-title">Try it: build a whole TCP conversation</p>
+      <div class="tool-in">
+        <label class="mini">Client ISN <input class="txt num" id="hsA" value="0" inputmode="numeric"></label>
+        <label class="mini">Server ISN <input class="txt num" id="hsB" value="0" inputmode="numeric"></label>
+        <label class="mini">Request bytes <input class="txt num" id="hsR" value="400" inputmode="numeric"></label>
+        <label class="mini">Response bytes <input class="txt num" id="hsS" value="2920" inputmode="numeric"></label>
+        <label class="mini">MSS <input class="txt num" id="hsM" value="1460" inputmode="numeric"></label>
+      </div>
+      <div id="hsOut" class="tool-out"></div>
+    </div>
+  </section>
+
+  <!-- RELIABILITY -->
+  <section id="reliability">
+    <div class="section-head">
+      <p class="kicker">Module 14 · 14.6</p>
+      <h2>Reliability and flow control</h2>
+      <p>Sequence numbers put the data back in order. Acknowledgments say what arrived. The window keeps the sender from flooding the receiver.</p>
+    </div>
+
+    <h3 class="sub">Ordered delivery</h3>
+    <p>Segments can take different paths and arrive out of order. The receiver uses sequence numbers to hold early arrivals until the gaps fill, then hands the data to the application in the original order.</p>
+
+    <h3 class="sub">Data transfer, byte by byte</h3>
+    <table class="spec">
+      <thead><tr><th>Direction</th><th>Flags</th><th class="mono">SEQ</th><th class="mono">ACK</th><th>Data</th><th>Why</th></tr></thead>
+      <tbody>
+        <tr><td>PC-A → SRV1</td><td class="mono">PSH, ACK</td><td class="mono">1</td><td class="mono">1</td><td class="mono">400</td><td>HTTP GET: bytes 1–400</td></tr>
+        <tr><td>SRV1 → PC-A</td><td class="mono">ACK</td><td class="mono">1</td><td class="mono">401</td><td class="mono">1460</td><td>1 + 400 = 401: "send byte 401 next"</td></tr>
+        <tr><td>SRV1 → PC-A</td><td class="mono">PSH, ACK</td><td class="mono">1461</td><td class="mono">401</td><td class="mono">1460</td><td>1 + 1460 = 1461</td></tr>
+        <tr><td>PC-A → SRV1</td><td class="mono">ACK</td><td class="mono">401</td><td class="mono">2921</td><td class="mono">0</td><td>One ACK covers both segments. PC-A's SEQ stays 401, because it sent no new data.</td></tr>
+      </tbody>
+    </table>
+
+    <h3 class="sub">Lost data and retransmission</h3>
+    <p>If the sender doesn't get an ACK in time, it re-sends. ACKs are <strong>cumulative</strong>: an ACK of 1461 means "I have everything before byte 1461". So if the middle segment of three is lost, the receiver can only keep ACKing up to the gap.</p>
+    <ul class="obj-list">
+      <li><strong>Without SACK:</strong> the sender may re-send everything from the gap onward, including data that already arrived.</li>
+      <li><strong>With SACK (Selective Acknowledgment):</strong> if both hosts support it, the receiver also reports the later blocks it <em>did</em> get, so only the missing segment is re-sent.</li>
+    </ul>
+
+    <h3 class="sub">Window size and MSS</h3>
+    <table class="spec">
+      <thead><tr><th></th><th>Window size</th><th>MSS (maximum segment size)</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;">What it limits</td><td>How many <strong>unacknowledged bytes</strong> can be in flight</td><td>How much <strong>data fits in one segment</strong></td></tr>
+        <tr><td style="font-weight:600;">Who sets it</td><td>The receiver advertises it in every segment</td><td>Each host announces its own in the SYN</td></tr>
+        <tr><td style="font-weight:600;">Typical value</td><td>Varies, and changes during the connection</td><td><strong>1460</strong> bytes = 1500 MTU − 20 IPv4 header − 20 TCP header</td></tr>
+      </tbody>
+    </table>
+    <p><strong>Sliding window:</strong> the receiver doesn't wait for the whole window before ACKing. It keeps sending ACKs with an updated window size, so the window "slides" forward and the sender rarely has to stop. If the receiver's buffer fills, it advertises a smaller window and the sender slows down. That's flow control.</p>
+    <div class="teach-note">
+      <span class="label">"Agreed" vs. "announced"</span>
+      ITN's wording suggests the window size is agreed during the handshake. Strictly, each side <em>announces</em> its own window and MSS; nobody negotiates. Either wording gets the same exam answer.
+    </div>
+
+    <h3 class="sub">Congestion avoidance</h3>
+    <p>When the network is congested, routers drop packets, and retransmissions make the congestion worse. When TCP detects loss, the <strong>source</strong> reduces how much unacknowledged data it sends. ITN stresses it's the sender doing this, not the receiver's advertised window. The actual algorithms are beyond this course.</p>
+    <div class="teach-note preview">
+      <span class="label">Preview, not on the ITN exam</span>
+      The real mechanisms are slow start, the congestion window (cwnd), and fast retransmit. You'll meet them in later courses.
+    </div>
+  </section>
+
+  <!-- UDP -->
+  <section id="udp">
+    <div class="section-head">
+      <p class="kicker">Module 14 · 14.7</p>
+      <h2>UDP in action</h2>
+      <p>UDP is simple, and that's the point.</p>
+    </div>
+    <ul class="obj-list">
+      <li><strong>Low overhead vs. reliability.</strong> No handshake, no ACKs, no retransmission. Good for DNS lookups, VoIP, and video.</li>
+      <li><strong>Datagram reassembly.</strong> UDP doesn't resequence. Datagrams are reassembled in the order they arrive, and anything lost stays lost.</li>
+      <li><strong>Server processes.</strong> A UDP server application listens on a well-known or registered port (DNS on 53).</li>
+      <li><strong>Client processes.</strong> The client picks a random dynamic source port and uses it for every datagram in that exchange. The server replies to that port.</li>
+    </ul>
+  </section>
+
+  <!-- APP LAYER -->
+  <section id="applayer">
+    <div class="section-head">
+      <p class="kicker">Module 15 · 15.1</p>
+      <h2>Application, presentation, and session</h2>
+      <p>In the TCP/IP model, OSI Layers 5, 6, and 7 are combined into one <strong>application layer</strong>. In the OSI Company: the Front Desk (L7), Translation &amp; Wardrobe (L6), and Scheduling (L5).</p>
+    </div>
+    <table class="spec">
+      <thead><tr><th>OSI layer</th><th>Job</th><th>Examples</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;">7 · Application</td><td>Interface between the user's programs and the network</td><td>DNS, DHCP, SMTP, POP3, IMAP, FTP, TFTP, HTTP, HTTPS</td></tr>
+        <tr><td style="font-weight:600;">6 · Presentation</td><td><strong>Formats</strong>, <strong>compresses</strong>, and <strong>encrypts</strong> data</td><td>JPEG, GIF, PNG, MPEG, QuickTime</td></tr>
+        <tr><td style="font-weight:600;">5 · Session</td><td>Creates and maintains dialogs, and <strong>restarts</strong> sessions that are interrupted or idle</td><td>—</td></tr>
+      </tbody>
+    </table>
+    <table class="spec">
+      <thead><tr><th>Protocol family</th><th>Protocols</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;">Name system</td><td>DNS</td></tr>
+        <tr><td style="font-weight:600;">Host configuration</td><td>DHCP (and its ancestor, BOOTP)</td></tr>
+        <tr><td style="font-weight:600;">Email</td><td>SMTP, POP3, IMAP</td></tr>
+        <tr><td style="font-weight:600;">File transfer</td><td>FTP, SFTP, TFTP</td></tr>
+        <tr><td style="font-weight:600;">Web</td><td>HTTP, HTTPS, REST</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- P2P -->
+  <section id="p2p">
+    <div class="section-head">
+      <p class="kicker">Module 15 · 15.2</p>
+      <h2>Client-server and peer-to-peer</h2>
+      <p>Who asks and who answers?</p>
+    </div>
+    <table class="spec">
+      <thead><tr><th></th><th>Client-server</th><th>Peer-to-peer (P2P)</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;">Roles</td><td>A dedicated server answers; clients request</td><td>Every device can be client <em>and</em> server, request by request</td></tr>
+        <tr><td style="font-weight:600;">Resources</td><td>Centralized on the server</td><td>Spread across the peers</td></tr>
+        <tr><td style="font-weight:600;">Example</td><td>A browser and a web server</td><td>Two PCs sharing a folder or printer, with no server</td></tr>
+      </tbody>
+    </table>
+    <ul class="obj-list">
+      <li><strong>Download</strong> = server → client. <strong>Upload</strong> = client → server.</li>
+      <li>A <strong>P2P network</strong> has no dedicated server. A <strong>P2P application</strong> lets a device be client and server in the same conversation.</li>
+      <li>Some P2P apps are <strong>hybrid</strong>: a central index helps peers find each other, then files move directly peer to peer.</li>
+      <li>Common P2P apps ITN names: <strong>BitTorrent, Direct Connect, eDonkey, Freenet</strong>. Some are based on <strong>Gnutella</strong>, where users share whole files. BitTorrent instead grabs <em>pieces</em> from many peers at once.</li>
+    </ul>
+  </section>
+
+  <!-- WEB & EMAIL -->
+  <section id="webmail">
+    <div class="section-head">
+      <p class="kicker">Module 15 · 15.3</p>
+      <h2>Web and email protocols</h2>
+      <p>The two protocol families you use most.</p>
+    </div>
+    <h3 class="sub">The web: HTTP and HTTPS</h3>
+    <div class="terminal">
+      <div class="terminal-header"><span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span><span class="terminal-title">Parts of a URL</span></div>
+      <div class="terminal-body"><span class="hl">http</span>://<span class="prompt">www.it131.example</span>/<span class="comment">index.html</span>
+└┬─┘   └──────┬────────┘ └───┬────┘
+protocol  server name     requested file
+          (DNS resolves it)</div>
+    </div>
+    <ul class="obj-list">
+      <li><strong>HTTP</strong> is a request/response protocol on TCP 80. It's plaintext, so anyone capturing traffic can read it.</li>
+      <li><strong>HTTPS</strong> adds authentication and encryption, on TCP 443.</li>
+      <li><strong>GET</strong>: the client requests data, like a web page.</li>
+      <li><strong>POST</strong>: uploads data to the server, like form data.</li>
+      <li><strong>PUT</strong>: uploads resources or content to the server, like an image.</li>
+    </ul>
+
+    <h3 class="sub">Email: one protocol to send, two to receive</h3>
+    <p>Email clients never talk directly to each other. Mail goes client → server → server → client.</p>
+    <table class="spec">
+      <thead><tr><th>Protocol</th><th>Job</th><th class="mono">Port</th><th>Mail kept on the server?</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;">SMTP</td><td><strong>Sends</strong>: client → server, and server → server. If the destination server is busy, SMTP spools the message and retries.</td><td class="mono">TCP 25</td><td>—</td></tr>
+        <tr><td style="font-weight:600;">POP3</td><td><strong>Retrieves</strong>: downloads mail to the client</td><td class="mono">TCP 110</td><td><strong>No.</strong> Downloaded, then deleted from the server. Bad for multiple devices.</td></tr>
+        <tr><td style="font-weight:600;">IMAP</td><td><strong>Retrieves</strong>: the client gets copies</td><td class="mono">TCP 143</td><td><strong>Yes</strong>, until the user deletes it. Folders sync across devices.</td></tr>
+      </tbody>
+    </table>
+    <div class="teach-note">
+      <span class="label">Memory hook</span>
+      <strong>S</strong>MTP <strong>S</strong>ends. <strong>P</strong>OP <strong>P</strong>ulls it off the server. <strong>IMAP</strong> keeps it <strong>I</strong>n the <strong>M</strong>ailbox. (Real POP3 clients often have a "leave a copy on server" option, but ITN's answer is that POP deletes.)
+    </div>
+  </section>
+
+  <!-- DNS & DHCP -->
+  <section id="dnsdhcp">
+    <div class="section-head">
+      <p class="kicker">Module 15 · 15.4</p>
+      <h2>IP addressing services: DNS and DHCP</h2>
+      <p>DNS turns names into addresses. DHCP hands out addresses in the first place.</p>
+    </div>
+
+    <h3 class="sub">DNS</h3>
+    <ul class="obj-list">
+      <li><strong>Hierarchy:</strong> root → top-level domains (<code>.com</code>, <code>.org</code>, <code>.net</code>, country codes like <code>.us</code>) → second-level domains, and down. Each server handles its own zone and refers other questions onward.</li>
+      <li><strong>Message format:</strong> queries and responses share one format, with Header, Question, Answer, Authority, and Additional sections.</li>
+      <li><strong>Caching:</strong> clients and servers remember answers for a while (the record's TTL), so repeat lookups are fast.</li>
+    </ul>
+    <table class="spec">
+      <thead><tr><th>Record</th><th>Holds</th></tr></thead>
+      <tbody>
+        <tr><td class="mono" style="font-weight:600;">A</td><td>An end device's IPv4 address</td></tr>
+        <tr><td class="mono" style="font-weight:600;">AAAA</td><td>An end device's IPv6 address ("quad-A")</td></tr>
+        <tr><td class="mono" style="font-weight:600;">NS</td><td>An authoritative name server</td></tr>
+        <tr><td class="mono" style="font-weight:600;">MX</td><td>A mail exchange server</td></tr>
+      </tbody>
+    </table>
+
+    <div class="terminal">
+      <div class="terminal-header"><span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span><span class="terminal-title">PC-A · nslookup (interactive mode)</span></div>
+      <div class="terminal-body"><span class="prompt">C:\Users\student&gt;</span> <span class="cmd">nslookup</span>
+<span class="hl">Default Server:  srv1.it131.example
+Address:  192.168.20.100</span>
+<span class="out">
+</span><span class="prompt">&gt;</span> <span class="cmd">www.it131.example</span>
+<span class="out">Server:  srv1.it131.example
+Address:  192.168.20.100
+
+Name:    www.it131.example
+Address:  192.168.20.100
+</span>
+<span class="prompt">&gt;</span> <span class="cmd">www.example.net</span>
+<span class="out">Server:  srv1.it131.example
+Address:  192.168.20.100
+
+</span><span class="hl">Non-authoritative answer:</span><span class="out">
+Name:    www.example.net
+Address:  203.0.113.80
+</span>
+<span class="prompt">&gt;</span> <span class="cmd">exit</span></div>
+    </div>
+    <table class="spec">
+      <thead><tr><th>Line</th><th>What it means</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;">Default Server / Address</td><td>The DNS server PC-A is configured to use.</td></tr>
+        <tr><td style="font-weight:600;">No "Non-authoritative" line</td><td>SRV1 <em>owns</em> the <code>it131.example</code> zone, so it answered from its own records.</td></tr>
+        <tr><td style="font-weight:600;">Non-authoritative answer</td><td>SRV1 doesn't own <code>example.net</code>. It got the answer from other servers (or its cache) and passed it on. <strong>Not an error.</strong></td></tr>
+      </tbody>
+    </table>
+    <div class="teach-note warn">
+      <span class="label">"Default Server: UnKnown" is usually harmless</span>
+      If the DNS server has no reverse (PTR) record for its own address, nslookup prints <code>Default Server: UnKnown</code>, sometimes after a timeout. Lookups still work. Also note that nslookup asks the DNS server directly and skips the PC's cache and hosts file, so it can disagree with what <code>ping</code> resolves.
+    </div>
+
+    <div class="terminal">
+      <div class="terminal-header"><span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span><span class="terminal-title">PC-A · ipconfig /displaydns (the local DNS cache)</span></div>
+      <div class="terminal-body"><span class="prompt">C:\Users\student&gt;</span> <span class="cmd">ipconfig /displaydns</span>
+<span class="out">
+Windows IP Configuration
+
+    www.it131.example
+    ----------------------------------------
+    Record Name . . . . . : www.it131.example
+    Record Type . . . . . : 1
+    Time To Live  . . . . : 3542
+    Data Length . . . . . : 4
+    Section . . . . . . . : Answer
+</span><span class="hl">    A (Host) Record . . . : 192.168.20.100</span></div>
+    </div>
+    <p style="font-size:.88rem;">Record Type 1 is an A record (AAAA shows as 28). The TTL counts down in seconds, and the entry disappears when it hits 0. <code>ipconfig /flushdns</code> empties the cache, which is useful after a DNS record changes. <em>(<code>/flushdns</code> is enrichment.)</em></p>
+
+    <h3 class="sub">DHCPv4</h3>
+    <p>DHCP automatically gives a host its IP address, subnet mask, default gateway, DNS server, and more. The address is <strong>leased</strong> for a set time. The client must renew before the lease expires, or the address goes back into the pool. DHCP uses <strong>UDP 67</strong> (server) and <strong>UDP 68</strong> (client).</p>
+    <table class="spec">
+      <thead><tr><th>Step</th><th>Message</th><th>From</th><th>Delivery</th></tr></thead>
+      <tbody>
+        <tr><td class="mono" style="font-weight:600;">D</td><td>DHCPDISCOVER</td><td>Client</td><td><strong>Broadcast.</strong> The client has no IP address and doesn't know any server. Source <code>0.0.0.0</code>, destination <code>255.255.255.255</code>.</td></tr>
+        <tr><td class="mono" style="font-weight:600;">O</td><td>DHCPOFFER</td><td>Server</td><td>Unicast to the client's MAC: "here's an address you can have"</td></tr>
+        <tr><td class="mono" style="font-weight:600;">R</td><td>DHCPREQUEST</td><td>Client</td><td><strong>Broadcast.</strong> Accepts one offer, and tells any <em>other</em> servers their offers were declined.</td></tr>
+        <tr><td class="mono" style="font-weight:600;">A</td><td>DHCPACK</td><td>Server</td><td>Unicast: the lease is confirmed and the client can use the address</td></tr>
+      </tbody>
+    </table>
+    <ul class="obj-list">
+      <li><strong>DHCPNAK:</strong> the server rejects the request (e.g., the address is no longer valid). The client starts over with DISCOVER.</li>
+      <li><strong>Renewal:</strong> the client already has an address and knows the server, so it sends a <strong>unicast</strong> DHCPREQUEST straight to that server, which answers with DHCPACK.</li>
+    </ul>
+    <div class="teach-note preview">
+      <span class="label">Footnotes, and a preview</span>
+      In real captures, OFFER and ACK sometimes go to <code>255.255.255.255</code>, depending on a "broadcast flag" the client sets. The exam answer is Discover and Request broadcast, Offer and Ack unicast. Configuring a DHCP server on a Cisco router, and <code>ipconfig /release</code> / <code>/renew</code> on a client, are CCNA 2 (SRWE) material.
+    </div>
+  </section>
+
+  <!-- FILES -->
+  <section id="files">
+    <div class="section-head">
+      <p class="kicker">Module 15 · 15.5</p>
+      <h2>File sharing: FTP and SMB</h2>
+      <p>Two ways to move files: grab a copy, or reach into the share as if it were local.</p>
+    </div>
+    <table class="spec">
+      <thead><tr><th></th><th>FTP</th><th>SMB</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;">Model</td><td>Client/server file transfer</td><td>Client/server request-response sharing</td></tr>
+        <tr><td style="font-weight:600;">Connections</td><td><strong>Two:</strong> control on <strong>TCP 21</strong> (commands and replies), data on <strong>TCP 20</strong> (the file itself). A new data connection opens for each transfer.</td><td>A <strong>long-term</strong> connection to the server</td></tr>
+        <tr><td style="font-weight:600;">Shares</td><td>Files</td><td>Files, directories, printers, and serial ports, used as if they were local</td></tr>
+        <tr><td style="font-weight:600;">Platforms</td><td>Everywhere. Plaintext, like HTTP.</td><td>Native to Windows. Linux and UNIX use <strong>Samba</strong>; macOS supports SMB too.</td></tr>
+      </tbody>
+    </table>
+    <div class="teach-note preview">
+      <span class="label">Enrichment</span>
+      Port 20 for data is only true in FTP's <em>active</em> mode. Most clients use passive mode, where the server picks a random high port for data, so don't be surprised if your capture shows no port 20. SMB uses TCP 445, which ITN doesn't list.
+    </div>
+  </section>
+
+  <!-- MISTAKES -->
+  <section id="mistakes">
+    <div class="section-head">
+      <p class="kicker">Watch for this</p>
+      <h2>Common Module 14–15 mistakes</h2>
+      <p>These come up every semester.</p>
+    </div>
+    <ul class="obj-list">
+      <li>Calling UDP "worse" than TCP. It's a trade-off: speed and low overhead over reliability.</li>
+      <li>Saying ACK = the last byte received. It's the <strong>next byte expected</strong>.</li>
+      <li>Forgetting that SYN and FIN each use one sequence number, so the ACK is off by one.</li>
+      <li>Moving the SEQ forward after a pure ACK. Only data, SYN, and FIN advance it.</li>
+      <li>Mixing up window size (unacknowledged bytes in flight) and MSS (data in one segment).</li>
+      <li>Saying the receiver's window handles congestion. Congestion avoidance is the <strong>sender</strong> cutting back.</li>
+      <li>Thinking clients use well-known ports. Clients use a dynamic source port, 49152+.</li>
+      <li>Mixing up a socket (one IP:port) and a socket pair (both ends).</li>
+      <li>Saying DNS is UDP only. ITN says UDP <strong>and</strong> TCP 53.</li>
+      <li>Saying DHCP uses TCP, or swapping 67 (server) and 68 (client).</li>
+      <li>Swapping FTP's ports: 21 is control, 20 is data.</li>
+      <li>Swapping POP3 and IMAP, or thinking SMTP retrieves mail. It only sends.</li>
+      <li>Reading "Non-authoritative answer" as an error.</li>
+      <li>Expecting LISTENING ports in plain <code>netstat</code> (you need <code>-a</code>), or treating TIME_WAIT as a fault.</li>
+      <li>Thinking the first DHCPREQUEST is unicast. It's broadcast. Only renewals are unicast.</li>
+    </ul>
+  </section>
+
+  <!-- CHECKPOINT -->
+  <section id="checkpoint">
+    <div class="section-head">
+      <p class="kicker">Module Quiz — Network Application Communications</p>
+      <h2>Checkpoint: Modules 14–15</h2>
+      <p>This quiz opens Session 11. If you can do these cold, you're ready.</p>
+    </div>
+    <ul class="obj-list">
+      <li><strong>Module 14:</strong> TCP vs. UDP features, and which apps use which.</li>
+      <li><strong>Module 14:</strong> the port ranges, the well-known port table, sockets and socket pairs, and reading <code>netstat</code>.</li>
+      <li><strong>Module 14:</strong> the handshake, termination, the six flags, and SEQ/ACK arithmetic. Practice with the <a href="#handshake">conversation builder</a>.</li>
+      <li><strong>Module 14:</strong> retransmission, SACK, window size, MSS, and congestion avoidance.</li>
+      <li><strong>Module 15:</strong> client-server vs. P2P, HTTP methods, SMTP/POP3/IMAP, DNS records and nslookup, DORA, FTP, and SMB.</li>
+    </ul>
+  </section>
+
+  <!-- FLASHCARDS -->
+  <section id="flashcards">
+    <div class="section-head">
+      <p class="kicker">Study</p>
+      <h2>Flashcards</h2>
+      <p>Click to flip. Double-click to mark as known.</p>
+    </div>
+    <div class="toolbar">
+      <button class="btn" id="shuffleBtn">Shuffle</button>
+      <button class="btn" id="resetKnownBtn">Reset progress</button>
+      <span id="cardProgress"></span>
+    </div>
+    <div class="card-grid" id="cardGrid"></div>
+  </section>
+
+  <!-- QUIZ -->
+  <section id="quiz">
+    <div class="section-head">
+      <p class="kicker">Check yourself</p>
+      <h2>Sample questions</h2>
+      <p>Pick an answer to see if you're right. Same style as the module quiz.</p>
+    </div>
+    <div id="quizScore"></div>
+    <div id="quizList"></div>
+    <button class="btn" id="resetQuizBtn">Reset quiz</button>
+  </section>
+
+  <!-- EXAMPLES -->
+  <section id="examples">
+    <div class="section-head">
+      <p class="kicker">Applied</p>
+      <h2>Worked examples</h2>
+      <p>Think it through before you expand the answer.</p>
+    </div>
+
+    <div class="example">
+      <span class="tag">SEQ / ACK</span>
+      <h3>Real-looking numbers</h3>
+      <p>PC-A picks ISN 5000 and SRV1 picks ISN 9000. Fill in the handshake. Then PC-A sends a 1,000-byte request. What acknowledgment number does SRV1 send back?</p>
+      <details class="solution"><summary>Show answer</summary><div class="solbody">
+        <p>SYN: SEQ 5000. SYN, ACK: SEQ 9000, ACK 5001. ACK: SEQ 5001, ACK 9001. The request also goes out with SEQ <strong>5001</strong>, because the third handshake segment carried no data. SRV1 acknowledges with <strong>ACK 6001</strong> (5001 + 1000).</p>
+      </div></details>
+    </div>
+
+    <div class="example">
+      <span class="tag">MSS &amp; loss</span>
+      <h3>The middle segment goes missing</h3>
+      <p>SRV1 sends a 4,380-byte file. MSS is 1460, and the first data byte is relative 1. How many segments are there, and what are their SEQs? The second segment is lost. What does PC-A ACK, and what does it ACK once the retransmission arrives?</p>
+      <details class="solution"><summary>Show answer</summary><div class="solbody">
+        <p>4380 ÷ 1460 = exactly <strong>3</strong> segments, with SEQs <strong>1, 1461, 2921</strong>. After getting segments 1 and 3, PC-A can only ACK up to the gap: <strong>ACK 1461</strong>. Without SACK, SRV1 may re-send from 1461 onward. With SACK, PC-A also reports that it holds bytes 2921–4380, so only the missing segment is re-sent. Once it arrives, PC-A sends <strong>ACK 4381</strong> (2921 + 1460).</p>
+      </div></details>
+    </div>
+
+    <div class="example">
+      <span class="tag">Socket pairs</span>
+      <h3>Two tabs and an SSH session</h3>
+      <p>PC-A has two tabs open to <code>http://www.it131.example</code> and an SSH session to R1. Its source ports are 49712, 49713, and 49731. Write the three socket pairs. How does SRV1 tell the two tabs apart?</p>
+      <details class="solution"><summary>Show answer</summary><div class="solbody">
+        <p><code>192.168.10.10:49712 ↔ 192.168.20.100:80</code><br><code>192.168.10.10:49713 ↔ 192.168.20.100:80</code><br><code>192.168.10.10:49731 ↔ 192.168.10.1:22</code><br>The server side is identical for both tabs. SRV1 tells them apart by the client's <strong>source port</strong>.</p>
+      </div></details>
+    </div>
+
+    <div class="example">
+      <span class="tag">TCP or UDP?</span>
+      <h3>Pick the transport</h3>
+      <p>A VoIP call. Downloading a 2 GB ISO over HTTPS. An ordinary DNS lookup. A zone transfer between DNS servers. Copying a config to a TFTP server. Getting an address by DHCP.</p>
+      <details class="solution"><summary>Show answer</summary><div class="solbody">
+        <p>VoIP: <strong>UDP</strong> (delay matters more than a lost packet). ISO over HTTPS: <strong>TCP 443</strong> (every byte, in order). DNS lookup: <strong>UDP 53</strong>. Zone transfer: <strong>TCP 53</strong>. TFTP: <strong>UDP 69</strong> (it does its own simple ACKs). DHCP: <strong>UDP 67/68</strong>.</p>
+      </div></details>
+    </div>
+
+    <div class="example">
+      <span class="tag">netstat</span>
+      <h3>"I think I have leftover connections"</h3>
+      <p>A user runs <code>netstat -an</code> and sees:</p>
+      <div class="terminal">
+        <div class="terminal-header"><span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span><span class="terminal-title">PC-A</span></div>
+        <div class="terminal-body"><span class="out">  TCP    192.168.10.10:49712    192.168.20.100:443     ESTABLISHED
+  TCP    192.168.10.10:49705    192.168.20.100:443     TIME_WAIT
+  TCP    192.168.10.10:49706    192.168.20.100:443     TIME_WAIT
+  UDP    0.0.0.0:123            *:*</span></div>
+      </div>
+      <p>Is anything wrong?</p>
+      <details class="solution"><summary>Show answer</summary><div class="solbody">
+        <p>Nothing is wrong. There's one live HTTPS session (ESTABLISHED, dynamic source port to well-known 443), and two recently closed sessions in TIME_WAIT that PC-A closed first. Those clear on their own. The UDP row has no state because UDP is connectionless.</p>
+      </div></details>
+    </div>
+
+    <div class="example">
+      <span class="tag">DHCP</span>
+      <h3>Name the DORA messages</h3>
+      <p>PC-A boots, and R1 (<code>192.168.10.1</code>) is the DHCP server. Name each message:<br>
+      1. <code>0.0.0.0 → 255.255.255.255</code>, UDP 68 → 67<br>
+      2. <code>192.168.10.1 → 192.168.10.10</code>, UDP 67 → 68<br>
+      3. <code>0.0.0.0 → 255.255.255.255</code>, UDP 68 → 67<br>
+      4. <code>192.168.10.1 → 192.168.10.10</code>, UDP 67 → 68<br>
+      Two days later PC-A renews its lease. What changes?</p>
+      <details class="solution"><summary>Show answer</summary><div class="solbody">
+        <p>1 DHCPDISCOVER (broadcast), 2 DHCPOFFER, 3 DHCPREQUEST (still broadcast, because the client doesn't have its address yet), 4 DHCPACK. At renewal PC-A already has <code>192.168.10.10</code> and knows the server, so its DHCPREQUEST is <strong>unicast</strong> from <code>192.168.10.10</code> to <code>192.168.10.1</code>, and R1 answers with a DHCPACK.</p>
+      </div></details>
+    </div>
+
+    <div class="example">
+      <span class="tag">Email</span>
+      <h3>Phone and laptop</h3>
+      <p>Which protocol carries a message from the sender's client to its mail server? A user reads mail on a phone and a laptop; which retrieval protocol leaves the laptop with the only copy, and which keeps both in sync?</p>
+      <details class="solution"><summary>Show answer</summary><div class="solbody">
+        <p>Sending: <strong>SMTP</strong>, TCP 25. Only copy on the laptop: <strong>POP3</strong> (TCP 110), which downloads and deletes in ITN's model. In sync: <strong>IMAP</strong> (TCP 143), which keeps mail on the server.</p>
+      </div></details>
+    </div>
+  </section>
+
+  <!-- GLOSSARY -->
+  <section id="glossary">
+    <div class="section-head">
+      <p class="kicker">Reference</p>
+      <h2>Glossary &amp; index</h2>
+      <p>Every term from this session, searchable and indexed A–Z.</p>
+    </div>
+    <input type="text" id="glossarySearch" placeholder="Search terms…" aria-label="Search glossary">
+    <div class="alpha-nav" id="alphaNav"></div>
+    <dl class="glossary" id="glossaryList"></dl>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>IT131 · CCNA: Introduction to Networks · Session 10 reference.</p>
+  </div>
+</footer>
+
+<button id="backToTop" class="back-to-top" aria-label="Back to top" title="Back to top">↑</button>
+
+<script>
+  /* ---- port lookup ---- */
+  const PORTS = [
+    {p:'20', n:'FTP data', t:'TCP'},
+    {p:'21', n:'FTP control', t:'TCP'},
+    {p:'22', n:'SSH', t:'TCP'},
+    {p:'23', n:'Telnet', t:'TCP'},
+    {p:'25', n:'SMTP', t:'TCP'},
+    {p:'53', n:'DNS', t:'UDP and TCP'},
+    {p:'67', n:'DHCPv4 server', t:'UDP'},
+    {p:'68', n:'DHCPv4 client', t:'UDP'},
+    {p:'69', n:'TFTP', t:'UDP'},
+    {p:'80', n:'HTTP', t:'TCP'},
+    {p:'110', n:'POP3', t:'TCP'},
+    {p:'143', n:'IMAP', t:'TCP'},
+    {p:'161', n:'SNMP', t:'UDP'},
+    {p:'443', n:'HTTPS', t:'TCP'},
+    {p:'123', n:'NTP', t:'UDP', x:1},
+    {p:'445', n:'SMB', t:'TCP', x:1},
+    {p:'514', n:'Syslog', t:'UDP', x:1},
+    {p:'3389', n:'RDP (Remote Desktop)', t:'TCP', x:1},
+  ];
+  function portRange(n){
+    if (n <= 1023) return 'Well-known (0–1023)';
+    if (n <= 49151) return 'Registered (1024–49151)';
+    return 'Private/dynamic (49152–65535): a client source port';
+  }
+  (function(){
+    const inp = document.getElementById('portIn'), out = document.getElementById('portOut');
+    function render(){
+      const q = inp.value.trim().toLowerCase();
+      if (!q){ out.innerHTML = '<p class="bad">Type a port number (like 53) or a protocol name (like imap).</p>'; return; }
+      const row = r => `<div class="row"><b>${r.p} · ${r.t}</b><span>${r.n}${r.x ? ' <em style="opacity:.7">(not in ITN\'s table)</em>' : ''}</span></div>`;
+      if (/^\d+$/.test(q)){
+        const n = Number(q);
+        if (n > 65535){ out.innerHTML = '<p class="bad">Port numbers are 16 bits: 0–65535.</p>'; return; }
+        const hits = PORTS.filter(r => r.p === String(n));
+        out.innerHTML = `<div class="row"><b>Range</b><span>${portRange(n)}</span></div>` +
+          (hits.length ? hits.map(row).join('') : '<div class="row"><b>Service</b><span>Not one of the ports on this page.</span></div>');
+        return;
+      }
+      const hits = PORTS.filter(r => r.n.toLowerCase().includes(q));
+      out.innerHTML = hits.length ? hits.map(row).join('') : '<p class="bad">No match. Try smtp, dns, dhcp, ftp, http…</p>';
+    }
+    inp.addEventListener('input', render); render();
+  })();
+
+  /* ---- TCP conversation builder ---- */
+  (function(){
+    const MOD = 4294967296;
+    const ids = ['hsA','hsB','hsR','hsS','hsM'];
+    const els = ids.map(id => document.getElementById(id));
+    const out = document.getElementById('hsOut');
+    const w = x => ((x % MOD) + MOD) % MOD;
+    function render(){
+      const v = els.map(e => e.value.trim());
+      if (v.some(s => !/^\d+$/.test(s))){ out.innerHTML = '<p class="bad">Whole numbers only.</p>'; return; }
+      const [a, b, r, s, m] = v.map(Number);
+      if (a >= MOD || b >= MOD){ out.innerHTML = '<p class="bad">An ISN is 32 bits: 0 to 4,294,967,295.</p>'; return; }
+      if (r < 1 || s < 1){ out.innerHTML = '<p class="bad">Request and response need at least 1 byte.</p>'; return; }
+      if (m < 1 || m > 65535){ out.innerHTML = '<p class="bad">MSS must be 1 to 65535 (it is a 16-bit field).</p>'; return; }
+      const n = Math.ceil(s / m);
+      if (n > 12){ out.innerHTML = `<p class="bad">That's ${n} response segments. Keep it to 12 or fewer (raise the MSS or shrink the response).</p>`; return; }
+      if (r > m){ out.innerHTML = '<p class="bad">Keep the request within one MSS so it fits in a single segment.</p>'; return; }
+      const rows = [];
+      const add = (dir, flags, seq, ack, len, note) => rows.push({dir, flags, seq, ack, len, note});
+      add('PC-A → SRV1', 'SYN', w(a), '—', 0, 'Open. SYN uses one sequence number.');
+      add('SRV1 → PC-A', 'SYN, ACK', w(b), w(a+1), 0, `ACK = ${w(a)} + 1 (for the SYN)`);
+      add('PC-A → SRV1', 'ACK', w(a+1), w(b+1), 0, 'Handshake complete. No data, so SEQ stays put.');
+      add('PC-A → SRV1', 'PSH, ACK', w(a+1), w(b+1), r, `Request: ${r} bytes`);
+      for (let i = 0; i < n; i++){
+        const len = Math.min(m, s - i*m);
+        add('SRV1 → PC-A', i === n-1 ? 'PSH, ACK' : 'ACK', w(b+1+i*m), w(a+1+r), len, i === 0 ? `ACK = ${w(a+1)} + ${r}` : `SEQ = previous SEQ + ${m}`);
+      }
+      const A = a+1+r, B = b+1+s;
+      add('PC-A → SRV1', 'ACK', w(A), w(B), 0, `One ACK covers all ${n} segment${n>1?'s':''}: ${w(b+1)} + ${s}`);
+      add('PC-A → SRV1', 'FIN, ACK', w(A), w(B), 0, 'Close. FIN uses one sequence number.');
+      add('SRV1 → PC-A', 'ACK', w(B), w(A+1), 0, `ACK = ${w(A)} + 1 (for the FIN)`);
+      add('SRV1 → PC-A', 'FIN, ACK', w(B), w(A+1), 0, "Server's own FIN (often combined with the previous row)");
+      add('PC-A → SRV1', 'ACK', w(A+1), w(B+1), 0, `ACK = ${w(B)} + 1. Done.`);
+      out.innerHTML = `<div style="overflow-x:auto"><table class="spec" style="margin:0;"><thead><tr><th>#</th><th>Direction</th><th>Flags</th><th class="mono">SEQ</th><th class="mono">ACK</th><th class="mono">Data</th><th>Why</th></tr></thead><tbody>` +
+        rows.map((x, i) => `<tr><td class="mono">${i+1}</td><td>${x.dir}</td><td class="mono">${x.flags}</td><td class="mono">${x.seq}</td><td class="mono">${x.ack}</td><td class="mono">${x.len}</td><td style="font-size:.8rem">${x.note}</td></tr>`).join('') +
+        '</tbody></table></div>';
+    }
+    els.forEach(e => e.addEventListener('input', render)); render();
+  })();
+
+  const TERMS = [
+    {t:"Acknowledgment number", d:"32-bit TCP field holding the next byte the receiver expects. It acknowledges every byte before that number."},
+    {t:"Client-server model", d:"A client requests a service and a dedicated server provides it, like a browser and a web server."},
+    {t:"Congestion avoidance", d:"When TCP detects loss from congestion, the sender reduces how much unacknowledged data it sends."},
+    {t:"Connection-oriented", d:"A session is set up before data is sent, as TCP does with the three-way handshake."},
+    {t:"Connectionless", d:"Data is sent with no session setup, as UDP does."},
+    {t:"Control bits (flags)", d:"Six one-bit TCP header fields in ITN that manage the connection: URG, ACK, PSH, RST, SYN, FIN."},
+    {t:"Datagram", d:"The name for a UDP unit of data."},
+    {t:"DHCP", d:"Dynamic Host Configuration Protocol. Leases an IP address, mask, gateway, and DNS server to hosts automatically, over UDP 67 (server) and 68 (client), using Discover, Offer, Request, Ack."},
+    {t:"DNS", d:"Domain Name System. A hierarchical, distributed system that resolves names to IP addresses, on UDP and TCP port 53. Record types: A, AAAA, NS, MX."},
+    {t:"Dynamic (private) ports", d:"49152–65535. Picked temporarily as a client's source port. Also called ephemeral ports."},
+    {t:"Flow control", d:"TCP limiting how fast the sender transmits so the receiver isn't overwhelmed, using the window size."},
+    {t:"FTP", d:"File Transfer Protocol. Uses two TCP connections: control on port 21 and data on port 20. Plaintext."},
+    {t:"HTTP / HTTPS", d:"Request/response web protocols. HTTP (TCP 80) is plaintext. HTTPS (TCP 443) adds authentication and encryption. Methods: GET, POST, PUT."},
+    {t:"IMAP", d:"Internet Message Access Protocol. Retrieves copies of email and leaves the originals on the server until deleted, so devices stay in sync (TCP 143)."},
+    {t:"Initial sequence number (ISN)", d:"The random starting sequence number each host picks for its SYN."},
+    {t:"Lease", d:"How long a DHCP-assigned address may be used before it must be renewed."},
+    {t:"MSS (maximum segment size)", d:"The most data (not counting headers) one TCP segment can carry. Typically 1460 bytes: 1500 MTU − 20 IPv4 − 20 TCP."},
+    {t:"Multiplexing", d:"Interleaving segments from many conversations on the same network. Port numbers keep the conversations apart."},
+    {t:"netstat", d:"Windows command that lists active TCP connections. -n shows numbers instead of names, and -a adds listening ports."},
+    {t:"Non-authoritative answer", d:"nslookup's note that the answer came from a DNS server that doesn't own that zone, often from its cache. Not an error."},
+    {t:"nslookup", d:"Command-line tool to query a DNS server directly and see which DNS server you're using."},
+    {t:"Peer-to-peer (P2P)", d:"Hosts share resources with no dedicated server. Each device can act as client and server. Apps: BitTorrent, Direct Connect, eDonkey, Freenet."},
+    {t:"POP3", d:"Post Office Protocol v3. Downloads email to the client and, in ITN's model, deletes it from the server (TCP 110)."},
+    {t:"Port number", d:"16-bit transport-layer value identifying the application sending or receiving the data."},
+    {t:"Presentation layer", d:"OSI Layer 6. Formats, compresses, and encrypts data. Standards include JPEG, GIF, PNG, and MPEG."},
+    {t:"Registered ports", d:"1024–49151. Assigned by IANA to specific applications on request."},
+    {t:"Retransmission", d:"TCP re-sends data that isn't acknowledged in time."},
+    {t:"SACK (Selective Acknowledgment)", d:"Optional TCP feature where the receiver reports the non-contiguous blocks it got, so only the missing data is re-sent."},
+    {t:"Segment", d:"The name for a TCP unit of data."},
+    {t:"Sequence number", d:"32-bit TCP field numbering the first data byte in a segment. Used for ordering and spotting loss. SYN and FIN each use one number."},
+    {t:"Session layer", d:"OSI Layer 5. Creates and maintains dialogs between applications, and restarts sessions that are interrupted or idle."},
+    {t:"Sliding window", d:"The receiver keeps updating its window as it ACKs, so the sender keeps sending without stopping after each segment."},
+    {t:"SMB", d:"Server Message Block. Client/server sharing of files, directories, printers, and serial ports over a long-term connection. Native to Windows; Samba on Linux."},
+    {t:"SMTP", d:"Simple Mail Transfer Protocol. Sends email from client to server and between servers (TCP 25). It never retrieves mail."},
+    {t:"Socket", d:"An IP address plus a port number, e.g. 192.168.10.10:49712."},
+    {t:"Socket pair", d:"Source socket plus destination socket. It uniquely identifies one conversation."},
+    {t:"Three-way handshake", d:"SYN → SYN, ACK → ACK. Opens a TCP connection and confirms the destination is present and listening on that port."},
+    {t:"TIME_WAIT", d:"netstat state for a recently closed connection on the side that sent the first FIN. Normal; it clears on its own."},
+    {t:"Well-known ports", d:"0–1023. Reserved for common services, like HTTP 80, DNS 53, and SSH 22."},
+    {t:"Window size", d:"16-bit TCP field: how many bytes the receiver can accept before an acknowledgment is needed. Used for flow control."},
+  ];
+
+  const QUIZ = [
+    { q:"Which TCP feature uses sequence numbers so the receiver can put segments back in their original order?",
+      choices:["Flow control","Same-order delivery","Session establishment","Multiplexing"], correct:1,
+      explain:"Segments can arrive out of order. TCP uses sequence numbers to reorder them before handing the data to the application." },
+    { q:"A Windows client opens a web connection. From which range is its source port most likely chosen?",
+      choices:["0–1023","1024–49151","1–65535 at random","49152–65535"], correct:3,
+      explain:"Clients use a dynamic (private) port. Windows Vista and later pick from 49152–65535." },
+    { q:"Which flags are set in the second segment of the TCP three-way handshake?",
+      choices:["SYN and ACK","SYN only","ACK only","FIN and ACK"], correct:0,
+      explain:"The server acknowledges the client's SYN and sends its own SYN in one SYN, ACK segment." },
+    { q:"A host sends a segment with sequence number 1001 carrying 500 bytes of data. What acknowledgment number does the receiver send back?",
+      choices:["1000","1500","1501","1502"], correct:2,
+      explain:"ACK is the next byte expected: 1001 + 500 = 1501." },
+    { q:"Which application normally uses UDP?",
+      choices:["HTTP","TFTP","SMTP","SSH"], correct:1,
+      explain:"TFTP uses UDP 69. HTTP, SMTP, and SSH all use TCP." },
+    { q:"A user reads email on a phone and a laptop and wants both to show the same messages and folders. Which retrieval protocol fits?",
+      choices:["IMAP","POP3","SMTP","SNMP"], correct:0,
+      explain:"IMAP keeps messages on the server until they're deleted, so every device sees the same mailbox." },
+    { q:"Which DNS record type maps a host name to an IPv6 address?",
+      choices:["A","NS","MX","AAAA"], correct:3,
+      explain:"AAAA (quad-A) records hold IPv6 addresses. A records hold IPv4 addresses." },
+    { q:"Which DHCPv4 message does a client broadcast to find available DHCP servers?",
+      choices:["DHCPREQUEST","DHCPOFFER","DHCPDISCOVER","DHCPACK"], correct:2,
+      explain:"The client has no address and doesn't know any server, so it starts by broadcasting a DHCPDISCOVER." },
+    { q:"Which TCP port does FTP use to carry the file data itself?",
+      choices:["20","21","22","69"], correct:0,
+      explain:"FTP uses TCP 21 for control (commands) and a separate connection on TCP 20 for data." },
+    { q:"Which TCP header field tells the sender how many bytes the receiver can accept before an acknowledgment is needed?",
+      choices:["Sequence number","Window size","Checksum","Urgent"], correct:1,
+      explain:"The receiver advertises its window size. That's TCP flow control." },
+    { q:"What uniquely identifies the conversation between 192.168.10.10:49712 and 192.168.20.100:443?",
+      choices:["The destination port alone","The source MAC address","The source socket alone","The socket pair"], correct:3,
+      explain:"The source IP and port plus the destination IP and port form a socket pair, which is unique to one conversation." },
+    { q:"According to ITN, which HTTP method uploads data such as form data to a web server?",
+      choices:["GET","PUT","POST","DELETE"], correct:2,
+      explain:"ITN: GET requests data, POST uploads data like form data, and PUT uploads resources like an image." },
+  ];
+
+  const grid = document.getElementById('cardGrid');
+  TERMS.forEach((item, i) => {
+    const card = document.createElement('button');
+    card.className = 'flashcard';
+    card.setAttribute('aria-label', 'Flashcard: ' + item.t + '. Press to flip.');
+    card.dataset.i = i;
+    card.innerHTML = `
+      <div class="flashcard-inner">
+        <div class="flashcard-face front"><div class="lbl">Term</div><div class="term">${item.t}</div></div>
+        <div class="flashcard-face back"><div class="lbl">Definition</div><div class="def">${item.d}</div></div>
+      </div>`;
+    card.addEventListener('click', () => card.classList.toggle('flipped'));
+    card.addEventListener('dblclick', () => { card.classList.toggle('known'); updateProgress(); });
+    grid.appendChild(card);
+  });
+  function updateProgress(){
+    const known = document.querySelectorAll('.flashcard.known').length;
+    document.getElementById('cardProgress').textContent = `${known} / ${TERMS.length} marked known (double-click a card to mark it)`;
+  }
+  updateProgress();
+  document.getElementById('shuffleBtn').addEventListener('click', () => {
+    const cards = Array.from(grid.children);
+    cards.sort(() => Math.random() - 0.5);
+    cards.forEach(c => { c.classList.remove('flipped'); grid.appendChild(c); });
+  });
+  document.getElementById('resetKnownBtn').addEventListener('click', () => {
+    document.querySelectorAll('.flashcard.known').forEach(c => c.classList.remove('known'));
+    updateProgress();
+  });
+
+  const quizList = document.getElementById('quizList');
+  let score = 0, answered = 0;
+  function renderQuiz(){
+    quizList.innerHTML = ''; score = 0; answered = 0;
+    QUIZ.forEach((item, qi) => {
+      const box = document.createElement('div');
+      box.className = 'quiz-q';
+      box.innerHTML = `<p class="qtext"><span class="qnum">Q${qi+1}.</span>${item.q}</p><div class="choices"></div><p class="explain"></p>`;
+      const choicesEl = box.querySelector('.choices');
+      item.choices.forEach((c, ci) => {
+        const b = document.createElement('button');
+        b.className = 'choice'; b.textContent = c;
+        b.addEventListener('click', () => {
+          if (box.dataset.done) return;
+          box.dataset.done = '1'; answered++;
+          if (ci === item.correct) score++;
+          Array.from(choicesEl.children).forEach((el, ei) => {
+            el.disabled = true;
+            if (ei === item.correct) el.classList.add('correct');
+            else if (ei === ci) el.classList.add('incorrect');
+          });
+          box.querySelector('.explain').textContent = item.explain;
+          box.querySelector('.explain').classList.add('show');
+          updateScore();
+        });
+        choicesEl.appendChild(b);
+      });
+      quizList.appendChild(box);
+    });
+    updateScore();
+  }
+  function updateScore(){
+    document.getElementById('quizScore').textContent =
+      answered === 0 ? `${QUIZ.length} questions — click an answer to check yourself` : `Score: ${score} / ${answered} answered`;
+  }
+  renderQuiz();
+  document.getElementById('resetQuizBtn').addEventListener('click', renderQuiz);
+
+  const glossaryList = document.getElementById('glossaryList');
+  const alphaNav = document.getElementById('alphaNav');
+  const letters = [...new Set(TERMS.map(t => t.t[0].toUpperCase()))];
+  'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').forEach(L => {
+    const a = document.createElement('a');
+    a.textContent = L;
+    if (letters.includes(L)) { a.href = '#g-' + L; a.className = 'has'; }
+    else { a.href = 'javascript:void(0)'; }
+    alphaNav.appendChild(a);
+  });
+  let currentLetter = '';
+  TERMS.forEach(item => {
+    const L = item.t[0].toUpperCase();
+    if (L !== currentLetter) {
+      currentLetter = L;
+      const h = document.createElement('div');
+      h.className = 'glossary-letter'; h.id = 'g-' + L; h.textContent = L;
+      glossaryList.appendChild(h);
+    }
+    const wrap = document.createElement('div');
+    wrap.className = 'gitem';
+    wrap.innerHTML = `<dt>${item.t}</dt><dd>${item.d}</dd>`;
+    wrap.dataset.search = (item.t + ' ' + item.d).toLowerCase();
+    glossaryList.appendChild(wrap);
+  });
+  document.getElementById('glossarySearch').addEventListener('input', (e) => {
+    const q = e.target.value.toLowerCase().trim();
+    document.querySelectorAll('.gitem').forEach(el => {
+      el.classList.toggle('hidden', q && !el.dataset.search.includes(q));
+    });
+  });
+
+  const backToTop = document.getElementById('backToTop');
+  function toggleBackToTop(){ backToTop.classList.toggle('show', window.scrollY > 480); }
+  window.addEventListener('scroll', toggleBackToTop, {passive:true});
+  toggleBackToTop();
+  backToTop.addEventListener('click', () => window.scrollTo({top:0, behavior:'smooth'}));
+</script>
