@@ -1,0 +1,1595 @@
+<title>IT131 Session 11 – Network Security &amp; Building a Small Network</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --paper:#EDE8DD; --canvas:#D9D2C3; --ink:#1F2421; --kraft:#B08554; --kraft-dark:#664526;
+    --blue:#2F4858; --red:#A23A2E; --ticket:#F3E7E2;
+    --blue-soft:rgba(47,72,88,.08); --red-soft:rgba(162,58,46,.08);
+    --kraft-soft:rgba(176,133,84,.14); --ink-soft:rgba(31,36,33,.06);
+    --shadow:5px 5px 0 rgba(31,36,33,.16);
+    --display:'Special Elite','Courier New',monospace;
+    --sans:'IBM Plex Sans', system-ui, sans-serif;
+    --mono:'IBM Plex Mono', monospace;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth; font-size:125%;}
+  body{
+    margin:0; background:var(--canvas); color:var(--ink); font-family:var(--sans);
+    line-height:1.55; -webkit-font-smoothing:antialiased;
+    background-image:radial-gradient(rgba(31,36,33,.06) 1px, transparent 1px);
+    background-size:16px 16px;
+  }
+  ::selection{ background:var(--kraft-soft); }
+  a{ color:var(--blue); }
+  .wrap{ max-width:940px; margin:0 auto; padding:0 20px; }
+  code{ font-family:var(--mono); background:var(--ink-soft); padding:1px 6px; border-radius:2px; font-size:.9em; }
+
+  header.masthead{ padding:48px 0 30px; }
+  .eyebrow{ display:inline-block; font-family:var(--mono); font-size:.86rem; letter-spacing:.12em;
+    border:2px solid var(--blue); color:var(--blue); padding:4px 10px; transform:rotate(-2deg); background:var(--paper); }
+  h1{ font-family:var(--display); font-weight:400; font-size:clamp(1.9rem,5vw,2.9rem); letter-spacing:.01em;
+    margin:16px 0 10px; line-height:1.15; }
+  .lede{ max-width:64ch; font-size:1.02rem; line-height:1.6; opacity:.85; margin:0 0 18px; }
+  .factrow{ display:flex; flex-wrap:wrap; gap:10px; }
+  .fact{ font-family:var(--mono); font-size:.82rem; letter-spacing:.02em; background:var(--paper);
+    border:1.5px solid var(--ink); padding:.4em .8em; display:flex; gap:.5em; box-shadow:3px 3px 0 rgba(31,36,33,.14); }
+  .fact b{ color:var(--kraft-dark); font-weight:600; text-transform:uppercase; letter-spacing:.06em; font-size:.88rem; }
+
+  nav.index{ position:sticky; top:0; z-index:20; background:color-mix(in srgb, var(--canvas) 92%, transparent);
+    backdrop-filter:blur(6px); border-top:2px solid var(--ink); border-bottom:2px solid var(--ink); }
+  nav.index .wrap{ display:flex; gap:2px; overflow-x:auto; padding:8px 20px; scrollbar-width:none; }
+  nav.index .wrap::-webkit-scrollbar{ display:none; }
+  nav.index a{ font-family:var(--mono); font-weight:600; letter-spacing:.03em; font-size:.82rem; text-decoration:none;
+    color:var(--ink); opacity:.85; padding:.5em .8em; white-space:nowrap; text-transform:uppercase; border:1px solid transparent; }
+  nav.index a:hover{ opacity:1; border-color:var(--ink); background:var(--paper); }
+  nav.index a.toc-link{ color:var(--blue); opacity:1; border-right:1.5px solid var(--ink); margin-right:8px; padding-right:16px; }
+  nav.index a.toc-link:hover{ background:var(--blue-soft); border-color:var(--ink); }
+
+  section{ padding:44px 0; border-bottom:2px dashed rgba(31,36,33,.3); }
+  section:last-of-type{ border-bottom:none; }
+  .section-head{ margin-bottom:26px; max-width:70ch; }
+  .kicker{ font-family:var(--mono); font-weight:600; font-size:.9rem; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--red); margin:0 0 .4em; }
+  h2{ font-family:var(--display); font-weight:400; font-size:clamp(1.4rem,2.8vw,1.9rem); margin:0 0 .25em; letter-spacing:.005em; }
+  .section-head p{ opacity:.82; margin:.5em 0 0; }
+  h3.sub{ font-family:var(--mono); font-size:1.02rem; margin:24px 0 10px; text-transform:uppercase; letter-spacing:.04em; color:var(--kraft-dark); }
+
+  .obj-list{ display:grid; gap:10px; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); list-style:none; margin:0; padding:0; }
+  .obj-list li{ background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow); padding:14px 16px; font-size:.92rem; }
+  .obj-list li::before{ content:"▸"; color:var(--red); margin-right:.5em; font-weight:700; }
+
+  .teach-note{ margin:18px 0; padding:12px 14px; border:1.5px dashed var(--blue); background:var(--blue-soft);
+    font-family:var(--mono); font-size:.82rem; line-height:1.6; }
+  .teach-note .label{ color:var(--blue); font-weight:600; letter-spacing:.05em; text-transform:uppercase; font-size:.88rem; display:block; margin-bottom:.4em; }
+  .teach-note.warn{ border-color:var(--red); background:var(--red-soft); }
+  .teach-note.warn .label{ color:var(--red); }
+  .teach-note.preview{ border-color:var(--kraft-dark); background:var(--kraft-soft); }
+  .teach-note.preview .label{ color:var(--kraft-dark); }
+
+  .cold-open{ background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow); padding:18px 20px; margin:24px 0; }
+  .cold-open .tag{ font-family:var(--mono); font-size:.84rem; letter-spacing:.1em; color:var(--red); margin:0 0 8px; text-transform:uppercase; }
+  .cold-open p{ margin:0; font-size:.95rem; line-height:1.6; font-style:italic; }
+
+  /* TERMINAL BLOCKS */
+  .terminal{ background:var(--ticket); color:var(--ink); border:1.5px solid var(--ink); margin:20px 0; overflow:hidden; box-shadow:var(--shadow); }
+  .terminal-header{ background:color-mix(in srgb, var(--ticket) 80%, #fff); padding:8px 14px; border-bottom:1px solid rgba(31,36,33,.15); display:flex; align-items:center; gap:6px; }
+  .terminal-dot{ width:10px; height:10px; border-radius:50%; }
+  .terminal-dot.r{ background:var(--red); }
+  .terminal-dot.y{ background:var(--kraft-dark); }
+  .terminal-dot.g{ background:var(--blue); }
+  .terminal-title{ font-family:var(--mono); font-size:.8rem; color:var(--kraft-dark); margin-left:8px; letter-spacing:.04em; }
+  .terminal-body{ padding:14px 18px; font-family:'Courier New', Courier, monospace; font-size:.84rem; line-height:1.65; overflow-x:auto; white-space:pre-wrap; word-wrap:break-word; }
+  .terminal-body .prompt{ color:var(--blue); font-weight:700; }
+  .terminal-body .cmd{ color:var(--ink); font-weight:600; }
+  .terminal-body .comment{ color:var(--kraft-dark); font-style:italic; }
+  .terminal-body .hl{ color:var(--red); font-weight:600; }
+  .terminal-body .out{ color:var(--ink); opacity:.7; }
+
+  table.spec{ width:100%; border-collapse:collapse; margin:18px 0; font-size:.86rem; }
+  table.spec th{ font-family:var(--mono); font-weight:600; text-transform:uppercase; letter-spacing:.05em; font-size:.86rem;
+    color:var(--kraft-dark); text-align:left; padding:8px 10px; border-bottom:2px solid var(--ink); }
+  table.spec td{ padding:9px 10px; border-bottom:1px dashed rgba(31,36,33,.3); vertical-align:top; }
+  table.spec tr:last-child td{ border-bottom:none; }
+  table.spec td.mono, table.spec th.mono{ font-family:var(--mono); }
+
+  .toolbar{ display:flex; gap:10px; align-items:center; margin-bottom:20px; flex-wrap:wrap; }
+  button.btn{ font-family:var(--mono); font-weight:600; letter-spacing:.03em; text-transform:uppercase; font-size:.9rem;
+    background:var(--paper); color:var(--ink); border:1.5px solid var(--ink); padding:.55em 1em; cursor:pointer; box-shadow:3px 3px 0 rgba(31,36,33,.14); }
+  button.btn:hover{ background:var(--kraft-soft); }
+  button.btn:focus-visible, a:focus-visible, .flashcard:focus-visible, input:focus-visible{ outline:2px solid var(--blue); outline-offset:2px; }
+  #cardProgress{ font-family:var(--mono); font-size:.85rem; opacity:.75; }
+  .card-grid{ display:grid; gap:16px; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); }
+  .flashcard{ perspective:1200px; height:190px; cursor:pointer; border:none; background:none; padding:0; font-family:inherit; text-align:left; width:100%; }
+  .flashcard-inner{ position:relative; width:100%; height:100%; transition:transform .5s cubic-bezier(.4,.2,.2,1); transform-style:preserve-3d; -webkit-transform-style:preserve-3d; will-change:transform; }
+  .flashcard.flipped .flashcard-inner{ transform:rotateY(180deg); -webkit-transform:rotateY(180deg); }
+  .flashcard-face{ position:absolute; inset:0; backface-visibility:hidden; -webkit-backface-visibility:hidden; -moz-backface-visibility:hidden; border:1.5px solid var(--ink); box-shadow:var(--shadow);
+    padding:15px; display:flex; flex-direction:column; justify-content:center; }
+  .flashcard-face.front{ background:var(--paper); transform:translateZ(.5px); }
+  .flashcard-face.back{ background:var(--ticket); transform:rotateY(180deg) translateZ(.5px); overflow-y:auto; }
+  .flashcard-face .lbl{ font-family:var(--mono); font-weight:600; letter-spacing:.1em; text-transform:uppercase; font-size:.82rem; color:var(--kraft-dark); margin-bottom:.5em; }
+  .flashcard-face.front .term{ font-family:var(--display); font-weight:400; font-size:1.05rem; letter-spacing:.01em; }
+  .flashcard-face.back .def{ font-size:.82rem; }
+  .flashcard.known .flashcard-face.front{ border-color:var(--blue); border-width:2px; }
+
+  .quiz-q{ background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow); padding:18px 20px; margin-bottom:18px; }
+  .quiz-q .qtext{ font-weight:600; margin:0 0 13px; }
+  .quiz-q .qnum{ font-family:var(--display); color:var(--red); margin-right:.5em; }
+  .choices{ display:grid; gap:8px; }
+  .choice{ text-align:left; font-family:var(--sans); font-size:.9rem; background:var(--ticket); border:1.5px solid var(--ink);
+    padding:.65em .85em; cursor:pointer; color:var(--ink); }
+  .choice:hover{ border-color:var(--blue); }
+  .choice.correct{ background:var(--blue-soft); border-color:var(--blue); border-width:2px; }
+  .choice.incorrect{ background:var(--red-soft); border-color:var(--red); border-width:2px; }
+  .choice[disabled]{ cursor:default; }
+  .explain{ margin-top:12px; font-size:.84rem; opacity:.85; border-left:3px solid var(--kraft); padding-left:12px; display:none; font-family:var(--mono); }
+  .explain.show{ display:block; }
+  #quizScore{ font-family:var(--mono); font-size:.9rem; opacity:.75; margin-bottom:16px; }
+
+  .example{ background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow); padding:20px 22px; margin-bottom:16px; }
+  .example h3{ font-family:var(--display); font-weight:400; font-size:1.15rem; margin:0 0 8px; }
+  .example .tag{ display:inline-block; font-family:var(--mono); font-weight:600; font-size:.86rem; text-transform:uppercase; letter-spacing:.07em;
+    color:var(--blue); background:var(--blue-soft); border:1px solid var(--blue); padding:.25em .6em; margin-bottom:10px; }
+  details.solution{ margin-top:12px; }
+  details.solution summary{ cursor:pointer; font-family:var(--mono); font-weight:600; letter-spacing:.03em; text-transform:uppercase;
+    font-size:.9rem; color:var(--blue); list-style:none; display:inline-flex; align-items:center; gap:.4em; }
+  details.solution summary::-webkit-details-marker{ display:none; }
+  details.solution summary::before{ content:"▸"; transition:transform .15s; }
+  details.solution[open] summary::before{ transform:rotate(90deg); }
+  details.solution .solbody{ margin-top:10px; padding:13px 15px; background:var(--ticket); font-size:.88rem; }
+
+  #glossarySearch{ width:100%; max-width:400px; font-family:var(--sans); font-size:.9rem; padding:.65em .85em;
+    border:1.5px solid var(--ink); background:var(--paper); color:var(--ink); margin-bottom:16px; }
+  .alpha-nav{ display:flex; flex-wrap:wrap; gap:4px; margin-bottom:22px; }
+  .alpha-nav a{ font-family:var(--mono); font-weight:600; font-size:.82rem; width:1.8em; height:1.8em; display:flex;
+    align-items:center; justify-content:center; border:1px solid var(--ink); text-decoration:none; color:var(--ink); opacity:.35; }
+  .alpha-nav a.has{ opacity:1; background:var(--paper); }
+  .alpha-nav a.has:hover{ border-color:var(--blue); color:var(--blue); }
+  .glossary-letter{ font-family:var(--display); font-weight:400; color:var(--red); font-size:1.1rem; margin:20px 0 6px; }
+  dl.glossary{ margin:0; }
+  dl.glossary .gitem{ border-top:1px dashed rgba(31,36,33,.35); padding:11px 0; }
+  dl.glossary dt{ font-family:var(--mono); font-weight:600; font-size:.98rem; }
+  dl.glossary dd{ margin:.3em 0 0; opacity:.8; font-size:.86rem; }
+  .gitem.hidden{ display:none; }
+
+  footer{ padding:30px 0 60px; }
+  footer p{ opacity:.65; font-size:.82rem; font-family:var(--mono); letter-spacing:.02em; }
+
+  .back-to-top{ position:fixed; bottom:22px; right:22px; z-index:40; width:50px; height:50px;
+    background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow);
+    font-family:var(--display); font-size:1.4rem; color:var(--ink); line-height:1;
+    display:flex; align-items:center; justify-content:center; padding:0; cursor:pointer; text-decoration:none;
+    opacity:0; visibility:hidden; transform:translateY(10px);
+    transition:opacity .25s ease, transform .25s ease, visibility 0s .25s; }
+  .back-to-top.show{ opacity:1; visibility:visible; transform:translateY(0); transition:opacity .25s ease, transform .25s ease, visibility 0s; }
+  .back-to-top:hover{ background:var(--blue-soft); border-color:var(--blue); color:var(--blue); }
+  .back-to-top:focus-visible{ outline:2px solid var(--blue); outline-offset:2px; }
+
+  @media print{
+    body{ background:#fff; }
+    nav.index{ display:none; }
+    .quiz-q, .example, .flashcard-face, .terminal{ box-shadow:none; }
+    .back-to-top{ display:none; }
+  }
+
+  /* INTERACTIVE TOOLS */
+  .tool{ background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow); padding:16px 18px; margin:20px 0; }
+  .tool-title{ margin:0 0 10px; font-family:var(--mono); font-weight:600; font-size:.8rem; letter-spacing:.06em; text-transform:uppercase; color:var(--kraft-dark); }
+  .tool-in{ display:flex; flex-wrap:wrap; gap:10px; margin-bottom:12px; }
+  .tool-in input.txt{ flex:1 1 16em; min-width:0; font-family:var(--mono); font-size:.9rem; padding:.5em .7em; border:1.5px solid var(--ink); background:var(--ticket); color:var(--ink); }
+  .tool-out .row{ display:grid; grid-template-columns:9.5em 1fr; gap:10px; padding:6px 0; border-top:1px dashed rgba(31,36,33,.3); font-size:.86rem; align-items:baseline; }
+  .tool-out .row b{ font-family:var(--mono); font-size:.74rem; text-transform:uppercase; letter-spacing:.05em; color:var(--kraft-dark); }
+  .tool-out code{ overflow-wrap:anywhere; }
+  .tool-out .bad{ color:var(--red); font-family:var(--mono); font-size:.84rem; margin:0; }
+  @media (max-width:560px){ .tool-out .row{ grid-template-columns:1fr; gap:2px; } }
+  .tool-in label.mini{ display:flex; flex-direction:column; gap:3px; font-family:var(--mono); font-size:.72rem; text-transform:uppercase; letter-spacing:.05em; color:var(--kraft-dark); }
+  .tool-in input.txt.num{ flex:none; width:8.5em; }
+  @media (max-width:640px){ table.spec{ display:block; overflow-x:auto; } .terminal-body{ white-space:pre; word-wrap:normal; } }
+  .sorter-case{ background:var(--ticket); border:1.5px solid var(--ink); padding:12px 14px; margin:0 0 12px; font-size:.92rem; min-height:4.5em; }
+  .sorter-case .count{ display:block; font-family:var(--mono); font-size:.72rem; letter-spacing:.06em; text-transform:uppercase; color:var(--kraft-dark); margin-bottom:.35em; }
+  .sorter-btns{ display:grid; gap:8px; grid-template-columns:repeat(auto-fit,minmax(9.5em,1fr)); margin-bottom:12px; }
+  .sorter-btns .choice{ font-family:var(--mono); font-size:.82rem; text-transform:uppercase; letter-spacing:.04em; text-align:center; }
+  .tool select{ font-family:var(--mono); font-size:.86rem; padding:.5em .6em; border:1.5px solid var(--ink); background:var(--ticket); color:var(--ink); max-width:100%; flex:1 1 16em; min-width:0; }
+  ol.steps{ counter-reset:step; list-style:none; margin:0; padding:0; display:grid; gap:10px; }
+  ol.steps li{ counter-increment:step; background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow); padding:12px 14px 12px 3.2em; position:relative; font-size:.92rem; }
+  ol.steps li::before{ content:counter(step); position:absolute; left:12px; top:10px; font-family:var(--display); font-size:1.3rem; color:var(--red); }
+</style>
+
+<header class="masthead">
+  <div class="wrap">
+    <p class="eyebrow">IT131 · SESSION 11 · FIELD NOTES</p>
+    <h1>Network Security &amp; Building a Small Network</h1>
+    <p class="lede">The OSI Company works now. Every floor can reach every other floor, and the Front Desk talks to the whole world. That's the problem: anything that can reach you can attack you. This week the NOC walks the building looking for unlocked doors, and then we step back and ask how you'd build, verify, and fix a small network like this from scratch.</p>
+    <div class="factrow">
+      <span class="fact"><b>Opens with</b> Module Quiz — Network Application Communications (14–15)</span>
+      <span class="fact"><b>New material</b> Module 16 — Network Security Fundamentals</span>
+      <span class="fact"><b>New material</b> Module 17 — Build a Small Network</span>
+      <span class="fact"><b>Next week</b> Module Quiz — Building and Securing a Small Network (16–17)</span>
+    </div>
+  </div>
+</header>
+
+<nav class="index" aria-label="Section index">
+  <div class="wrap">
+    <a href="index.html" class="toc-link">↩ Contents</a>
+    <a href="#overview">Overview</a>
+    <a href="#quizday">Quiz Day</a>
+    <a href="#threats">Threats</a>
+    <a href="#attacks">Attacks</a>
+    <a href="#mitigation">Mitigation</a>
+    <a href="#hardening">Device Security</a>
+    <a href="#design">Small Networks</a>
+    <a href="#verify">Ping &amp; Traceroute</a>
+    <a href="#commands">Host &amp; IOS Commands</a>
+    <a href="#method">Troubleshooting</a>
+    <a href="#scenarios">Scenarios</a>
+    <a href="#mistakes">Common Mistakes</a>
+    <a href="#checkpoint">Checkpoint</a>
+    <a href="#flashcards">Flashcards</a>
+    <a href="#quiz">Quiz</a>
+    <a href="#examples">Examples</a>
+    <a href="#glossary">Glossary</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+  <!-- OVERVIEW -->
+  <section id="overview">
+    <div class="section-head">
+      <p class="kicker">Modules 16 &amp; 17</p>
+      <h2>What Session 11 covers</h2>
+      <p>We start with the module quiz on Modules 14–15. Then there are two new modules. Module 16 covers what attacks a network, and how you lock a router or switch down. Module 17 brings the whole course together: choosing devices for a small network, then verifying and troubleshooting it with <code>ping</code>, <code>traceroute</code>, <code>show</code> commands, and <code>debug</code>. Next week's module quiz covers both.</p>
+    </div>
+    <div class="cold-open">
+      <p class="tag">Cold open · The NOC, after hours</p>
+      <p>The NOC does a walk-through of the building with a clipboard. In the lobby, a "delivery driver" is asking the Front Desk which floor the servers are on and what time the guards change shifts. On Floor 3, someone is trying every badge reader with a ring of guessed codes. Out front, two hundred people have formed a line that goes nowhere, and real customers can't get through the door. In the mailroom, a parcel labelled "Free Office Snacks" is ticking. "Reconnaissance, access, denial of service, malware," the NOC says, writing it all down. "And the server-room door was propped open with a fire extinguisher. That one's on us."</p>
+    </div>
+    <ul class="obj-list">
+      <li>Explain why security matters, and the four types of threats</li>
+      <li>Name the three kinds of vulnerabilities and the four kinds of physical threats</li>
+      <li>Tell malware apart: viruses, worms, Trojan horses</li>
+      <li>Classify reconnaissance, access, and DoS/DDoS attacks</li>
+      <li>Describe defense-in-depth, backups, patching, AAA, firewalls, and endpoint security</li>
+      <li>Harden a Cisco device: strong passwords, encryption, login blocking, SSH, unused services off</li>
+      <li>Choose devices, addressing, and redundancy for a small network, and plan for growth</li>
+      <li>Verify with ping, extended ping, and traceroute, and read IOS ping symbols</li>
+      <li>Use <code>ipconfig</code>, <code>ip address</code>, <code>ifconfig</code>, <code>arp -a</code>, <code>show</code> commands, and CDP</li>
+      <li>Follow the six-step troubleshooting method, use <code>debug</code> safely, and fix duplex, addressing, gateway, and DNS problems</li>
+    </ul>
+    <div class="teach-note">
+      <span class="label">Topology used on this page</span>
+      The same network as Session 10. R1's LAN is <code>192.168.10.0/24</code> (PC-A <code>192.168.10.10</code>, gateway <code>192.168.10.1</code>). The R1–R2 link is <code>10.0.0.0/30</code>. R2's LAN is <code>192.168.20.0/24</code> (PC-B <code>192.168.20.10</code>, and SRV1 <code>192.168.20.100</code>, the web and DNS server for <code>it131.example</code>). New this week: switches <strong>S1</strong> on R1's LAN and <strong>S2</strong> on R2's LAN, both Catalyst 2960s. The routers are ISR 4321s.
+    </div>
+  </section>
+
+  <!-- QUIZ DAY -->
+  <section id="quizday">
+    <div class="section-head">
+      <p class="kicker">Module Quiz — Network Application Communications</p>
+      <h2>Quiz day: Modules 14–15</h2>
+      <p>The quiz comes first. Everything on it is on the Session 10 page. Here's a last-minute pass.</p>
+    </div>
+    <ul class="obj-list">
+      <li>The <a href="IT131_Session10.html#checkpoint">Session 10 checkpoint</a> lists everything the quiz covers.</li>
+      <li>Do the <a href="IT131_Session10.html#quiz">Session 10 sample questions</a> one more time, cold.</li>
+      <li>Run three conversations through the <a href="IT131_Session10.html#handshake">TCP conversation builder</a> and predict every ACK before you look.</li>
+      <li>Drill the <a href="IT131_Session10.html#ports">port table</a> with the port lookup until you know it both ways: number → protocol and protocol → number.</li>
+    </ul>
+    <div class="teach-note warn">
+      <span class="label">The four most-missed points</span>
+      ACK = the <strong>next</strong> byte expected. SYN and FIN each use one sequence number. DHCP's first REQUEST is a <strong>broadcast</strong>. POP3 downloads and deletes; IMAP keeps mail on the server.
+    </div>
+  </section>
+
+  <!-- THREATS -->
+  <section id="threats">
+    <div class="section-head">
+      <p class="kicker">Module 16 · 16.1</p>
+      <h2>Security threats and vulnerabilities</h2>
+      <p>A <strong>threat</strong> is what could go wrong. A <strong>vulnerability</strong> is the weakness that lets it happen. An attack needs both.</p>
+    </div>
+
+    <h3 class="sub">Four types of threats</h3>
+    <table class="spec">
+      <thead><tr><th>Threat</th><th>What happens</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;">Information theft</td><td>Someone gets in and steals confidential data: customer lists, designs, research.</td></tr>
+        <tr><td style="font-weight:600;">Data loss and manipulation</td><td>Data is destroyed or changed: a virus that wipes a drive, or someone editing a grade or a price.</td></tr>
+        <tr><td style="font-weight:600;">Identity theft</td><td>Personal information is stolen to pretend to be someone else: to open accounts, file taxes, take loans.</td></tr>
+        <tr><td style="font-weight:600;">Disruption of service</td><td>Legitimate users can't get to the service. DoS attacks are the classic example.</td></tr>
+      </tbody>
+    </table>
+
+    <h3 class="sub">Three types of vulnerabilities</h3>
+    <table class="spec">
+      <thead><tr><th>Type</th><th>Examples</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;">Technological</td><td>Weaknesses built into the technology itself: TCP/IP protocol weaknesses (HTTP, FTP, and Telnet send in plaintext), operating system flaws, and network equipment flaws.</td></tr>
+        <tr><td style="font-weight:600;">Configuration</td><td>Weaknesses <em>we</em> create: unsecured user accounts, system accounts with easy passwords, misconfigured internet services, unsecured default settings, and misconfigured network equipment.</td></tr>
+        <tr><td style="font-weight:600;">Security policy</td><td>No written policy, office politics, no authentication continuity, logical access controls not applied, software and hardware changes made outside the policy, and no disaster recovery plan.</td></tr>
+      </tbody>
+    </table>
+    <div class="teach-note">
+      <span class="label">Which one is yours?</span>
+      You can't fix a protocol, but you can choose not to use it. Telnet's plaintext is a <em>technological</em> weakness. Leaving Telnet enabled on your router is a <em>configuration</em> weakness. Most of the device security in <a href="#hardening">16.4</a> is about closing configuration vulnerabilities.
+    </div>
+
+    <h3 class="sub">Four types of physical threats</h3>
+    <table class="spec">
+      <thead><tr><th>Type</th><th>Examples</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;">Hardware</td><td>Physical damage to servers, routers, switches, cabling, and workstations.</td></tr>
+        <tr><td style="font-weight:600;">Environmental</td><td>Temperature extremes (too hot or too cold) and humidity extremes (too wet or too dry).</td></tr>
+        <tr><td style="font-weight:600;">Electrical</td><td>Voltage spikes, brownouts (insufficient supply voltage), unconditioned power (noise), and total power loss.</td></tr>
+        <tr><td style="font-weight:600;">Maintenance</td><td>Poor handling of key components (electrostatic discharge), no critical spare parts, poor cabling, and poor labeling.</td></tr>
+      </tbody>
+    </table>
+    <p>A good physical plan locks wiring closets and equipment rooms, controls who has the key, and puts monitoring on the door. The fanciest firewall in the world doesn't help if anyone can walk in and plug into the console port.</p>
+  </section>
+
+  <!-- ATTACKS -->
+  <section id="attacks">
+    <div class="section-head">
+      <p class="kicker">Module 16 · 16.2</p>
+      <h2>Network attacks</h2>
+      <p>Malicious software, plus three families of attack: reconnaissance, access, and denial of service.</p>
+    </div>
+
+    <h3 class="sub">Malware</h3>
+    <table class="spec">
+      <thead><tr><th>Type</th><th>How it spreads</th><th>Key idea</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;">Virus</td><td>Attaches to a host program or file. Needs a <strong>human action</strong> (running the program, opening the file) to spread.</td><td>Can't move on its own.</td></tr>
+        <tr><td style="font-weight:600;">Worm</td><td>Copies itself across the network by exploiting vulnerabilities. <strong>No host program and no user action</strong> needed.</td><td>Spreads very fast and eats bandwidth.</td></tr>
+        <tr><td style="font-weight:600;">Trojan horse</td><td>Looks like legitimate software, and the user installs it willingly.</td><td>The damage is hidden inside the "gift".</td></tr>
+      </tbody>
+    </table>
+
+    <h3 class="sub">Reconnaissance attacks: casing the building</h3>
+    <p>Recon is information gathering: finding out what's there before attacking it. It usually comes first.</p>
+    <ol class="steps">
+      <li><strong>Internet queries.</strong> Look up public information about the target: who owns the address block (whois), DNS records, the company website.</li>
+      <li><strong>Ping sweeps.</strong> Ping every address in a range to find out which hosts are alive.</li>
+      <li><strong>Port scans.</strong> Probe the live hosts to see which ports are open, so which services are running. Tools ITN names: Nmap, SuperScan, Angry IP Scanner, NetScanTools.</li>
+      <li><strong>Vulnerability scans.</strong> Ask the running services what version they are, and look up known weaknesses for those versions.</li>
+      <li><strong>Exploitation tools.</strong> Try to exploit what was found.</li>
+    </ol>
+
+    <h3 class="sub">Access attacks: getting in</h3>
+    <table class="spec">
+      <thead><tr><th>Attack</th><th>What the attacker does</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;">Password attacks</td><td>Guesses or cracks passwords: brute force, dictionary attacks, or sniffing them off the wire (which is why Telnet is a problem).</td></tr>
+        <tr><td style="font-weight:600;">Trust exploitation</td><td>Compromises a host that another system trusts, then uses that trust to get into the second system.</td></tr>
+        <tr><td style="font-weight:600;">Port redirection</td><td>Uses a compromised host as a stepping stone to pass traffic through to a target that would otherwise be filtered.</td></tr>
+        <tr><td style="font-weight:600;">Man-in-the-middle (MITM)</td><td>Sits between two parties, reading and possibly changing what they send, while both think they're talking directly.</td></tr>
+      </tbody>
+    </table>
+
+    <h3 class="sub">Denial of service: blocking the door</h3>
+    <ul class="obj-list">
+      <li><strong>DoS:</strong> one source overwhelms a device or service with too much traffic, or with maliciously formatted packets it can't handle. The goal isn't to steal anything; it's to take the service away from legitimate users.</li>
+      <li><strong>DDoS (distributed DoS):</strong> the same thing from many sources at once, usually a <strong>botnet</strong> of compromised "zombie" machines controlled by the attacker.</li>
+      <li>DoS attacks are relatively simple to run, even for an unskilled attacker, and they cost the victim time and money.</li>
+    </ul>
+
+    <div class="tool">
+      <p class="tool-title">Try it: name that attack</p>
+      <div class="sorter-case" id="atkCase"></div>
+      <div class="sorter-btns" id="atkBtns"></div>
+      <div id="atkOut" class="tool-out"></div>
+      <div class="toolbar" style="margin:10px 0 0;">
+        <button class="btn" id="atkNext">Next case</button>
+        <span id="atkScore" style="font-family:var(--mono);font-size:.85rem;opacity:.75;"></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- MITIGATION -->
+  <section id="mitigation">
+    <div class="section-head">
+      <p class="kicker">Module 16 · 16.3</p>
+      <h2>Network attack mitigations</h2>
+      <p>No single product stops everything. You layer defenses so that an attacker who gets past one still meets the next.</p>
+    </div>
+
+    <h3 class="sub">Defense-in-depth</h3>
+    <p>Also called the layered approach. ITN's example network uses several security devices and services together:</p>
+    <table class="spec">
+      <thead><tr><th>Device or service</th><th>Job</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;">VPN</td><td>An encrypted tunnel across an untrusted network, for remote users and branch sites.</td></tr>
+        <tr><td style="font-weight:600;">ASA firewall</td><td>Cisco's dedicated firewall. Allows outbound traffic and returning replies, and blocks unrequested traffic from outside.</td></tr>
+        <tr><td style="font-weight:600;">IPS</td><td>Intrusion prevention system. Watches traffic for known attack signatures and stops them in real time.</td></tr>
+        <tr><td style="font-weight:600;">ESA / WSA</td><td>Email and web security appliances. Filter spam, phishing, and malicious websites.</td></tr>
+        <tr><td style="font-weight:600;">AAA server</td><td>Central place that checks who is logging in, what they may do, and records what they did.</td></tr>
+      </tbody>
+    </table>
+
+    <h3 class="sub">Keep backups</h3>
+    <p>Back up device configurations and IOS images as well as data. ITN's four backup considerations:</p>
+    <ul class="obj-list">
+      <li><strong>Frequency:</strong> regular, scheduled backups, e.g. a full backup weekly and partial backups daily.</li>
+      <li><strong>Storage:</strong> keep copies offsite, and rotate the media.</li>
+      <li><strong>Security:</strong> protect backups with passwords, and know who can restore them.</li>
+      <li><strong>Validation:</strong> test restores, so you know the backup actually works.</li>
+    </ul>
+
+    <h3 class="sub">Upgrade, update, and patch</h3>
+    <p>Most worms and many other attacks exploit holes that already have a fix. Keeping operating systems, applications, and device software current is one of the most effective defenses there is. In a large organization, patches are managed centrally so they can be tested and then pushed to every host.</p>
+
+    <h3 class="sub">AAA: authentication, authorization, accounting</h3>
+    <table class="spec">
+      <thead><tr><th></th><th>Question it answers</th><th>Credit-card version</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;">Authentication</td><td>Who are you?</td><td>Is this your card?</td></tr>
+        <tr><td style="font-weight:600;">Authorization</td><td>What are you allowed to do?</td><td>How much can you spend?</td></tr>
+        <tr><td style="font-weight:600;">Accounting</td><td>What did you do, and when?</td><td>What did you spend it on? (the statement)</td></tr>
+      </tbody>
+    </table>
+    <div class="teach-note preview">
+      <span class="label">Preview, not configured in ITN</span>
+      In ITN, AAA is a concept. Configuring it with a RADIUS or TACACS+ server comes in later courses. The device security you <em>do</em> configure this term is in <a href="#hardening">16.4</a>.
+    </div>
+
+    <h3 class="sub">Firewalls</h3>
+    <p>A firewall sits between networks and controls what crosses. It allows traffic from inside out, and only lets traffic in from outside if it's a reply or explicitly permitted. ITN's four filtering methods:</p>
+    <table class="spec">
+      <thead><tr><th>Method</th><th>Filters by</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;">Packet filtering</td><td>IP or MAC address</td></tr>
+        <tr><td style="font-weight:600;">Application filtering</td><td>Application type, using port numbers</td></tr>
+        <tr><td style="font-weight:600;">URL filtering</td><td>Specific URLs or keywords</td></tr>
+        <tr><td style="font-weight:600;">Stateful packet inspection (SPI)</td><td>Whether incoming packets are legitimate replies to requests from inside. Unsolicited packets are blocked.</td></tr>
+      </tbody>
+    </table>
+    <p><strong>Endpoint security:</strong> an endpoint is any host: laptop, desktop, server, smartphone. Protecting them means antivirus and anti-malware, host-based firewalls and intrusion prevention, and a company policy for what can be installed. Endpoints are often the weakest link, because people use them.</p>
+  </section>
+
+  <!-- HARDENING -->
+  <section id="hardening">
+    <div class="section-head">
+      <p class="kicker">Module 16 · 16.4</p>
+      <h2>Device security</h2>
+      <p>This is the part you configure. Routers and switches ship with almost no security, so these steps go on every device you touch.</p>
+    </div>
+
+    <h3 class="sub">Cisco AutoSecure</h3>
+    <p>One privileged EXEC command, <code>auto secure</code>, starts an interactive wizard that turns off risky services and prompts you for passwords, banners, and SSH settings. It's a quick way to lock down a new device, but you should still know what each individual command does, because that's what the exam (and the next section) asks about.</p>
+    <div class="terminal">
+      <div class="terminal-header"><span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span><span class="terminal-title">R1 · AutoSecure (first lines only)</span></div>
+      <div class="terminal-body"><span class="prompt">R1#</span> <span class="hl">auto secure</span>
+<span class="out">                --- AutoSecure Configuration ---
+
+*** AutoSecure configuration enhances the security of
+the router, but it will not make it absolutely resistant
+to all security attacks ***
+...</span></div>
+    </div>
+
+    <h3 class="sub">Strong passwords</h3>
+    <ul class="obj-list">
+      <li>Use at least <strong>8 characters</strong>, and preferably 10 or more.</li>
+      <li>Mix upper and lower case, numbers, symbols, and spaces.</li>
+      <li>Avoid repetition, common dictionary words, letter or number sequences, user names, relatives' or pets' names, and birthdays.</li>
+      <li>Deliberately misspell words: <code>Smith</code> → <code>Smyth</code> → <code>5mYth</code>.</li>
+      <li>Change passwords often, and don't write them on a sticky note on the monitor.</li>
+    </ul>
+    <div class="teach-note">
+      <span class="label">Passphrases</span>
+      A sentence is longer and easier to remember than a random string: <code>Ch@ngeTheW0rld!</code> or <code>IT131 makes 7 holy steps!</code>. On Cisco devices, leading spaces in a password are ignored, but spaces after the first character count.
+    </div>
+
+    <h3 class="sub">Additional password security</h3>
+    <p>Four commands from ITN, plus the <code>enable secret</code> you already know. The passwords in these examples are 8 characters or longer, because once <code>min-length 8</code> is on, <code>cisco</code> and <code>class</code> are rejected.</p>
+    <div class="terminal">
+      <div class="terminal-header"><span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span><span class="terminal-title">R1 · password hardening</span></div>
+      <div class="terminal-body"><span class="prompt">R1(config)#</span> <span class="hl">security passwords min-length 8</span>
+<span class="prompt">R1(config)#</span> <span class="cmd">enable secret cisco</span>
+<span class="out">% Password too short - must be at least 8 characters. Password configuration failed</span>
+<span class="prompt">R1(config)#</span> <span class="hl">enable secret En@ble2026</span>
+<span class="prompt">R1(config)#</span> <span class="hl">service password-encryption</span>
+<span class="prompt">R1(config)#</span> <span class="cmd">line console 0</span>
+<span class="prompt">R1(config-line)#</span> <span class="cmd">password C0ns0le!26</span>
+<span class="prompt">R1(config-line)#</span> <span class="cmd">login</span>
+<span class="prompt">R1(config-line)#</span> <span class="hl">exec-timeout 5 0</span>
+<span class="prompt">R1(config-line)#</span> <span class="cmd">exit</span>
+<span class="prompt">R1(config)#</span> <span class="hl">login block-for 120 attempts 3 within 60</span>
+<span class="prompt">R1(config)#</span> <span class="cmd">end</span>
+<span class="prompt">R1#</span> <span class="cmd">show running-config | include secret|password</span>
+<span class="out">service password-encryption
+security passwords min-length 8
+enable secret 5 $1$Xq7f$eKERTZ5T9/IQc26ztSdjI/</span>
+<span class="hl"> password 7 04785B081C71404B484B53</span>
+<span class="comment">! type 7 = scrambled, NOT hashed. Any online decoder reverses it.</span></div>
+    </div>
+    <table class="spec">
+      <thead><tr><th>Command</th><th>What it does</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;"><code>security passwords min-length 8</code></td><td>Rejects any <em>new</em> password shorter than 8 characters. Passwords set before the command are not checked.</td></tr>
+        <tr><td style="font-weight:600;"><code>service password-encryption</code></td><td>Scrambles the plaintext passwords in the config (console, vty, <code>username … password</code>) as type 7, so they can't be read over your shoulder.</td></tr>
+        <tr><td style="font-weight:600;"><code>exec-timeout 5 0</code></td><td>Logs out an idle session after 5 minutes, 0 seconds. <code>exec-timeout 0 0</code> means never, which is bad practice.</td></tr>
+        <tr><td style="font-weight:600;"><code>login block-for 120 attempts 3 within 60</code></td><td>After 3 failed logins within 60 seconds, refuse all logins for 120 seconds. Slows down password guessing.</td></tr>
+      </tbody>
+    </table>
+    <div class="teach-note warn">
+      <span class="label">Type 7 is not real protection</span>
+      Decode that type 7 line and you get <code>C0ns0le!26</code> back. <code>service password-encryption</code> only defeats someone reading the screen. The real protection is <code>secret</code>, which is a one-way hash (type 5 on this router; newer IOS uses type 9). Use <code>enable secret</code> and <code>username … secret</code>, never <code>enable password</code>.
+    </div>
+
+    <h3 class="sub">Enable SSH</h3>
+    <p>Telnet sends everything, including your password, in plaintext. SSH encrypts the session. ITN's steps, in order:</p>
+    <div class="terminal">
+      <div class="terminal-header"><span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span><span class="terminal-title">R1 · enabling SSH</span></div>
+      <div class="terminal-body"><span class="comment">! 1. a unique hostname</span>
+<span class="prompt">Router(config)#</span> <span class="cmd">hostname R1</span>
+<span class="comment">! 2. a domain name</span>
+<span class="prompt">R1(config)#</span> <span class="hl">ip domain-name it131.example</span>
+<span class="comment">! 3. RSA keys</span>
+<span class="prompt">R1(config)#</span> <span class="hl">crypto key generate rsa</span>
+<span class="out">The name for the keys will be: R1.it131.example
+Choose the size of the key modulus in the range of 360 to 4096 for your
+  General Purpose Keys. Choosing a key modulus greater than 512 may take
+  a few minutes.
+
+How many bits in the modulus [512]: </span><span class="hl">1024</span>
+<span class="out">% Generating 1024 bit RSA keys, keys will be non-exportable...
+[OK] (elapsed time was 1 seconds)
+
+*Oct  7 14:02:11.482: %SSH-5-ENABLED: SSH 1.99 has been enabled</span>
+<span class="comment">! ITN's one-line form: crypto key generate rsa general-keys modulus 1024</span>
+<span class="comment">! 4. a local user</span>
+<span class="prompt">R1(config)#</span> <span class="hl">username admin secret Adm1n!2026</span>
+<span class="comment">! 5. vty lines: SSH only, and check the local user list</span>
+<span class="prompt">R1(config)#</span> <span class="cmd">line vty 0 4</span>
+<span class="prompt">R1(config-line)#</span> <span class="hl">transport input ssh</span>
+<span class="prompt">R1(config-line)#</span> <span class="hl">login local</span>
+<span class="prompt">R1(config-line)#</span> <span class="cmd">exit</span>
+<span class="comment">! 6. version 2 only</span>
+<span class="prompt">R1(config)#</span> <span class="hl">ip ssh version 2</span>
+<span class="prompt">R1(config)#</span> <span class="cmd">end</span>
+<span class="prompt">R1#</span> <span class="cmd">show ip ssh</span>
+<span class="hl">SSH Enabled - version 2.0</span>
+<span class="out">...</span>
+<span class="out">Authentication timeout: 120 secs; Authentication retries: 3</span></div>
+    </div>
+    <table class="spec">
+      <thead><tr><th>Line</th><th>Why</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;">Hostname + domain name</td><td>The RSA key is named <code>hostname.domain</code>. The router won't generate keys while it's still called <code>Router</code> or has no domain name.</td></tr>
+        <tr><td style="font-weight:600;"><code>crypto key generate rsa</code></td><td>Creates the key pair that encrypts the session. Generating it is what turns the SSH server on. ITN uses 1024 bits; in real life use 2048 or more.</td></tr>
+        <tr><td style="font-weight:600;">SSH 1.99</td><td>Means versions 1 and 2 are both accepted. <code>ip ssh version 2</code> turns off the old, weak version 1.</td></tr>
+        <tr><td style="font-weight:600;"><code>login local</code></td><td>Checks the <code>username</code> list. With no username configured, nobody can log in.</td></tr>
+        <tr><td style="font-weight:600;"><code>transport input ssh</code></td><td>The vty lines accept SSH and refuse Telnet.</td></tr>
+      </tbody>
+    </table>
+    <div class="teach-note preview">
+      <span class="label">Enrichment: SSH from a current Windows PC</span>
+      <code>show ip ssh</code> is from CCNA 2 (SRWE 1). One lab gotcha: with a 1024-bit key on this IOS version, the router only offers the old <code>ssh-rsa</code> host key type, and the SSH client built into current Windows refuses it with "no matching host key type found". Either use a newer IOS-XE release that offers rsa-sha2 host keys, or connect with <code>ssh -o HostKeyAlgorithms=+ssh-rsa admin@192.168.10.1</code>. On IOS-XE the running config shows the domain command as <code>ip domain name</code> (no hyphen); both forms are accepted.
+    </div>
+
+    <h3 class="sub">Disable unused services</h3>
+    <p>Every service that's running is something that can be attacked. Turn off what you don't use. IOS-XE routers ship with the web interface on (HTTP 80 and HTTPS 443):</p>
+    <div class="terminal">
+      <div class="terminal-header"><span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span><span class="terminal-title">R1 · find the open ports, close the web server</span></div>
+      <div class="terminal-body"><span class="prompt">R1#</span> <span class="hl">show ip ports all</span>
+<span class="out">Proto Local Address    Foreign Address  State   PID/Name
+TCP   0.0.0.0:22       0.0.0.0:0        LISTEN  [IOS]SSH-Process</span>
+<span class="hl">TCP   0.0.0.0:80       0.0.0.0:0        LISTEN  [IOS]HTTP CORE
+TCP   0.0.0.0:443      0.0.0.0:0        LISTEN  [IOS]HTTP CORE</span>
+<span class="out">...</span>
+<span class="prompt">R1#</span> <span class="cmd">configure terminal</span>
+<span class="prompt">R1(config)#</span> <span class="hl">no ip http server</span>
+<span class="prompt">R1(config)#</span> <span class="hl">no ip http secure-server</span>
+<span class="prompt">R1(config)#</span> <span class="cmd">end</span>
+<span class="prompt">R1#</span> <span class="cmd">show ip ports all</span>
+<span class="out">Proto Local Address    Foreign Address  State   PID/Name
+TCP   0.0.0.0:22       0.0.0.0:0        LISTEN  [IOS]SSH-Process</span></div>
+    </div>
+    <div class="teach-note preview">
+      <span class="label">Your output may look different</span>
+      The column layout of <code>show ip ports all</code> varies between IOS versions, so read it for the idea: each line is a port the router is listening on. Port 22 stays, because we just turned SSH on. On IOS-XE the documented equivalent is <code>show control-plane host open-ports</code> (beyond ITN).
+    </div>
+  </section>
+
+  <!-- DESIGN -->
+  <section id="design">
+    <div class="section-head">
+      <p class="kicker">Module 17 · 17.1–17.3</p>
+      <h2>Designing and growing a small network</h2>
+      <p>A small network is a few to a few dozen users, usually one internet connection, and one person (maybe you) who looks after all of it.</p>
+    </div>
+
+    <h3 class="sub">Choosing devices</h3>
+    <table class="spec">
+      <thead><tr><th>Factor</th><th>What to think about</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;">Cost</td><td>The device, plus redundancy, plus support and maintenance contracts.</td></tr>
+        <tr><td style="font-weight:600;">Speed and types of ports/interfaces</td><td>Enough ports, at the right speeds, of the right types (copper, fiber), with room to grow.</td></tr>
+        <tr><td style="font-weight:600;">Expandability</td><td>Fixed-configuration devices are cheaper. Modular devices take expansion cards when you need more.</td></tr>
+        <tr><td style="font-weight:600;">Operating system features and services</td><td>Does the IOS version support what you need: security, QoS, VoIP, NAT, DHCP?</td></tr>
+      </tbody>
+    </table>
+
+    <h3 class="sub">Planning the addressing</h3>
+    <p>Plan the IP addressing before you install anything. Give each kind of device its own range in the subnet, so you can tell what something is from its address:</p>
+    <table class="spec">
+      <thead><tr><th>Device type</th><th>Addressing</th><th>Our LAN-A, for example</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;">Network devices (routers, switches, APs)</td><td>Static, low or high in the range</td><td class="mono">.1 – .9</td></tr>
+        <tr><td style="font-weight:600;">Servers and peripherals (printers, cameras)</td><td>Static, so their address never changes</td><td class="mono">.100 – .199</td></tr>
+        <tr><td style="font-weight:600;">End devices (PCs, phones, laptops)</td><td>DHCP pool</td><td class="mono">.20 – .99, .200 – .254</td></tr>
+        <tr><td style="font-weight:600;">Hosts reachable from the internet (a public web server)</td><td>Static</td><td>—</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:.88rem;">The exact ranges are your choice. The rule is to pick a scheme, write it down, and stick to it. (PC-A is static at .10 for this page's examples, which is why the pool starts at .20.) (Picking subnet sizes is the <a href="IT131_Subnetting.html#vlsm">Subnetting Field Manual</a>'s job.)</p>
+
+    <h3 class="sub">Redundancy and traffic management</h3>
+    <ul class="obj-list">
+      <li><strong>Redundancy</strong> removes single points of failure: duplicate devices, duplicate links, redundant power supplies, and even duplicate services. It costs money, so a small network adds it where an outage would hurt most.</li>
+      <li><strong>Traffic management:</strong> real-time traffic like voice and video can't wait in line. Routers and switches can use <strong>priority queuing</strong>, where the high-priority queue is always emptied first.</li>
+    </ul>
+
+    <h3 class="sub">Applications and protocols</h3>
+    <ul class="obj-list">
+      <li><strong>Network-aware applications</strong> talk to the network themselves: web browsers, email clients.</li>
+      <li><strong>Application layer services</strong> handle the network for programs that aren't network-aware: file transfer, network print spooling.</li>
+      <li>The protocols you'll support are the ones from <a href="IT131_Session10.html#applayer">Module 15</a>: DNS, DHCP, HTTP/HTTPS, SMTP, POP3, IMAP, FTP, SSH (and Telnet, which you'll turn off).</li>
+      <li><strong>Voice and video</strong> need an infrastructure that supports them, end to end. VoIP converts analog phone signals to IP packets. IP telephony uses dedicated IP phones and a call-control server. Real-time apps use <strong>RTP</strong> and <strong>RTCP</strong> and depend on QoS.</li>
+    </ul>
+
+    <h3 class="sub">Growing the network</h3>
+    <p>Networks grow, so plan for it. ITN lists four things you need before you can scale:</p>
+    <table class="spec">
+      <thead><tr><th>Element</th><th>What it means</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;">Network documentation</td><td>Physical and logical topology diagrams.</td></tr>
+        <tr><td style="font-weight:600;">Device inventory</td><td>A list of every device that uses or makes up the network.</td></tr>
+        <tr><td style="font-weight:600;">Budget</td><td>An itemized IT budget, including the yearly equipment purchasing budget.</td></tr>
+        <tr><td style="font-weight:600;">Traffic analysis</td><td>Which protocols, applications, and services are on the network, and how much traffic each uses.</td></tr>
+      </tbody>
+    </table>
+    <p><strong>Protocol analysis</strong> (a tool like Wireshark) shows what the traffic actually is. Capture during peak times, and on different segments, because traffic isn't the same everywhere. <strong>Employee network utilization</strong> looks at each user's OS and versions, applications (network and non-network), and CPU, drive, and RAM utilization. Over time these records add up to a <strong>baseline</strong>.</p>
+  </section>
+
+  <!-- VERIFY -->
+  <section id="verify">
+    <div class="section-head">
+      <p class="kicker">Module 17 · 17.4</p>
+      <h2>Verify connectivity: ping and traceroute</h2>
+      <p>Ping asks "can I reach it?" Traceroute asks "which way did it go, and where did it stop?"</p>
+    </div>
+    <h3 class="sub">Ping</h3>
+    <p>Ping sends ICMP echo requests and waits for echo replies (<a href="IT131_Session09.html">Module 13</a>). On a Cisco device, each probe prints one symbol:</p>
+    <div class="terminal">
+      <div class="terminal-header"><span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span><span class="terminal-title">R1 · three pings, three results</span></div>
+      <div class="terminal-body"><span class="prompt">R1#</span> <span class="cmd">ping 192.168.20.10</span>
+<span class="out">Type escape sequence to abort.
+Sending 5, 100-byte ICMP Echos to 192.168.20.10, timeout is 2 seconds:</span>
+<span class="hl">!!!!!</span>
+<span class="out">Success rate is 100 percent (5/5), round-trip min/avg/max = 1/1/2 ms</span>
+
+<span class="comment">! Same ping right after R2 reloads (empty ARP cache):</span>
+<span class="prompt">R1#</span> <span class="cmd">ping 192.168.20.10</span>
+<span class="out">Type escape sequence to abort.
+Sending 5, 100-byte ICMP Echos to 192.168.20.10, timeout is 2 seconds:</span>
+<span class="hl">.!!!!</span>
+<span class="out">Success rate is 80 percent (4/5), round-trip min/avg/max = 1/1/1 ms</span>
+
+<span class="comment">! A router on the path sends back "unreachable":</span>
+<span class="prompt">R1#</span> <span class="cmd">ping 192.168.20.10</span>
+<span class="out">Type escape sequence to abort.
+Sending 5, 100-byte ICMP Echos to 192.168.20.10, timeout is 2 seconds:</span>
+<span class="hl">U.U.U</span>
+<span class="out">Success rate is 0 percent (0/5)</span></div>
+    </div>
+    <table class="spec">
+      <thead><tr><th class="mono">Symbol</th><th>Meaning</th></tr></thead>
+      <tbody>
+        <tr><td class="mono" style="font-weight:600;">!</td><td>Echo reply received. The path works in both directions.</td></tr>
+        <tr><td class="mono" style="font-weight:600;">.</td><td>Timed out waiting for a reply. The packet was lost or blocked, or there's no route back.</td></tr>
+        <tr><td class="mono" style="font-weight:600;">U</td><td>A router on the path sent back an ICMP Destination Unreachable.</td></tr>
+      </tbody>
+    </table>
+    <div class="teach-note">
+      <span class="label">Why .!!!! is normal</span>
+      R2 had no ARP entry for PC-B yet. While it ARPs, IOS drops the packet that triggered the request instead of holding it, so the first echo times out. Once ARP finishes, the rest succeed. A <code>.</code> on the very first ping after a reboot is not a fault. (<code>U.U.U</code> alternates because routers rate-limit the unreachables they send; that detail is enrichment.)
+    </div>
+    <div class="teach-note warn">
+      <span class="label">Silence isn't always a broken network</span>
+      Windows Defender Firewall drops incoming pings by default, so <code>.....</code> to a Windows PC can just mean the firewall is doing its job. Test against the router interfaces first. To stop a long ping on IOS, press <strong>Ctrl+Shift+6</strong>.
+    </div>
+    <h3 class="sub">Extended ping</h3>
+    <p>A plain ping from R1 to PC-B leaves from R1's outgoing interface, <code>10.0.0.1</code>. That proves R1 can reach PC-B, but not that LAN-B can route back to <em>LAN-A</em>, which is what PC-A actually needs. Type <code>ping</code> with no address to get the extended prompts, and pick the source interface:</p>
+    <div class="terminal">
+      <div class="terminal-header"><span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span><span class="terminal-title">R1 · extended ping, sourced from LAN-A</span></div>
+      <div class="terminal-body"><span class="prompt">R1#</span> <span class="hl">ping</span>
+<span class="out">Protocol [ip]:
+Target IP address: </span><span class="cmd">192.168.20.10</span>
+<span class="out">Repeat count [5]:
+Datagram size [100]:
+Timeout in seconds [2]:
+Extended commands [n]: </span><span class="hl">y</span>
+<span class="out">Ingress ping [n]:
+Source address or interface: </span><span class="hl">g0/0/1</span>
+<span class="out">DSCP Value [0]:
+Type of service [0]:
+Set DF bit in IP header? [no]:
+Validate reply data? [no]:
+Data pattern [0x0000ABCD]:
+Loose, Strict, Record, Timestamp, Verbose[none]:
+Sweep range of sizes [n]:
+Type escape sequence to abort.
+Sending 5, 100-byte ICMP Echos to 192.168.20.10, timeout is 2 seconds:</span>
+<span class="hl">Packet sent with a source address of 192.168.10.1</span>
+<span class="out">!!!!!
+Success rate is 100 percent (5/5), round-trip min/avg/max = 1/1/2 ms</span></div>
+    </div>
+    <p style="font-size:.88rem;">Press Enter to accept any <code>[default]</code>. You can type the interface name or its address. Prompts like <code>Ingress ping</code> and <code>DSCP Value</code> depend on the IOS version; the ones that matter are Target, Repeat count, Extended commands, and Source. The one-line form is <code>ping 192.168.20.10 source g0/0/1</code>.</p>
+    <h3 class="sub">Traceroute</h3>
+    <p>Traceroute sends probes with TTL 1, 2, 3, and so on. Each router that drops a probe when its TTL runs out sends back an ICMP Time Exceeded, which reveals that hop. Windows calls it <code>tracert</code>; IOS and Linux call it <code>traceroute</code>.</p>
+    <div class="terminal">
+      <div class="terminal-header"><span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span><span class="terminal-title">PC-A · tracert to the web server</span></div>
+      <div class="terminal-body"><span class="prompt">C:\Users\student&gt;</span> <span class="hl">tracert www.it131.example</span>
+<span class="out">
+Tracing route to www.it131.example [192.168.20.100]
+over a maximum of 30 hops:
+
+  1    &lt;1 ms    &lt;1 ms    &lt;1 ms  192.168.10.1
+  2    &lt;1 ms    &lt;1 ms     1 ms  10.0.0.2
+  3     1 ms    &lt;1 ms    &lt;1 ms  192.168.20.100
+
+Trace complete.</span></div>
+    </div>
+    <table class="spec">
+      <thead><tr><th>What you see</th><th>What it means</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;">Three times per hop</td><td>Three probes are sent to each hop.</td></tr>
+        <tr><td style="font-weight:600;">Hop 2 is <code>10.0.0.2</code></td><td>R2 answers from the interface the probe <em>arrived on</em>, its link to R1, not its LAN-B gateway address <code>192.168.20.1</code>.</td></tr>
+        <tr><td style="font-weight:600;">Bare IP addresses</td><td>tracert tries to look up a name for each hop. With no reverse DNS, you get IPs, sometimes after a pause. <code>tracert -d</code> skips the lookups.</td></tr>
+      </tbody>
+    </table>
+    <div class="terminal">
+      <div class="terminal-header"><span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span><span class="terminal-title">R1 · IOS traceroute, working and then failing</span></div>
+      <div class="terminal-body"><span class="prompt">R1#</span> <span class="hl">traceroute 192.168.20.100</span>
+<span class="out">Type escape sequence to abort.
+Tracing the route to 192.168.20.100
+VRF info: (vrf in name/id, vrf out name/id)
+  1 10.0.0.2 1 msec 0 msec 1 msec
+  2 192.168.20.100 1 msec 1 msec 1 msec</span>
+
+<span class="comment">! Later, after something breaks:</span>
+<span class="prompt">R1#</span> <span class="cmd">traceroute 192.168.20.100</span>
+<span class="out">Type escape sequence to abort.
+Tracing the route to 192.168.20.100
+VRF info: (vrf in name/id, vrf out name/id)</span>
+<span class="hl">  1 10.0.0.2 1 msec 0 msec 1 msec
+  2  *  *  *
+  3  *  *  *</span>
+<span class="out">...</span>
+<span class="comment">! Ctrl+Shift+6 to stop early</span></div>
+    </div>
+    <div class="teach-note">
+      <span class="label">Reading a failed trace</span>
+      The rule: the problem is <strong>at or beyond the last hop that answered</strong>. Here R2 answered, so the problem is between R2 and SRV1, or SRV1 itself. From R1, hop 2 <em>is</em> SRV1, so the likely causes are: SRV1 is off or unplugged (or its S2 port is down), SRV1 has a wrong default gateway so its replies can't get back, or a firewall is dropping the probes. A trace that dies at the far end is often a <em>return-path</em> problem.
+    </div>
+    <div class="teach-note preview">
+      <span class="label">Enrichment: why IOS and Windows can disagree</span>
+      Windows tracert sends ICMP echo requests. IOS traceroute sends UDP probes to high ports (33434 and up), and the destination ends the trace by answering Port Unreachable. A host firewall can drop one kind and not the other, so stars on the last hop alone can be normal.
+    </div>
+    <h3 class="sub">Extended traceroute</h3>
+    <p>Like extended ping: type <code>traceroute</code> with no address and answer the prompts. The useful ones are Target, Source address, and Numeric display (skip the slow name lookups).</p>
+    <div class="terminal">
+      <div class="terminal-header"><span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span><span class="terminal-title">R1 · extended traceroute</span></div>
+      <div class="terminal-body"><span class="prompt">R1#</span> <span class="hl">traceroute</span>
+<span class="out">Protocol [ip]:
+Target IP address: </span><span class="cmd">192.168.20.100</span>
+<span class="out">Ingress traceroute [n]:
+Source address: </span><span class="hl">192.168.10.1</span>
+<span class="out">DSCP Value [0]:
+Numeric display [n]: </span><span class="cmd">y</span>
+<span class="out">Timeout in seconds [3]:
+Probe count [3]:
+Minimum Time to Live [1]:
+Maximum Time to Live [30]:
+Port Number [33434]:
+Loose, Strict, Record, Timestamp, Verbose[none]:
+Type escape sequence to abort.
+Tracing the route to 192.168.20.100
+VRF info: (vrf in name/id, vrf out name/id)
+  1 10.0.0.2 1 msec 0 msec 1 msec
+  2 192.168.20.100 1 msec 1 msec 1 msec</span></div>
+    </div>
+    <p style="font-size:.88rem;"><code>Ingress traceroute</code> and <code>DSCP Value</code> only appear on newer IOS versions.</p>
+    <h3 class="sub">Network baseline</h3>
+    <p>A <strong>baseline</strong> is a record of what "normal" looks like: ping and traceroute times, interface statistics, and utilization, taken at regular times while the network is healthy. When users say "the network is slow", you compare against the baseline to tell whether it actually is. Ping output is an easy start: save it, with the date and time, and compare later. Cisco devices can timestamp it for you.</p>
+  </section>
+
+  <!-- COMMANDS -->
+  <section id="commands">
+    <div class="section-head">
+      <p class="kicker">Module 17 · 17.5</p>
+      <h2>Host and IOS commands</h2>
+      <p>Before you troubleshoot anything, find out how it's actually configured. Don't trust what it's supposed to be.</p>
+    </div>
+    <h3 class="sub">IP configuration on a Windows host</h3>
+    <div class="terminal">
+      <div class="terminal-header"><span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span><span class="terminal-title">PC-A · ipconfig /all (trimmed)</span></div>
+      <div class="terminal-body"><span class="prompt">C:\Users\student&gt;</span> <span class="hl">ipconfig /all</span>
+<span class="out">
+Windows IP Configuration
+
+   Host Name . . . . . . . . . . . . : PC-A
+   ...
+Ethernet adapter Ethernet:
+
+   Connection-specific DNS Suffix  . :
+   Description . . . . . . . . . . . : Intel(R) Ethernet Connection I219-LM</span>
+<span class="hl">   Physical Address. . . . . . . . . : 50-9A-4C-1A-2B-3C
+   DHCP Enabled. . . . . . . . . . . : No</span>
+<span class="out">   Autoconfiguration Enabled . . . . : Yes
+   Link-local IPv6 Address . . . . . : fe80::4a1c:9e2f:7b3d:12a4%12(Preferred)</span>
+<span class="hl">   IPv4 Address. . . . . . . . . . . : 192.168.10.10(Preferred)
+   Subnet Mask . . . . . . . . . . . : 255.255.255.0
+   Default Gateway . . . . . . . . . : 192.168.10.1
+   DNS Servers . . . . . . . . . . . : 192.168.20.100</span>
+<span class="out">   NetBIOS over Tcpip. . . . . . . . : Enabled</span></div>
+    </div>
+    <p>Plain <code>ipconfig</code> shows the address, mask, and gateway. You need <code>/all</code> for the MAC address, whether DHCP is on, and the DNS servers. "DHCP Enabled: No" means PC-A has a static address. <code>ipconfig /displaydns</code> shows the DNS cache (<a href="IT131_Session10.html#dnsdhcp">Session 10</a>).</p>
+    <h3 class="sub">Linux and macOS</h3>
+    <div class="terminal">
+      <div class="terminal-header"><span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span><span class="terminal-title">A Linux host on LAN-B · ip address and ip route</span></div>
+      <div class="terminal-body"><span class="prompt">student@lab-linux:~$</span> <span class="hl">ip address</span>
+<span class="out">1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue state UNKNOWN ...
+    inet 127.0.0.1/8 scope host lo
+...
+2: ens33: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc fq_codel state UP ...
+    link/ether 00:0c:29:4f:8a:21 brd ff:ff:ff:ff:ff:ff</span>
+<span class="hl">    inet 192.168.20.50/24 brd 192.168.20.255 scope global noprefixroute ens33</span>
+<span class="out">       valid_lft forever preferred_lft forever
+    inet6 fe80::20c:29ff:fe4f:8a21/64 scope link noprefixroute
+       valid_lft forever preferred_lft forever</span>
+<span class="prompt">student@lab-linux:~$</span> <span class="cmd">ip route</span>
+<span class="hl">default via 192.168.20.1 dev ens33 proto static metric 100</span>
+<span class="out">192.168.20.0/24 dev ens33 proto kernel scope link src 192.168.20.50 metric 100</span></div>
+    </div>
+    <div class="terminal">
+      <div class="terminal-header"><span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span><span class="terminal-title">A Mac on LAN-B · ifconfig en0</span></div>
+      <div class="terminal-body"><span class="prompt">student@MacBook ~ %</span> <span class="hl">ifconfig en0</span>
+<span class="out">en0: flags=8863&lt;UP,BROADCAST,SMART,RUNNING,SIMPLEX,MULTICAST&gt; mtu 1500
+	ether a4:83:e7:2c:91:5e
+	inet6 fe80::1c2b:3d4e:5f60:7a8b%en0 prefixlen 64 secured scopeid 0xb</span>
+<span class="hl">	inet 192.168.20.60 netmask 0xffffff00 broadcast 192.168.20.255</span>
+<span class="out">	media: autoselect
+	status: active</span></div>
+    </div>
+    <table class="spec">
+      <thead><tr><th></th><th>Address and mask</th><th>Gateway</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;">Windows</td><td><code>ipconfig</code>: dotted decimal, <code>255.255.255.0</code></td><td>In the same output</td></tr>
+        <tr><td style="font-weight:600;">Linux</td><td><code>ip address</code>: prefix, <code>/24</code></td><td><code>ip route</code> (the <code>default via</code> line)</td></tr>
+        <tr><td style="font-weight:600;">macOS</td><td><code>ifconfig</code>: hex, <code>0xffffff00</code> = 255.255.255.0</td><td><code>netstat -rn</code></td></tr>
+      </tbody>
+    </table>
+    <h3 class="sub">The ARP cache</h3>
+    <div class="terminal">
+      <div class="terminal-header"><span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span><span class="terminal-title">PC-A · arp -a after pinging the gateway and a neighbor</span></div>
+      <div class="terminal-body"><span class="prompt">C:\Users\student&gt;</span> <span class="hl">arp -a</span>
+<span class="out">
+Interface: 192.168.10.10 --- 0xc
+  Internet Address      Physical Address      Type</span>
+<span class="hl">  192.168.10.1          70-ea-1a-5c-3e-81     dynamic</span>
+<span class="out">  192.168.10.20         50-9a-4c-77-88-99     dynamic
+  192.168.10.255        ff-ff-ff-ff-ff-ff     static
+  224.0.0.22            01-00-5e-00-00-16     static
+  224.0.0.251           01-00-5e-00-00-fb     static
+  224.0.0.252           01-00-5e-00-00-fc     static
+  239.255.255.250       01-00-5e-7f-ff-fa     static
+  255.255.255.255       ff-ff-ff-ff-ff-ff     static</span></div>
+    </div>
+    <p>Only addresses on PC-A's own subnet appear. PC-B and SRV1 never show up, because frames to them go to the gateway's MAC (<code>70-ea-1a-5c-3e-81</code>, R1's G0/0/1). <strong>Dynamic</strong> entries were learned by ARP and age out. The <strong>static</strong> entries are broadcast and multicast mappings Windows builds itself. <code>arp -d *</code> clears the cache (from an administrator prompt).</p>
+    <h3 class="sub">Common show commands</h3>
+    <table class="spec">
+      <thead><tr><th>Command</th><th>Shows</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;"><code>show running-config</code></td><td>The current configuration in RAM</td></tr>
+        <tr><td style="font-weight:600;"><code>show interfaces</code></td><td>Status and statistics for every interface: errors, collisions, speed, duplex</td></tr>
+        <tr><td style="font-weight:600;"><code>show ip interface</code></td><td>The IPv4 settings and status of each interface (in detail)</td></tr>
+        <tr><td style="font-weight:600;"><code>show ip interface brief</code></td><td>One line per interface: address, status, protocol</td></tr>
+        <tr><td style="font-weight:600;"><code>show arp</code></td><td>The router's ARP table</td></tr>
+        <tr><td style="font-weight:600;"><code>show ip route</code></td><td>The routing table</td></tr>
+        <tr><td style="font-weight:600;"><code>show protocols</code></td><td>Which routed protocols are configured, and the interface status</td></tr>
+        <tr><td style="font-weight:600;"><code>show version</code></td><td>IOS version, uptime, image file, memory, interfaces, config register</td></tr>
+        <tr><td style="font-weight:600;"><code>show cdp neighbors</code></td><td>Directly connected Cisco devices</td></tr>
+      </tbody>
+    </table>
+    <div class="terminal">
+      <div class="terminal-header"><span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span><span class="terminal-title">R1 · show ip interface brief</span></div>
+      <div class="terminal-body"><span class="prompt">R1#</span> <span class="hl">show ip interface brief</span>
+<span class="out">Interface              IP-Address      OK? Method Status                Protocol</span>
+<span class="hl">GigabitEthernet0/0/0   10.0.0.1        YES manual up                    up
+GigabitEthernet0/0/1   192.168.10.1    YES manual up                    up</span>
+<span class="out">Serial0/1/0            unassigned      YES NVRAM  administratively down down
+Serial0/1/1            unassigned      YES NVRAM  administratively down down
+GigabitEthernet0       unassigned      YES NVRAM  administratively down down</span></div>
+    </div>
+    <p style="font-size:.88rem;"><strong>up / up</strong> means Layer 1 (Status) and Layer 2 (Protocol) are both working. <strong>administratively down</strong> means the interface is shut down: either <code>no shutdown</code> was never entered, or someone entered <code>shutdown</code>. The serial ports only appear if the router has a serial card. <code>GigabitEthernet0</code> is a separate management port that doesn't route user traffic.</p>
+    <div class="terminal">
+      <div class="terminal-header"><span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span><span class="terminal-title">R1 · show version (trimmed)</span></div>
+      <div class="terminal-body"><span class="prompt">R1#</span> <span class="hl">show version</span>
+<span class="hl">Cisco IOS XE Software, Version 16.09.04</span>
+<span class="out">Cisco IOS Software [Fuji], ISR Software (X86_64_LINUX_IOSD-UNIVERSALK9-M), Version 16.9.4, RELEASE SOFTWARE (fc2)
+...</span>
+<span class="hl">R1 uptime is 2 hours, 14 minutes</span>
+<span class="out">System returned to ROM by Reload Command</span>
+<span class="hl">System image file is "bootflash:isr4300-universalk9.16.09.04.SPA.bin"</span>
+<span class="out">...
+cisco ISR4321/K9 (1RU) processor with 1795999K/6147K bytes of memory.
+...
+2 Gigabit Ethernet interfaces
+32768K bytes of non-volatile configuration memory.
+4194304K bytes of physical memory.
+3223551K bytes of flash memory at bootflash:.
+...</span>
+<span class="hl">Configuration register is 0x2102</span></div>
+    </div>
+    <p style="font-size:.88rem;">Config register <code>0x2102</code> is a normal boot: load IOS from flash and read the startup config. (<code>0x2142</code> skips the startup config, which is how password recovery works; that's enrichment.)</p>
+    <h3 class="sub">CDP: who's plugged into me?</h3>
+    <div class="terminal">
+      <div class="terminal-header"><span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span><span class="terminal-title">R1 · show cdp neighbors</span></div>
+      <div class="terminal-body"><span class="prompt">R1#</span> <span class="hl">show cdp neighbors</span>
+<span class="out">Capability Codes: R - Router, T - Trans Bridge, B - Source Route Bridge
+                  S - Switch, H - Host, I - IGMP, r - Repeater, P - Phone,
+                  D - Remote, C - CVTA, M - Two-port Mac Relay
+
+Device ID        Local Intrfce     Holdtme    Capability  Platform  Port ID</span>
+<span class="hl">S1               Gig 0/0/1         163             S I    WS-C2960- Gig 0/1
+R2               Gig 0/0/0         151          R B S I   ISR4321/K Gig 0/0/0</span>
+<span class="out">
+Total cdp entries displayed : 2</span>
+<span class="prompt">R1#</span> <span class="cmd">show cdp neighbors detail</span>
+<span class="out">-------------------------
+Device ID: R2
+Entry address(es): </span>
+<span class="hl">  IP address: 10.0.0.2</span>
+<span class="out">Platform: cisco ISR4321/K9,  Capabilities: Router Source-Route-Bridge Switch IGMP
+Interface: GigabitEthernet0/0/0,  Port ID (outgoing port): GigabitEthernet0/0/0
+Holdtime : 151 sec
+
+Version :</span>
+<span class="hl">Cisco IOS Software [Fuji], ISR Software (X86_64_LINUX_IOSD-UNIVERSALK9-M), Version 16.9.4, RELEASE SOFTWARE (fc2)</span>
+<span class="out">...</span></div>
+    </div>
+    <p><strong>Local Intrfce</strong> is R1's own port. <strong>Port ID</strong> is the neighbor's port. CDP runs at Layer 2, so it works even if IP isn't configured, which makes it great for drawing a map of a network you didn't build. <code>detail</code> adds each neighbor's IP address and IOS version.</p>
+    <div class="teach-note warn">
+      <span class="label">CDP is a gift to attackers too</span>
+      Everything CDP tells you, it tells anyone plugged into that port: device names, models, addresses, and IOS versions to look up vulnerabilities for. Turn it off where it isn't needed: <code>no cdp run</code> for the whole device, or <code>no cdp enable</code> on a single interface (for example, one facing users or the internet).
+    </div>
+  </section>
+
+  <!-- METHOD -->
+  <section id="method">
+    <div class="section-head">
+      <p class="kicker">Module 17 · 17.6</p>
+      <h2>Troubleshooting methodology</h2>
+      <p>Guessing works on easy problems. A method works on all of them.</p>
+    </div>
+    <h3 class="sub">The six steps</h3>
+    <ol class="steps">
+      <li><strong>Identify the problem.</strong> Talk to users, gather symptoms, and find out what changed. You can't fix what you haven't defined.</li>
+      <li><strong>Establish a theory of probable causes.</strong> List the likely causes, starting with the obvious.</li>
+      <li><strong>Test the theory to determine the cause.</strong> If the theory is wrong, go back to step 2 with a new one, or escalate.</li>
+      <li><strong>Establish a plan of action and implement the solution.</strong> Think about what the fix might break before you make it.</li>
+      <li><strong>Verify the solution and implement preventive measures.</strong> Check that it's fixed for the user, and stop it from coming back.</li>
+      <li><strong>Document findings, actions, and outcomes.</strong> The next person to see this problem might be you.</li>
+    </ol>
+    <div class="teach-note">
+      <span class="label">Escalation</span>
+      Some problems are beyond your knowledge or your access. Escalating is not failing: company policy should say when and to whom (a senior technician, or the vendor). Document what you tried before you hand it on.
+    </div>
+    <div class="teach-note">
+      <span class="label">The OSI Company version</span>
+      When something breaks, the NOC starts at the bottom and works up: is the cable in (Infrastructure Crew, L1)? Is the link up and the duplex right (Local Dispatch, L2)? Are the address, mask, and gateway right (Logistics, L3)? Then the port and service (Shipping, L4), then the name (Front Desk, L7). Most "the internet is down" tickets end at L1 or L3.
+    </div>
+    <h3 class="sub">debug and terminal monitor</h3>
+    <p><code>show</code> commands are a snapshot. <code>debug</code> shows events <em>as they happen</em>. By default, debug and log messages appear only on the console. If you're connected over SSH, you see nothing until you type <code>terminal monitor</code>.</p>
+    <div class="terminal">
+      <div class="terminal-header"><span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span><span class="terminal-title">R1 · debug ip icmp over SSH</span></div>
+      <div class="terminal-body"><span class="comment">! Logged in to R1 over SSH from PC-A</span>
+<span class="prompt">R1#</span> <span class="hl">terminal monitor</span>
+<span class="prompt">R1#</span> <span class="hl">debug ip icmp</span>
+<span class="out">ICMP packet debugging is on</span>
+<span class="comment">! PC-A runs: ping 192.168.10.1</span>
+<span class="out">*Oct  7 14:30:01.512: ICMP: echo reply sent, src 192.168.10.1, dst 192.168.10.10, topology BASE, dscp 0 topoid 0
+*Oct  7 14:30:02.519: ICMP: echo reply sent, src 192.168.10.1, dst 192.168.10.10, topology BASE, dscp 0 topoid 0
+*Oct  7 14:30:03.527: ICMP: echo reply sent, src 192.168.10.1, dst 192.168.10.10, topology BASE, dscp 0 topoid 0
+*Oct  7 14:30:04.534: ICMP: echo reply sent, src 192.168.10.1, dst 192.168.10.10, topology BASE, dscp 0 topoid 0</span>
+<span class="prompt">R1#</span> <span class="hl">undebug all</span>
+<span class="out">All possible debugging has been turned off</span>
+<span class="prompt">R1#</span> <span class="cmd">terminal no monitor</span></div>
+    </div>
+    <div class="teach-note warn">
+      <span class="label">debug can take a router down</span>
+      Debug output gets high priority on the CPU. On a busy router, a broad debug (like <code>debug all</code>) can overload it. Use the narrowest debug that answers your question, and turn it off as soon as you have the answer: <code>undebug all</code> (or <code>no debug all</code>). Four lines appear here because a Windows ping sends four echoes; the exact line format varies a little between IOS versions.
+    </div>
+  </section>
+
+  <!-- SCENARIOS -->
+  <section id="scenarios">
+    <div class="section-head">
+      <p class="kicker">Module 17 · 17.7</p>
+      <h2>Troubleshooting scenarios</h2>
+      <p>The four problems ITN walks through, in the order you'd usually hit them.</p>
+    </div>
+    <h3 class="sub">1 · Duplex mismatch</h3>
+    <p>If one end of a link runs full duplex and the other half duplex, the link stays <strong>up/up</strong>. Nothing alarms. It just gets slow and racks up errors, which is why this one is hard to spot. It usually happens when one end is hard-set and the other is left on auto: the auto end can't negotiate and falls back to half duplex. To force it in a lab on Gigabit copper, set both ends to 100 Mbps and only one to half:</p>
+    <div class="terminal">
+      <div class="terminal-header"><span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span><span class="terminal-title">S1 and R1 · duplex mismatch</span></div>
+      <div class="terminal-body"><span class="comment">! R1 G0/0/1 forced to speed 100 / duplex half
+! S1 G0/1   forced to speed 100 / duplex full
+! Console log on S1:</span>
+<span class="hl">*Mar  1 00:41:17.204: %CDP-4-DUPLEX_MISMATCH: duplex mismatch discovered on GigabitEthernet0/1 (not half duplex), with R1 GigabitEthernet0/0/1 (half duplex).</span>
+<span class="prompt">R1#</span> <span class="cmd">show interfaces g0/0/1</span>
+<span class="out">GigabitEthernet0/0/1 is up, line protocol is up
+  Hardware is ISR4321-2x1GE, address is 70ea.1a5c.3e81 (bia 70ea.1a5c.3e81)
+  Internet address is 192.168.10.1/24
+  ...</span>
+<span class="hl">  Half Duplex, 100Mbps, link type is force-up, media type is RJ45</span>
+<span class="out">  ...
+     0 output errors, 1832 collisions, 0 interface resets
+     ...</span>
+<span class="hl">     0 babbles, 147 late collision, 0 deferred</span>
+<span class="prompt">S1#</span> <span class="cmd">show interfaces g0/1</span>
+<span class="out">GigabitEthernet0/1 is up, line protocol is up (connected)
+  ...</span>
+<span class="hl">  Full-duplex, 100Mb/s, media type is 10/100/1000BaseTX</span>
+<span class="out">  ...</span>
+<span class="hl">     231 runts, 0 giants, 0 throttles
+     489 input errors, 258 CRC, 0 frame, 0 overrun, 0 ignored</span></div>
+    </div>
+    <p>The half-duplex side (R1) sees <strong>collisions and late collisions</strong>. The full-duplex side (S1) sees <strong>runts and CRC errors</strong>. CDP spots the mismatch between two Cisco devices; between a switch and a PC, you find it from those counters. <strong>Fix:</strong> set both ends to auto, or hard-set both ends to the same speed and duplex.</p>
+    <h3 class="sub">2 · IP addressing problems</h3>
+    <p><strong>On IOS devices:</strong> a wrong address or mask on a router interface, or two devices with the same address. Check with <code>show ip interface brief</code> and <code>show running-config</code>. <strong>On end devices:</strong> the most common sign is a Windows PC that gave itself an address because DHCP didn't answer.</p>
+    <div class="terminal">
+      <div class="terminal-header"><span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span><span class="terminal-title">PC-A · switched to DHCP, and DHCP failed</span></div>
+      <div class="terminal-body"><span class="comment">! PC-A was changed to "Obtain an IP address automatically"</span>
+<span class="prompt">C:\Users\student&gt;</span> <span class="hl">ipconfig</span>
+<span class="out">
+Windows IP Configuration
+
+Ethernet adapter Ethernet:
+
+   Connection-specific DNS Suffix  . :
+   Link-local IPv6 Address . . . . . : fe80::4a1c:9e2f:7b3d:12a4%12</span>
+<span class="hl">   Autoconfiguration IPv4 Address. . : 169.254.87.211
+   Subnet Mask . . . . . . . . . . . : 255.255.0.0
+   Default Gateway . . . . . . . . . :</span></div>
+    </div>
+    <p><code>169.254.0.0/16</code> is <strong>APIPA</strong> (Automatic Private IP Addressing). The label changes to "Autoconfiguration IPv4 Address", and there's no gateway. The PC can only talk to other APIPA hosts. Look for: no DHCP server on the segment, a bad cable or switch port, or a DHCP server on another subnet with no relay configured (relay is CCNA 2). After the fix, <code>ipconfig /release</code> then <code>ipconfig /renew</code>.</p>
+    <h3 class="sub">3 · Default gateway problems</h3>
+    <p>Without a correct default gateway, a host can talk to its own subnet and nothing else. Here PC-A's gateway was typed as <code>.254</code>, which doesn't exist:</p>
+    <div class="terminal">
+      <div class="terminal-header"><span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span><span class="terminal-title">PC-A · wrong default gateway</span></div>
+      <div class="terminal-body"><span class="prompt">C:\Users\student&gt;</span> <span class="cmd">ipconfig</span>
+<span class="out">   ...
+   IPv4 Address. . . . . . . . . . . : 192.168.10.10
+   Subnet Mask . . . . . . . . . . . : 255.255.255.0</span>
+<span class="hl">   Default Gateway . . . . . . . . . : 192.168.10.254</span>
+<span class="prompt">C:\Users\student&gt;</span> <span class="cmd">ping 192.168.10.1</span>
+<span class="out">
+Pinging 192.168.10.1 with 32 bytes of data:
+Reply from 192.168.10.1: bytes=32 time&lt;1ms TTL=255
+...</span>
+<span class="prompt">C:\Users\student&gt;</span> <span class="cmd">ping 192.168.20.10</span>
+<span class="out">
+Pinging 192.168.20.10 with 32 bytes of data:</span>
+<span class="hl">Reply from 192.168.10.10: Destination host unreachable.
+Reply from 192.168.10.10: Destination host unreachable.
+Reply from 192.168.10.10: Destination host unreachable.
+Reply from 192.168.10.10: Destination host unreachable.</span>
+<span class="out">
+Ping statistics for 192.168.20.10:</span>
+<span class="hl">    Packets: Sent = 4, Received = 4, Lost = 0 (0% loss),</span></div>
+    </div>
+    <table class="spec">
+      <thead><tr><th>What you see</th><th>What it means</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;">Ping to <code>192.168.10.1</code> works</td><td>Same subnet, so no gateway is needed. The router itself is fine.</td></tr>
+        <tr><td style="font-weight:600;">"Reply from <strong>192.168.10.10</strong>"</td><td>The reply comes from PC-A <em>itself</em>. It ARPed for .254, got no answer, and gave up. No router said anything.</td></tr>
+        <tr><td style="font-weight:600;"><strong>0% loss</strong></td><td>Windows counts those self-generated replies as received. The ping failed anyway. Read the reply lines, not the summary.</td></tr>
+        <tr><td style="font-weight:600;">TTL=255</td><td>The reply from .1 came from a Cisco router (it starts at 255). Windows hosts start at 128.</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:.88rem;">The same thing happens to a Layer 2 switch: with no <code>ip default-gateway</code> it can be managed from its own subnet but not from anywhere else.</p>
+    <h3 class="sub">4 · DNS problems</h3>
+    <p>The test that tells you it's DNS: <strong>ping by IP works, ping by name fails.</strong></p>
+    <div class="terminal">
+      <div class="terminal-header"><span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span><span class="terminal-title">PC-A · pointed at the wrong DNS server</span></div>
+      <div class="terminal-body"><span class="prompt">C:\Users\student&gt;</span> <span class="cmd">ping 192.168.20.100</span>
+<span class="out">Reply from 192.168.20.100: bytes=32 time=1ms TTL=126
+...</span>
+<span class="prompt">C:\Users\student&gt;</span> <span class="cmd">ping www.it131.example</span>
+<span class="hl">Ping request could not find host www.it131.example. Please check the name and try again.</span>
+<span class="prompt">C:\Users\student&gt;</span> <span class="hl">nslookup www.it131.example</span>
+<span class="out">DNS request timed out.
+    timeout was 2 seconds.</span>
+<span class="hl">Server:  UnKnown
+Address:  192.168.20.200</span>
+<span class="out">
+DNS request timed out.
+    timeout was 2 seconds.
+...</span>
+<span class="hl">*** Request to UnKnown timed-out</span></div>
+    </div>
+    <p>Routing works (TTL=126: a Windows host two router hops away). The name fails. <code>nslookup</code> shows which DNS server PC-A is using: <code>192.168.20.200</code>, which doesn't exist. It should be SRV1, <code>192.168.20.100</code>. Fix the DNS server setting, then <code>ipconfig /flushdns</code> to clear any cached bad answers.</p>
+    <div class="teach-note warn">
+      <span class="label">"UnKnown" on its own is not the problem</span>
+      As in <a href="IT131_Session10.html#dnsdhcp">Session 10</a>, <code>Server: UnKnown</code> also appears when a working DNS server just has no reverse record for itself. The clue here is the timeouts and the wrong address. Read the result lines, not the server name.
+    </div>
+
+    <div class="tool">
+      <p class="tool-title">Try it: symptom → first check</p>
+      <div class="tool-in">
+        <select id="symIn" aria-label="Pick a symptom"></select>
+      </div>
+      <div id="symOut" class="tool-out"></div>
+    </div>
+  </section>
+
+  <!-- MISTAKES -->
+  <section id="mistakes">
+    <div class="section-head">
+      <p class="kicker">Watch for this</p>
+      <h2>Common Module 16–17 mistakes</h2>
+      <p>These come up every semester.</p>
+    </div>
+    <ul class="obj-list">
+      <li>Mixing up threats and vulnerabilities. The vulnerability is the weakness; the threat is what exploits it.</li>
+      <li>Calling a worm a virus. A virus needs a host program and a user to spread it. A worm spreads itself.</li>
+      <li>Filing a ping sweep or port scan under access attacks. It's <strong>reconnaissance</strong>: nobody has gotten in yet.</li>
+      <li>Thinking DDoS means "a bigger DoS". The key word is <em>distributed</em>: many sources, usually a botnet.</li>
+      <li>Swapping authentication and authorization. Authentication is <em>who you are</em>; authorization is <em>what you may do</em>.</li>
+      <li>Thinking <code>service password-encryption</code> makes passwords safe. It only stops shoulder-surfing; type 7 is easily reversed. Use <code>secret</code>.</li>
+      <li>Forgetting a step of SSH: no domain name or no RSA keys means no SSH, and <code>login local</code> needs a local username.</li>
+      <li>Reading a <code>.</code> in IOS ping as "unreachable". It's a timeout. <code>U</code> is unreachable.</li>
+      <li>Panicking at <code>.!!!!</code>. The first ping usually times out while ARP resolves.</li>
+      <li>Concluding that the last hop that answered traceroute must be fine. The problem is <strong>at or beyond</strong> it: that router may be the one with the missing route or the down interface.</li>
+      <li>Running <code>debug</code> on a busy production router, or forgetting <code>undebug all</code>.</li>
+      <li>Expecting debug output over SSH without <code>terminal monitor</code>.</li>
+      <li>Treating a 169.254.x.x address as a valid configuration. It means DHCP failed.</li>
+      <li>Blaming DNS when ping by IP fails too. If the IP doesn't work, the name never will.</li>
+    </ul>
+  </section>
+
+  <!-- CHECKPOINT -->
+  <section id="checkpoint">
+    <div class="section-head">
+      <p class="kicker">Module Quiz — Building and Securing a Small Network</p>
+      <h2>Checkpoint: Modules 16–17</h2>
+      <p>This quiz opens Session 12. If you can do these cold, you're ready.</p>
+    </div>
+    <ul class="obj-list">
+      <li><strong>Module 16:</strong> the four threat types, three vulnerability types, and four physical threat types.</li>
+      <li><strong>Module 16:</strong> virus vs. worm vs. Trojan; recon vs. access vs. DoS/DDoS. Practice with <a href="#attacks">name that attack</a>.</li>
+      <li><strong>Module 16:</strong> defense-in-depth devices, backup considerations, AAA, and the four firewall filtering methods.</li>
+      <li><strong>Module 16:</strong> every hardening command on this page, and what each one does. Be able to configure SSH from memory.</li>
+      <li><strong>Module 17:</strong> device-selection factors, addressing plans, and what you need before scaling.</li>
+      <li><strong>Module 17:</strong> ping symbols, extended ping, traceroute, the host and <code>show</code> commands, CDP, the six steps, <code>debug</code>, and the four scenarios.</li>
+    </ul>
+  </section>
+
+  <!-- FLASHCARDS -->
+  <section id="flashcards">
+    <div class="section-head">
+      <p class="kicker">Study</p>
+      <h2>Flashcards</h2>
+      <p>Click to flip. Double-click to mark as known.</p>
+    </div>
+    <div class="toolbar">
+      <button class="btn" id="shuffleBtn">Shuffle</button>
+      <button class="btn" id="resetKnownBtn">Reset progress</button>
+      <span id="cardProgress"></span>
+    </div>
+    <div class="card-grid" id="cardGrid"></div>
+  </section>
+
+  <!-- QUIZ -->
+  <section id="quiz">
+    <div class="section-head">
+      <p class="kicker">Check yourself</p>
+      <h2>Sample questions</h2>
+      <p>Pick an answer to see if you're right. Same style as the module quiz.</p>
+    </div>
+    <div id="quizScore"></div>
+    <div id="quizList"></div>
+    <button class="btn" id="resetQuizBtn">Reset quiz</button>
+  </section>
+
+  <!-- EXAMPLES -->
+  <section id="examples">
+    <div class="section-head">
+      <p class="kicker">Applied</p>
+      <h2>Worked examples</h2>
+      <p>Think it through before you expand the answer.</p>
+    </div>
+
+    <div class="example">
+      <span class="tag">Threats &amp; vulnerabilities</span>
+      <h3>Sort the audit findings</h3>
+      <p>An audit of a small office finds: (a) the router still has the default admin account, (b) there's no written security policy, (c) the server closet is next to a leaky water heater, (d) the switches are managed with Telnet. Classify each.</p>
+      <details class="solution"><summary>Show answer</summary><div class="solbody">
+        <p>(a) <strong>Configuration</strong> vulnerability: unsecured default settings. (b) <strong>Security policy</strong> vulnerability. (c) <strong>Environmental</strong> physical threat (humidity and water). (d) Telnet's plaintext is a <strong>technological</strong> weakness of the protocol, and choosing to leave it on is a <strong>configuration</strong> vulnerability. The fix is SSH with <code>transport input ssh</code>.</p>
+      </div></details>
+    </div>
+
+    <div class="example">
+      <span class="tag">Malware</span>
+      <h3>Which kind?</h3>
+      <p>(1) A spreadsheet macro that infects other spreadsheets when someone opens them. (2) A "free PDF converter" that also installs a keylogger. (3) Code that scans the network for unpatched hosts and copies itself to each one overnight while nobody is logged in.</p>
+      <details class="solution"><summary>Show answer</summary><div class="solbody">
+        <p>(1) <strong>Virus</strong>: attached to a host file, and spreads when a user opens it. (2) <strong>Trojan horse</strong>: looks legitimate, installed willingly. (3) <strong>Worm</strong>: exploits a vulnerability and spreads with no user action. Patching (16.3) is the main defense against worms.</p>
+      </div></details>
+    </div>
+
+    <div class="example">
+      <span class="tag">AAA</span>
+      <h3>Which A?</h3>
+      <p>(1) A help-desk tech can run <code>show</code> commands on R1 but not <code>configure terminal</code>. (2) R1 asks for a username and password at login. (3) A log shows that user <code>admin</code> changed the G0/0/1 address at 14:02.</p>
+      <details class="solution"><summary>Show answer</summary><div class="solbody">
+        <p>(1) <strong>Authorization</strong>: what you may do. (2) <strong>Authentication</strong>: who you are. (3) <strong>Accounting</strong>: a record of what you did.</p>
+      </div></details>
+    </div>
+
+    <div class="example">
+      <span class="tag">SSH</span>
+      <h3>"SSH just doesn't work"</h3>
+      <p>A classmate types this on a new router, then tries to SSH in from PC-A and fails. Find three problems.</p>
+      <div class="terminal">
+      <div class="terminal-header"><span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span><span class="terminal-title">Router</span></div>
+      <div class="terminal-body"><span class="prompt">Router(config)#</span> <span class="cmd">hostname R1</span>
+<span class="prompt">R1(config)#</span> <span class="cmd">crypto key generate rsa general-keys modulus 1024</span>
+<span class="out">% Please define a domain-name first.</span>
+<span class="prompt">R1(config)#</span> <span class="cmd">line vty 0 4</span>
+<span class="prompt">R1(config-line)#</span> <span class="cmd">transport input telnet</span>
+<span class="prompt">R1(config-line)#</span> <span class="cmd">login local</span></div>
+    </div>
+      <details class="solution"><summary>Show answer</summary><div class="solbody">
+        <p><strong>1.</strong> No <code>ip domain-name</code>, so the RSA keys were never generated and the SSH server never started. The router said so. <strong>2.</strong> <code>transport input telnet</code> refuses SSH; it should be <code>transport input ssh</code>. <strong>3.</strong> <code>login local</code> with no <code>username … secret …</code> means there's no account to log in with. Also worth adding: <code>ip ssh version 2</code>.</p>
+      </div></details>
+    </div>
+
+    <div class="example">
+      <span class="tag">Ping symbols</span>
+      <h3>Read the dots</h3>
+      <p>From R1, four pings to four places give: (1) <code>!!!!!</code> (2) <code>.!!!!</code> (3) <code>.....</code> (4) <code>U.U.U</code>. What does each tell you?</p>
+      <details class="solution"><summary>Show answer</summary><div class="solbody">
+        <p>(1) Every echo got a reply: the path works both ways. (2) The first one timed out while ARP resolved; normal. (3) Every echo timed out: lost, blocked, or no route back. Check the target is up, its gateway is right, and whether a firewall drops ping. (4) A router on the path is sending back Destination Unreachable, so it has no route or is filtering. The <code>U</code>s tell you where to look.</p>
+      </div></details>
+    </div>
+
+    <div class="example">
+      <span class="tag">Traceroute</span>
+      <h3>Where did it stop?</h3>
+      <p>From PC-A, <code>tracert 192.168.20.10</code> shows hop 1 <code>192.168.10.1</code>, then <code>* * * Request timed out.</code> for every hop after that. PC-A can ping its gateway. Where is the problem?</p>
+      <details class="solution"><summary>Show answer</summary><div class="solbody">
+        <p>At or beyond the last hop that answered: R1. Nothing past R1 replies, so suspect the R1–R2 link (<code>show ip interface brief</code> on both routers, CDP to see if they're even neighbors), R1's routing to <code>192.168.20.0/24</code> (<code>show ip route</code>), or R2. PC-A's own settings are probably fine, because hop 1 worked.</p>
+      </div></details>
+    </div>
+
+    <div class="example">
+      <span class="tag">Scenarios</span>
+      <h3>Name the problem</h3>
+      <p>(a) A PC shows <code>169.254.3.9</code>, mask <code>255.255.0.0</code>. (b) A PC pings everything by IP, but browsers say "server not found". (c) A link is up/up but slow, and <code>show interfaces</code> shows late collisions. (d) A PC can ping every host on its LAN but nothing beyond.</p>
+      <details class="solution"><summary>Show answer</summary><div class="solbody">
+        <p>(a) DHCP failed: APIPA. (b) DNS. (c) Duplex mismatch; you're looking at the half-duplex side. (d) Default gateway: missing or wrong.</p>
+      </div></details>
+    </div>
+
+    <div class="example">
+      <span class="tag">Methodology</span>
+      <h3>Put the steps in order</h3>
+      <p>A tech: (a) writes up the fix in the ticket, (b) asks the user what changed and when, (c) replaces the patch cable, (d) suspects a bad patch cable, (e) has the user open three websites, (f) swaps in a known-good cable to see if the link comes up. Put them in the six-step order.</p>
+      <details class="solution"><summary>Show answer</summary><div class="solbody">
+        <p><strong>b</strong> identify the problem → <strong>d</strong> theory of probable cause → <strong>f</strong> test the theory → <strong>c</strong> plan and implement → <strong>e</strong> verify → <strong>a</strong> document.</p>
+      </div></details>
+    </div>
+  </section>
+
+  <!-- GLOSSARY -->
+  <section id="glossary">
+    <div class="section-head">
+      <p class="kicker">Reference</p>
+      <h2>Glossary &amp; index</h2>
+      <p>Every term from this session, searchable and indexed A–Z.</p>
+    </div>
+    <input type="text" id="glossarySearch" placeholder="Search terms…" aria-label="Search glossary">
+    <div class="alpha-nav" id="alphaNav"></div>
+    <dl class="glossary" id="glossaryList"></dl>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>IT131 · CCNA: Introduction to Networks · Session 11 reference.</p>
+  </div>
+</footer>
+
+<button id="backToTop" class="back-to-top" aria-label="Back to top" title="Back to top">↑</button>
+
+<script>
+  /* ---- name that attack ---- */
+  (function(){
+    const KINDS = ['Reconnaissance','Access','Denial of service','Malware'];
+    const CASES = [
+      {s:"Someone pings every address from 192.168.10.1 to 192.168.10.254 to see which ones answer.", k:0, why:"A ping sweep finds live hosts. Nobody has gotten in yet; it's information gathering."},
+      {s:"An attacker runs Nmap against 192.168.20.100 and finds TCP 22, 53, 80, and 443 open.", k:0, why:"A port scan shows which services are running. Still reconnaissance."},
+      {s:"An attacker looks up who owns a company's public address block and reads its DNS records.", k:0, why:"Internet queries (whois, DNS) are the first step of reconnaissance."},
+      {s:"A script tries thousands of common passwords against R1's login prompt.", k:1, why:"A password attack (brute force or dictionary) is an access attack: the goal is to get in."},
+      {s:"An attacker captures a Telnet session on the LAN and reads the admin password out of it.", k:1, why:"Sniffing a plaintext password is a password attack, which is an access attack. SSH would have encrypted it."},
+      {s:"An attacker compromises a web server in the DMZ, then uses the fact that the inside database server trusts it to log in there.", k:1, why:"Trust exploitation: using a trusted host to get into another system."},
+      {s:"An attacker quietly relays traffic between PC-A and its gateway, reading everything while both sides think they're talking directly.", k:1, why:"Man-in-the-middle is an access attack."},
+      {s:"Thousands of compromised home routers flood SRV1's web server with requests until real users can't load the page.", k:2, why:"Many sources, coordinated: a DDoS from a botnet. The goal is to deny service, not to get in."},
+      {s:"One host sends R2 a stream of maliciously formatted packets that make it crash and reload.", k:2, why:"Malformed packets that a device can't handle are a classic DoS. One source, so DoS rather than DDoS."},
+      {s:"A user opens an emailed spreadsheet whose macro infects every other spreadsheet on the shared drive.", k:3, why:"A virus: it attaches to a host file and spreads when a user opens it."},
+      {s:"Code scans the network for unpatched hosts and copies itself to each one, with nobody logged in.", k:3, why:"A worm spreads itself by exploiting vulnerabilities, with no user action."},
+      {s:"A free 'network speed booster' download also installs a backdoor.", k:3, why:"A Trojan horse: legitimate-looking software carrying something malicious."},
+    ];
+    const caseEl = document.getElementById('atkCase'), btns = document.getElementById('atkBtns'),
+          out = document.getElementById('atkOut'), scoreEl = document.getElementById('atkScore');
+    let order = [], pos = 0, right = 0, done = 0;
+    function shuffle(){ order = CASES.map((_, i) => i).sort(() => Math.random() - 0.5); pos = 0; }
+    function show(){
+      const c = CASES[order[pos]];
+      caseEl.innerHTML = `<span class="count">Case ${pos+1} of ${CASES.length}</span>${c.s}`;
+      out.innerHTML = '';
+      btns.innerHTML = '';
+      KINDS.forEach((k, ki) => {
+        const b = document.createElement('button');
+        b.className = 'choice'; b.textContent = k;
+        b.addEventListener('click', () => {
+          if (btns.dataset.done) return;
+          btns.dataset.done = '1'; done++;
+          if (ki === c.k) right++;
+          Array.from(btns.children).forEach((el, ei) => {
+            el.disabled = true;
+            if (ei === c.k) el.classList.add('correct');
+            else if (ei === ki) el.classList.add('incorrect');
+          });
+          out.innerHTML = `<div class="row"><b>${ki === c.k ? 'Right' : 'It\'s ' + KINDS[c.k]}</b><span>${c.why}</span></div>`;
+          scoreEl.textContent = `${right} / ${done} right`;
+        });
+        btns.appendChild(b);
+      });
+      delete btns.dataset.done;
+    }
+    document.getElementById('atkNext').addEventListener('click', () => {
+      pos++;
+      if (pos >= CASES.length){ shuffle(); right = 0; done = 0; scoreEl.textContent = 'New round'; }
+      show();
+    });
+    shuffle(); show();
+  })();
+
+  /* ---- symptom -> first check ---- */
+  (function(){
+    const SYM = [
+      {s:"PC gets a 169.254.x.x address", cause:"DHCP failed: the PC never got an answer to its DHCPDISCOVER, so Windows gave itself an APIPA address.", layer:"L3 (addressing), but check L1 first", check:"<code>ipconfig</code> on the PC; then is the cable in and the switch port up? Is the DHCP server reachable?", fix:"Fix the link or the DHCP server, then let the PC request again (or set a static address)."},
+      {s:"Can reach local hosts, but nothing off the LAN", cause:"Check the PC's default gateway first. Pinging the router's address works even when the gateway <em>setting</em> is wrong (scenario 3). If the gateway is right, suspect routing past the router, or the far host's gateway, so replies can't get back.", layer:"L3", check:"<code>ipconfig</code>: does Default Gateway match the router's LAN address? Then <code>tracert</code> to see where it stops, then <code>show ip route</code> on the router.", fix:"Set the gateway to the router interface on that LAN (192.168.10.1 for PC-A), or fix the route or the far side's gateway."},
+      {s:"Ping by IP works, ping by name fails", cause:"DNS: the PC has the wrong DNS server, or the server can't resolve that name.", layer:"L7", check:"<code>ipconfig /all</code> for the DNS server, then <code>nslookup</code> the name.", fix:"Point the PC at the right DNS server (SRV1, 192.168.20.100), or fix the record."},
+      {s:"Link is up but slow, with late collisions", cause:"Duplex mismatch: one side full duplex, the other half.", layer:"L2", check:"<code>show interfaces</code> on both ends; look for a CDP duplex-mismatch log message.", fix:"Set both ends to auto, or hard-set both to the same speed and duplex."},
+      {s:"Interface shows down/down", cause:"Physical: no cable, bad cable, wrong port, or the device at the other end is off.", layer:"L1", check:"<code>show ip interface brief</code>; look at the link lights; check the cable.", fix:"Reseat or replace the cable, or power on the far device."},
+      {s:"Router interface shows administratively down", cause:"Router interfaces are shut down by default, and nobody typed <code>no shutdown</code>.", layer:"L1/L2 (config)", check:"<code>show ip interface brief</code>: Status says administratively down.", fix:"<code>interface g0/0/1</code> then <code>no shutdown</code>."},
+      {s:"Can't SSH to the router, but can ping it", cause:"SSH isn't fully configured: missing domain name or RSA keys, no local user with <code>login local</code>, or <code>transport input</code> doesn't allow SSH.", layer:"L7 (device config)", check:"<code>show ip ssh</code>; <code>show running-config | section line vty</code>.", fix:"Finish the SSH steps in 16.4."},
+    ];
+    const sel = document.getElementById('symIn'), out = document.getElementById('symOut');
+    SYM.forEach((x, i) => { const o = document.createElement('option'); o.value = i; o.textContent = x.s; sel.appendChild(o); });
+    function render(){
+      const x = SYM[sel.value];
+      out.innerHTML = `<div class="row"><b>Likely cause</b><span>${x.cause}</span></div>` +
+        `<div class="row"><b>Layer</b><span>${x.layer}</span></div>` +
+        `<div class="row"><b>First check</b><span>${x.check}</span></div>` +
+        `<div class="row"><b>Fix</b><span>${x.fix}</span></div>`;
+    }
+    sel.addEventListener('change', render); render();
+  })();
+
+  const TERMS = [
+    {t:"AAA", d:"Authentication, authorization, and accounting. Who you are, what you may do, and a record of what you did. Usually provided by a central AAA server."},
+    {t:"Access attack", d:"An attack that gets unauthorized access to accounts, data, or devices: password attacks, trust exploitation, port redirection, man-in-the-middle."},
+    {t:"Accounting", d:"The AAA function that records what a user did and when, like a credit card statement."},
+    {t:"APIPA", d:"Automatic Private IP Addressing. Windows gives itself a 169.254.x.x address when it can't reach a DHCP server. A sign DHCP failed."},
+    {t:"Authentication", d:"The AAA function that proves who a user is, e.g. with a username and password."},
+    {t:"Authorization", d:"The AAA function that decides what an authenticated user is allowed to do."},
+    {t:"AutoSecure", d:"Cisco IOS feature (auto secure) that walks through locking down a device with one command and a set of prompts."},
+    {t:"Baseline", d:"A record of normal network performance (ping times, utilization, interface statistics) used to judge later whether something is wrong."},
+    {t:"Botnet", d:"A network of compromised 'zombie' hosts controlled by an attacker, often used for DDoS attacks."},
+    {t:"CDP", d:"Cisco Discovery Protocol. A Cisco Layer 2 protocol that tells directly connected Cisco devices about each other: name, platform, port, IP address, IOS version."},
+    {t:"Configuration vulnerability", d:"A weakness created by how a device is set up: default settings, weak passwords, unneeded services left on."},
+    {t:"DDoS", d:"Distributed denial of service. A DoS attack from many coordinated sources at once, usually a botnet."},
+    {t:"debug", d:"IOS command that shows events as they happen, like debug ip icmp. CPU-heavy: use it carefully and stop it with undebug all."},
+    {t:"Defense-in-depth", d:"Layering several security devices and services (VPN, firewall, IPS, ESA/WSA, AAA) so one failure doesn't expose everything."},
+    {t:"DoS", d:"Denial of service. An attack that stops legitimate users from reaching a service, by flooding it or sending packets it can't handle."},
+    {t:"Duplex mismatch", d:"One end of a link at full duplex and the other at half. Causes late collisions and poor performance. CDP logs a warning."},
+    {t:"Endpoint security", d:"Protecting hosts (laptops, desktops, servers, phones) with antivirus, host firewalls, and policy."},
+    {t:"Escalation", d:"Handing a problem to someone with more knowledge or access, as company policy directs, after documenting what you tried."},
+    {t:"Extended ping", d:"IOS ping run with no arguments, so you can set the repeat count, size, timeout, and source interface."},
+    {t:"Firewall", d:"A device or software that controls traffic between networks. ITN's methods: packet, application, and URL filtering, and stateful packet inspection."},
+    {t:"IPS", d:"Intrusion prevention system. Detects and stops known attacks in real time."},
+    {t:"login block-for", d:"IOS command that blocks login attempts for a set time after too many failures, e.g. login block-for 120 attempts 3 within 60."},
+    {t:"Malware", d:"Malicious software: viruses, worms, and Trojan horses."},
+    {t:"Man-in-the-middle (MITM)", d:"An access attack where the attacker sits between two parties, reading or changing their traffic."},
+    {t:"Physical threats", d:"Hardware, environmental, electrical, and maintenance threats to network equipment."},
+    {t:"Ping sweep", d:"Reconnaissance that pings a range of addresses to find live hosts."},
+    {t:"Port redirection", d:"An access attack that uses a compromised host to pass traffic to a target that would otherwise be blocked."},
+    {t:"Port scan", d:"Reconnaissance that probes a host's ports to find which services are running, e.g. with Nmap."},
+    {t:"Reconnaissance attack", d:"Gathering information about a target before attacking: internet queries, ping sweeps, port scans."},
+    {t:"security passwords min-length", d:"IOS command that rejects new passwords shorter than the given length."},
+    {t:"service password-encryption", d:"IOS command that hides plaintext passwords in the config as type 7. Weak and reversible; only stops casual viewing."},
+    {t:"SSH", d:"Secure Shell. Encrypted remote access on TCP 22. On IOS it needs a hostname, a domain name, RSA keys, a local user, and login local on the vty lines."},
+    {t:"Stateful packet inspection (SPI)", d:"Firewall method that only allows incoming packets that are legitimate replies to requests from inside."},
+    {t:"terminal monitor", d:"IOS command that shows log and debug messages in a remote (SSH or Telnet) session. They appear on the console by default."},
+    {t:"Threat", d:"A potential danger to a network: information theft, data loss and manipulation, identity theft, or disruption of service."},
+    {t:"traceroute / tracert", d:"Shows each router hop on the path to a destination. IOS and Linux use traceroute; Windows uses tracert."},
+    {t:"Trojan horse", d:"Malware disguised as legitimate software that the user installs willingly."},
+    {t:"Trust exploitation", d:"An access attack that uses a trusted host's privileges to get into another system."},
+    {t:"Virus", d:"Malware that attaches to a host program or file and needs a user action to spread."},
+    {t:"Vulnerability", d:"A weakness that a threat can exploit. ITN's types: technological, configuration, and security policy."},
+    {t:"Worm", d:"Malware that copies itself across the network by exploiting vulnerabilities, with no host program or user action."},
+  ];
+
+  const QUIZ = [
+    { q:"Which type of malware can spread across a network on its own, without attaching to a program or needing a user to run it?",
+      choices:["Virus","Trojan horse","Worm","Spyware"], correct:2,
+      explain:"A worm exploits vulnerabilities to copy itself from host to host. A virus needs a host file and a user action; a Trojan is installed willingly." },
+    { q:"An attacker uses Nmap to find which TCP ports are open on a server. What kind of attack is this?",
+      choices:["Reconnaissance","Access","Denial of service","Trust exploitation"], correct:0,
+      explain:"A port scan gathers information about which services are running. That's reconnaissance." },
+    { q:"Which describes a DDoS attack?",
+      choices:["One host sends malformed packets that crash a router","An attacker guesses passwords on a login prompt","An attacker reads traffic between two hosts","Many compromised hosts flood a target at the same time"], correct:3,
+      explain:"Distributed DoS comes from many coordinated sources, usually a botnet of zombies." },
+    { q:"Which AAA function decides what an authenticated user is allowed to do?",
+      choices:["Authorization","Authentication","Accounting","Auditing"], correct:0,
+      explain:"Authentication is who you are, authorization is what you may do, and accounting records what you did." },
+    { q:"Which firewall method allows incoming packets only if they are replies to requests from inside hosts?",
+      choices:["URL filtering","Stateful packet inspection","Application filtering","Packet filtering"], correct:1,
+      explain:"Stateful packet inspection tracks outgoing requests and only admits matching replies." },
+    { q:"Which command makes a Cisco router reject any new password shorter than 10 characters?",
+      choices:["service password-encryption","login block-for 10","security passwords min-length 10","enable secret 10"], correct:2,
+      explain:"security passwords min-length sets the minimum length for passwords configured after it." },
+    { q:"What does login block-for 120 attempts 3 within 60 do?",
+      choices:["Blocks logins for 120 seconds after 3 failed attempts within 60 seconds","Allows 3 logins every 120 seconds","Locks the console for 60 minutes after 120 failures","Disconnects idle sessions after 120 seconds"], correct:0,
+      explain:"After 3 failed login attempts within 60 seconds, the device refuses logins for 120 seconds." },
+    { q:"Which step is required to enable SSH on a Cisco router?",
+      choices:["no ip http server","service password-encryption","banner motd","crypto key generate rsa"], correct:3,
+      explain:"SSH needs an RSA key pair, which needs a hostname and domain name first." },
+    { q:"In IOS ping output, what does a period ( . ) mean?",
+      choices:["The echo reply was received","The request timed out waiting for a reply","The destination was unreachable","The packet was too large"], correct:1,
+      explain:"! is a reply, . is a timeout, and U means an unreachable message came back." },
+    { q:"A Windows PC shows the IPv4 address 169.254.17.42. What is the most likely cause?",
+      choices:["The PC could not reach a DHCP server","The default gateway is wrong","The DNS server is down","The PC has a duplex mismatch"], correct:0,
+      explain:"169.254.x.x is APIPA. Windows assigns it when DHCP gets no answer." },
+    { q:"A user can ping 192.168.20.100 but cannot ping www.it131.example. Where should you look first?",
+      choices:["The default gateway","The cable","DNS","The switch duplex setting"], correct:2,
+      explain:"The IP works, so the path is fine. Only the name lookup is failing, so check the DNS server setting and nslookup." },
+    { q:"Which is the first step of the troubleshooting process?",
+      choices:["Establish a theory of probable causes","Identify the problem","Test the theory","Document findings"], correct:1,
+      explain:"The six steps start with identifying the problem: gather symptoms and find out what changed." },
+    { q:"An administrator is connected to R1 by SSH and runs debug ip icmp, but sees no debug output. What is missing?",
+      choices:["undebug all","show debugging","terminal monitor","logging console"], correct:2,
+      explain:"Debug and log messages go to the console by default. terminal monitor sends them to your vty session." },
+    { q:"Which command shows the name, platform, and port of directly connected Cisco devices?",
+      choices:["show ip interface brief","show cdp neighbors","show version","show arp"], correct:1,
+      explain:"CDP discovers directly connected Cisco devices. show cdp neighbors lists their device ID, platform, and port." },
+  ];
+
+  const grid = document.getElementById('cardGrid');
+  TERMS.forEach((item, i) => {
+    const card = document.createElement('button');
+    card.className = 'flashcard';
+    card.setAttribute('aria-label', 'Flashcard: ' + item.t + '. Press to flip.');
+    card.dataset.i = i;
+    card.innerHTML = `
+      <div class="flashcard-inner">
+        <div class="flashcard-face front"><div class="lbl">Term</div><div class="term">${item.t}</div></div>
+        <div class="flashcard-face back"><div class="lbl">Definition</div><div class="def">${item.d}</div></div>
+      </div>`;
+    card.addEventListener('click', () => card.classList.toggle('flipped'));
+    card.addEventListener('dblclick', () => { card.classList.toggle('known'); updateProgress(); });
+    grid.appendChild(card);
+  });
+  function updateProgress(){
+    const known = document.querySelectorAll('.flashcard.known').length;
+    document.getElementById('cardProgress').textContent = `${known} / ${TERMS.length} marked known (double-click a card to mark it)`;
+  }
+  updateProgress();
+  document.getElementById('shuffleBtn').addEventListener('click', () => {
+    const cards = Array.from(grid.children);
+    cards.sort(() => Math.random() - 0.5);
+    cards.forEach(c => { c.classList.remove('flipped'); grid.appendChild(c); });
+  });
+  document.getElementById('resetKnownBtn').addEventListener('click', () => {
+    document.querySelectorAll('.flashcard.known').forEach(c => c.classList.remove('known'));
+    updateProgress();
+  });
+
+  const quizList = document.getElementById('quizList');
+  let score = 0, answered = 0;
+  function renderQuiz(){
+    quizList.innerHTML = ''; score = 0; answered = 0;
+    QUIZ.forEach((item, qi) => {
+      const box = document.createElement('div');
+      box.className = 'quiz-q';
+      box.innerHTML = `<p class="qtext"><span class="qnum">Q${qi+1}.</span>${item.q}</p><div class="choices"></div><p class="explain"></p>`;
+      const choicesEl = box.querySelector('.choices');
+      item.choices.forEach((c, ci) => {
+        const b = document.createElement('button');
+        b.className = 'choice'; b.textContent = c;
+        b.addEventListener('click', () => {
+          if (box.dataset.done) return;
+          box.dataset.done = '1'; answered++;
+          if (ci === item.correct) score++;
+          Array.from(choicesEl.children).forEach((el, ei) => {
+            el.disabled = true;
+            if (ei === item.correct) el.classList.add('correct');
+            else if (ei === ci) el.classList.add('incorrect');
+          });
+          box.querySelector('.explain').textContent = item.explain;
+          box.querySelector('.explain').classList.add('show');
+          updateScore();
+        });
+        choicesEl.appendChild(b);
+      });
+      quizList.appendChild(box);
+    });
+    updateScore();
+  }
+  function updateScore(){
+    document.getElementById('quizScore').textContent =
+      answered === 0 ? `${QUIZ.length} questions — click an answer to check yourself` : `Score: ${score} / ${answered} answered`;
+  }
+  renderQuiz();
+  document.getElementById('resetQuizBtn').addEventListener('click', renderQuiz);
+
+  const glossaryList = document.getElementById('glossaryList');
+  const alphaNav = document.getElementById('alphaNav');
+  const letters = [...new Set(TERMS.map(t => t.t[0].toUpperCase()))];
+  'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').forEach(L => {
+    const a = document.createElement('a');
+    a.textContent = L;
+    if (letters.includes(L)) { a.href = '#g-' + L; a.className = 'has'; }
+    else { a.href = 'javascript:void(0)'; }
+    alphaNav.appendChild(a);
+  });
+  let currentLetter = '';
+  TERMS.forEach(item => {
+    const L = item.t[0].toUpperCase();
+    if (L !== currentLetter) {
+      currentLetter = L;
+      const h = document.createElement('div');
+      h.className = 'glossary-letter'; h.id = 'g-' + L; h.textContent = L;
+      glossaryList.appendChild(h);
+    }
+    const wrap = document.createElement('div');
+    wrap.className = 'gitem';
+    wrap.innerHTML = `<dt>${item.t}</dt><dd>${item.d}</dd>`;
+    wrap.dataset.search = (item.t + ' ' + item.d).toLowerCase();
+    glossaryList.appendChild(wrap);
+  });
+  document.getElementById('glossarySearch').addEventListener('input', (e) => {
+    const q = e.target.value.toLowerCase().trim();
+    document.querySelectorAll('.gitem').forEach(el => {
+      el.classList.toggle('hidden', q && !el.dataset.search.includes(q));
+    });
+  });
+
+  const backToTop = document.getElementById('backToTop');
+  function toggleBackToTop(){ backToTop.classList.toggle('show', window.scrollY > 480); }
+  window.addEventListener('scroll', toggleBackToTop, {passive:true});
+  toggleBackToTop();
+  backToTop.addEventListener('click', () => window.scrollTo({top:0, behavior:'smooth'}));
+</script>
