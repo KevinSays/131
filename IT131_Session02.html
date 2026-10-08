@@ -67,6 +67,9 @@
   figure svg{ width:100%; height:auto; display:block; background:var(--surface); border:1px solid var(--border); }
   figcaption{ font-size:.85rem; color:var(--muted); margin-top:.6em; }
   .xref{ font-family:var(--mono); font-size:.85rem; color:var(--muted); margin-top:14px; }
+  .teach-note{ margin:18px 0; padding:12px 14px; border:1.5px dashed var(--accent); background:var(--accent-soft); font-family:var(--mono); font-size:.82rem; line-height:1.6; }
+  .teach-note .label{ color:var(--accent); font-weight:600; letter-spacing:.05em; text-transform:uppercase; font-size:.88rem; display:block; margin-bottom:.4em; }
+  .teach-note code{ overflow-wrap:anywhere; }
   .diagram-grid{ display:grid; gap:32px; grid-template-columns:1fr; }
   @media(min-width:860px){ .diagram-grid{ grid-template-columns:1fr 1fr; } }
 
@@ -387,8 +390,10 @@
 <span class="prompt">Floor1-SW(config)#</span> <span class="hl">ip ssh version 2</span>
 <span class="prompt">Floor1-SW(config)#</span> <span class="hl">username admin secret Cisco123</span>
 <span class="prompt">Floor1-SW(config)#</span> <span class="cmd">line vty 0 4</span>
-<span class="prompt">Floor1-SW(config-line)#</span> <span class="hl">login local</span> <span class="comment">! authenticate against the local username database</span>
-<span class="prompt">Floor1-SW(config-line)#</span> <span class="hl">transport input ssh</span> <span class="comment">! SSH only — refuse Telnet</span>
+<span class="comment">! login local = authenticate against the local username database</span>
+<span class="prompt">Floor1-SW(config-line)#</span> <span class="hl">login local</span>
+<span class="comment">! transport input ssh = SSH only, refuse Telnet</span>
+<span class="prompt">Floor1-SW(config-line)#</span> <span class="hl">transport input ssh</span>
 <span class="prompt">Floor1-SW(config-line)#</span> <span class="cmd">exit</span>
 <span class="prompt">Floor1-SW(config)#</span> <span class="hl">service password-encryption</span>
 <span class="comment">! Weakly obscures the line passwords set above (type 7 — trivially</span>
@@ -413,6 +418,13 @@
 <span class="prompt">Floor1-SW#</span> <span class="hl">copy running-config startup-config</span>
 <span class="comment">! Without this step, everything above is lost on reboot!</span>
       </div>
+    </div>
+
+    <div class="teach-note">
+      <span class="label">Connecting from a real PC</span>
+      Packet Tracer's PC has its own SSH client and connects fine: <code>ssh -l admin 192.168.1.10</code>. A real 2960 on IOS 15 only offers older SHA-1 methods, for both the key exchange and the <code>ssh-rsa</code> host key signature. Current OpenSSH clients turn both off by default: up-to-date Windows 11, macOS, and Linux. The first error is usually <code>no matching key exchange method found. Their offer: diffie-hellman-group-exchange-sha1,diffie-hellman-group14-sha1</code>. Once that's fixed, the next one is <code>no matching host key type found. Their offer: ssh-rsa</code>. A bigger RSA key doesn't fix either one. For a lab device, allow the old methods for this one connection:<br>
+      <code>ssh -o KexAlgorithms=+diffie-hellman-group14-sha1 -o HostKeyAlgorithms=+ssh-rsa admin@192.168.1.10</code><br>
+      If it then complains about ciphers, also add <code>-o Ciphers=+aes128-cbc</code>. Older Windows 10 machines may connect with plain <code>ssh admin@192.168.1.10</code>, and PuTTY also works. Keep the switch key at 1024 bits or more: current clients reject smaller RSA keys.
     </div>
 
     <div class="terminal" style="margin-top:20px;">
