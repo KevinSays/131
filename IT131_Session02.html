@@ -433,12 +433,18 @@
         <span class="terminal-title">Verification commands</span>
       </div>
       <div class="terminal-body">
-<span class="prompt">Floor1-SW#</span> <span class="cmd">show running-config</span>         <span class="comment">! full current config</span>
-<span class="prompt">Floor1-SW#</span> <span class="cmd">show ip interface brief</span>    <span class="comment">! IP addresses on all interfaces</span>
-<span class="prompt">Floor1-SW#</span> <span class="cmd">show mac address-table</span>     <span class="comment">! MAC-to-port mapping</span>
-<span class="prompt">Floor1-SW#</span> <span class="cmd">show interfaces</span>            <span class="comment">! detailed interface status</span>
-<span class="prompt">Floor1-SW#</span> <span class="cmd">show version</span>               <span class="comment">! IOS version, uptime, config register</span>
-<span class="prompt">Floor1-SW#</span> <span class="cmd">show ip ssh</span>                <span class="comment">! SSH status and version</span>
+<span class="comment">! full current config</span>
+<span class="prompt">Floor1-SW#</span> <span class="cmd">show running-config</span>
+<span class="comment">! IP addresses on all interfaces</span>
+<span class="prompt">Floor1-SW#</span> <span class="cmd">show ip interface brief</span>
+<span class="comment">! MAC-to-port mapping</span>
+<span class="prompt">Floor1-SW#</span> <span class="cmd">show mac address-table</span>
+<span class="comment">! detailed interface status</span>
+<span class="prompt">Floor1-SW#</span> <span class="cmd">show interfaces</span>
+<span class="comment">! IOS version, uptime, config register</span>
+<span class="prompt">Floor1-SW#</span> <span class="cmd">show version</span>
+<span class="comment">! SSH status and version</span>
+<span class="prompt">Floor1-SW#</span> <span class="cmd">show ip ssh</span>
       </div>
     </div>
 
@@ -451,10 +457,15 @@
 <span class="comment">! Everything above is switch-side. You need the host-side commands</span>
 <span class="comment">! just as often — this ladder is the single most useful troubleshooting</span>
 <span class="comment">! habit you can install this early.</span>
-<span class="prompt">C:\&gt;</span> <span class="cmd">ipconfig /all</span>        <span class="comment">! IP, mask, gateway, MAC, DNS — all in one place</span>
-<span class="prompt">C:\&gt;</span> <span class="cmd">ping 127.0.0.1</span>       <span class="comment">! loopback — tests the local TCP/IP stack, not the NIC</span>
-<span class="prompt">C:\&gt;</span> <span class="cmd">ping 192.168.1.10</span>    <span class="comment">! L3 reachability to the switch's own SVI</span>
-<span class="prompt">C:\&gt;</span> <span class="cmd">tracert 8.8.8.8</span>      <span class="comment">! hop-by-hop path (previews Module 13's TTL trick)</span>
+
+<span class="comment">! IP, mask, gateway, MAC, DNS — all in one place</span>
+<span class="prompt">C:\&gt;</span> <span class="cmd">ipconfig /all</span>
+<span class="comment">! loopback — tests the local TCP/IP stack, not the NIC</span>
+<span class="prompt">C:\&gt;</span> <span class="cmd">ping 127.0.0.1</span>
+<span class="comment">! L3 reachability to the switch's own SVI</span>
+<span class="prompt">C:\&gt;</span> <span class="cmd">ping 192.168.1.10</span>
+<span class="comment">! hop-by-hop path (previews Module 13's TTL trick)</span>
+<span class="prompt">C:\&gt;</span> <span class="cmd">tracert 8.8.8.8</span>
       </div>
     </div>
   </section>

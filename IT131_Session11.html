@@ -568,8 +568,8 @@ How many bits in the modulus [512]: </span><span class="hl">1024</span>
       </tbody>
     </table>
     <div class="teach-note preview">
-      <span class="label">Enrichment: SSH from a current Windows PC</span>
-      <code>show ip ssh</code> is from CCNA 2 (SRWE 1). One lab gotcha: with a 1024-bit key on this IOS version, the router only offers the old <code>ssh-rsa</code> host key type, and the SSH client built into current Windows refuses it with "no matching host key type found". Either use a newer IOS-XE release that offers rsa-sha2 host keys, or connect with <code>ssh -o HostKeyAlgorithms=+ssh-rsa admin@192.168.10.1</code>. On IOS-XE the running config shows the domain command as <code>ip domain name</code> (no hyphen); both forms are accepted.
+      <span class="label">Enrichment: SSH from a current PC</span>
+      <code>show ip ssh</code> is from CCNA 2 (SRWE 1). One lab gotcha: IOS-XE 16.9 only offers older SHA-1 methods, for both the key exchange and the <code>ssh-rsa</code> host key signature. Current OpenSSH clients (up-to-date Windows 11, macOS, Linux) turn those off by default, so you'll see <code>no matching key exchange method found</code> or <code>no matching host key type found. Their offer: ssh-rsa</code>. A bigger RSA key doesn't fix it. Either use a newer IOS-XE release that supports SHA-2 methods, or allow the old ones for this one connection:<br><code>ssh -o KexAlgorithms=+diffie-hellman-group14-sha1 -o HostKeyAlgorithms=+ssh-rsa admin@192.168.10.1</code><br>On IOS-XE the running config shows the domain command as <code>ip domain name</code> (no hyphen); both forms are accepted.
     </div>
 
     <h3 class="sub">Disable unused services</h3>
