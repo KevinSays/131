@@ -196,7 +196,24 @@
   ol.steps{ counter-reset:step; list-style:none; margin:0; padding:0; display:grid; gap:10px; }
   ol.steps li{ counter-increment:step; background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow); padding:12px 14px 12px 3.2em; position:relative; font-size:.92rem; }
   ol.steps li::before{ content:counter(step); position:absolute; left:12px; top:10px; font-family:var(--display); font-size:1.3rem; color:var(--red); }
+  /* Top bar: wrap onto extra rows instead of hiding links past the edge */
+  nav.index .wrap{ flex-wrap:wrap; overflow-x:visible; row-gap:2px; padding-top:6px; padding-bottom:6px; max-width:1240px; }
+  nav.index a{ padding:.35em .65em; }
+  @media (max-width:960px){ nav.index{ position:static; } }
+  @media (max-width:640px){ main code{ overflow-wrap:anywhere; } main{ overflow-wrap:break-word; } }
 </style>
+<script>
+  /* Keep anchor jumps clear of the sticky top bar, whatever its height */
+  (function(){
+    function pad(){
+      var n = document.querySelector('nav.index');
+      var sticky = n && getComputedStyle(n).position === 'sticky';
+      document.documentElement.style.scrollPaddingTop = sticky ? (n.offsetHeight + 8) + 'px' : '';
+    }
+    document.addEventListener('DOMContentLoaded', pad);
+    window.addEventListener('resize', pad);
+  })();
+</script>
 
 <header class="masthead">
   <div class="wrap">
@@ -917,7 +934,7 @@ GigabitEthernet0/0/1   192.168.10.1    YES manual up                    up</span
 Serial0/1/1            unassigned      YES NVRAM  administratively down down
 GigabitEthernet0       unassigned      YES NVRAM  administratively down down</span></div>
     </div>
-    <p style="font-size:.88rem;"><strong>up / up</strong> means Layer 1 (Status) and Layer 2 (Protocol) are both working. <strong>administratively down</strong> means the interface is shut down: either <code>no shutdown</code> was never entered, or someone entered <code>shutdown</code>. The serial ports only appear if the router has a serial card. <code>GigabitEthernet0</code> is a separate management port that doesn't route user traffic.</p>
+    <p style="font-size:.88rem;"><strong>up / up</strong> means Layer 1 (Status) and Layer 2 (Protocol) are both working. <strong>administratively down</strong> means the interface is shut down: either <code>no shutdown</code> was never entered, or someone entered <code>shutdown</code>. The serial ports only appear if the router has a serial card. In Packet Tracer, an ISR 4321 with no modules lists only G0/0/0, G0/0/1, and a <code>Vlan1</code> line, so don't worry if yours is shorter. <code>GigabitEthernet0</code> is a separate management port that doesn't route user traffic.</p>
     <div class="terminal">
       <div class="terminal-header"><span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span><span class="terminal-title">R1 · show version (trimmed)</span></div>
       <div class="terminal-body"><span class="prompt">R1#</span> <span class="hl">show version</span>

@@ -188,7 +188,24 @@
   .tool-in label.mini{ display:flex; flex-direction:column; gap:3px; font-family:var(--mono); font-size:.72rem; text-transform:uppercase; letter-spacing:.05em; color:var(--kraft-dark); }
   .tool-in input.txt.num{ flex:none; width:8.5em; }
   @media (max-width:640px){ table.spec{ display:block; overflow-x:auto; } .terminal-body{ white-space:pre; word-wrap:normal; } }
+  /* Top bar: wrap onto extra rows instead of hiding links past the edge */
+  nav.index .wrap{ flex-wrap:wrap; overflow-x:visible; row-gap:2px; padding-top:6px; padding-bottom:6px; max-width:1240px; }
+  nav.index a{ padding:.35em .65em; }
+  @media (max-width:960px){ nav.index{ position:static; } }
+  @media (max-width:640px){ main code{ overflow-wrap:anywhere; } main{ overflow-wrap:break-word; } }
 </style>
+<script>
+  /* Keep anchor jumps clear of the sticky top bar, whatever its height */
+  (function(){
+    function pad(){
+      var n = document.querySelector('nav.index');
+      var sticky = n && getComputedStyle(n).position === 'sticky';
+      document.documentElement.style.scrollPaddingTop = sticky ? (n.offsetHeight + 8) + 'px' : '';
+    }
+    document.addEventListener('DOMContentLoaded', pad);
+    window.addEventListener('resize', pad);
+  })();
+</script>
 
 <header class="masthead">
   <div class="wrap">

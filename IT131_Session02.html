@@ -85,6 +85,7 @@
   .terminal-body .prompt{ color:var(--terminal-prompt); font-weight:700; }
   .terminal-body .cmd{ color:var(--terminal-cmd); font-weight:600; }
   .terminal-body .comment{ color:var(--terminal-comment); font-style:italic; }
+  .terminal-body .out{ opacity:.7; }
   .terminal-body .hl{ color:#A23A2E; font-weight:600; }
 
   /* Model comparison table */
@@ -146,7 +147,26 @@
   .gitem.hidden{ display:none; }
   footer{ padding:32px 0 60px; }
   footer p{ color:var(--muted); font-size:.9rem; font-family:var(--mono); letter-spacing:.02em; }
+  /* Top bar: wrap onto extra rows instead of hiding links past the edge */
+  nav.index .wrap{ flex-wrap:wrap; overflow-x:visible; row-gap:2px; padding-top:6px; padding-bottom:6px; max-width:1240px; }
+  nav.index a{ padding:.35em .65em; }
+  @media (max-width:960px){ nav.index{ position:static; } }
+  /* Phones: wide tables scroll inside their own box instead of widening the page */
+  @media (max-width:640px){ main table{ display:block; overflow-x:auto; } main code{ overflow-wrap:anywhere; } main{ overflow-wrap:break-word; } }
+  .diagram-grid > *{ min-width:0; }
 </style>
+<script>
+  /* Keep anchor jumps clear of the sticky top bar, whatever its height */
+  (function(){
+    function pad(){
+      var n = document.querySelector('nav.index');
+      var sticky = n && getComputedStyle(n).position === 'sticky';
+      document.documentElement.style.scrollPaddingTop = sticky ? (n.offsetHeight + 8) + 'px' : '';
+    }
+    document.addEventListener('DOMContentLoaded', pad);
+    window.addEventListener('resize', pad);
+  })();
+</script>
 
 <header class="hero">
   <div class="wrap">
@@ -401,7 +421,7 @@
 
 <span class="comment">! === Step 7: Set a legal warning banner ===</span>
 <span class="prompt">Floor1-SW(config)#</span> <span class="cmd">banner motd #</span>
-<span class="cmd">Enter TEXT message.  End with the character '#'</span>
+<span class="out">Enter TEXT message.  End with the character '#'.</span>
 <span class="cmd">Authorized access only. All activity is monitored.#</span>
 
 <span class="comment">! === Step 8: Configure management IP on VLAN 1 ===</span>

@@ -194,7 +194,25 @@
     .case-file, .quiz-q, .example, .flashcard-face, .book{ box-shadow:none; }
     .back-to-top{ display:none; }
   }
+  /* Top bar: wrap onto extra rows instead of hiding links past the edge */
+  nav.index .wrap{ flex-wrap:wrap; overflow-x:visible; row-gap:2px; padding-top:6px; padding-bottom:6px; max-width:1240px; }
+  nav.index a{ padding:.35em .65em; }
+  @media (max-width:960px){ nav.index{ position:static; } }
+  /* Phones: wide tables scroll inside their own box instead of widening the page */
+  @media (max-width:640px){ main table{ display:block; overflow-x:auto; } main code{ overflow-wrap:anywhere; } main{ overflow-wrap:break-word; } }
 </style>
+<script>
+  /* Keep anchor jumps clear of the sticky top bar, whatever its height */
+  (function(){
+    function pad(){
+      var n = document.querySelector('nav.index');
+      var sticky = n && getComputedStyle(n).position === 'sticky';
+      document.documentElement.style.scrollPaddingTop = sticky ? (n.offsetHeight + 8) + 'px' : '';
+    }
+    document.addEventListener('DOMContentLoaded', pad);
+    window.addEventListener('resize', pad);
+  })();
+</script>
 
 <header class="masthead">
   <div class="wrap">
