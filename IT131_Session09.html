@@ -185,22 +185,69 @@
   .tool-out code{ overflow-wrap:anywhere; }
   .tool-out .bad{ color:var(--red); font-family:var(--mono); font-size:.84rem; margin:0; }
   @media (max-width:560px){ .tool-out .row{ grid-template-columns:1fr; gap:2px; } }
-  /* Top bar: wrap onto extra rows instead of hiding links past the edge */
-  nav.index .wrap{ flex-wrap:wrap; overflow-x:visible; row-gap:2px; padding-top:6px; padding-bottom:6px; max-width:1240px; }
+  /* Top bar: Contents + two pinned links + a Sections menu (the script below builds the menu;
+     without JavaScript the links simply wrap onto extra rows) */
+  nav.index .wrap{ flex-wrap:wrap; overflow-x:visible; row-gap:2px; padding-top:6px; padding-bottom:6px; position:relative; }
   nav.index a{ padding:.35em .65em; }
-  @media (max-width:960px){ nav.index{ position:static; } }
+  @media (max-width:960px){ nav.index:not(.has-menu){ position:static; } }
+  nav.index.has-menu .wrap{ flex-wrap:nowrap; align-items:center; }
+  nav.index .menu-btn{ margin-left:auto; font-family:var(--mono); font-weight:600; letter-spacing:.03em; text-transform:uppercase;
+    background:var(--paper, var(--surface)); color:var(--ink, var(--text)); border:1.5px solid var(--ink, var(--border)); padding:.35em .75em;
+    cursor:pointer; white-space:nowrap; box-shadow:3px 3px 0 rgba(31,36,33,.14); }
+  nav.index .menu-btn[aria-expanded="true"]{ background:var(--blue-soft, var(--accent-soft)); border-color:var(--blue, var(--accent)); color:var(--blue, var(--accent)); }
+  nav.index .menu-btn:focus-visible{ outline:2px solid var(--blue, var(--accent)); outline-offset:2px; }
+  nav.index .nav-menu{ position:absolute; top:calc(100% + 4px); right:20px; z-index:30; width:min(620px, calc(100vw - 24px));
+    max-height:70vh; overflow-y:auto; background:var(--paper, var(--surface)); border:1.5px solid var(--ink, var(--border));
+    box-shadow:5px 5px 0 rgba(31,36,33,.16); padding:10px; display:grid; grid-template-columns:repeat(auto-fill,minmax(12em,1fr)); gap:2px; }
+  nav.index .nav-menu[hidden]{ display:none; }
+  nav.index .nav-menu a{ white-space:normal; opacity:1; border-right:none; margin-right:0; }
+  @media (max-width:560px){
+    nav.index a, nav.index .menu-btn{ font-size:.72rem !important; }
+    nav.index .wrap{ padding-left:12px; padding-right:12px; }
+    nav.index a.toc-link{ margin-right:4px; padding-right:10px; }
+    nav.index.has-menu .wrap{ flex-wrap:wrap; row-gap:4px; }
+    nav.index .nav-menu{ left:12px; right:12px; width:auto; }
+  }
   /* Phones: wide tables scroll inside their own box instead of widening the page */
   @media (max-width:640px){ main table{ display:block; overflow-x:auto; } main code{ overflow-wrap:anywhere; } main{ overflow-wrap:break-word; } }
 </style>
 <script>
-  /* Keep anchor jumps clear of the sticky top bar, whatever its height */
+  /* Top bar: keep Contents and the pinned links (data-pin on the nav) in the bar, put the rest in a
+     Sections menu, and keep anchor jumps clear of the sticky bar */
   (function(){
     function pad(){
       var n = document.querySelector('nav.index');
       var sticky = n && getComputedStyle(n).position === 'sticky';
       document.documentElement.style.scrollPaddingTop = sticky ? (n.offsetHeight + 8) + 'px' : '';
     }
-    document.addEventListener('DOMContentLoaded', pad);
+    function build(){
+      var nav = document.querySelector('nav.index');
+      if (!nav) return;
+      var wrap = nav.querySelector('.wrap') || nav;
+      var links = [].slice.call(wrap.querySelectorAll(':scope > a'));
+      var rest = links.filter(function(a){ return !a.classList.contains('toc-link'); });
+      var want = (nav.getAttribute('data-pin') || '').split(/\s+/).filter(Boolean);
+      var pinned = want.map(function(h){ return rest.filter(function(a){ return a.getAttribute('href') === h; })[0]; }).filter(Boolean);
+      if (!pinned.length) pinned = rest.slice(0, 2);
+      var more = rest.filter(function(a){ return pinned.indexOf(a) < 0; });
+      if (!more.length) return;
+      var btn = document.createElement('button');
+      btn.type = 'button'; btn.className = 'menu-btn'; btn.textContent = '\u2630 Sections';
+      btn.setAttribute('aria-expanded', 'false'); btn.setAttribute('aria-controls', 'navMenu');
+      var panel = document.createElement('div');
+      panel.id = 'navMenu'; panel.className = 'nav-menu'; panel.hidden = true;
+      more.forEach(function(a){ panel.appendChild(a); });
+      pinned.forEach(function(a){ wrap.appendChild(a); });
+      wrap.appendChild(btn); wrap.appendChild(panel);
+      nav.classList.add('has-menu');
+      btn.style.fontSize = getComputedStyle(pinned[0] || more[0]).fontSize;
+      function set(open){ panel.hidden = !open; btn.setAttribute('aria-expanded', open ? 'true' : 'false'); }
+      btn.addEventListener('click', function(e){ e.stopPropagation(); set(panel.hidden); });
+      panel.addEventListener('click', function(e){ if (e.target.closest('a')) set(false); });
+      document.addEventListener('click', function(e){ if (!panel.hidden && !nav.contains(e.target)) set(false); });
+      document.addEventListener('keydown', function(e){ if (e.key === 'Escape' && !panel.hidden){ set(false); btn.focus(); } });
+    }
+    document.addEventListener('DOMContentLoaded', function(){ build(); pad(); });
     window.addEventListener('resize', pad);
   })();
 </script>
@@ -218,7 +265,7 @@
   </div>
 </header>
 
-<nav class="index" aria-label="Section index">
+<nav class="index" data-pin="#flashcards #quiz" aria-label="Section index">
   <div class="wrap">
     <a href="index.html" class="toc-link">↩ Contents</a>
     <a href="#overview">Overview</a>
