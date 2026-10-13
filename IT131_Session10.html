@@ -338,7 +338,7 @@
         <tr><td style="font-weight:600;">Conversation multiplexing</td><td>Segments from many conversations are interleaved on the same link, so one big download doesn't block everything else.</td></tr>
       </tbody>
     </table>
-    <p>The two transport protocols are <strong>TCP</strong> and <strong>UDP</strong>. Neither is "better": ITN's phrase is <em>the right protocol for the right application</em>.</p>
+    <p>The two transport protocols are <strong>TCP</strong> and <strong>UDP</strong>. Neither is "better": Cisco NetAcad's phrase is <em>the right protocol for the right application</em>.</p>
   </section>
 
   <!-- TCP VS UDP -->
@@ -400,7 +400,7 @@
     </table>
     <div class="teach-note preview">
       <span class="label">Footnote: modern TCP has 8 flags</span>
-      ITN draws 6 reserved bits and 6 flags, which is the original 1981 layout. Current TCP uses 4 reserved bits and adds two congestion flags (CWR, ECE), and Wireshark will show them. For the exam, answer <strong>6 flags</strong>.
+      NetAcad draws 6 reserved bits and 6 flags, which is the original 1981 layout. Current TCP uses 4 reserved bits and adds two congestion flags (CWR, ECE), and Wireshark will show them. For the exam, answer <strong>6 flags</strong>.
     </div>
 
     <h3 class="sub">The UDP header (4 fields, 8 bytes)</h3>
@@ -452,7 +452,7 @@
         <tr><td class="mono">443</td><td>HTTPS</td><td>TCP</td></tr>
       </tbody>
     </table>
-    <p style="font-size:.88rem;">DNS uses UDP for ordinary lookups and TCP for zone transfers between servers and for very large responses. ITN just says "both". (The when-each detail is enrichment.)</p>
+    <p style="font-size:.88rem;">DNS uses UDP for ordinary lookups and TCP for zone transfers between servers and for very large responses. NetAcad just says "both". (The when-each detail is enrichment.)</p>
 
     <div class="tool">
       <p class="tool-title">Try it: look up a port or a protocol</p>
@@ -517,8 +517,8 @@ Active Connections
       </tbody>
     </table>
     <div class="teach-note">
-      <span class="label">ITN's netstat screenshot is old</span>
-      The course's netstat example shows source ports like <code>3126</code>. That's the pre-Vista range (1025–5000). Current Windows uses 49152–65535, which is what you'll see in lab. Plain <code>netstat</code> and <code>-n</code> are in ITN. The <code>-a</code> flag and the state names other than ESTABLISHED are light enrichment.
+      <span class="label">NetAcad's netstat screenshot is old</span>
+      The course's netstat example shows source ports like <code>3126</code>. That's the pre-Vista range (1025–5000). Current Windows uses 49152–65535, which is what you'll see in lab. Plain <code>netstat</code> and <code>-n</code> are in NetAcad. The <code>-a</code> flag and the state names other than ESTABLISHED are light enrichment.
     </div>
   </section>
 
@@ -553,7 +553,7 @@ Active Connections
         <tr><td class="mono">3</td><td>PC-A → SRV1</td><td class="mono">ACK</td><td class="mono">1</td><td class="mono">1</td></tr>
       </tbody>
     </table>
-    <p>ITN gives the handshake three jobs:</p>
+    <p>NetAcad gives the handshake three jobs:</p>
     <ol class="obj-list" style="list-style:none;">
       <li><strong>1.</strong> It establishes that the destination device is present on the network.</li>
       <li><strong>2.</strong> It verifies that the destination has an active service accepting requests on that port.</li>
@@ -638,13 +638,13 @@ Active Connections
     <p><strong>Sliding window:</strong> the receiver doesn't wait for the whole window before ACKing. It keeps sending ACKs with an updated window size, so the window "slides" forward and the sender rarely has to stop. If the receiver's buffer fills, it advertises a smaller window and the sender slows down. That's flow control.</p>
     <div class="teach-note">
       <span class="label">"Agreed" vs. "announced"</span>
-      ITN's wording suggests the window size is agreed during the handshake. Strictly, each side <em>announces</em> its own window and MSS; nobody negotiates. Either wording gets the same exam answer.
+      NetAcad's wording suggests the window size is agreed during the handshake. Strictly, each side <em>announces</em> its own window and MSS; nobody negotiates. Either wording gets the same exam answer.
     </div>
 
     <h3 class="sub">Congestion avoidance</h3>
-    <p>When the network is congested, routers drop packets, and retransmissions make the congestion worse. When TCP detects loss, the <strong>source</strong> reduces how much unacknowledged data it sends. ITN stresses it's the sender doing this, not the receiver's advertised window. The actual algorithms are beyond this course.</p>
+    <p>When the network is congested, routers drop packets, and retransmissions make the congestion worse. When TCP detects loss, the <strong>source</strong> reduces how much unacknowledged data it sends. NetAcad stresses it's the sender doing this, not the receiver's advertised window. The actual algorithms are beyond this course.</p>
     <div class="teach-note preview">
-      <span class="label">Preview, not on the ITN exam</span>
+      <span class="label">Preview, not on the NetAcad exam</span>
       The real mechanisms are slow start, the congestion window (cwnd), and fast retransmit. You'll meet them in later courses.
     </div>
   </section>
@@ -710,7 +710,7 @@ Active Connections
       <li><strong>Download</strong> = server → client. <strong>Upload</strong> = client → server.</li>
       <li>A <strong>P2P network</strong> has no dedicated server. A <strong>P2P application</strong> lets a device be client and server in the same conversation.</li>
       <li>Some P2P apps are <strong>hybrid</strong>: a central index helps peers find each other, then files move directly peer to peer.</li>
-      <li>Common P2P apps ITN names: <strong>BitTorrent, Direct Connect, eDonkey, Freenet</strong>. Some are based on <strong>Gnutella</strong>, where users share whole files. BitTorrent instead grabs <em>pieces</em> from many peers at once.</li>
+      <li>Common P2P apps NetAcad names: <strong>BitTorrent, Direct Connect, eDonkey, Freenet</strong>. Some are based on <strong>Gnutella</strong>, where users share whole files. BitTorrent instead grabs <em>pieces</em> from many peers at once.</li>
     </ul>
   </section>
 
@@ -749,7 +749,7 @@ protocol  server name     requested file
     </table>
     <div class="teach-note">
       <span class="label">Memory hook</span>
-      <strong>S</strong>MTP <strong>S</strong>ends. <strong>P</strong>OP <strong>P</strong>ulls it off the server. <strong>IMAP</strong> keeps it <strong>I</strong>n the <strong>M</strong>ailbox. (Real POP3 clients often have a "leave a copy on server" option, but ITN's answer is that POP deletes.)
+      <strong>S</strong>MTP <strong>S</strong>ends. <strong>P</strong>OP <strong>P</strong>ulls it off the server. <strong>IMAP</strong> keeps it <strong>I</strong>n the <strong>M</strong>ailbox. (Real POP3 clients often have a "leave a copy on server" option, but NetAcad's answer is that POP deletes.)
     </div>
   </section>
 
@@ -869,7 +869,7 @@ Windows IP Configuration
     </table>
     <div class="teach-note preview">
       <span class="label">Enrichment</span>
-      Port 20 for data is only true in FTP's <em>active</em> mode. Most clients use passive mode, where the server picks a random high port for data, so don't be surprised if your capture shows no port 20. SMB uses TCP 445, which ITN doesn't list.
+      Port 20 for data is only true in FTP's <em>active</em> mode. Most clients use passive mode, where the server picks a random high port for data, so don't be surprised if your capture shows no port 20. SMB uses TCP 445, which NetAcad doesn't list.
     </div>
   </section>
 
@@ -889,7 +889,7 @@ Windows IP Configuration
       <li>Saying the receiver's window handles congestion. Congestion avoidance is the <strong>sender</strong> cutting back.</li>
       <li>Thinking clients use well-known ports. Clients use a dynamic source port, 49152+.</li>
       <li>Mixing up a socket (one IP:port) and a socket pair (both ends).</li>
-      <li>Saying DNS is UDP only. ITN says UDP <strong>and</strong> TCP 53.</li>
+      <li>Saying DNS is UDP only. NetAcad says UDP <strong>and</strong> TCP 53.</li>
       <li>Saying DHCP uses TCP, or swapping 67 (server) and 68 (client).</li>
       <li>Swapping FTP's ports: 21 is control, 20 is data.</li>
       <li>Swapping POP3 and IMAP, or thinking SMTP retrieves mail. It only sends.</li>
@@ -1022,7 +1022,7 @@ Windows IP Configuration
       <h3>Phone and laptop</h3>
       <p>Which protocol carries a message from the sender's client to its mail server? A user reads mail on a phone and a laptop; which retrieval protocol leaves the laptop with the only copy, and which keeps both in sync?</p>
       <details class="solution"><summary>Show answer</summary><div class="solbody">
-        <p>Sending: <strong>SMTP</strong>, TCP 25. Only copy on the laptop: <strong>POP3</strong> (TCP 110), which downloads and deletes in ITN's model. In sync: <strong>IMAP</strong> (TCP 143), which keeps mail on the server.</p>
+        <p>Sending: <strong>SMTP</strong>, TCP 25. Only copy on the laptop: <strong>POP3</strong> (TCP 110), which downloads and deletes in NetAcad's model. In sync: <strong>IMAP</strong> (TCP 143), which keeps mail on the server.</p>
       </div></details>
     </div>
   </section>
@@ -1081,7 +1081,7 @@ Windows IP Configuration
     function render(){
       const q = inp.value.trim().toLowerCase();
       if (!q){ out.innerHTML = '<p class="bad">Type a port number (like 53) or a protocol name (like imap).</p>'; return; }
-      const row = r => `<div class="row"><b>${r.p} · ${r.t}</b><span>${r.n}${r.x ? ' <em style="opacity:.7">(not in ITN\'s table)</em>' : ''}</span></div>`;
+      const row = r => `<div class="row"><b>${r.p} · ${r.t}</b><span>${r.n}${r.x ? ' <em style="opacity:.7">(not in NetAcad\'s table)</em>' : ''}</span></div>`;
       if (/^\d+$/.test(q)){
         const n = Number(q);
         if (n > 65535){ out.innerHTML = '<p class="bad">Port numbers are 16 bits: 0–65535.</p>'; return; }
@@ -1142,7 +1142,7 @@ Windows IP Configuration
     {t:"Congestion avoidance", d:"When TCP detects loss from congestion, the sender reduces how much unacknowledged data it sends."},
     {t:"Connection-oriented", d:"A session is set up before data is sent, as TCP does with the three-way handshake."},
     {t:"Connectionless", d:"Data is sent with no session setup, as UDP does."},
-    {t:"Control bits (flags)", d:"Six one-bit TCP header fields in ITN that manage the connection: URG, ACK, PSH, RST, SYN, FIN."},
+    {t:"Control bits (flags)", d:"Six one-bit TCP header fields in NetAcad that manage the connection: URG, ACK, PSH, RST, SYN, FIN."},
     {t:"Datagram", d:"The name for a UDP unit of data."},
     {t:"DHCP", d:"Dynamic Host Configuration Protocol. Leases an IP address, mask, gateway, and DNS server to hosts automatically, over UDP 67 (server) and 68 (client), using Discover, Offer, Request, Ack."},
     {t:"DNS", d:"Domain Name System. A hierarchical, distributed system that resolves names to IP addresses, on UDP and TCP port 53. Record types: A, AAAA, NS, MX."},
@@ -1159,7 +1159,7 @@ Windows IP Configuration
     {t:"Non-authoritative answer", d:"nslookup's note that the answer came from a DNS server that doesn't own that zone, often from its cache. Not an error."},
     {t:"nslookup", d:"Command-line tool to query a DNS server directly and see which DNS server you're using."},
     {t:"Peer-to-peer (P2P)", d:"Hosts share resources with no dedicated server. Each device can act as client and server. Apps: BitTorrent, Direct Connect, eDonkey, Freenet."},
-    {t:"POP3", d:"Post Office Protocol v3. Downloads email to the client and, in ITN's model, deletes it from the server (TCP 110)."},
+    {t:"POP3", d:"Post Office Protocol v3. Downloads email to the client and, in NetAcad's model, deletes it from the server (TCP 110)."},
     {t:"Port number", d:"16-bit transport-layer value identifying the application sending or receiving the data."},
     {t:"Presentation layer", d:"OSI Layer 6. Formats, compresses, and encrypts data. Standards include JPEG, GIF, PNG, and MPEG."},
     {t:"Registered ports", d:"1024–49151. Assigned by IANA to specific applications on request."},
@@ -1213,9 +1213,9 @@ Windows IP Configuration
     { q:"What uniquely identifies the conversation between 192.168.10.10:49712 and 192.168.20.100:443?",
       choices:["The destination port alone","The source MAC address","The source socket alone","The socket pair"], correct:3,
       explain:"The source IP and port plus the destination IP and port form a socket pair, which is unique to one conversation." },
-    { q:"According to ITN, which HTTP method uploads data such as form data to a web server?",
+    { q:"According to NetAcad, which HTTP method uploads data such as form data to a web server?",
       choices:["GET","PUT","POST","DELETE"], correct:2,
-      explain:"ITN: GET requests data, POST uploads data like form data, and PUT uploads resources like an image." },
+      explain:"NetAcad: GET requests data, POST uploads data like form data, and PUT uploads resources like an image." },
   ];
 
   const grid = document.getElementById('cardGrid');

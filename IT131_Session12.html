@@ -354,7 +354,7 @@
     <div class="section-head">
       <p class="kicker">Practice lab</p>
       <h2>The lab: finish the HQ network</h2>
-      <p>This lab works like ITN's Packet Tracer Skills Assessment (PTSA): you get a topology, an addressing table, and a list of requirements, and you configure the devices yourself. Every task is something a grader can check.</p>
+      <p>This lab works like Cisco NetAcad's Packet Tracer Skills Assessment (PTSA): you get a topology, an addressing table, and a list of requirements, and you configure the devices yourself. Every task is something a grader can check.</p>
     </div>
     <div class="terminal">
       <div class="terminal-header"><span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span><span class="terminal-title">Topology · you build the left side (all addresses 192.168.x.x unless shown)</span></div>
@@ -376,7 +376,7 @@
     </ul>
     <div class="teach-note preview">
       <span class="label">One provided step: static routes (CCNA 2 preview)</span>
-      R1 needs a route to LAN-B. Reading routing tables is ITN 8, but configuring routes to remote networks is CCNA 2 (SRWE 15). Step 4.5 gives you the two route commands to type exactly. You're not expected to design them; just know that an <code>S</code> in the routing table means a static route. The real ITN skills exam avoids this by using one router; this lab uses two so that you can test DNS, the web, and SSH against a real server.
+      R1 needs a route to LAN-B. Reading routing tables is Module 8, but configuring routes to remote networks is CCNA 2 (SRWE 15). Step 4.5 gives you the two route commands to type exactly. You're not expected to design them; just know that an <code>S</code> in the routing table means a static route. The real NetAcad skills exam avoids this by using one router; this lab uses two so that you can test DNS, the web, and SSH against a real server.
     </div>
     <details class="solution">
       <summary>For instructors: building the starting .pkt</summary>
@@ -431,7 +431,7 @@
     </table>
     <div class="teach-note">
       <span class="label">Why the switches have no IPv6</span>
-      A 2960 needs an SDM template change (<code>sdm prefer dual-ipv4-and-ipv6 default</code>) and a reload before its management interface accepts IPv6. ITN's IPv6 lab (12.6.6) shows this, but the skills exam doesn't ask for it, so this lab skips it. The switch's IPv4 address on VLAN 1 is only for managing the switch; the switch itself forwards frames at Layer 2 without it.
+      A 2960 needs an SDM template change (<code>sdm prefer dual-ipv4-and-ipv6 default</code>) and a reload before its management interface accepts IPv6. NetAcad's IPv6 lab (12.6.6) shows this, but the skills exam doesn't ask for it, so this lab skips it. The switch's IPv4 address on VLAN 1 is only for managing the switch; the switch itself forwards frames at Layer 2 without it.
     </div>
     <h3 class="sub">The passwords for this lab</h3>
     <table class="spec">
@@ -761,7 +761,7 @@ Building configuration...
       <li>A straight-through cable between R1 and R2, or a console cable where an Ethernet cable belongs.</li>
       <li>A wrong or missing gateway on PC-A, or the wrong mask. (Session 11's <code>.254</code> scenario is exactly this.)</li>
       <li>Adding IPv6 addresses without <code>ipv6 unicast-routing</code>. The interfaces get addresses, but R1 won't route IPv6.</li>
-      <li>Setting PC-A's IPv6 gateway to R1's global address instead of <code>FE80::1</code>, or leaving it blank. ITN and the skills exam use the link-local address.</li>
+      <li>Setting PC-A's IPv6 gateway to R1's global address instead of <code>FE80::1</code>, or leaving it blank. NetAcad and the skills exam use the link-local address.</li>
       <li>SSH keys that won't generate: the hostname is still <code>Router</code>/<code>Switch</code>, or the domain name is missing. A typo like <code>it131.exmaple</code> still generates keys, but loses the step.</li>
       <li>Typing <code>security passwords min-length 8</code> <em>after</em> the passwords. It doesn't re-check existing passwords.</li>
       <li>Using <code>login</code> instead of <code>login local</code> on the vty lines, or forgetting <code>transport input ssh</code>, which leaves Telnet open.</li>
@@ -868,18 +868,18 @@ Building configuration...
   }
 
   const TASKS = [
-    {title:'Part 1 · Build and cable', scope:'ITN 2 (console), ITN 4 (cabling)', items:[
+    {title:'Part 1 · Build and cable', scope:'Module 2 (console), Module 4 (cabling)', items:[
       '1.1 Add PC-A, a 2960 named S1, and an ISR4321 named R1. Set the display names exactly as shown.',
       '1.2 Cable PC-A Fa0 → S1 F0/1 and S1 G0/1 → R1 G0/0/1 with <strong>copper straight-through</strong> (unlike devices).',
-      '1.3 Cable R1 G0/0/0 → R2 G0/0/0 with <strong>copper crossover</strong> (two routers are like devices). Real gear with auto-MDIX may link with either; use the ITN rule here.',
+      '1.3 Cable R1 G0/0/0 → R2 G0/0/0 with <strong>copper crossover</strong> (two routers are like devices). Real gear with auto-MDIX may link with either; use the NetAcad rule here.',
       '1.4 Cable PC-A RS-232 → R1 Console with a <strong>console</strong> cable. For S1, move the cable or use S1\'s CLI tab.',
     ]},
-    {title:'Part 2 · Subnetting and addressing', scope:'ITN 11 (VLSM), ITN 12 (IPv6)', items:[
+    {title:'Part 2 · Subnetting and addressing', scope:'Module 11 (VLSM), Module 12 (IPv6)', items:[
       '2.1 Complete the four LAN-C rows in the <a href="#worksheet">subnet worksheet</a>: network, prefix/mask, first, last, broadcast.',
       '2.2 Choose LAN-C\'s IPv6 /64 and its router address.',
       '2.3 Fill the three blanks in the addressing table: R1 G0/0/0\'s mask, the usable hosts on that /30, and PC-A\'s IPv6 gateway.',
     ]},
-    {title:'Part 3 · Basic configuration on R1 and S1', scope:'ITN 2, ITN 16', items:[
+    {title:'Part 3 · Basic configuration on R1 and S1', scope:'Modules 2, 16', items:[
       '3.1 Hostnames <code>R1</code> and <code>S1</code>.',
       '3.2 <code>no ip domain-lookup</code> on both.',
       '3.3 R1: <code>security passwords min-length 8</code>, typed <strong>before</strong> any password. (Optional on S1.)',
@@ -889,26 +889,26 @@ Building configuration...
       '3.7 MOTD banner on both, exactly: <code>Authorized access only. All activity is monitored.</code>',
       '3.8 R1: <code>login block-for 120 attempts 3 within 60</code>. (Optional on S1.)',
     ]},
-    {title:'Part 4 · Interfaces', scope:'ITN 10, ITN 12. Step 4.5 is a CCNA 2 preview (SRWE 15).', items:[
+    {title:'Part 4 · Interfaces', scope:'Modules 10, 12. Step 4.5 is a CCNA 2 preview (SRWE 15).', items:[
       '4.1 R1: <code>ipv6 unicast-routing</code>.',
       '4.2 R1 G0/0/1: description, IPv4, IPv6 GUA, <code>fe80::1 link-local</code>, <code>no shutdown</code>.',
       '4.3 R1 G0/0/0: the same.',
       '4.4 S1: VLAN 1 address, <code>no shutdown</code>, <code>ip default-gateway 192.168.10.1</code>, and descriptions on F0/1 and G0/1.',
       '4.5 <strong>Provided:</strong> type these exactly: <code>ip route 192.168.20.0 255.255.255.0 10.0.0.2</code> and <code>ipv6 route 2001:db8:acad:2::/64 2001:db8:acad:ff01::2</code>.',
     ]},
-    {title:'Part 5 · SSH on R1 and S1', scope:'ITN 16', items:[
+    {title:'Part 5 · SSH on R1 and S1', scope:'Module 16', items:[
       '5.1 <code>ip domain-name it131.example</code>.',
       '5.2 <code>crypto key generate rsa general-keys modulus 1024</code>.',
       '5.3 <code>username admin secret Adm1n!2026</code>.',
       '5.4 vty lines (R1 <code>0 4</code>, S1 <code>0 15</code>): <code>transport input ssh</code>, <code>login local</code>, <code>exec-timeout 5 0</code>.',
       '5.5 <code>ip ssh version 2</code>.',
     ]},
-    {title:'Part 6 · Host addressing', scope:'ITN 2, ITN 12, ITN 15 (DNS)', items:[
+    {title:'Part 6 · Host addressing', scope:'Modules 2, 12, 15 (DNS)', items:[
       '6.1 PC-A static IPv4 address, mask, and gateway.',
       '6.2 PC-A DNS server <code>192.168.20.100</code>.',
       '6.3 PC-A static IPv6 address, prefix /64, and gateway <code>FE80::1</code>.',
     ]},
-    {title:'Part 7 · Verification', scope:'ITN 8 (routing table), ITN 15, ITN 17', items:[
+    {title:'Part 7 · Verification', scope:'Module 8 (routing table), Modules 15, 17', items:[
       '7.1 R1 <code>show ip interface brief</code> and <code>show ipv6 interface brief</code>: G0/0/0 and G0/0/1 up/up with the right addresses.',
       '7.2 R1 <code>show ip route</code>: two C routes, two L routes, one S route.',
       '7.3 R1 <code>show cdp neighbors</code>: S1 and R2 on the right local interfaces.',
@@ -919,7 +919,7 @@ Building configuration...
       '7.8 PC-A <code>nslookup www.it131.example</code> returns 192.168.20.100, and the browser loads <code>http://www.it131.example</code>.',
       '7.9 PC-A <code>ssh -l admin 192.168.10.1</code> and <code>ssh -l admin 192.168.10.2</code> both log in and show the banner.',
     ]},
-    {title:'Part 8 · Save', scope:'ITN 2', items:[
+    {title:'Part 8 · Save', scope:'Module 2', items:[
       '8.1 <code>copy running-config startup-config</code> on R1 and S1.',
       '8.2 <code>show running-config</code>: the enable secret is hashed, the console password shows as <code>password 7 …</code>, and the banner, routes, and vty settings are there.',
     ]},
@@ -929,22 +929,22 @@ Building configuration...
 
   const SKILLS = [
     {title:'I can…', items:[
-      'choose straight-through, crossover, and console cables, and explain why. <em>(ITN 2, 4)</em>',
-      'move between user EXEC, privileged EXEC, global, interface, and line configuration modes. <em>(ITN 2)</em>',
-      'set a hostname, an enable secret, a console password, and a MOTD banner. <em>(ITN 2)</em>',
-      'save the running config to startup, and explain the difference. <em>(ITN 2)</em>',
-      'give a switch a management address and a default gateway, and explain why it needs one. <em>(ITN 2, 10)</em>',
-      'address a router interface with IPv4, an IPv6 GUA, and a static link-local address, and bring it up. <em>(ITN 10, 12)</em>',
-      'explain why <code>ipv6 unicast-routing</code> is needed. <em>(ITN 10, 12)</em>',
-      'subnet a /24 with VLSM, largest subnet first. <em>(ITN 11)</em>',
-      'pick the next IPv6 /64 from a /48. <em>(ITN 12)</em>',
-      'statically address a host with IPv4, IPv6, and DNS. <em>(ITN 2, 12, 15)</em>',
-      'harden a device with <code>service password-encryption</code>, <code>min-length</code>, <code>login block-for</code>, and <code>exec-timeout</code>. <em>(ITN 16)</em>',
-      'configure SSH-only remote access with a local user, and test it from a PC. <em>(ITN 16)</em>',
-      'read C and L routes in <code>show ip route</code>, and say what S means. <em>(ITN 8; S is an SRWE preview)</em>',
-      'verify interfaces with <code>show ip interface brief</code>, <code>show ipv6 interface brief</code>, and <code>show cdp neighbors</code>. <em>(ITN 17)</em>',
-      'test end to end with ping and tracert, and use the last hop that answered to locate a fault. <em>(ITN 17)</em>',
-      'use <code>nslookup</code> to tell a DNS failure from a connectivity failure. <em>(ITN 15, 17)</em>',
+      'choose straight-through, crossover, and console cables, and explain why. <em>(Modules 2, 4)</em>',
+      'move between user EXEC, privileged EXEC, global, interface, and line configuration modes. <em>(Module 2)</em>',
+      'set a hostname, an enable secret, a console password, and a MOTD banner. <em>(Module 2)</em>',
+      'save the running config to startup, and explain the difference. <em>(Module 2)</em>',
+      'give a switch a management address and a default gateway, and explain why it needs one. <em>(Modules 2, 10)</em>',
+      'address a router interface with IPv4, an IPv6 GUA, and a static link-local address, and bring it up. <em>(Modules 10, 12)</em>',
+      'explain why <code>ipv6 unicast-routing</code> is needed. <em>(Modules 10, 12)</em>',
+      'subnet a /24 with VLSM, largest subnet first. <em>(Module 11)</em>',
+      'pick the next IPv6 /64 from a /48. <em>(Module 12)</em>',
+      'statically address a host with IPv4, IPv6, and DNS. <em>(Modules 2, 12, 15)</em>',
+      'harden a device with <code>service password-encryption</code>, <code>min-length</code>, <code>login block-for</code>, and <code>exec-timeout</code>. <em>(Module 16)</em>',
+      'configure SSH-only remote access with a local user, and test it from a PC. <em>(Module 16)</em>',
+      'read C and L routes in <code>show ip route</code>, and say what S means. <em>(Module 8; S is an SRWE preview)</em>',
+      'verify interfaces with <code>show ip interface brief</code>, <code>show ipv6 interface brief</code>, and <code>show cdp neighbors</code>. <em>(Module 17)</em>',
+      'test end to end with ping and tracert, and use the last hop that answered to locate a fault. <em>(Module 17)</em>',
+      'use <code>nslookup</code> to tell a DNS failure from a connectivity failure. <em>(Modules 15, 17)</em>',
     ]},
   ];
   checklist('skillList', 'skillProgress', 'it131-s12-skills', SKILLS, 'skills ready');
@@ -990,14 +990,14 @@ Building configuration...
   const TERMS = [
     {t:"Answer key", d:"The finished configuration for a lab. Use it to check your work, not to copy from."},
     {t:"Console cable", d:"Connects a PC's serial (RS-232) port to a device's RJ-45 console port for out-of-band setup. Also called a rollover cable. Newer devices also have a separate USB console port."},
-    {t:"Crossover cable", d:"Copper Ethernet cable for connecting like devices, such as router to router or switch to switch. Auto-MDIX on modern gear often makes it unnecessary, but ITN still tests the rule."},
+    {t:"Crossover cable", d:"Copper Ethernet cable for connecting like devices, such as router to router or switch to switch. Auto-MDIX on modern gear often makes it unnecessary, but NetAcad still tests the rule."},
     {t:"exec-timeout", d:"Line command that logs out an idle session. exec-timeout 5 0 means 5 minutes, 0 seconds."},
     {t:"GUA (global unicast address)", d:"A routable IPv6 address, like 2001:db8:acad:1::1/64. The IPv6 equivalent of a public IPv4 address."},
     {t:"ip default-gateway", d:"Global command that gives a Layer 2 switch a gateway for its own management traffic, so it can be reached from other subnets."},
     {t:"ipv6 unicast-routing", d:"Global command that turns on IPv6 routing on a Cisco router. Without it, the router has IPv6 addresses but won't forward IPv6 packets or send router advertisements."},
     {t:"Link-local address", d:"An fe80::/10 IPv6 address used only on one link. Hosts use the router's link-local address as their IPv6 default gateway."},
     {t:"login local", d:"Line command that checks logins against the device's local username list. Required for SSH with a local user."},
-    {t:"Management SVI", d:"A switch virtual interface (usually VLAN 1 in ITN) that gives a switch an IP address for remote management. It doesn't affect frame forwarding."},
+    {t:"Management SVI", d:"A switch virtual interface (usually VLAN 1 in NetAcad) that gives a switch an IP address for remote management. It doesn't affect frame forwarding."},
     {t:"no ip domain-lookup", d:"Stops the device from treating a mistyped command as a host name and trying to look it up in DNS."},
     {t:"no shutdown", d:"Interface command that enables an interface. Router interfaces are shut down by default."},
     {t:"Packet Tracer", d:"Cisco's network simulator, used for NetAcad labs and the skills exams."},
@@ -1010,9 +1010,9 @@ Building configuration...
   ];
 
   const QUIZ = [
-    { q:"Which cable connects R1's G0/0/0 directly to R2's G0/0/0 in the ITN cabling rules?",
+    { q:"Which cable connects R1's G0/0/0 directly to R2's G0/0/0 in the NetAcad cabling rules?",
       choices:["Straight-through","Crossover","Console","Coaxial"], correct:1,
-      explain:"Two routers are like devices, so ITN uses a crossover cable. (Auto-MDIX on real gear often works with either.)" },
+      explain:"Two routers are like devices, so NetAcad uses a crossover cable. (Auto-MDIX on real gear often works with either.)" },
     { q:"A student configures IPv6 addresses on both R1 interfaces, but PCs on LAN-A can't reach LAN-B over IPv6. IPv4 works. Which command is most likely missing?",
       choices:["ipv6 enable","no shutdown","ipv6 unicast-routing","ip routing"], correct:2,
       explain:"Without ipv6 unicast-routing, the router has IPv6 addresses but won't forward IPv6 packets." },

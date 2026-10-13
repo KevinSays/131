@@ -280,7 +280,7 @@
     <div class="section-head">
       <p class="kicker">Module 11</p>
       <h2>What Session 8 covers</h2>
-      <p>Module 11 is the longest module in ITN, and it has two halves. The first half is vocabulary: what the parts of an address are called, and which addresses are special. The second half is a skill: subnetting. You learn the vocabulary by reading. You learn the skill by doing problems.</p>
+      <p>Module 11 is the longest module in the course, and it has two halves. The first half is vocabulary: what the parts of an address are called, and which addresses are special. The second half is a skill: subnetting. You learn the vocabulary by reading. You learn the skill by doing problems.</p>
     </div>
     <ul class="obj-list">
       <li>Describe the structure of an IPv4 address: network portion, host portion, subnet mask, prefix length</li>
@@ -460,7 +460,7 @@
     </table>
     <div class="teach-note warn">
       <span class="label">The −2 is for hosts only</span>
-      Borrowing 3 bits gives 2³ = <strong>8</strong> subnets, not 6. ITN counts every subnet, including the first (subnet zero) and the last. The −2 applies only to hosts, because it removes each subnet's network and broadcast address.
+      Borrowing 3 bits gives 2³ = <strong>8</strong> subnets, not 6. Cisco NetAcad counts every subnet, including the first (subnet zero) and the last. The −2 applies only to hosts, because it removes each subnet's network and broadcast address.
     </div>
 
     <h3 class="sub">The class method: the 7 holy steps</h3>
@@ -476,7 +476,7 @@
     <p style="font-size:.88rem;">Printable copy: <a href="IT131_7_Holy_Steps_of_Subnetting.pdf">7 Holy Steps of Subnetting (PDF)</a>. Three fully worked examples, including one that doesn't start from a default mask, are in the guide's <a href="IT131_Subnetting.html#subnetting">Borrowing Bits</a> section.</p>
 
     <h3 class="sub">Subnetting on and across octet boundaries</h3>
-    <p>ITN works through subnetting a /24, then a /16, then a /8. The method is the same each time. What changes is which octet the new boundary lands in.</p>
+    <p>NetAcad works through subnetting a /24, then a /16, then a /8. The method is the same each time. What changes is which octet the new boundary lands in.</p>
     <table class="spec">
       <thead><tr><th>Start with</th><th>Need</th><th>Borrow</th><th>New prefix / mask</th><th>Subnets</th><th>Hosts each</th><th>Counts by</th></tr></thead>
       <tbody>
@@ -505,7 +505,7 @@
     </div>
 
     <h3 class="sub">VLSM in one paragraph</h3>
-    <p><strong>Variable Length Subnet Masking</strong> gives each segment the smallest subnet that fits it. ITN describes it as <strong>subnetting a subnet</strong>: split the block into subnets for the LANs, then take one unused subnet and split it again, for example a /27 into eight /30s for point-to-point WAN links. Working largest-first gives the same kind of result. A point-to-point link needs only 2 addresses, one per router, so ITN uses a <strong>/30</strong> for it. A /24 spent on a two-router link wastes 252 addresses.</p>
+    <p><strong>Variable Length Subnet Masking</strong> gives each segment the smallest subnet that fits it. NetAcad describes it as <strong>subnetting a subnet</strong>: split the block into subnets for the LANs, then take one unused subnet and split it again, for example a /27 into eight /30s for point-to-point WAN links. Working largest-first gives the same kind of result. A point-to-point link needs only 2 addresses, one per router, so NetAcad uses a <strong>/30</strong> for it. A /24 spent on a two-router link wastes 252 addresses.</p>
     <p style="font-size:.88rem;">Worked VLSM plans, including your class example (31, 15, and 6 hosts from 192.168.10.0/24), are in the guide's <a href="IT131_Subnetting.html#vlsm">VLSM</a> section. It also has a drill that checks a plan you type in.</p>
 
     <h3 class="sub">Structured design: which device gets which address</h3>
@@ -686,7 +686,7 @@
     {t:"Subnet mask", d:"A 32-bit value with 1s for the network bits and 0s for the host bits, always contiguous 1s followed by 0s."},
     {t:"Subnetting", d:"Borrowing host bits to create more, smaller networks. n borrowed bits give 2^n subnets; h remaining host bits give 2^h − 2 usable hosts each."},
     {t:"Unicast", d:"Traffic from one device to exactly one device. The source address of any packet is always unicast."},
-    {t:"VLSM", d:"Variable Length Subnet Masking. Different prefix lengths within one block, so each segment gets the smallest subnet that fits. ITN frames it as 'subnetting a subnet.'"},
+    {t:"VLSM", d:"Variable Length Subnet Masking. Different prefix lengths within one block, so each segment gets the smallest subnet that fits. NetAcad frames it as 'subnetting a subnet.'"},
   ];
 
   const QUIZ = [
@@ -711,7 +711,7 @@
     { q:"Which device should normally receive its address from DHCP?",
       choices:["The router's LAN interface","A network printer","An employee's laptop","A web server"], correct:2,
       explain:"End devices use DHCP. Routers, servers, printers, and managed switches get static addresses so other devices can find them." },
-    { q:"Why does ITN use a /30 for a point-to-point link between two routers?",
+    { q:"Why does NetAcad use a /30 for a point-to-point link between two routers?",
       choices:["It has exactly 2 usable addresses, one per router","Routers require a /30","It allows broadcasts across the link","A /30 is the default for serial links"], correct:0,
       explain:"A /30 has 4 addresses: network, 2 usable, broadcast. That's exactly enough for the two router interfaces, with no waste." },
     { q:"Which device marks the edge of a broadcast domain?",

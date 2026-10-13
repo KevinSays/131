@@ -869,7 +869,7 @@
     </div>
     <div class="teach-note warn">
       <span class="label">Subnets: 2ⁿ. Don't subtract 2.</span>
-      The −2 applies only to <strong>hosts</strong>, because it removes the network and broadcast addresses. Older textbooks also subtracted 2 from the subnet count and skipped the "subnet zero" and "all-ones subnet." Modern routers use both, and ITN teaches <strong>2ⁿ</strong>. Borrowing 3 bits gives 8 subnets, not 6.
+      The −2 applies only to <strong>hosts</strong>, because it removes the network and broadcast addresses. Older textbooks also subtracted 2 from the subnet count and skipped the "subnet zero" and "all-ones subnet." Modern routers use both, and Cisco NetAcad teaches <strong>2ⁿ</strong>. Borrowing 3 bits gives 8 subnets, not 6.
     </div>
     <p>Every bit you borrow <strong>doubles</strong> the number of subnets and roughly <strong>halves</strong> the hosts in each one. That trade-off is the whole design decision.</p>
 
@@ -1072,7 +1072,7 @@
       <li><strong>Start each subnet on a multiple of its own block size.</strong> Going largest-first makes this happen automatically.</li>
       <li><strong>Allocate contiguously.</strong> Each subnet starts right after the previous broadcast. WAN /30s go last.</li>
     </ol>
-    <p style="font-size:.86rem;">ITN describes the same idea as <strong>subnetting a subnet</strong>: split the block into equal subnets for the LANs, then take one unused subnet and split it again (for example, a /27 into eight /30s for WAN links). Largest-first gives the same kind of result, so expect to see both framings on the exam.</p>
+    <p style="font-size:.86rem;">NetAcad describes the same idea as <strong>subnetting a subnet</strong>: split the block into equal subnets for the LANs, then take one unused subnet and split it again (for example, a /27 into eight /30s for WAN links). Largest-first gives the same kind of result, so expect to see both framings on the exam.</p>
 
     <h3 class="sub">The allocation</h3>
     <div class="table-scroll">
@@ -1317,7 +1317,7 @@
     </div>
     <div class="teach-note">
       <span class="label">The two oddballs</span>
-      <strong>/31</strong> has no room for separate network and broadcast addresses, so RFC 3021 lets both of its addresses be used on point-to-point links. ITN teaches <strong>/30</strong> for point-to-point links, so answer /30 on the exam. <strong>/32</strong> is a single address, used for loopback interfaces and host routes (the <code>L</code> routes you saw in Session 7's routing table).
+      <strong>/31</strong> has no room for separate network and broadcast addresses, so RFC 3021 lets both of its addresses be used on point-to-point links. NetAcad teaches <strong>/30</strong> for point-to-point links, so answer /30 on the exam. <strong>/32</strong> is a single address, used for loopback interfaces and host routes (the <code>L</code> routes you saw in Session 7's routing table).
     </div>
   </section>
 
@@ -1340,7 +1340,7 @@
           <tr><td class="mono">169.254.0.0/16</td><td class="b">Link-local (APIPA)</td><td>Windows assigns itself one of these when DHCP fails. Seeing it usually means "no DHCP server answered."</td></tr>
           <tr><td class="mono">0.0.0.0/8</td><td class="b">"This network"</td><td><code>0.0.0.0</code> means "no address yet" (a DHCP client's source address). In a route, <code>0.0.0.0/0</code> is the default route.</td></tr>
           <tr><td class="mono">255.255.255.255</td><td class="b">Limited broadcast</td><td>Every host on the local segment. Routers never forward it.</td></tr>
-          <tr><td class="mono">192.0.2.0/24</td><td class="b">TEST-NET-1</td><td>Reserved for documentation and examples, like <code>2001:db8::/32</code> in IPv6. <em>(Reference only; not on the ITN exam.)</em></td></tr>
+          <tr><td class="mono">192.0.2.0/24</td><td class="b">TEST-NET-1</td><td>Reserved for documentation and examples, like <code>2001:db8::/32</code> in IPv6. <em>(Reference only; not on the NetAcad exam.)</em></td></tr>
           <tr><td class="mono">224.0.0.0/4</td><td class="b">Multicast</td><td>224–239 in the first octet. One sender, a group of receivers. Never assigned to a host as its own address.</td></tr>
         </tbody>
       </table>
@@ -1740,7 +1740,7 @@
       if (s.p !== 31) steps.push(`Broadcast: ${nv} + ${s.block} − 1 = ${bv} in the ${ORD[s.io]} octet${right ? ', and every octet to its right becomes 255' : ''} → <code>${intToIp(s.bc)}</code>. (That's one less than the next network.)`);
     }
     if (s.p === 31){
-      steps.push('A /31 has only two addresses. On point-to-point links, RFC 3021 lets both be used. ITN uses /30 for these links.');
+      steps.push('A /31 has only two addresses. On point-to-point links, RFC 3021 lets both be used. NetAcad uses /30 for these links.');
     } else {
       steps.push(`First usable = network + 1 → <code>${intToIp(s.first)}</code>. Last usable = broadcast − 1 → <code>${intToIp(s.last)}</code>.`);
       steps.push(`Usable hosts = 2<sup>${s.hostBits}</sup> − 2 = <strong>${fmt(s.hosts)}</strong>.`);
@@ -1915,7 +1915,7 @@ ${line('Broadcast', s.bc, intToIp(s.bc) + '   ← host bits all 1')}</pre>
           <div><b>Block size</b><span>${s.p % 8 === 0 ? '1 in ' + ORD[s.p / 8 - 1] : s.block + ' in ' + ORD[s.io]} octet</span></div>
           <div><b>Address type · class</b><span>${addrType(s.ip)} · ${legacyClass(s.ip)}</span></div>
         </div>
-        ${s.p >= 31 ? '<div class="teach-note"><span class="label">* /31 and /32</span>A /31 has no separate network or broadcast address, so both addresses are usable on point-to-point links (RFC 3021). ITN uses /30 for those links. A /32 is a single address, used for loopbacks and host routes.</div>' : ''}
+        ${s.p >= 31 ? '<div class="teach-note"><span class="label">* /31 and /32</span>A /31 has no separate network or broadcast address, so both addresses are usable on point-to-point links (RFC 3021). NetAcad uses /30 for those links. A /32 is a single address, used for loopbacks and host routes.</div>' : ''}
         ${s.ip === s.net && s.p < 31 ? '<div class="teach-note warn"><span class="label">Heads up</span>This is the network address itself. It can\'t be assigned to a host.</div>' : ''}
         ${s.ip === s.bc && s.p < 31 ? '<div class="teach-note warn"><span class="label">Heads up</span>This is the broadcast address. It can\'t be assigned to a host.</div>' : ''}
         <h3 class="sub" style="margin-top:18px;">Worked the long way</h3>
@@ -2402,7 +2402,7 @@ ${line('Broadcast', s.bc, intToIp(s.bc) + '   ← host bits all 1')}</pre>
     {t:"Loopback (127.0.0.0/8)", d:"Addresses that refer to the device itself. ping 127.0.0.1 tests the local TCP/IP stack without touching the network."},
     {t:"Network address", d:"The first address in a subnet, with all host bits set to 0. It identifies the subnet itself and can't be assigned to a host."},
     {t:"Octet", d:"One 8-bit group of an IPv4 address, value 0–255. Four octets make up the 32-bit address."},
-    {t:"Point-to-point /30", d:"A /30 subnet (255.255.255.252) has exactly 2 usable hosts, one for each router on a WAN link. It's the size ITN uses for router-to-router links."},
+    {t:"Point-to-point /30", d:"A /30 subnet (255.255.255.252) has exactly 2 usable hosts, one for each router on a WAN link. It's the size NetAcad uses for router-to-router links."},
     {t:"Prefix length", d:"The number of network bits, written /n. /26 means the first 26 bits are network, equivalent to mask 255.255.255.192."},
     {t:"Private addresses (RFC 1918)", d:"10.0.0.0/8, 172.16.0.0/12 (172.16–172.31), and 192.168.0.0/16. Not routed on the internet, so NAT is needed to reach the internet."},
     {t:"Subnet ID (IPv6)", d:"The 16 bits between a /48 global routing prefix and the 64-bit interface ID: the 4th hextet. It allows 65,536 /64 subnets per site."},
@@ -2444,9 +2444,9 @@ ${line('Broadcast', s.bc, intToIp(s.bc) + '   ← host bits all 1')}</pre>
     { q:"When building a VLSM plan, why do you allocate the largest subnet first?",
       choices:["Routers require it","It keeps every subnet aligned to a multiple of its block size, so nothing overlaps and free space stays in one block","Largest subnets must always use the network address","It minimizes the number of routers needed"], correct:1,
       explain:"A subnet has to start on a multiple of its own block size. Going largest-first puts every later, smaller block on a valid boundary automatically. Going smallest-first puts subnets off their boundaries, where they overlap, or forces you to skip ahead, which leaves holes that fragment your free space." },
-    { q:"In ITN, which prefix is used for a point-to-point link between two routers?",
+    { q:"In NetAcad, which prefix is used for a point-to-point link between two routers?",
       choices:["/24","/28","/30","/32"], correct:2,
-      explain:"/30 gives exactly 2 usable addresses, one per router interface. (/31 is allowed by RFC 3021, but ITN uses /30.)" },
+      explain:"/30 gives exactly 2 usable addresses, one per router interface. (/31 is allowed by RFC 3021, but NetAcad uses /30.)" },
     { q:"A site has 2001:db8:acad::/48 and uses /64 LAN subnets. How many subnets are available?",
       choices:["256","65,536","4,096","16"], correct:1,
       explain:"The subnet ID is the 16 bits between /48 and /64: 2¹⁶ = 65,536 subnets." },

@@ -419,7 +419,7 @@
     <ol class="steps">
       <li><strong>Internet queries.</strong> Look up public information about the target: who owns the address block (whois), DNS records, the company website.</li>
       <li><strong>Ping sweeps.</strong> Ping every address in a range to find out which hosts are alive.</li>
-      <li><strong>Port scans.</strong> Probe the live hosts to see which ports are open, so which services are running. Tools ITN names: Nmap, SuperScan, Angry IP Scanner, NetScanTools.</li>
+      <li><strong>Port scans.</strong> Probe the live hosts to see which ports are open, so which services are running. Tools Cisco NetAcad names: Nmap, SuperScan, Angry IP Scanner, NetScanTools.</li>
       <li><strong>Vulnerability scans.</strong> Ask the running services what version they are, and look up known weaknesses for those versions.</li>
       <li><strong>Exploitation tools.</strong> Try to exploit what was found.</li>
     </ol>
@@ -463,7 +463,7 @@
     </div>
 
     <h3 class="sub">Defense-in-depth</h3>
-    <p>Also called the layered approach. ITN's example network uses several security devices and services together:</p>
+    <p>Also called the layered approach. NetAcad's example network uses several security devices and services together:</p>
     <table class="spec">
       <thead><tr><th>Device or service</th><th>Job</th></tr></thead>
       <tbody>
@@ -476,7 +476,7 @@
     </table>
 
     <h3 class="sub">Keep backups</h3>
-    <p>Back up device configurations and IOS images as well as data. ITN's four backup considerations:</p>
+    <p>Back up device configurations and IOS images as well as data. NetAcad's four backup considerations:</p>
     <ul class="obj-list">
       <li><strong>Frequency:</strong> regular, scheduled backups, e.g. a full backup weekly and partial backups daily.</li>
       <li><strong>Storage:</strong> keep copies offsite, and rotate the media.</li>
@@ -497,12 +497,12 @@
       </tbody>
     </table>
     <div class="teach-note preview">
-      <span class="label">Preview, not configured in ITN</span>
-      In ITN, AAA is a concept. Configuring it with a RADIUS or TACACS+ server comes in later courses. The device security you <em>do</em> configure this term is in <a href="#hardening">16.4</a>.
+      <span class="label">Preview, not configured in NetAcad</span>
+      In NetAcad, AAA is a concept. Configuring it with a RADIUS or TACACS+ server comes in later courses. The device security you <em>do</em> configure this term is in <a href="#hardening">16.4</a>.
     </div>
 
     <h3 class="sub">Firewalls</h3>
-    <p>A firewall sits between networks and controls what crosses. It allows traffic from inside out, and only lets traffic in from outside if it's a reply or explicitly permitted. ITN's four filtering methods:</p>
+    <p>A firewall sits between networks and controls what crosses. It allows traffic from inside out, and only lets traffic in from outside if it's a reply or explicitly permitted. NetAcad's four filtering methods:</p>
     <table class="spec">
       <thead><tr><th>Method</th><th>Filters by</th></tr></thead>
       <tbody>
@@ -550,7 +550,7 @@ to all security attacks ***
     </div>
 
     <h3 class="sub">Additional password security</h3>
-    <p>Four commands from ITN, plus the <code>enable secret</code> you already know. The passwords in these examples are 8 characters or longer, because once <code>min-length 8</code> is on, <code>cisco</code> and <code>class</code> are rejected.</p>
+    <p>Four commands from NetAcad, plus the <code>enable secret</code> you already know. The passwords in these examples are 8 characters or longer, because once <code>min-length 8</code> is on, <code>cisco</code> and <code>class</code> are rejected.</p>
     <div class="terminal">
       <div class="terminal-header"><span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span><span class="terminal-title">R1 · password hardening</span></div>
       <div class="terminal-body"><span class="prompt">R1(config)#</span> <span class="hl">security passwords min-length 8</span>
@@ -587,7 +587,7 @@ enable secret 5 $1$Xq7f$eKERTZ5T9/IQc26ztSdjI/</span>
     </div>
 
     <h3 class="sub">Enable SSH</h3>
-    <p>Telnet sends everything, including your password, in plaintext. SSH encrypts the session. ITN's steps, in order:</p>
+    <p>Telnet sends everything, including your password, in plaintext. SSH encrypts the session. NetAcad's steps, in order:</p>
     <div class="terminal">
       <div class="terminal-header"><span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span><span class="terminal-title">R1 · enabling SSH</span></div>
       <div class="terminal-body"><span class="comment">! 1. a unique hostname</span>
@@ -606,7 +606,7 @@ How many bits in the modulus [512]: </span><span class="hl">1024</span>
 [OK] (elapsed time was 1 seconds)
 
 *Oct  7 14:02:11.482: %SSH-5-ENABLED: SSH 1.99 has been enabled</span>
-<span class="comment">! ITN's one-line form: crypto key generate rsa general-keys modulus 1024</span>
+<span class="comment">! NetAcad's one-line form: crypto key generate rsa general-keys modulus 1024</span>
 <span class="comment">! 4. a local user</span>
 <span class="prompt">R1(config)#</span> <span class="hl">username admin secret Adm1n!2026</span>
 <span class="comment">! 5. vty lines: SSH only, and check the local user list</span>
@@ -626,7 +626,7 @@ How many bits in the modulus [512]: </span><span class="hl">1024</span>
       <thead><tr><th>Line</th><th>Why</th></tr></thead>
       <tbody>
         <tr><td style="font-weight:600;">Hostname + domain name</td><td>The RSA key is named <code>hostname.domain</code>. The router won't generate keys while it's still called <code>Router</code> or has no domain name.</td></tr>
-        <tr><td style="font-weight:600;"><code>crypto key generate rsa</code></td><td>Creates the key pair that encrypts the session. Generating it is what turns the SSH server on. ITN uses 1024 bits; in real life use 2048 or more.</td></tr>
+        <tr><td style="font-weight:600;"><code>crypto key generate rsa</code></td><td>Creates the key pair that encrypts the session. Generating it is what turns the SSH server on. NetAcad uses 1024 bits; in real life use 2048 or more.</td></tr>
         <tr><td style="font-weight:600;">SSH 1.99</td><td>Means versions 1 and 2 are both accepted. <code>ip ssh version 2</code> turns off the old, weak version 1.</td></tr>
         <tr><td style="font-weight:600;"><code>login local</code></td><td>Checks the <code>username</code> list. With no username configured, nobody can log in.</td></tr>
         <tr><td style="font-weight:600;"><code>transport input ssh</code></td><td>The vty lines accept SSH and refuse Telnet.</td></tr>
@@ -657,7 +657,7 @@ TCP   0.0.0.0:22       0.0.0.0:0        LISTEN  [IOS]SSH-Process</span></div>
     </div>
     <div class="teach-note preview">
       <span class="label">Your output may look different</span>
-      The column layout of <code>show ip ports all</code> varies between IOS versions, so read it for the idea: each line is a port the router is listening on. Port 22 stays, because we just turned SSH on. On IOS-XE the documented equivalent is <code>show control-plane host open-ports</code> (beyond ITN).
+      The column layout of <code>show ip ports all</code> varies between IOS versions, so read it for the idea: each line is a port the router is listening on. Port 22 stays, because we just turned SSH on. On IOS-XE the documented equivalent is <code>show control-plane host open-ports</code> (beyond this course).
     </div>
   </section>
 
@@ -708,7 +708,7 @@ TCP   0.0.0.0:22       0.0.0.0:0        LISTEN  [IOS]SSH-Process</span></div>
     </ul>
 
     <h3 class="sub">Growing the network</h3>
-    <p>Networks grow, so plan for it. ITN lists four things you need before you can scale:</p>
+    <p>Networks grow, so plan for it. NetAcad lists four things you need before you can scale:</p>
     <table class="spec">
       <thead><tr><th>Element</th><th>What it means</th></tr></thead>
       <tbody>
@@ -1088,7 +1088,7 @@ Version :</span>
     <div class="section-head">
       <p class="kicker">Module 17 · 17.7</p>
       <h2>Troubleshooting scenarios</h2>
-      <p>The four problems ITN walks through, in the order you'd usually hit them.</p>
+      <p>The four problems NetAcad walks through, in the order you'd usually hit them.</p>
     </div>
     <h3 class="sub">1 · Duplex mismatch</h3>
     <p>If one end of a link runs full duplex and the other half duplex, the link stays <strong>up/up</strong>. Nothing alarms. It just gets slow and racks up errors, which is why this one is hard to spot. It usually happens when one end is hard-set and the other is left on auto: the auto end can't negotiate and falls back to half duplex. To force it in a lab on Gigabit copper, set both ends to 100 Mbps and only one to half:</p>
@@ -1483,7 +1483,7 @@ DNS request timed out.
     {t:"Endpoint security", d:"Protecting hosts (laptops, desktops, servers, phones) with antivirus, host firewalls, and policy."},
     {t:"Escalation", d:"Handing a problem to someone with more knowledge or access, as company policy directs, after documenting what you tried."},
     {t:"Extended ping", d:"IOS ping run with no arguments, so you can set the repeat count, size, timeout, and source interface."},
-    {t:"Firewall", d:"A device or software that controls traffic between networks. ITN's methods: packet, application, and URL filtering, and stateful packet inspection."},
+    {t:"Firewall", d:"A device or software that controls traffic between networks. NetAcad's methods: packet, application, and URL filtering, and stateful packet inspection."},
     {t:"IPS", d:"Intrusion prevention system. Detects and stops known attacks in real time."},
     {t:"login block-for", d:"IOS command that blocks login attempts for a set time after too many failures, e.g. login block-for 120 attempts 3 within 60."},
     {t:"Malware", d:"Malicious software: viruses, worms, and Trojan horses."},
@@ -1503,7 +1503,7 @@ DNS request timed out.
     {t:"Trojan horse", d:"Malware disguised as legitimate software that the user installs willingly."},
     {t:"Trust exploitation", d:"An access attack that uses a trusted host's privileges to get into another system."},
     {t:"Virus", d:"Malware that attaches to a host program or file and needs a user action to spread."},
-    {t:"Vulnerability", d:"A weakness that a threat can exploit. ITN's types: technological, configuration, and security policy."},
+    {t:"Vulnerability", d:"A weakness that a threat can exploit. NetAcad's types: technological, configuration, and security policy."},
     {t:"Worm", d:"Malware that copies itself across the network by exploiting vulnerabilities, with no host program or user action."},
   ];
 
