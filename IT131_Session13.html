@@ -1,0 +1,668 @@
+<title>IT131 Session 13 – Final Exam Review</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --paper:#EDE8DD; --canvas:#D9D2C3; --ink:#1F2421; --kraft:#B08554; --kraft-dark:#664526;
+    --blue:#2F4858; --red:#A23A2E; --ticket:#F3E7E2;
+    --blue-soft:rgba(47,72,88,.08); --red-soft:rgba(162,58,46,.08);
+    --kraft-soft:rgba(176,133,84,.14); --ink-soft:rgba(31,36,33,.06);
+    --shadow:5px 5px 0 rgba(31,36,33,.16);
+    --display:'Special Elite','Courier New',monospace;
+    --sans:'IBM Plex Sans', system-ui, sans-serif;
+    --mono:'IBM Plex Mono', monospace;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth; font-size:125%;}
+  body{
+    margin:0; background:var(--canvas); color:var(--ink); font-family:var(--sans);
+    line-height:1.55; -webkit-font-smoothing:antialiased;
+    background-image:radial-gradient(rgba(31,36,33,.06) 1px, transparent 1px);
+    background-size:16px 16px;
+  }
+  ::selection{ background:var(--kraft-soft); }
+  a{ color:var(--blue); }
+  .wrap{ max-width:940px; margin:0 auto; padding:0 20px; }
+  code{ font-family:var(--mono); background:var(--ink-soft); padding:1px 6px; border-radius:2px; font-size:.9em; }
+
+  header.masthead{ padding:48px 0 30px; }
+  .eyebrow{ display:inline-block; font-family:var(--mono); font-size:.86rem; letter-spacing:.12em;
+    border:2px solid var(--blue); color:var(--blue); padding:4px 10px; transform:rotate(-2deg); background:var(--paper); }
+  h1{ font-family:var(--display); font-weight:400; font-size:clamp(1.9rem,5vw,2.9rem); letter-spacing:.01em;
+    margin:16px 0 10px; line-height:1.15; }
+  .lede{ max-width:64ch; font-size:1.02rem; line-height:1.6; opacity:.85; margin:0 0 18px; }
+  .factrow{ display:flex; flex-wrap:wrap; gap:10px; }
+  .fact{ font-family:var(--mono); font-size:.82rem; letter-spacing:.02em; background:var(--paper);
+    border:1.5px solid var(--ink); padding:.4em .8em; display:flex; gap:.5em; box-shadow:3px 3px 0 rgba(31,36,33,.14); }
+  .fact b{ color:var(--kraft-dark); font-weight:600; text-transform:uppercase; letter-spacing:.06em; font-size:.88rem; }
+
+  nav.index{ position:sticky; top:0; z-index:20; background:color-mix(in srgb, var(--canvas) 92%, transparent);
+    backdrop-filter:blur(6px); border-top:2px solid var(--ink); border-bottom:2px solid var(--ink); }
+  nav.index .wrap{ display:flex; gap:2px; overflow-x:auto; padding:8px 20px; scrollbar-width:none; }
+  nav.index .wrap::-webkit-scrollbar{ display:none; }
+  nav.index a{ font-family:var(--mono); font-weight:600; letter-spacing:.03em; font-size:.82rem; text-decoration:none;
+    color:var(--ink); opacity:.85; padding:.5em .8em; white-space:nowrap; text-transform:uppercase; border:1px solid transparent; }
+  nav.index a:hover{ opacity:1; border-color:var(--ink); background:var(--paper); }
+  nav.index a.toc-link{ color:var(--blue); opacity:1; border-right:1.5px solid var(--ink); margin-right:8px; padding-right:16px; }
+  nav.index a.toc-link:hover{ background:var(--blue-soft); border-color:var(--ink); }
+
+  section{ padding:44px 0; border-bottom:2px dashed rgba(31,36,33,.3); }
+  section:last-of-type{ border-bottom:none; }
+  .section-head{ margin-bottom:26px; max-width:70ch; }
+  .kicker{ font-family:var(--mono); font-weight:600; font-size:.9rem; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--red); margin:0 0 .4em; }
+  h2{ font-family:var(--display); font-weight:400; font-size:clamp(1.4rem,2.8vw,1.9rem); margin:0 0 .25em; letter-spacing:.005em; }
+  .section-head p{ opacity:.82; margin:.5em 0 0; }
+  h3.sub{ font-family:var(--mono); font-size:1.02rem; margin:24px 0 10px; text-transform:uppercase; letter-spacing:.04em; color:var(--kraft-dark); }
+
+  .obj-list{ display:grid; gap:10px; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); list-style:none; margin:0; padding:0; }
+  .obj-list li{ background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow); padding:14px 16px; font-size:.92rem; }
+  .obj-list li::before{ content:"▸"; color:var(--red); margin-right:.5em; font-weight:700; }
+
+  .teach-note{ margin:18px 0; padding:12px 14px; border:1.5px dashed var(--blue); background:var(--blue-soft);
+    font-family:var(--mono); font-size:.82rem; line-height:1.6; }
+  .teach-note .label{ color:var(--blue); font-weight:600; letter-spacing:.05em; text-transform:uppercase; font-size:.88rem; display:block; margin-bottom:.4em; }
+  .teach-note.warn{ border-color:var(--red); background:var(--red-soft); }
+  .teach-note.warn .label{ color:var(--red); }
+  .teach-note.preview{ border-color:var(--kraft-dark); background:var(--kraft-soft); }
+  .teach-note.preview .label{ color:var(--kraft-dark); }
+
+  .cold-open{ background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow); padding:18px 20px; margin:24px 0; }
+  .cold-open .tag{ font-family:var(--mono); font-size:.84rem; letter-spacing:.1em; color:var(--red); margin:0 0 8px; text-transform:uppercase; }
+  .cold-open p{ margin:0; font-size:.95rem; line-height:1.6; font-style:italic; }
+
+  /* TERMINAL BLOCKS */
+  .terminal{ background:var(--ticket); color:var(--ink); border:1.5px solid var(--ink); margin:20px 0; overflow:hidden; box-shadow:var(--shadow); }
+  .terminal-header{ background:color-mix(in srgb, var(--ticket) 80%, #fff); padding:8px 14px; border-bottom:1px solid rgba(31,36,33,.15); display:flex; align-items:center; gap:6px; }
+  .terminal-dot{ width:10px; height:10px; border-radius:50%; }
+  .terminal-dot.r{ background:var(--red); }
+  .terminal-dot.y{ background:var(--kraft-dark); }
+  .terminal-dot.g{ background:var(--blue); }
+  .terminal-title{ font-family:var(--mono); font-size:.8rem; color:var(--kraft-dark); margin-left:8px; letter-spacing:.04em; }
+  .terminal-body{ padding:14px 18px; font-family:'Courier New', Courier, monospace; font-size:.84rem; line-height:1.65; overflow-x:auto; white-space:pre-wrap; word-wrap:break-word; }
+  .terminal-body .prompt{ color:var(--blue); font-weight:700; }
+  .terminal-body .cmd{ color:var(--ink); font-weight:600; }
+  .terminal-body .comment{ color:var(--kraft-dark); font-style:italic; }
+  .terminal-body .hl{ color:var(--red); font-weight:600; }
+  .terminal-body .out{ color:var(--ink); opacity:.7; }
+
+  table.spec{ width:100%; border-collapse:collapse; margin:18px 0; font-size:.86rem; }
+  table.spec th{ font-family:var(--mono); font-weight:600; text-transform:uppercase; letter-spacing:.05em; font-size:.86rem;
+    color:var(--kraft-dark); text-align:left; padding:8px 10px; border-bottom:2px solid var(--ink); }
+  table.spec td{ padding:9px 10px; border-bottom:1px dashed rgba(31,36,33,.3); vertical-align:top; }
+  table.spec tr:last-child td{ border-bottom:none; }
+  table.spec td.mono, table.spec th.mono{ font-family:var(--mono); }
+
+  .toolbar{ display:flex; gap:10px; align-items:center; margin-bottom:20px; flex-wrap:wrap; }
+  button.btn{ font-family:var(--mono); font-weight:600; letter-spacing:.03em; text-transform:uppercase; font-size:.9rem;
+    background:var(--paper); color:var(--ink); border:1.5px solid var(--ink); padding:.55em 1em; cursor:pointer; box-shadow:3px 3px 0 rgba(31,36,33,.14); }
+  button.btn:hover{ background:var(--kraft-soft); }
+  button.btn:focus-visible, a:focus-visible, .flashcard:focus-visible, input:focus-visible{ outline:2px solid var(--blue); outline-offset:2px; }
+  #cardProgress{ font-family:var(--mono); font-size:.85rem; opacity:.75; }
+  .card-grid{ display:grid; gap:16px; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); }
+  .flashcard{ perspective:1200px; height:190px; cursor:pointer; border:none; background:none; padding:0; font-family:inherit; text-align:left; width:100%; }
+  .flashcard-inner{ position:relative; width:100%; height:100%; transition:transform .5s cubic-bezier(.4,.2,.2,1); transform-style:preserve-3d; -webkit-transform-style:preserve-3d; will-change:transform; }
+  .flashcard.flipped .flashcard-inner{ transform:rotateY(180deg); -webkit-transform:rotateY(180deg); }
+  .flashcard-face{ position:absolute; inset:0; backface-visibility:hidden; -webkit-backface-visibility:hidden; -moz-backface-visibility:hidden; border:1.5px solid var(--ink); box-shadow:var(--shadow);
+    padding:15px; display:flex; flex-direction:column; justify-content:center; }
+  .flashcard-face.front{ background:var(--paper); transform:translateZ(.5px); }
+  .flashcard-face.back{ background:var(--ticket); transform:rotateY(180deg) translateZ(.5px); overflow-y:auto; }
+  .flashcard-face .lbl{ font-family:var(--mono); font-weight:600; letter-spacing:.1em; text-transform:uppercase; font-size:.82rem; color:var(--kraft-dark); margin-bottom:.5em; }
+  .flashcard-face.front .term{ font-family:var(--display); font-weight:400; font-size:1.05rem; letter-spacing:.01em; }
+  .flashcard-face.back .def{ font-size:.82rem; }
+  .flashcard.known .flashcard-face.front{ border-color:var(--blue); border-width:2px; }
+
+  .quiz-q{ background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow); padding:18px 20px; margin-bottom:18px; }
+  .quiz-q .qtext{ font-weight:600; margin:0 0 13px; }
+  .quiz-q .qnum{ font-family:var(--display); color:var(--red); margin-right:.5em; }
+  .choices{ display:grid; gap:8px; }
+  .choice{ text-align:left; font-family:var(--sans); font-size:.9rem; background:var(--ticket); border:1.5px solid var(--ink);
+    padding:.65em .85em; cursor:pointer; color:var(--ink); }
+  .choice:hover{ border-color:var(--blue); }
+  .choice.correct{ background:var(--blue-soft); border-color:var(--blue); border-width:2px; }
+  .choice.incorrect{ background:var(--red-soft); border-color:var(--red); border-width:2px; }
+  .choice[disabled]{ cursor:default; }
+  .explain{ margin-top:12px; font-size:.84rem; opacity:.85; border-left:3px solid var(--kraft); padding-left:12px; display:none; font-family:var(--mono); }
+  .explain.show{ display:block; }
+  #quizScore{ font-family:var(--mono); font-size:.9rem; opacity:.75; margin-bottom:16px; }
+
+  .example{ background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow); padding:20px 22px; margin-bottom:16px; }
+  .example h3{ font-family:var(--display); font-weight:400; font-size:1.15rem; margin:0 0 8px; }
+  .example .tag{ display:inline-block; font-family:var(--mono); font-weight:600; font-size:.86rem; text-transform:uppercase; letter-spacing:.07em;
+    color:var(--blue); background:var(--blue-soft); border:1px solid var(--blue); padding:.25em .6em; margin-bottom:10px; }
+  details.solution{ margin-top:12px; }
+  details.solution summary{ cursor:pointer; font-family:var(--mono); font-weight:600; letter-spacing:.03em; text-transform:uppercase;
+    font-size:.9rem; color:var(--blue); list-style:none; display:inline-flex; align-items:center; gap:.4em; }
+  details.solution summary::-webkit-details-marker{ display:none; }
+  details.solution summary::before{ content:"▸"; transition:transform .15s; }
+  details.solution[open] summary::before{ transform:rotate(90deg); }
+  details.solution .solbody{ margin-top:10px; padding:13px 15px; background:var(--ticket); font-size:.88rem; }
+
+  #glossarySearch{ width:100%; max-width:400px; font-family:var(--sans); font-size:.9rem; padding:.65em .85em;
+    border:1.5px solid var(--ink); background:var(--paper); color:var(--ink); margin-bottom:16px; }
+  .alpha-nav{ display:flex; flex-wrap:wrap; gap:4px; margin-bottom:22px; }
+  .alpha-nav a{ font-family:var(--mono); font-weight:600; font-size:.82rem; width:1.8em; height:1.8em; display:flex;
+    align-items:center; justify-content:center; border:1px solid var(--ink); text-decoration:none; color:var(--ink); opacity:.35; }
+  .alpha-nav a.has{ opacity:1; background:var(--paper); }
+  .alpha-nav a.has:hover{ border-color:var(--blue); color:var(--blue); }
+  .glossary-letter{ font-family:var(--display); font-weight:400; color:var(--red); font-size:1.1rem; margin:20px 0 6px; }
+  dl.glossary{ margin:0; }
+  dl.glossary .gitem{ border-top:1px dashed rgba(31,36,33,.35); padding:11px 0; }
+  dl.glossary dt{ font-family:var(--mono); font-weight:600; font-size:.98rem; }
+  dl.glossary dd{ margin:.3em 0 0; opacity:.8; font-size:.86rem; }
+  .gitem.hidden{ display:none; }
+
+  footer{ padding:30px 0 60px; }
+  footer p{ opacity:.65; font-size:.82rem; font-family:var(--mono); letter-spacing:.02em; }
+
+  .back-to-top{ position:fixed; bottom:22px; right:22px; z-index:40; width:50px; height:50px;
+    background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow);
+    font-family:var(--display); font-size:1.4rem; color:var(--ink); line-height:1;
+    display:flex; align-items:center; justify-content:center; padding:0; cursor:pointer; text-decoration:none;
+    opacity:0; visibility:hidden; transform:translateY(10px);
+    transition:opacity .25s ease, transform .25s ease, visibility 0s .25s; }
+  .back-to-top.show{ opacity:1; visibility:visible; transform:translateY(0); transition:opacity .25s ease, transform .25s ease, visibility 0s; }
+  .back-to-top:hover{ background:var(--blue-soft); border-color:var(--blue); color:var(--blue); }
+  .back-to-top:focus-visible{ outline:2px solid var(--blue); outline-offset:2px; }
+
+  @media print{
+    body{ background:#fff; }
+    nav.index{ display:none; }
+    .quiz-q, .example, .flashcard-face, .terminal{ box-shadow:none; }
+    .back-to-top{ display:none; }
+  }
+
+  /* INTERACTIVE TOOLS */
+  .tool{ background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow); padding:16px 18px; margin:20px 0; }
+  .tool-title{ margin:0 0 10px; font-family:var(--mono); font-weight:600; font-size:.8rem; letter-spacing:.06em; text-transform:uppercase; color:var(--kraft-dark); }
+  .tool-in{ display:flex; flex-wrap:wrap; gap:10px; margin-bottom:12px; }
+  .tool-in input.txt{ flex:1 1 16em; min-width:0; font-family:var(--mono); font-size:.9rem; padding:.5em .7em; border:1.5px solid var(--ink); background:var(--ticket); color:var(--ink); }
+  .tool-out .row{ display:grid; grid-template-columns:9.5em 1fr; gap:10px; padding:6px 0; border-top:1px dashed rgba(31,36,33,.3); font-size:.86rem; align-items:baseline; }
+  .tool-out .row b{ font-family:var(--mono); font-size:.74rem; text-transform:uppercase; letter-spacing:.05em; color:var(--kraft-dark); }
+  .tool-out code{ overflow-wrap:anywhere; }
+  .tool-out .bad{ color:var(--red); font-family:var(--mono); font-size:.84rem; margin:0; }
+  @media (max-width:560px){ .tool-out .row{ grid-template-columns:1fr; gap:2px; } }
+  .tool-in label.mini{ display:flex; flex-direction:column; gap:3px; font-family:var(--mono); font-size:.72rem; text-transform:uppercase; letter-spacing:.05em; color:var(--kraft-dark); }
+  .tool-in input.txt.num{ flex:none; width:8.5em; }
+  @media (max-width:640px){ table.spec{ display:block; overflow-x:auto; } .terminal-body{ white-space:pre; word-wrap:normal; } }
+  .sorter-case{ background:var(--ticket); border:1.5px solid var(--ink); padding:12px 14px; margin:0 0 12px; font-size:.92rem; min-height:4.5em; }
+  .sorter-case .count{ display:block; font-family:var(--mono); font-size:.72rem; letter-spacing:.06em; text-transform:uppercase; color:var(--kraft-dark); margin-bottom:.35em; }
+  .sorter-btns{ display:grid; gap:8px; grid-template-columns:repeat(auto-fit,minmax(9.5em,1fr)); margin-bottom:12px; }
+  .sorter-btns .choice{ font-family:var(--mono); font-size:.82rem; text-transform:uppercase; letter-spacing:.04em; text-align:center; }
+  .tool select{ font-family:var(--mono); font-size:.86rem; padding:.5em .6em; border:1.5px solid var(--ink); background:var(--ticket); color:var(--ink); max-width:100%; flex:1 1 16em; min-width:0; }
+  ol.steps{ counter-reset:step; list-style:none; margin:0; padding:0; display:grid; gap:10px; }
+  ol.steps li{ counter-increment:step; background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow); padding:12px 14px 12px 3.2em; position:relative; font-size:.92rem; }
+  ol.steps li::before{ content:counter(step); position:absolute; left:12px; top:10px; font-family:var(--display); font-size:1.3rem; color:var(--red); }
+  /* Top bar: wrap onto extra rows instead of hiding links past the edge */
+  nav.index .wrap{ flex-wrap:wrap; overflow-x:visible; row-gap:2px; padding-top:6px; padding-bottom:6px; max-width:1240px; }
+  nav.index a{ padding:.35em .65em; }
+  @media (max-width:960px){ nav.index{ position:static; } }
+  @media (max-width:640px){ main code{ overflow-wrap:anywhere; } main{ overflow-wrap:break-word; } }
+</style>
+<script>
+  /* Keep anchor jumps clear of the sticky top bar, whatever its height */
+  (function(){
+    function pad(){
+      var n = document.querySelector('nav.index');
+      var sticky = n && getComputedStyle(n).position === 'sticky';
+      document.documentElement.style.scrollPaddingTop = sticky ? (n.offsetHeight + 8) + 'px' : '';
+    }
+    document.addEventListener('DOMContentLoaded', pad);
+    window.addEventListener('resize', pad);
+  })();
+</script>
+
+
+<header class="masthead">
+  <div class="wrap">
+    <p class="eyebrow">IT131 · SESSION 13 · FINAL REVIEW</p>
+    <h1>The Final: Modules 1–17</h1>
+    <p class="lede">Every floor of the OSI Company, one last walk-through. This page is a map of the whole course: what the final covers, how many questions each module gets, where each topic lives on this site, and the facts you should be able to say without looking.</p>
+    <div class="factrow">
+      <span class="fact"><b>Exam</b> Final — Modules 1–17</span>
+      <span class="fact"><b>Practice</b> 55 questions · 70% to pass</span>
+      <span class="fact"><b>Drill</b> <a href="IT131_PracticeFinal.html">Practice Final →</a></span>
+    </div>
+  </div>
+</header>
+
+<nav class="index" aria-label="Section index">
+  <div class="wrap">
+    <a href="index.html" class="toc-link">↩ Contents</a>
+    <a href="#overview">Overview</a>
+    <a href="#format">Format</a>
+    <a href="#blueprint">Blueprint</a>
+    <a href="#plan">Study Plan</a>
+    <a href="#tower">The Whole Stack</a>
+    <a href="#numbers">Must-Know Numbers</a>
+    <a href="#traps">Classic Traps</a>
+    <a href="#examday">Exam Day</a>
+    <a href="#next">What's Next</a>
+    <a href="#flashcards">Flashcards</a>
+    <a href="#quiz">Quiz</a>
+    <a href="#glossary">Glossary</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+  <!-- OVERVIEW -->
+  <section id="overview">
+    <div class="section-head">
+      <p class="kicker">Final exam</p>
+      <h2>What Session 13 covers</h2>
+      <p>Session 13 is the final exam. There's no new material; this page is for the week before. Start with the <a href="IT131_PracticeFinal.html">Practice Final</a>, use its per-module breakdown to find your weak spots, and use the blueprint below to jump straight to the session page for each one.</p>
+    </div>
+    <div class="cold-open">
+      <p class="tag">Cold open · The OSI Company, closing time</p>
+      <p>The NOC walks the building one last time. The Front Desk is translating requests into HTTP and DNS. Translation &amp; Wardrobe has the encryption on. Scheduling is keeping every conversation straight. Shipping &amp; Receiving is numbering parcels and waiting for receipts. Logistics, with the Zoning Office down the hall, is routing between subnets that don't overlap. Local Dispatch is framing everything with the right MAC address, and the Infrastructure Crew has every cable labeled. "Seven floors," the NOC says, switching off the lights. "One request. You know every desk now."</p>
+    </div>
+  </section>
+
+  <!-- FORMAT -->
+  <section id="format">
+    <div class="section-head">
+      <p class="kicker">Know the shape</p>
+      <h2>The practice final's format</h2>
+      <p>The course's NetAcad practice final is set up like this. Confirm the details of the real final with your instructor.</p>
+    </div>
+    <ul class="obj-list">
+      <li><strong>55 questions</strong>, drawn from module banks</li>
+      <li><strong>70%</strong> to pass: 39 of 55</li>
+      <li><strong>Unlimited attempts</strong> on the practice final</li>
+      <li><strong>No time limit</strong> per attempt on the practice final</li>
+    </ul>
+    <div class="teach-note">
+      <span class="label">The site's Practice Final matches the mix</span>
+      <a href="IT131_PracticeFinal.html">IT131_PracticeFinal.html</a> draws the same number of questions from each module as the blueprint below, scores you against 70%, and shows a per-module breakdown when you finish. It's a different question bank from NetAcad's, so it tests the same topics without repeating the real questions.
+    </div>
+  </section>
+
+  <!-- BLUEPRINT -->
+  <section id="blueprint">
+    <div class="section-head">
+      <p class="kicker">Where the points are</p>
+      <h2>The blueprint, module by module</h2>
+      <p>How many questions each module gets, and where to review it. Module 5 (number systems) has no questions of its own, but you'll use binary on every subnetting question.</p>
+    </div>
+    <table class="spec">
+      <thead><tr><th>Module</th><th class="mono">Qs</th><th>Review it on</th><th>Make sure you can…</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;">1 · Networking Today</td><td class="mono">3</td><td><a href="IT131_Session01.html">Session 1</a></td><td>Name network types (LAN, WAN, internet, intranet, extranet), access technologies, and the four basic characteristics of reliable networks.</td></tr>
+        <tr><td style="font-weight:600;">2 · Basic Switch and End Device Configuration</td><td class="mono">4</td><td><a href="IT131_Session02.html">Session 2</a></td><td>Move between IOS modes, secure a device, give a switch a management address, and save the config.</td></tr>
+        <tr><td style="font-weight:600;">3 · Protocols and Models</td><td class="mono">3</td><td><a href="IT131_Session02.html">Session 2</a></td><td>Map the OSI and TCP/IP models, and name each layer's PDU and job.</td></tr>
+        <tr><td style="font-weight:600;">4 · Physical Layer</td><td class="mono">4</td><td><a href="IT131_Session03.html">Session 3</a></td><td>Compare copper, fiber, and wireless; pick straight-through vs. crossover; know bandwidth vs. throughput.</td></tr>
+        <tr><td style="font-weight:600;">5 · Number Systems</td><td class="mono">0</td><td><a href="IT131_Session04.html">Session 4</a></td><td>Convert binary, decimal, and hex fast. You'll need it for Modules 11–12.</td></tr>
+        <tr><td style="font-weight:600;">6 · Data Link Layer</td><td class="mono">4</td><td><a href="IT131_Session04.html">Session 4</a></td><td>Describe LLC and MAC sublayers, topologies, half/full duplex, and frame fields.</td></tr>
+        <tr><td style="font-weight:600;">7 · Ethernet Switching</td><td class="mono">4</td><td><a href="IT131_Session05.html">Session 5</a></td><td>Read MAC addresses, explain how a switch learns and forwards, and compare store-and-forward vs. cut-through.</td></tr>
+        <tr><td style="font-weight:600;">8 · Network Layer</td><td class="mono">4</td><td><a href="IT131_Session06.html">Session 6</a></td><td>Describe IPv4 and IPv6 headers, how a host picks its gateway, and read a routing table (C, L, S).</td></tr>
+        <tr><td style="font-weight:600;">9 · Address Resolution</td><td class="mono">3</td><td><a href="IT131_Session06.html">Session 6</a></td><td>Explain ARP (and what goes to the gateway's MAC) and IPv6 neighbor discovery.</td></tr>
+        <tr><td style="font-weight:600;">10 · Basic Router Configuration</td><td class="mono">3</td><td><a href="IT131_Session07.html">Session 7</a></td><td>Configure and verify a router's interfaces, and give hosts the right default gateway.</td></tr>
+        <tr><td style="font-weight:600;">11 · IPv4 Addressing</td><td class="mono">4</td><td><a href="IT131_Session08.html">Session 8</a> · <a href="IT131_Subnetting.html">Subnetting guide</a></td><td>Find network, broadcast, and usable range; subnet with borrowed bits and VLSM; know private and special ranges.</td></tr>
+        <tr><td style="font-weight:600;">12 · IPv6 Addressing</td><td class="mono">3</td><td><a href="IT131_Session09.html">Session 9</a></td><td>Compress addresses, name GUA/LLA/multicast types, explain SLAAC and DHCPv6, and build an EUI-64 ID.</td></tr>
+        <tr><td style="font-weight:600;">13 · ICMP</td><td class="mono">3</td><td><a href="IT131_Session09.html">Session 9</a></td><td>Explain echo, unreachable, and time exceeded messages, and the ICMPv6 RS/RA/NS/NA messages; read ping and traceroute.</td></tr>
+        <tr><td style="font-weight:600;">14 · Transport Layer</td><td class="mono">3</td><td><a href="IT131_Session10.html">Session 10</a></td><td>Compare TCP and UDP, know port ranges and sockets, and work SEQ/ACK numbers.</td></tr>
+        <tr><td style="font-weight:600;">15 · Application Layer</td><td class="mono">3</td><td><a href="IT131_Session10.html">Session 10</a></td><td>Explain HTTP, email (SMTP/POP3/IMAP), DNS, DHCP (DORA), FTP, and SMB.</td></tr>
+        <tr><td style="font-weight:600;">16 · Network Security Fundamentals</td><td class="mono">4</td><td><a href="IT131_Session11.html">Session 11</a></td><td>Classify threats and attacks, explain mitigations and AAA, and harden a device with SSH.</td></tr>
+        <tr><td style="font-weight:600;">17 · Build a Small Network</td><td class="mono">3</td><td><a href="IT131_Session11.html">Session 11</a> · <a href="IT131_Session12.html">Session 12 lab</a></td><td>Verify with ping, traceroute, and show commands; follow the six troubleshooting steps.</td></tr>
+        <tr><td style="font-weight:600;">Total</td><td class="mono"><strong>55</strong></td><td></td><td>The heaviest modules (4 questions each): 2, 4, 6, 7, 8, 11, 16.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- PLAN -->
+  <section id="plan">
+    <div class="section-head">
+      <p class="kicker">One week out</p>
+      <h2>A study plan that uses your weak spots</h2>
+      <p>Re-reading everything feels productive and mostly isn't. Test, find the gaps, fix the gaps, test again.</p>
+    </div>
+    <ol class="steps">
+      <li><strong>Take the <a href="IT131_PracticeFinal.html">Practice Final</a> cold.</strong> No notes. Note your score and the per-module breakdown at the top.</li>
+      <li><strong>Pick your three worst modules.</strong> Any module under 70% counts, heaviest modules first.</li>
+      <li><strong>Review just those</strong> on their session pages (blueprint links above): the recap, the common-mistakes list, and the worked examples.</li>
+      <li><strong>Drill them.</strong> Use each session's flashcards and sample questions, then build a Practice Final run with only those modules checked.</li>
+      <li><strong>Subnetting every day.</strong> Ten minutes in the <a href="IT131_Subnetting.html?drill=quick#practice">Subnetting drills</a>. It's worth points in Modules 11 and 12 and it only gets faster with reps.</li>
+      <li><strong>Take the full Practice Final again</strong> two days before the exam. If you're over 80%, you're in good shape.</li>
+    </ol>
+  </section>
+
+  <!-- TOWER -->
+  <section id="tower">
+    <div class="section-head">
+      <p class="kicker">One request, seven desks</p>
+      <h2>The whole stack on one page</h2>
+      <p>Follow a PC loading a web page from the top floor down. If you can explain every row, you understand the course.</p>
+    </div>
+    <table class="spec">
+      <thead><tr><th>OSI layer · OSI Company desk</th><th>PDU</th><th>What happens</th><th>Modules</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;">7 Application · Front Desk</td><td>Data</td><td>The browser asks DNS for the server's address, then sends an HTTP GET. DHCP gave the PC its address in the first place.</td><td class="mono">15</td></tr>
+        <tr><td style="font-weight:600;">6 Presentation · Translation &amp; Wardrobe</td><td>Data</td><td>Formats, compresses, and encrypts (HTTPS).</td><td class="mono">3, 15</td></tr>
+        <tr><td style="font-weight:600;">5 Session · Scheduling</td><td>Data</td><td>Keeps the dialog open and restarts it if interrupted.</td><td class="mono">3, 15</td></tr>
+        <tr><td style="font-weight:600;">4 Transport · Shipping &amp; Receiving</td><td>Segment</td><td>TCP handshakes, numbers bytes with SEQ/ACK, and uses ports to reach the right application.</td><td class="mono">14</td></tr>
+        <tr><td style="font-weight:600;">3 Network · Logistics</td><td>Packet</td><td>Adds source and destination IP. The host compares the destination with its own network, and sends off-subnet traffic to the default gateway. Routers forward by the routing table.</td><td class="mono">8, 10–13</td></tr>
+        <tr><td style="font-weight:600;">2 Data Link · Local Dispatch</td><td>Frame</td><td>Adds MAC addresses for <em>this hop</em> only. ARP (IPv4) or ND (IPv6) finds the next hop's MAC. Switches forward by the MAC table.</td><td class="mono">6, 7, 9</td></tr>
+        <tr><td style="font-weight:600;">1 Physical · Infrastructure Crew</td><td>Bits</td><td>Signals on copper, fiber, or radio.</td><td class="mono">4</td></tr>
+      </tbody>
+    </table>
+    <div class="teach-note">
+      <span class="label">The one idea that answers a dozen questions</span>
+      IP addresses stay the same end to end; MAC addresses change at every router. A frame leaving PC-A for SRV1 is addressed to <strong>R1's MAC</strong> but <strong>SRV1's IP</strong>. The <a href="osi-company-teaching-kit/osi-company/osi-episode-01-script.html">OSI Company Episode 01</a> walks through this desk by desk.
+    </div>
+  </section>
+
+  <!-- NUMBERS -->
+  <section id="numbers">
+    <div class="section-head">
+      <p class="kicker">Say these without looking</p>
+      <h2>Must-know numbers</h2>
+      <p>Facts that show up across many modules.</p>
+    </div>
+    <h3 class="sub">Ports</h3>
+    <table class="spec">
+      <thead><tr><th class="mono">Port</th><th>Protocol</th><th class="mono">Port</th><th>Protocol</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">20 / 21</td><td>FTP data / control (TCP)</td><td class="mono">80</td><td>HTTP (TCP)</td></tr>
+        <tr><td class="mono">22</td><td>SSH (TCP)</td><td class="mono">110</td><td>POP3 (TCP)</td></tr>
+        <tr><td class="mono">23</td><td>Telnet (TCP)</td><td class="mono">143</td><td>IMAP (TCP)</td></tr>
+        <tr><td class="mono">25</td><td>SMTP (TCP)</td><td class="mono">161</td><td>SNMP (UDP)</td></tr>
+        <tr><td class="mono">53</td><td>DNS (UDP and TCP)</td><td class="mono">443</td><td>HTTPS (TCP)</td></tr>
+        <tr><td class="mono">67 / 68</td><td>DHCPv4 server / client (UDP)</td><td class="mono">69</td><td>TFTP (UDP)</td></tr>
+      </tbody>
+    </table>
+    <h3 class="sub">Addresses and sizes</h3>
+    <table class="spec">
+      <thead><tr><th>Fact</th><th>Value</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;">Private IPv4 (RFC 1918)</td><td class="mono">10.0.0.0/8 · 172.16.0.0/12 · 192.168.0.0/16</td></tr>
+        <tr><td style="font-weight:600;">Loopback / APIPA</td><td class="mono">127.0.0.0/8 · 169.254.0.0/16</td></tr>
+        <tr><td style="font-weight:600;">Usable hosts</td><td>2<sup>host bits</sup> − 2. A /30 has 2; a /24 has 254.</td></tr>
+        <tr><td style="font-weight:600;">IPv6 link-local / multicast</td><td class="mono">fe80::/10 · ff00::/8</td></tr>
+        <tr><td style="font-weight:600;">IPv6 all-nodes / all-routers</td><td class="mono">ff02::1 · ff02::2</td></tr>
+        <tr><td style="font-weight:600;">IPv6 LAN prefix</td><td><code>/64</code>: a 64-bit network part and a 64-bit interface ID</td></tr>
+        <tr><td style="font-weight:600;">MAC address</td><td>48 bits: 24-bit OUI (vendor) + 24-bit device ID</td></tr>
+        <tr><td style="font-weight:600;">Address lengths</td><td>IPv4 32 bits · IPv6 128 bits</td></tr>
+        <tr><td style="font-weight:600;">Header sizes</td><td>IPv4 20 bytes (no options) · IPv6 40 bytes fixed · TCP 20 bytes minimum · UDP 8 bytes</td></tr>
+        <tr><td style="font-weight:600;">Ethernet frame</td><td>64 to 1518 bytes; 1500-byte MTU</td></tr>
+        <tr><td style="font-weight:600;">Port ranges</td><td>0–1023 well-known · 1024–49151 registered · 49152–65535 dynamic</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- TRAPS -->
+  <section id="traps">
+    <div class="section-head">
+      <p class="kicker">Read the question twice</p>
+      <h2>Classic traps</h2>
+      <p>The most-missed points from every session's common-mistakes list, in one place.</p>
+    </div>
+    <ul class="obj-list">
+      <li><strong>Network vs. broadcast:</strong> neither one can be assigned to a host. Usable is everything in between.</li>
+      <li><strong>Borrowed bits:</strong> subnets = 2<sup>borrowed</sup>; hosts = 2<sup>remaining</sup> − 2. Don't subtract 2 from the subnet count.</li>
+      <li><strong>ACK</strong> is the <em>next</em> byte expected, not the last one received.</li>
+      <li><strong>Switches</strong> forward by MAC; <strong>routers</strong> forward by IP. A router is the edge of a broadcast domain.</li>
+      <li><strong>Unknown unicast</strong> is flooded by a switch, like a broadcast, until the switch learns the MAC.</li>
+      <li><strong>DHCP:</strong> Discover and Request are broadcast; Offer and Ack are unicast. That's ITN's answer. In real captures a server can broadcast them too (see <a href="IT131_Session10.html#dnsdhcp">Session 10</a>), and a lease-renewal Request is unicast.</li>
+      <li><strong>Hosts ARP for the gateway</strong> when the destination is on another network, never for the remote host.</li>
+      <li><strong>IPv6 has no broadcast.</strong> It uses multicast.</li>
+      <li><strong><code>enable secret</code> beats <code>enable password</code></strong>; <code>service password-encryption</code> is only type 7.</li>
+      <li><strong>Router interfaces</strong> are shut down by default. Switch ports aren't, but a switch's VLAN 1 SVI is.</li>
+      <li><strong>Ping symbols:</strong> <code>!</code> reply, <code>.</code> timeout, <code>U</code> unreachable.</li>
+      <li><strong>Worm vs. virus:</strong> a worm spreads itself; a virus needs a user.</li>
+    </ul>
+  </section>
+
+  <!-- EXAM DAY -->
+  <section id="examday">
+    <div class="section-head">
+      <p class="kicker">On the day</p>
+      <h2>Exam-day tips</h2>
+      <p>Points lost to haste are the cheapest ones to win back.</p>
+    </div>
+    <ul class="obj-list">
+      <li>Read the <strong>last line</strong> of the question first, so you know what it's asking before you read the scenario.</li>
+      <li>Watch for <strong>NOT</strong>, <strong>EXCEPT</strong>, and "choose two". Pick exactly as many as asked; one answer on a "choose two" loses points.</li>
+      <li>For subnetting, write the block size and the subnet boundaries down before you look at the choices.</li>
+      <li>For command questions, say the prompt out loud: <code>R1(config-if)#</code> tells you which mode the command must run in.</li>
+      <li>Eliminate first. Two of the four choices are usually clearly wrong.</li>
+      <li>Change an answer when you have a concrete reason, such as a misread word or a fact you remembered. Changes made for a reason help more often than they hurt.</li>
+    </ul>
+  </section>
+
+  <!-- NEXT -->
+  <section id="next">
+    <div class="section-head">
+      <p class="kicker">After the final</p>
+      <h2>What's next: the previews you've already seen</h2>
+      <p>Most of what's marked "preview" on this site is CCNA 2 (Switching, Routing, and Wireless Essentials) material, and you've already met it. (A few earlier previews pointed ahead to later ITN modules, and a few, like TCP congestion control, are beyond the course.)</p>
+    </div>
+    <table class="spec">
+      <thead><tr><th>Preview</th><th>Where you saw it</th><th>CCNA 2</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;">Static routes (S in the routing table)</td><td><a href="IT131_Session07.html">Session 7</a>, <a href="IT131_Session12.html">Session 12 lab</a></td><td>SRWE 15</td></tr>
+        <tr><td style="font-weight:600;">Router advertisement flags (SLAAC vs. DHCPv6)</td><td><a href="IT131_Session09.html">Session 9</a></td><td>SRWE 8</td></tr>
+        <tr><td style="font-weight:600;">Configuring a DHCP server and relay</td><td><a href="IT131_Session10.html">Session 10</a>, <a href="IT131_Session11.html">Session 11</a></td><td>SRWE 7</td></tr>
+        <tr><td style="font-weight:600;">VLANs, trunking, and inter-VLAN routing</td><td>Why the lab switches only use VLAN 1</td><td>SRWE 3–4</td></tr>
+        <tr><td style="font-weight:600;">Port security, DHCP snooping</td><td><a href="IT131_Session11.html">Session 11</a></td><td>SRWE 10–11</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- FLASHCARDS -->
+  <section id="flashcards">
+    <div class="section-head">
+      <p class="kicker">Study</p>
+      <h2>Flashcards</h2>
+      <p>The cross-course essentials. Click to flip. Double-click to mark as known.</p>
+    </div>
+    <div class="toolbar">
+      <button class="btn" id="shuffleBtn">Shuffle</button>
+      <button class="btn" id="resetKnownBtn">Reset progress</button>
+      <span id="cardProgress"></span>
+    </div>
+    <div class="card-grid" id="cardGrid"></div>
+  </section>
+
+  <!-- QUIZ -->
+  <section id="quiz">
+    <div class="section-head">
+      <p class="kicker">Check yourself</p>
+      <h2>Mixed review questions</h2>
+      <p>Questions that need more than one module. For the full blueprint, use the <a href="IT131_PracticeFinal.html">Practice Final</a>.</p>
+    </div>
+    <div id="quizScore"></div>
+    <div id="quizList"></div>
+    <button class="btn" id="resetQuizBtn">Reset quiz</button>
+  </section>
+
+  <!-- GLOSSARY -->
+  <section id="glossary">
+    <div class="section-head">
+      <p class="kicker">Reference</p>
+      <h2>Glossary &amp; index</h2>
+      <p>The cross-course essentials, searchable and indexed A–Z. Each session page has its own full glossary.</p>
+    </div>
+    <input type="text" id="glossarySearch" placeholder="Search terms…" aria-label="Search glossary">
+    <div class="alpha-nav" id="alphaNav"></div>
+    <dl class="glossary" id="glossaryList"></dl>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>IT131 · CCNA: Introduction to Networks · Session 13 final review.</p>
+  </div>
+</footer>
+
+<button id="backToTop" class="back-to-top" aria-label="Back to top" title="Back to top">↑</button>
+
+<script>
+  const TERMS = [
+    {t:"ARP", d:"Address Resolution Protocol. Finds the MAC address for an IPv4 address on the local network. For a remote destination, a host ARPs for its default gateway."},
+    {t:"Broadcast domain", d:"The set of devices that receive each other's broadcasts. Switches extend it; routers end it."},
+    {t:"Default gateway", d:"The router interface a host sends traffic to when the destination is on another network."},
+    {t:"DHCP", d:"Automatically leases an IP address, mask, gateway, and DNS server to hosts, using Discover, Offer, Request, Ack (UDP 67/68)."},
+    {t:"DNS", d:"Resolves names to IP addresses, on UDP and TCP port 53."},
+    {t:"Encapsulation", d:"Each layer adds its own header (and Layer 2 a trailer) as data moves down the stack: data → segment → packet → frame → bits."},
+    {t:"Frame", d:"The Layer 2 PDU. Its MAC addresses change at every router hop."},
+    {t:"Link-local address", d:"An fe80::/10 IPv6 address valid only on one link. Every IPv6 interface has one; hosts use the router's as their gateway."},
+    {t:"MAC address", d:"A 48-bit Layer 2 address: a 24-bit OUI for the vendor and a 24-bit device part, written in hex."},
+    {t:"MAC address table", d:"A switch's list of which MAC address was seen on which port. It forwards known unicast out one port and floods unknown unicast."},
+    {t:"Neighbor Discovery (ND)", d:"IPv6's replacement for ARP, using ICMPv6 neighbor and router solicitations and advertisements."},
+    {t:"OSI model", d:"Seven layers: Application, Presentation, Session, Transport, Network, Data Link, Physical."},
+    {t:"Packet", d:"The Layer 3 PDU. Its source and destination IP addresses stay the same end to end (without NAT)."},
+    {t:"Port number", d:"A 16-bit Layer 4 value identifying the application. Well-known 0–1023, registered 1024–49151, dynamic 49152–65535."},
+    {t:"Routing table", d:"A router's list of known networks and how to reach them. C connected, L local, S static (CCNA 2 preview)."},
+    {t:"Segment", d:"The Transport layer PDU. ITN calls it a segment for both TCP and UDP (a UDP one is also called a datagram)."},
+    {t:"SLAAC", d:"Stateless Address Autoconfiguration. An IPv6 host builds its own address from the prefix in the router's advertisement."},
+    {t:"SSH", d:"Encrypted remote access on TCP 22. On IOS: hostname, domain name, RSA keys, a local user, login local, transport input ssh."},
+    {t:"Subnet mask", d:"Marks which bits of an IPv4 address are the network part. /24 = 255.255.255.0."},
+    {t:"TCP/IP model", d:"Four layers: Application, Transport, Internet, Network Access."},
+    {t:"Three-way handshake", d:"SYN → SYN, ACK → ACK. How TCP opens a connection."},
+    {t:"VLSM", d:"Variable-length subnet masking: sizing each subnet to its need, largest first."},
+  ];
+
+  const QUIZ = [
+    { q:"PC-A (192.168.10.10) sends a packet to SRV1 (192.168.20.100) on another network. Which destination addresses are in the frame as it leaves PC-A?",
+      choices:["SRV1's MAC and SRV1's IP","R1's MAC and R1's IP","R1's MAC and SRV1's IP","SRV1's MAC and R1's IP"], correct:2,
+      explain:"The IP destination is the final host. The MAC destination is only the next hop, the default gateway (R1)." },
+    { q:"How many usable host addresses are in 192.168.30.64/27, and what is its broadcast address?",
+      choices:["30, 192.168.30.95","32, 192.168.30.95","30, 192.168.30.96","62, 192.168.30.127"], correct:0,
+      explain:"A /27 is a block of 32: .64–.95. The broadcast is .95, and 32 − 2 = 30 hosts are usable." },
+    { q:"A switch receives a frame whose destination MAC isn't in its MAC address table. What does it do?",
+      choices:["Drops the frame","Floods it out every port except the one it came in on","Sends an ARP request","Forwards it to the default gateway"], correct:1,
+      explain:"Unknown unicast frames are flooded, like broadcasts, until the switch learns where that MAC lives." },
+    { q:"Which pair of protocols both use UDP?",
+      choices:["HTTP and DNS","SMTP and TFTP","SSH and DHCP","DHCP and TFTP"], correct:3,
+      explain:"DHCP (UDP 67/68) and TFTP (UDP 69) use UDP. HTTP, SMTP, and SSH use TCP; DNS uses both." },
+    { q:"Which device separates broadcast domains?",
+      choices:["Router","Switch","Hub","Access point"], correct:0,
+      explain:"Routers don't forward broadcasts, so each router interface is the edge of a broadcast domain." },
+    { q:"At which OSI layer does a router make its forwarding decision?",
+      choices:["Layer 2","Layer 4","Layer 3","Layer 7"], correct:2,
+      explain:"Routers forward by destination IP address, which is Layer 3. Switches forward at Layer 2 by MAC." },
+    { q:"A host has the IPv6 address fe80::1a2b:3cff:fe4d:5e6f. What type of address is it?",
+      choices:["Global unicast","Link-local","Multicast","Unique local"], correct:1,
+      explain:"fe80::/10 is link-local: valid only on the local link, and present on every IPv6 interface." },
+    { q:"A technician runs ping from R1 and sees U.U.U. What does that mean?",
+      choices:["All echoes were answered","The echoes timed out with no reply","A router on the path reported the destination unreachable","The local interface is shut down"], correct:2,
+      explain:"U means an ICMP Destination Unreachable came back from a router on the path. A period is a timeout." },
+    { q:"Which command, typed at R1(config)#, prevents passwords from appearing in plaintext in the running configuration?",
+      choices:["enable password","service password-encryption","security passwords min-length 8","login local"], correct:1,
+      explain:"service password-encryption hides plaintext passwords as type 7. It's weak, which is why secret is preferred, but it's the command that does this." },
+    { q:"Which statement about TCP and UDP is true?",
+      choices:["UDP numbers each segment so data can be reordered","TCP has no header overhead","Both establish a session before sending data","TCP acknowledges data and retransmits lost segments; UDP does not"], correct:3,
+      explain:"TCP is reliable: acknowledgments, retransmission, ordering. UDP is best effort with an 8-byte header." },
+  ];
+
+  const grid = document.getElementById('cardGrid');
+  TERMS.forEach((item, i) => {
+    const card = document.createElement('button');
+    card.className = 'flashcard';
+    card.setAttribute('aria-label', 'Flashcard: ' + item.t + '. Press to flip.');
+    card.dataset.i = i;
+    card.innerHTML = `
+      <div class="flashcard-inner">
+        <div class="flashcard-face front"><div class="lbl">Term</div><div class="term">${item.t}</div></div>
+        <div class="flashcard-face back"><div class="lbl">Definition</div><div class="def">${item.d}</div></div>
+      </div>`;
+    card.addEventListener('click', () => card.classList.toggle('flipped'));
+    card.addEventListener('dblclick', () => { card.classList.toggle('known'); updateProgress(); });
+    grid.appendChild(card);
+  });
+  function updateProgress(){
+    const known = document.querySelectorAll('.flashcard.known').length;
+    document.getElementById('cardProgress').textContent = `${known} / ${TERMS.length} marked known (double-click a card to mark it)`;
+  }
+  updateProgress();
+  document.getElementById('shuffleBtn').addEventListener('click', () => {
+    const cards = Array.from(grid.children);
+    cards.sort(() => Math.random() - 0.5);
+    cards.forEach(c => { c.classList.remove('flipped'); grid.appendChild(c); });
+  });
+  document.getElementById('resetKnownBtn').addEventListener('click', () => {
+    document.querySelectorAll('.flashcard.known').forEach(c => c.classList.remove('known'));
+    updateProgress();
+  });
+
+  const quizList = document.getElementById('quizList');
+  let score = 0, answered = 0;
+  function renderQuiz(){
+    quizList.innerHTML = ''; score = 0; answered = 0;
+    QUIZ.forEach((item, qi) => {
+      const box = document.createElement('div');
+      box.className = 'quiz-q';
+      box.innerHTML = `<p class="qtext"><span class="qnum">Q${qi+1}.</span>${item.q}</p><div class="choices"></div><p class="explain"></p>`;
+      const choicesEl = box.querySelector('.choices');
+      item.choices.forEach((c, ci) => {
+        const b = document.createElement('button');
+        b.className = 'choice'; b.textContent = c;
+        b.addEventListener('click', () => {
+          if (box.dataset.done) return;
+          box.dataset.done = '1'; answered++;
+          if (ci === item.correct) score++;
+          Array.from(choicesEl.children).forEach((el, ei) => {
+            el.disabled = true;
+            if (ei === item.correct) el.classList.add('correct');
+            else if (ei === ci) el.classList.add('incorrect');
+          });
+          box.querySelector('.explain').textContent = item.explain;
+          box.querySelector('.explain').classList.add('show');
+          updateScore();
+        });
+        choicesEl.appendChild(b);
+      });
+      quizList.appendChild(box);
+    });
+    updateScore();
+  }
+  function updateScore(){
+    document.getElementById('quizScore').textContent =
+      answered === 0 ? `${QUIZ.length} questions — click an answer to check yourself` : `Score: ${score} / ${answered} answered`;
+  }
+  renderQuiz();
+  document.getElementById('resetQuizBtn').addEventListener('click', renderQuiz);
+
+  const glossaryList = document.getElementById('glossaryList');
+  const alphaNav = document.getElementById('alphaNav');
+  const letters = [...new Set(TERMS.map(t => t.t[0].toUpperCase()))];
+  'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').forEach(L => {
+    const a = document.createElement('a');
+    a.textContent = L;
+    if (letters.includes(L)) { a.href = '#g-' + L; a.className = 'has'; }
+    else { a.href = 'javascript:void(0)'; }
+    alphaNav.appendChild(a);
+  });
+  let currentLetter = '';
+  TERMS.forEach(item => {
+    const L = item.t[0].toUpperCase();
+    if (L !== currentLetter) {
+      currentLetter = L;
+      const h = document.createElement('div');
+      h.className = 'glossary-letter'; h.id = 'g-' + L; h.textContent = L;
+      glossaryList.appendChild(h);
+    }
+    const wrap = document.createElement('div');
+    wrap.className = 'gitem';
+    wrap.innerHTML = `<dt>${item.t}</dt><dd>${item.d}</dd>`;
+    wrap.dataset.search = (item.t + ' ' + item.d).toLowerCase();
+    glossaryList.appendChild(wrap);
+  });
+  document.getElementById('glossarySearch').addEventListener('input', (e) => {
+    const q = e.target.value.toLowerCase().trim();
+    document.querySelectorAll('.gitem').forEach(el => {
+      el.classList.toggle('hidden', q && !el.dataset.search.includes(q));
+    });
+  });
+
+  const backToTop = document.getElementById('backToTop');
+  function toggleBackToTop(){ backToTop.classList.toggle('show', window.scrollY > 480); }
+  window.addEventListener('scroll', toggleBackToTop, {passive:true});
+  toggleBackToTop();
+  backToTop.addEventListener('click', () => window.scrollTo({top:0, behavior:'smooth'}));
+</script>

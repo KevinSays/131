@@ -3,7 +3,8 @@
 Student-facing session review pages for IT131: lecture recaps, flashcards, sample quizzes, worked examples, and glossaries for each session. Also included:
 
 - the "OSI Company" teaching kit referenced throughout
-- an interactive multi-module practice test generator
+- interactive practice test generators: a Modules 1–10 practice midterm and a Modules 1–17 **Practice Final** (`IT131_PracticeFinal.html`) that matches the final's 55-question blueprint
+- a hands-on **practice lab** (Session 12) in the style of the ITN Packet Tracer Skills Assessment, with an answer key
 - the **Subnetting Field Manual** (`IT131_Subnetting.html`), with a step-by-step calculator and eight practice drills
 - **The Zoning Office** (`IT131_ZoningOffice.html`), subnetting told as an OSI Company spinoff series
 - a growing page of reference graphics and diagrams

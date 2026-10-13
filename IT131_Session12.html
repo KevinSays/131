@@ -1,0 +1,1108 @@
+<title>IT131 Session 12 – Practice Lab &amp; Skills Review</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --paper:#EDE8DD; --canvas:#D9D2C3; --ink:#1F2421; --kraft:#B08554; --kraft-dark:#664526;
+    --blue:#2F4858; --red:#A23A2E; --ticket:#F3E7E2;
+    --blue-soft:rgba(47,72,88,.08); --red-soft:rgba(162,58,46,.08);
+    --kraft-soft:rgba(176,133,84,.14); --ink-soft:rgba(31,36,33,.06);
+    --shadow:5px 5px 0 rgba(31,36,33,.16);
+    --display:'Special Elite','Courier New',monospace;
+    --sans:'IBM Plex Sans', system-ui, sans-serif;
+    --mono:'IBM Plex Mono', monospace;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth; font-size:125%;}
+  body{
+    margin:0; background:var(--canvas); color:var(--ink); font-family:var(--sans);
+    line-height:1.55; -webkit-font-smoothing:antialiased;
+    background-image:radial-gradient(rgba(31,36,33,.06) 1px, transparent 1px);
+    background-size:16px 16px;
+  }
+  ::selection{ background:var(--kraft-soft); }
+  a{ color:var(--blue); }
+  .wrap{ max-width:940px; margin:0 auto; padding:0 20px; }
+  code{ font-family:var(--mono); background:var(--ink-soft); padding:1px 6px; border-radius:2px; font-size:.9em; }
+
+  header.masthead{ padding:48px 0 30px; }
+  .eyebrow{ display:inline-block; font-family:var(--mono); font-size:.86rem; letter-spacing:.12em;
+    border:2px solid var(--blue); color:var(--blue); padding:4px 10px; transform:rotate(-2deg); background:var(--paper); }
+  h1{ font-family:var(--display); font-weight:400; font-size:clamp(1.9rem,5vw,2.9rem); letter-spacing:.01em;
+    margin:16px 0 10px; line-height:1.15; }
+  .lede{ max-width:64ch; font-size:1.02rem; line-height:1.6; opacity:.85; margin:0 0 18px; }
+  .factrow{ display:flex; flex-wrap:wrap; gap:10px; }
+  .fact{ font-family:var(--mono); font-size:.82rem; letter-spacing:.02em; background:var(--paper);
+    border:1.5px solid var(--ink); padding:.4em .8em; display:flex; gap:.5em; box-shadow:3px 3px 0 rgba(31,36,33,.14); }
+  .fact b{ color:var(--kraft-dark); font-weight:600; text-transform:uppercase; letter-spacing:.06em; font-size:.88rem; }
+
+  nav.index{ position:sticky; top:0; z-index:20; background:color-mix(in srgb, var(--canvas) 92%, transparent);
+    backdrop-filter:blur(6px); border-top:2px solid var(--ink); border-bottom:2px solid var(--ink); }
+  nav.index .wrap{ display:flex; gap:2px; overflow-x:auto; padding:8px 20px; scrollbar-width:none; }
+  nav.index .wrap::-webkit-scrollbar{ display:none; }
+  nav.index a{ font-family:var(--mono); font-weight:600; letter-spacing:.03em; font-size:.82rem; text-decoration:none;
+    color:var(--ink); opacity:.85; padding:.5em .8em; white-space:nowrap; text-transform:uppercase; border:1px solid transparent; }
+  nav.index a:hover{ opacity:1; border-color:var(--ink); background:var(--paper); }
+  nav.index a.toc-link{ color:var(--blue); opacity:1; border-right:1.5px solid var(--ink); margin-right:8px; padding-right:16px; }
+  nav.index a.toc-link:hover{ background:var(--blue-soft); border-color:var(--ink); }
+
+  section{ padding:44px 0; border-bottom:2px dashed rgba(31,36,33,.3); }
+  section:last-of-type{ border-bottom:none; }
+  .section-head{ margin-bottom:26px; max-width:70ch; }
+  .kicker{ font-family:var(--mono); font-weight:600; font-size:.9rem; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--red); margin:0 0 .4em; }
+  h2{ font-family:var(--display); font-weight:400; font-size:clamp(1.4rem,2.8vw,1.9rem); margin:0 0 .25em; letter-spacing:.005em; }
+  .section-head p{ opacity:.82; margin:.5em 0 0; }
+  h3.sub{ font-family:var(--mono); font-size:1.02rem; margin:24px 0 10px; text-transform:uppercase; letter-spacing:.04em; color:var(--kraft-dark); }
+
+  .obj-list{ display:grid; gap:10px; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); list-style:none; margin:0; padding:0; }
+  .obj-list li{ background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow); padding:14px 16px; font-size:.92rem; }
+  .obj-list li::before{ content:"▸"; color:var(--red); margin-right:.5em; font-weight:700; }
+
+  .teach-note{ margin:18px 0; padding:12px 14px; border:1.5px dashed var(--blue); background:var(--blue-soft);
+    font-family:var(--mono); font-size:.82rem; line-height:1.6; }
+  .teach-note .label{ color:var(--blue); font-weight:600; letter-spacing:.05em; text-transform:uppercase; font-size:.88rem; display:block; margin-bottom:.4em; }
+  .teach-note.warn{ border-color:var(--red); background:var(--red-soft); }
+  .teach-note.warn .label{ color:var(--red); }
+  .teach-note.preview{ border-color:var(--kraft-dark); background:var(--kraft-soft); }
+  .teach-note.preview .label{ color:var(--kraft-dark); }
+
+  .cold-open{ background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow); padding:18px 20px; margin:24px 0; }
+  .cold-open .tag{ font-family:var(--mono); font-size:.84rem; letter-spacing:.1em; color:var(--red); margin:0 0 8px; text-transform:uppercase; }
+  .cold-open p{ margin:0; font-size:.95rem; line-height:1.6; font-style:italic; }
+
+  /* TERMINAL BLOCKS */
+  .terminal{ background:var(--ticket); color:var(--ink); border:1.5px solid var(--ink); margin:20px 0; overflow:hidden; box-shadow:var(--shadow); }
+  .terminal-header{ background:color-mix(in srgb, var(--ticket) 80%, #fff); padding:8px 14px; border-bottom:1px solid rgba(31,36,33,.15); display:flex; align-items:center; gap:6px; }
+  .terminal-dot{ width:10px; height:10px; border-radius:50%; }
+  .terminal-dot.r{ background:var(--red); }
+  .terminal-dot.y{ background:var(--kraft-dark); }
+  .terminal-dot.g{ background:var(--blue); }
+  .terminal-title{ font-family:var(--mono); font-size:.8rem; color:var(--kraft-dark); margin-left:8px; letter-spacing:.04em; }
+  .terminal-body{ padding:14px 18px; font-family:'Courier New', Courier, monospace; font-size:.84rem; line-height:1.65; overflow-x:auto; white-space:pre-wrap; word-wrap:break-word; }
+  .terminal-body .prompt{ color:var(--blue); font-weight:700; }
+  .terminal-body .cmd{ color:var(--ink); font-weight:600; }
+  .terminal-body .comment{ color:var(--kraft-dark); font-style:italic; }
+  .terminal-body .hl{ color:var(--red); font-weight:600; }
+  .terminal-body .out{ color:var(--ink); opacity:.7; }
+
+  table.spec{ width:100%; border-collapse:collapse; margin:18px 0; font-size:.86rem; }
+  table.spec th{ font-family:var(--mono); font-weight:600; text-transform:uppercase; letter-spacing:.05em; font-size:.86rem;
+    color:var(--kraft-dark); text-align:left; padding:8px 10px; border-bottom:2px solid var(--ink); }
+  table.spec td{ padding:9px 10px; border-bottom:1px dashed rgba(31,36,33,.3); vertical-align:top; }
+  table.spec tr:last-child td{ border-bottom:none; }
+  table.spec td.mono, table.spec th.mono{ font-family:var(--mono); }
+
+  .toolbar{ display:flex; gap:10px; align-items:center; margin-bottom:20px; flex-wrap:wrap; }
+  button.btn{ font-family:var(--mono); font-weight:600; letter-spacing:.03em; text-transform:uppercase; font-size:.9rem;
+    background:var(--paper); color:var(--ink); border:1.5px solid var(--ink); padding:.55em 1em; cursor:pointer; box-shadow:3px 3px 0 rgba(31,36,33,.14); }
+  button.btn:hover{ background:var(--kraft-soft); }
+  button.btn:focus-visible, a:focus-visible, .flashcard:focus-visible, input:focus-visible{ outline:2px solid var(--blue); outline-offset:2px; }
+  #cardProgress{ font-family:var(--mono); font-size:.85rem; opacity:.75; }
+  .card-grid{ display:grid; gap:16px; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); }
+  .flashcard{ perspective:1200px; height:190px; cursor:pointer; border:none; background:none; padding:0; font-family:inherit; text-align:left; width:100%; }
+  .flashcard-inner{ position:relative; width:100%; height:100%; transition:transform .5s cubic-bezier(.4,.2,.2,1); transform-style:preserve-3d; -webkit-transform-style:preserve-3d; will-change:transform; }
+  .flashcard.flipped .flashcard-inner{ transform:rotateY(180deg); -webkit-transform:rotateY(180deg); }
+  .flashcard-face{ position:absolute; inset:0; backface-visibility:hidden; -webkit-backface-visibility:hidden; -moz-backface-visibility:hidden; border:1.5px solid var(--ink); box-shadow:var(--shadow);
+    padding:15px; display:flex; flex-direction:column; justify-content:center; }
+  .flashcard-face.front{ background:var(--paper); transform:translateZ(.5px); }
+  .flashcard-face.back{ background:var(--ticket); transform:rotateY(180deg) translateZ(.5px); overflow-y:auto; }
+  .flashcard-face .lbl{ font-family:var(--mono); font-weight:600; letter-spacing:.1em; text-transform:uppercase; font-size:.82rem; color:var(--kraft-dark); margin-bottom:.5em; }
+  .flashcard-face.front .term{ font-family:var(--display); font-weight:400; font-size:1.05rem; letter-spacing:.01em; }
+  .flashcard-face.back .def{ font-size:.82rem; }
+  .flashcard.known .flashcard-face.front{ border-color:var(--blue); border-width:2px; }
+
+  .quiz-q{ background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow); padding:18px 20px; margin-bottom:18px; }
+  .quiz-q .qtext{ font-weight:600; margin:0 0 13px; }
+  .quiz-q .qnum{ font-family:var(--display); color:var(--red); margin-right:.5em; }
+  .choices{ display:grid; gap:8px; }
+  .choice{ text-align:left; font-family:var(--sans); font-size:.9rem; background:var(--ticket); border:1.5px solid var(--ink);
+    padding:.65em .85em; cursor:pointer; color:var(--ink); }
+  .choice:hover{ border-color:var(--blue); }
+  .choice.correct{ background:var(--blue-soft); border-color:var(--blue); border-width:2px; }
+  .choice.incorrect{ background:var(--red-soft); border-color:var(--red); border-width:2px; }
+  .choice[disabled]{ cursor:default; }
+  .explain{ margin-top:12px; font-size:.84rem; opacity:.85; border-left:3px solid var(--kraft); padding-left:12px; display:none; font-family:var(--mono); }
+  .explain.show{ display:block; }
+  #quizScore{ font-family:var(--mono); font-size:.9rem; opacity:.75; margin-bottom:16px; }
+
+  .example{ background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow); padding:20px 22px; margin-bottom:16px; }
+  .example h3{ font-family:var(--display); font-weight:400; font-size:1.15rem; margin:0 0 8px; }
+  .example .tag{ display:inline-block; font-family:var(--mono); font-weight:600; font-size:.86rem; text-transform:uppercase; letter-spacing:.07em;
+    color:var(--blue); background:var(--blue-soft); border:1px solid var(--blue); padding:.25em .6em; margin-bottom:10px; }
+  details.solution{ margin-top:12px; }
+  details.solution summary{ cursor:pointer; font-family:var(--mono); font-weight:600; letter-spacing:.03em; text-transform:uppercase;
+    font-size:.9rem; color:var(--blue); list-style:none; display:inline-flex; align-items:center; gap:.4em; }
+  details.solution summary::-webkit-details-marker{ display:none; }
+  details.solution summary::before{ content:"▸"; transition:transform .15s; }
+  details.solution[open] summary::before{ transform:rotate(90deg); }
+  details.solution .solbody{ margin-top:10px; padding:13px 15px; background:var(--ticket); font-size:.88rem; }
+
+  #glossarySearch{ width:100%; max-width:400px; font-family:var(--sans); font-size:.9rem; padding:.65em .85em;
+    border:1.5px solid var(--ink); background:var(--paper); color:var(--ink); margin-bottom:16px; }
+  .alpha-nav{ display:flex; flex-wrap:wrap; gap:4px; margin-bottom:22px; }
+  .alpha-nav a{ font-family:var(--mono); font-weight:600; font-size:.82rem; width:1.8em; height:1.8em; display:flex;
+    align-items:center; justify-content:center; border:1px solid var(--ink); text-decoration:none; color:var(--ink); opacity:.35; }
+  .alpha-nav a.has{ opacity:1; background:var(--paper); }
+  .alpha-nav a.has:hover{ border-color:var(--blue); color:var(--blue); }
+  .glossary-letter{ font-family:var(--display); font-weight:400; color:var(--red); font-size:1.1rem; margin:20px 0 6px; }
+  dl.glossary{ margin:0; }
+  dl.glossary .gitem{ border-top:1px dashed rgba(31,36,33,.35); padding:11px 0; }
+  dl.glossary dt{ font-family:var(--mono); font-weight:600; font-size:.98rem; }
+  dl.glossary dd{ margin:.3em 0 0; opacity:.8; font-size:.86rem; }
+  .gitem.hidden{ display:none; }
+
+  footer{ padding:30px 0 60px; }
+  footer p{ opacity:.65; font-size:.82rem; font-family:var(--mono); letter-spacing:.02em; }
+
+  .back-to-top{ position:fixed; bottom:22px; right:22px; z-index:40; width:50px; height:50px;
+    background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow);
+    font-family:var(--display); font-size:1.4rem; color:var(--ink); line-height:1;
+    display:flex; align-items:center; justify-content:center; padding:0; cursor:pointer; text-decoration:none;
+    opacity:0; visibility:hidden; transform:translateY(10px);
+    transition:opacity .25s ease, transform .25s ease, visibility 0s .25s; }
+  .back-to-top.show{ opacity:1; visibility:visible; transform:translateY(0); transition:opacity .25s ease, transform .25s ease, visibility 0s; }
+  .back-to-top:hover{ background:var(--blue-soft); border-color:var(--blue); color:var(--blue); }
+  .back-to-top:focus-visible{ outline:2px solid var(--blue); outline-offset:2px; }
+
+  @media print{
+    body{ background:#fff; }
+    nav.index{ display:none; }
+    .quiz-q, .example, .flashcard-face, .terminal{ box-shadow:none; }
+    .back-to-top{ display:none; }
+  }
+
+  /* INTERACTIVE TOOLS */
+  .tool{ background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow); padding:16px 18px; margin:20px 0; }
+  .tool-title{ margin:0 0 10px; font-family:var(--mono); font-weight:600; font-size:.8rem; letter-spacing:.06em; text-transform:uppercase; color:var(--kraft-dark); }
+  .tool-in{ display:flex; flex-wrap:wrap; gap:10px; margin-bottom:12px; }
+  .tool-in input.txt{ flex:1 1 16em; min-width:0; font-family:var(--mono); font-size:.9rem; padding:.5em .7em; border:1.5px solid var(--ink); background:var(--ticket); color:var(--ink); }
+  .tool-out .row{ display:grid; grid-template-columns:9.5em 1fr; gap:10px; padding:6px 0; border-top:1px dashed rgba(31,36,33,.3); font-size:.86rem; align-items:baseline; }
+  .tool-out .row b{ font-family:var(--mono); font-size:.74rem; text-transform:uppercase; letter-spacing:.05em; color:var(--kraft-dark); }
+  .tool-out code{ overflow-wrap:anywhere; }
+  .tool-out .bad{ color:var(--red); font-family:var(--mono); font-size:.84rem; margin:0; }
+  @media (max-width:560px){ .tool-out .row{ grid-template-columns:1fr; gap:2px; } }
+  .tool-in label.mini{ display:flex; flex-direction:column; gap:3px; font-family:var(--mono); font-size:.72rem; text-transform:uppercase; letter-spacing:.05em; color:var(--kraft-dark); }
+  .tool-in input.txt.num{ flex:none; width:8.5em; }
+  @media (max-width:640px){ table.spec{ display:block; overflow-x:auto; } .terminal-body{ white-space:pre; word-wrap:normal; } }
+  .sorter-case{ background:var(--ticket); border:1.5px solid var(--ink); padding:12px 14px; margin:0 0 12px; font-size:.92rem; min-height:4.5em; }
+  .sorter-case .count{ display:block; font-family:var(--mono); font-size:.72rem; letter-spacing:.06em; text-transform:uppercase; color:var(--kraft-dark); margin-bottom:.35em; }
+  .sorter-btns{ display:grid; gap:8px; grid-template-columns:repeat(auto-fit,minmax(9.5em,1fr)); margin-bottom:12px; }
+  .sorter-btns .choice{ font-family:var(--mono); font-size:.82rem; text-transform:uppercase; letter-spacing:.04em; text-align:center; }
+  .tool select{ font-family:var(--mono); font-size:.86rem; padding:.5em .6em; border:1.5px solid var(--ink); background:var(--ticket); color:var(--ink); max-width:100%; flex:1 1 16em; min-width:0; }
+  ol.steps{ counter-reset:step; list-style:none; margin:0; padding:0; display:grid; gap:10px; }
+  ol.steps li{ counter-increment:step; background:var(--paper); border:1.5px solid var(--ink); box-shadow:var(--shadow); padding:12px 14px 12px 3.2em; position:relative; font-size:.92rem; }
+  ol.steps li::before{ content:counter(step); position:absolute; left:12px; top:10px; font-family:var(--display); font-size:1.3rem; color:var(--red); }
+  ul.checks{ list-style:none; margin:0 0 8px; padding:0; display:grid; gap:6px; }
+  ul.checks li{ background:var(--paper); border:1.5px solid var(--ink); padding:9px 12px; font-size:.9rem; }
+  ul.checks li.done{ background:var(--blue-soft); border-color:var(--blue); }
+  ul.checks label{ display:flex; gap:10px; align-items:flex-start; cursor:pointer; }
+  ul.checks input{ margin-top:.3em; width:1.05em; height:1.05em; flex:none; accent-color:var(--blue); }
+  ul.checks li.done span{ opacity:.75; }
+  p.scope{ font-family:var(--mono); font-size:.74rem; letter-spacing:.04em; color:var(--kraft-dark); margin:-4px 0 8px; text-transform:uppercase; }
+  table.ws input.ws-in{ width:100%; min-width:8.5em; font-family:var(--mono); font-size:.82rem; padding:.35em .5em; border:1.5px solid var(--ink); background:var(--ticket); color:var(--ink); }
+  table.ws input.ws-in.right{ border-color:var(--blue); background:var(--blue-soft); }
+  table.ws input.ws-in.wrong{ border-color:var(--red); background:var(--red-soft); }
+  /* Top bar: wrap onto extra rows instead of hiding links past the edge */
+  nav.index .wrap{ flex-wrap:wrap; overflow-x:visible; row-gap:2px; padding-top:6px; padding-bottom:6px; max-width:1240px; }
+  nav.index a{ padding:.35em .65em; }
+  @media (max-width:960px){ nav.index{ position:static; } }
+  @media (max-width:640px){ main code{ overflow-wrap:anywhere; } main{ overflow-wrap:break-word; } }
+</style>
+<script>
+  /* Keep anchor jumps clear of the sticky top bar, whatever its height */
+  (function(){
+    function pad(){
+      var n = document.querySelector('nav.index');
+      var sticky = n && getComputedStyle(n).position === 'sticky';
+      document.documentElement.style.scrollPaddingTop = sticky ? (n.offsetHeight + 8) + 'px' : '';
+    }
+    document.addEventListener('DOMContentLoaded', pad);
+    window.addEventListener('resize', pad);
+  })();
+</script>
+
+
+<header class="masthead">
+  <div class="wrap">
+    <p class="eyebrow">IT131 · SESSION 12 · FIELD NOTES</p>
+    <h1>Practice Lab &amp; Skills Review</h1>
+    <p class="lede">Eleven weeks of theory, one network. This week you build the OSI Company's HQ side from a box of parts: cable it, address it, lock it down, and prove that PC-A can reach the company web server by name. It's the same kind of task the hands-on part of the final asks for, so treat it as the dress rehearsal.</p>
+    <div class="factrow">
+      <span class="fact"><b>Opens with</b> Module Quiz — Building and Securing a Small Network (16–17)</span>
+      <span class="fact"><b>Hands-on</b> Practice lab in Packet Tracer</span>
+      <span class="fact"><b>Next week</b> Final exam (Modules 1–17)</span>
+    </div>
+  </div>
+</header>
+
+<nav class="index" aria-label="Section index">
+  <div class="wrap">
+    <a href="index.html" class="toc-link">↩ Contents</a>
+    <a href="#overview">Overview</a>
+    <a href="#quizday">Quiz Day</a>
+    <a href="#lab">The Lab</a>
+    <a href="#addressing">Addressing</a>
+    <a href="#tasks">Tasks</a>
+    <a href="#worksheet">Subnet Worksheet</a>
+    <a href="#verify">Verification</a>
+    <a href="#key">Answer Key</a>
+    <a href="#pointlosers">Point-Losers</a>
+    <a href="#skills">Skills Checklist</a>
+    <a href="#flashcards">Flashcards</a>
+    <a href="#quiz">Quiz</a>
+    <a href="#glossary">Glossary</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+  <!-- OVERVIEW -->
+  <section id="overview">
+    <div class="section-head">
+      <p class="kicker">Quiz + practice lab</p>
+      <h2>What Session 12 covers</h2>
+      <p>No new modules this week. We start with the module quiz on Modules 16–17, then spend the rest of class on a practice lab that pulls the whole course together: cabling, subnetting, basic device configuration, IPv4 and IPv6 addressing, device hardening, SSH, and verification.</p>
+    </div>
+    <div class="cold-open">
+      <p class="tag">Cold open · HQ, Friday, 4:55 p.m.</p>
+      <p>The last network tech left a sticky note on an unopened box: "Shipping &amp; Receiving side is done. R2, S2, PC-B, and the web server are up. HQ is all yours. Good luck." Inside: a router, a switch, a PC, and a tangle of cables. The Front Desk opens Monday at 8. By then, PC-A has to load <code>www.it131.example</code>, and nobody without a password gets into anything.</p>
+    </div>
+    <ul class="obj-list">
+      <li>Choose and connect the right cables: straight-through, crossover, console</li>
+      <li>Subnet an address block with VLSM and plan an IPv6 /64</li>
+      <li>Do a full basic configuration on a router and a switch</li>
+      <li>Address router interfaces with IPv4, IPv6 GUA, and link-local, and give a switch a management address</li>
+      <li>Harden both devices and set up SSH-only remote access</li>
+      <li>Configure a host with IPv4, IPv6, and DNS</li>
+      <li>Verify the build end to end, and save it</li>
+    </ul>
+  </section>
+
+  <!-- QUIZ DAY -->
+  <section id="quizday">
+    <div class="section-head">
+      <p class="kicker">Module Quiz — Building and Securing a Small Network</p>
+      <h2>Quiz day: Modules 16–17</h2>
+      <p>The quiz comes first. Everything on it is on the Session 11 page.</p>
+    </div>
+    <ul class="obj-list">
+      <li>The <a href="IT131_Session11.html#checkpoint">Session 11 checkpoint</a> lists everything the quiz covers.</li>
+      <li>Redo the <a href="IT131_Session11.html#quiz">Session 11 sample questions</a> cold.</li>
+      <li>Run a full round of <a href="IT131_Session11.html#attacks">name that attack</a>.</li>
+      <li>Be able to type the <a href="IT131_Session11.html#hardening">hardening and SSH commands</a> from memory. You'll need them in the lab anyway.</li>
+    </ul>
+    <div class="teach-note warn">
+      <span class="label">The most-missed points</span>
+      A worm spreads itself; a virus needs a user. Ping sweeps and port scans are <strong>reconnaissance</strong>. Authentication is who you are, authorization is what you may do. In IOS ping, <code>.</code> is a timeout and <code>U</code> is unreachable. And 169.254.x.x means DHCP failed.
+    </div>
+  </section>
+
+  <!-- THE LAB -->
+  <section id="lab">
+    <div class="section-head">
+      <p class="kicker">Practice lab</p>
+      <h2>The lab: finish the HQ network</h2>
+      <p>This lab works like ITN's Packet Tracer Skills Assessment (PTSA): you get a topology, an addressing table, and a list of requirements, and you configure the devices yourself. Every task is something a grader can check.</p>
+    </div>
+    <div class="terminal">
+      <div class="terminal-header"><span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span><span class="terminal-title">Topology · you build the left side (all addresses 192.168.x.x unless shown)</span></div>
+      <div class="terminal-body"> <span class="hl">YOU BUILD THIS</span>              |        <span class="out">ALREADY DONE</span>
+                             |
+ PC-A ---- S1 ---- R1 =======|======= R2 ---- S2 ---- PC-B
+ .10.10    .10.2   .10.1     |        .20.1   .20.2   .20.10
+                             |                |
+                             |                SRV1 .20.100
+                             |
+ LAN-A .10.0/24         10.0.0.0/30   LAN-B .20.0/24
+<span class="comment"> ----  straight-through     ====  crossover</span></div>
+    </div>
+    <ul class="obj-list">
+      <li><strong>What you configure:</strong> R1, S1, and PC-A, including cabling them.</li>
+      <li><strong>What's already done:</strong> R2, S2, PC-B, and SRV1 (the web server and DNS server for <code>it131.example</code>). Don't change them.</li>
+      <li><strong>What you need:</strong> Cisco Packet Tracer, and the starting file from your instructor.</li>
+      <li><strong>How long:</strong> plan on about 75 minutes the first time. The real skills exam is timed.</li>
+    </ul>
+    <div class="teach-note preview">
+      <span class="label">One provided step: static routes (CCNA 2 preview)</span>
+      R1 needs a route to LAN-B. Reading routing tables is ITN 8, but configuring routes to remote networks is CCNA 2 (SRWE 15). Step 4.5 gives you the two route commands to type exactly. You're not expected to design them; just know that an <code>S</code> in the routing table means a static route. The real ITN skills exam avoids this by using one router; this lab uses two so that you can test DNS, the web, and SSH against a real server.
+    </div>
+    <details class="solution">
+      <summary>For instructors: building the starting .pkt</summary>
+      <div class="solbody">
+        <p>Build the whole topology, configure the right side as below, and leave R1, S1, and PC-A as factory-default devices (or leave them out and have students add them, per step 1.1). Cabling on LAN-B: S2 F0/1 → PC-B, S2 F0/2 → SRV1, S2 G0/1 → R2 G0/0/1. On SRV1, turn on HTTP and DNS, with an A record <code>www.it131.example</code> → <code>192.168.20.100</code>. Consider an enable secret on R2 that students don't know, so nobody "fixes" the far side. If you build the finished network in Packet Tracer's Activity Wizard from the answer key, you get automatic scoring.</p>
+        <div class="terminal">
+          <div class="terminal-header"><span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span><span class="terminal-title">R2 and S2 · instructor only</span></div>
+          <div class="terminal-body"><span class="comment">! R2: pre-built. Students don't type this.</span>
+<span class="prompt">Router(config)#</span> <span class="cmd">hostname R2</span>
+<span class="prompt">R2(config)#</span> <span class="cmd">ipv6 unicast-routing</span>
+<span class="prompt">R2(config)#</span> <span class="cmd">interface g0/0/0</span>
+<span class="prompt">R2(config-if)#</span> <span class="cmd">ip address 10.0.0.2 255.255.255.252</span>
+<span class="prompt">R2(config-if)#</span> <span class="cmd">ipv6 address 2001:db8:acad:ff01::2/64</span>
+<span class="prompt">R2(config-if)#</span> <span class="cmd">ipv6 address fe80::2 link-local</span>
+<span class="prompt">R2(config-if)#</span> <span class="cmd">no shutdown</span>
+<span class="prompt">R2(config-if)#</span> <span class="cmd">interface g0/0/1</span>
+<span class="prompt">R2(config-if)#</span> <span class="cmd">ip address 192.168.20.1 255.255.255.0</span>
+<span class="prompt">R2(config-if)#</span> <span class="cmd">ipv6 address 2001:db8:acad:2::1/64</span>
+<span class="prompt">R2(config-if)#</span> <span class="cmd">ipv6 address fe80::2 link-local</span>
+<span class="prompt">R2(config-if)#</span> <span class="cmd">no shutdown</span>
+<span class="prompt">R2(config-if)#</span> <span class="cmd">exit</span>
+<span class="comment">! Return routes (SRWE 15), same as Session 7's R2</span>
+<span class="prompt">R2(config)#</span> <span class="cmd">ip route 0.0.0.0 0.0.0.0 10.0.0.1</span>
+<span class="prompt">R2(config)#</span> <span class="cmd">ipv6 route ::/0 2001:db8:acad:ff01::1</span>
+<span class="comment">! S2: hostname S2, interface vlan 1 192.168.20.2 /24,</span>
+<span class="comment">! no shutdown, ip default-gateway 192.168.20.1</span></div>
+        </div>
+      </div>
+    </details>
+  </section>
+
+  <!-- ADDRESSING -->
+  <section id="addressing">
+    <div class="section-head">
+      <p class="kicker">Lab · addressing table</p>
+      <h2>Addressing table</h2>
+      <p>Cells marked <strong>fill</strong> are yours to work out (Part 2). Everything else is given. Grey rows are already configured.</p>
+    </div>
+    <table class="spec">
+      <thead><tr><th>Device</th><th>Interface</th><th>IPv4 / mask</th><th>IPv6 / prefix</th><th>Default gateway</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;">R1</td><td class="mono">G0/0/1</td><td class="mono">192.168.10.1 / 255.255.255.0</td><td class="mono">2001:db8:acad:1::1/64<br>fe80::1 link-local</td><td>n/a</td></tr>
+        <tr><td style="font-weight:600;">R1</td><td class="mono">G0/0/0</td><td class="mono">10.0.0.1 / <strong>fill</strong></td><td class="mono">2001:db8:acad:ff01::1/64<br>fe80::1 link-local</td><td>n/a</td></tr>
+        <tr><td style="font-weight:600;">S1</td><td class="mono">VLAN 1</td><td class="mono">192.168.10.2 / 255.255.255.0</td><td>n/a</td><td class="mono">192.168.10.1</td></tr>
+        <tr><td style="font-weight:600;">PC-A</td><td class="mono">NIC</td><td class="mono">192.168.10.10 / 255.255.255.0</td><td class="mono">2001:db8:acad:1::10/64</td><td class="mono">192.168.10.1<br><strong>fill</strong> (IPv6)</td></tr>
+        <tr style="opacity:.6;"><td style="font-weight:600;">R2</td><td class="mono">G0/0/0</td><td class="mono">10.0.0.2 / 255.255.255.252</td><td class="mono">2001:db8:acad:ff01::2/64<br>fe80::2 link-local</td><td>n/a</td></tr>
+        <tr style="opacity:.6;"><td style="font-weight:600;">R2</td><td class="mono">G0/0/1</td><td class="mono">192.168.20.1 / 255.255.255.0</td><td class="mono">2001:db8:acad:2::1/64<br>fe80::2 link-local</td><td>n/a</td></tr>
+        <tr style="opacity:.6;"><td style="font-weight:600;">S2</td><td class="mono">VLAN 1</td><td class="mono">192.168.20.2 / 255.255.255.0</td><td>n/a</td><td class="mono">192.168.20.1</td></tr>
+        <tr style="opacity:.6;"><td style="font-weight:600;">PC-B</td><td class="mono">NIC</td><td class="mono">192.168.20.10 / 255.255.255.0</td><td class="mono">2001:db8:acad:2::10/64</td><td class="mono">192.168.20.1 · fe80::2</td></tr>
+        <tr style="opacity:.6;"><td style="font-weight:600;">SRV1</td><td class="mono">NIC</td><td class="mono">192.168.20.100 / 255.255.255.0</td><td class="mono">2001:db8:acad:2::100/64</td><td class="mono">192.168.20.1 · fe80::2</td></tr>
+      </tbody>
+    </table>
+    <div class="teach-note">
+      <span class="label">Why the switches have no IPv6</span>
+      A 2960 needs an SDM template change (<code>sdm prefer dual-ipv4-and-ipv6 default</code>) and a reload before its management interface accepts IPv6. ITN's IPv6 lab (12.6.6) shows this, but the skills exam doesn't ask for it, so this lab skips it. The switch's IPv4 address on VLAN 1 is only for managing the switch; the switch itself forwards frames at Layer 2 without it.
+    </div>
+    <h3 class="sub">The passwords for this lab</h3>
+    <table class="spec">
+      <thead><tr><th>Use</th><th class="mono">Password</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;">enable secret</td><td class="mono">En@ble2026</td></tr>
+        <tr><td style="font-weight:600;">Console line</td><td class="mono">C0ns0le!26</td></tr>
+        <tr><td style="font-weight:600;">Local user for SSH</td><td class="mono">admin / Adm1n!2026</td></tr>
+        <tr><td style="font-weight:600;">Domain name</td><td class="mono">it131.example</td></tr>
+        <tr><td style="font-weight:600;">MOTD banner</td><td class="mono">Authorized access only. All activity is monitored.</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:.88rem;">Every password is 8 characters or longer, because you'll set <code>security passwords min-length 8</code> first. These are practice passwords. Never reuse lab passwords anywhere real.</p>
+  </section>
+
+  <!-- TASKS -->
+  <section id="tasks">
+    <div class="section-head">
+      <p class="kicker">Lab · requirements</p>
+      <h2>The tasks</h2>
+      <p>Tick each item as you finish it. Your ticks are saved in this browser only.</p>
+    </div>
+    <div class="toolbar">
+      <span id="taskProgress" style="font-family:var(--mono);font-size:.85rem;opacity:.8;"></span>
+      <button class="btn" id="taskReset">Clear ticks</button>
+    </div>
+    <div id="taskList"></div>
+  </section>
+
+  <!-- WORKSHEET -->
+  <section id="worksheet">
+    <div class="section-head">
+      <p class="kicker">Lab · Part 2</p>
+      <h2>Subnet worksheet: plan LAN-C</h2>
+      <p>Logistics is planning HQ Floor 3, a future LAN-C, on <code>192.168.30.0/24</code>. Use VLSM: give the largest need its block first, and start each subnet right after the previous broadcast. Type your answers and press <strong>Check</strong>.</p>
+    </div>
+    <table class="spec">
+      <thead><tr><th>Need</th><th>Hosts</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;">Floor 3 users</td><td class="mono">50</td></tr>
+        <tr><td style="font-weight:600;">Printers and phones</td><td class="mono">20</td></tr>
+        <tr><td style="font-weight:600;">Floor 3 switch management</td><td class="mono">10</td></tr>
+        <tr><td style="font-weight:600;">Link to a future router</td><td class="mono">2</td></tr>
+      </tbody>
+    </table>
+    <div class="tool">
+      <p class="tool-title">Your plan</p>
+      <div id="wsGrid"></div>
+      <div class="toolbar" style="margin:12px 0 0;">
+        <button class="btn" id="wsCheck">Check</button>
+        <button class="btn" id="wsShow">Show answers</button>
+        <button class="btn" id="wsClear">Clear</button>
+        <span id="wsScore" style="font-family:var(--mono);font-size:.85rem;opacity:.8;"></span>
+      </div>
+    </div>
+    <p style="font-size:.88rem;">Stuck? The <a href="IT131_Subnetting.html#vlsm">Subnetting Field Manual's VLSM section</a> walks through the method, and its <a href="IT131_Subnetting.html?drill=vlsm#practice">VLSM drill</a> gives you more practice.</p>
+    <details class="solution"><summary>Show the worked solution</summary><div class="solbody">
+      <table class="spec" style="margin:0;">
+        <thead><tr><th>Need</th><th>Host bits</th><th>Prefix / mask</th><th>Network</th><th>Usable</th><th>Broadcast</th></tr></thead>
+        <tbody>
+          <tr><td>50 users</td><td class="mono">6 → 62</td><td class="mono">/26 · 255.255.255.192</td><td class="mono">192.168.30.0</td><td class="mono">.1 – .62</td><td class="mono">.63</td></tr>
+          <tr><td>20 printers/phones</td><td class="mono">5 → 30</td><td class="mono">/27 · 255.255.255.224</td><td class="mono">192.168.30.64</td><td class="mono">.65 – .94</td><td class="mono">.95</td></tr>
+          <tr><td>10 switch mgmt</td><td class="mono">4 → 14</td><td class="mono">/28 · 255.255.255.240</td><td class="mono">192.168.30.96</td><td class="mono">.97 – .110</td><td class="mono">.111</td></tr>
+          <tr><td>2 router link</td><td class="mono">2 → 2</td><td class="mono">/30 · 255.255.255.252</td><td class="mono">192.168.30.112</td><td class="mono">.113 – .114</td><td class="mono">.115</td></tr>
+        </tbody>
+      </table>
+      <p>Block sizes 64, 32, 16, 4. The next free address is <code>192.168.30.116</code>, leaving .116–.255 for growth. The router takes the first usable address in each subnet, as everywhere else on this site. For IPv6, the site uses <code>2001:db8:acad::/48</code> and subnet IDs 1, 2, and ff01 are taken, so LAN-C gets the next one: <code>2001:db8:acad:3::/64</code>, with the router at <code>2001:db8:acad:3::1/64</code>.</p>
+      <p><strong>The three fill-ins in the build:</strong> R1 G0/0/0's mask is <code>255.255.255.252</code> (a /30). A /30 has <strong>2</strong> usable hosts. PC-A's IPv6 default gateway is R1's link-local address, <code>FE80::1</code>.</p>
+    </div></details>
+  </section>
+
+  <!-- VERIFY -->
+  <section id="verify">
+    <div class="section-head">
+      <p class="kicker">Lab · Part 7</p>
+      <h2>What "done" looks like</h2>
+      <p>Compare your output to these. Small formatting differences between Packet Tracer and real gear are normal; the addresses and states are what count.</p>
+    </div>
+    <h3 class="sub">R1 interfaces</h3>
+    <div class="terminal">
+      <div class="terminal-header"><span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span><span class="terminal-title">R1 · show ip interface brief</span></div>
+      <div class="terminal-body"><span class="prompt">R1#</span> <span class="hl">show ip interface brief</span>
+<span class="out">Interface              IP-Address      OK? Method Status                Protocol</span>
+<span class="hl">GigabitEthernet0/0/0   10.0.0.1        YES manual up                    up
+GigabitEthernet0/0/1   192.168.10.1    YES manual up                    up</span>
+<span class="out">Vlan1                  unassigned      YES unset  administratively down down</span></div>
+    </div>
+    <p style="font-size:.88rem;">This is how Packet Tracer's ISR 4321 looks with no modules installed. A real 4321 lists a <code>GigabitEthernet0</code> management port (and any module interfaces) instead of <code>Vlan1</code> (see <a href="IT131_Session11.html#commands">Session 11</a>).</p>
+    <div class="terminal">
+      <div class="terminal-header"><span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span><span class="terminal-title">R1 · show ipv6 interface brief</span></div>
+      <div class="terminal-body"><span class="prompt">R1#</span> <span class="hl">show ipv6 interface brief</span>
+<span class="out">GigabitEthernet0/0/0   [up/up]
+    FE80::1
+    2001:DB8:ACAD:FF01::1
+GigabitEthernet0/0/1   [up/up]
+    FE80::1
+    2001:DB8:ACAD:1::1
+Vlan1                  [administratively down/down]
+    unassigned</span></div>
+    </div>
+    <p style="font-size:.88rem;">IOS shows IPv6 addresses in capitals and compressed, with the link-local address first.</p>
+    <h3 class="sub">R1 routing table</h3>
+    <div class="terminal">
+      <div class="terminal-header"><span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span><span class="terminal-title">R1 · show ip route (legend trimmed)</span></div>
+      <div class="terminal-body"><span class="prompt">R1#</span> <span class="hl">show ip route</span>
+<span class="out">Codes: L - local, C - connected, S - static, R - RIP, ...
+
+Gateway of last resort is not set
+
+      10.0.0.0/8 is variably subnetted, 2 subnets, 2 masks
+C        10.0.0.0/30 is directly connected, GigabitEthernet0/0/0
+L        10.0.0.1/32 is directly connected, GigabitEthernet0/0/0
+      192.168.10.0/24 is variably subnetted, 2 subnets, 2 masks
+C        192.168.10.0/24 is directly connected, GigabitEthernet0/0/1
+L        192.168.10.1/32 is directly connected, GigabitEthernet0/0/1</span>
+<span class="hl">S     192.168.20.0/24 [1/0] via 10.0.0.2</span>
+<span class="comment">! S = static route: CCNA 2 preview (SRWE 15)</span></div>
+    </div>
+    <p style="font-size:.88rem;">Two <strong>C</strong> routes (the networks R1 is connected to), two <strong>L</strong> routes (R1's own addresses on them), and one <strong>S</strong> route, the one you typed in step 4.5. Same layout as <a href="IT131_Session07.html">Session 7</a>.</p>
+    <h3 class="sub">From PC-A</h3>
+    <div class="terminal">
+      <div class="terminal-header"><span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span><span class="terminal-title">PC-A · ping by name</span></div>
+      <div class="terminal-body"><span class="prompt">C:\&gt;</span> <span class="hl">ping www.it131.example</span>
+<span class="out">
+Pinging 192.168.20.100 with 32 bytes of data:
+
+Request timed out.
+Reply from 192.168.20.100: bytes=32 time&lt;1ms TTL=126
+Reply from 192.168.20.100: bytes=32 time&lt;1ms TTL=126
+Reply from 192.168.20.100: bytes=32 time&lt;1ms TTL=126
+
+Ping statistics for 192.168.20.100:
+    Packets: Sent = 4, Received = 3, Lost = 1 (25% loss),</span></div>
+    </div>
+    <p style="font-size:.88rem;">The first request often times out while ARP resolves along the path; ping again and you should get 4 of 4. TTL=126 means SRV1 (which starts at 128) is two routers away. Real Windows also prints the name: <code>Pinging www.it131.example [192.168.20.100]</code>.</p>
+    <div class="terminal">
+      <div class="terminal-header"><span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span><span class="terminal-title">PC-A · tracert</span></div>
+      <div class="terminal-body"><span class="prompt">C:\&gt;</span> <span class="hl">tracert www.it131.example</span>
+<span class="out">
+Tracing route to 192.168.20.100 over a maximum of 30 hops:
+
+  1   0 ms      0 ms      0 ms      192.168.10.1
+  2   0 ms      0 ms      0 ms      10.0.0.2
+  3   0 ms      0 ms      0 ms      192.168.20.100
+
+Trace complete.</span></div>
+    </div>
+    <p style="font-size:.88rem;">Hop 2 is R2's interface facing R1 (<code>10.0.0.2</code>), not its LAN-B address. Routers answer from the interface the probe arrived on.</p>
+    <div class="terminal">
+      <div class="terminal-header"><span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span><span class="terminal-title">PC-A · nslookup</span></div>
+      <div class="terminal-body"><span class="prompt">C:\&gt;</span> <span class="cmd">nslookup www.it131.example</span>
+<span class="out">
+Server: [192.168.20.100]
+Address:  192.168.20.100
+
+Non-authoritative answer:</span>
+<span class="hl">Name:   www.it131.example
+Address:  192.168.20.100</span></div>
+    </div>
+    <div class="teach-note warn">
+      <span class="label">A Packet Tracer quirk</span>
+      Packet Tracer prints "Non-authoritative answer" even though SRV1 owns the <code>it131.example</code> zone. On real gear, an answer from the zone's own server has no such line (see <a href="IT131_Session10.html#dnsdhcp">Session 10</a>). Ignore it here; the Name and Address lines are what count.
+    </div>
+    <div class="terminal">
+      <div class="terminal-header"><span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span><span class="terminal-title">PC-A · SSH to R1</span></div>
+      <div class="terminal-body"><span class="prompt">C:\&gt;</span> <span class="hl">ssh -l admin 192.168.10.1</span>
+<span class="out">
+Password:
+
+Authorized access only. All activity is monitored.
+</span>
+<span class="prompt">R1&gt;</span> <span class="cmd">enable</span>
+<span class="out">Password:</span>
+<span class="prompt">R1#</span> <span class="cmd">exit</span>
+<span class="out">
+[Connection to 192.168.10.1 closed by foreign host]</span></div>
+    </div>
+    <ul class="obj-list"><li>Passwords don't echo as you type.</li><li>You land at <code>R1&gt;</code>, user EXEC, because the local user has no privilege level set. <code>enable</code> asks for the <strong>enable secret</strong> (<code>En@ble2026</code>), not the admin password.</li><li>On real IOS, the MOTD banner appears after you log in over SSH. Packet Tracer may show it in a slightly different spot.</li><li>This is Packet Tracer's SSH client. Connecting from a real PC to real gear can need extra options; see <a href="IT131_Session02.html#config">Session 2</a>.</li></ul>
+  </section>
+
+  <!-- ANSWER KEY -->
+  <section id="key">
+    <div class="section-head">
+      <p class="kicker">Lab · answer key</p>
+      <h2>Answer key</h2>
+      <p>Try the whole lab first. Open these only to check your work or when you're truly stuck.</p>
+    </div>
+    <details class="solution"><summary>R1: the full configuration, in typed order</summary><div class="solbody">
+    <div class="terminal">
+      <div class="terminal-header"><span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span><span class="terminal-title">R1</span></div>
+      <div class="terminal-body"><span class="prompt">Router&gt;</span> <span class="cmd">enable</span>
+<span class="prompt">Router#</span> <span class="cmd">configure terminal</span>
+<span class="comment">! ---- Part 3: basic configuration ----</span>
+<span class="prompt">Router(config)#</span> <span class="hl">hostname R1</span>
+<span class="prompt">R1(config)#</span> <span class="cmd">no ip domain-lookup</span>
+<span class="comment">! min-length first: it only checks passwords set after it</span>
+<span class="prompt">R1(config)#</span> <span class="hl">security passwords min-length 8</span>
+<span class="prompt">R1(config)#</span> <span class="hl">enable secret En@ble2026</span>
+<span class="prompt">R1(config)#</span> <span class="cmd">line console 0</span>
+<span class="prompt">R1(config-line)#</span> <span class="cmd">password C0ns0le!26</span>
+<span class="prompt">R1(config-line)#</span> <span class="cmd">login</span>
+<span class="prompt">R1(config-line)#</span> <span class="cmd">exec-timeout 5 0</span>
+<span class="prompt">R1(config-line)#</span> <span class="cmd">exit</span>
+<span class="prompt">R1(config)#</span> <span class="hl">service password-encryption</span>
+<span class="prompt">R1(config)#</span> <span class="cmd">banner motd #</span>
+<span class="out">Enter TEXT message.  End with the character '#'.</span>
+<span class="cmd">Authorized access only. All activity is monitored.#</span>
+<span class="prompt">R1(config)#</span> <span class="hl">login block-for 120 attempts 3 within 60</span>
+<span class="comment">! ---- Part 4: interfaces ----</span>
+<span class="comment">! Off by default; without it R1 won't route IPv6</span>
+<span class="prompt">R1(config)#</span> <span class="hl">ipv6 unicast-routing</span>
+<span class="prompt">R1(config)#</span> <span class="cmd">interface g0/0/1</span>
+<span class="prompt">R1(config-if)#</span> <span class="cmd">description LAN-A to S1 G0/1</span>
+<span class="prompt">R1(config-if)#</span> <span class="cmd">ip address 192.168.10.1 255.255.255.0</span>
+<span class="prompt">R1(config-if)#</span> <span class="cmd">ipv6 address 2001:db8:acad:1::1/64</span>
+<span class="prompt">R1(config-if)#</span> <span class="cmd">ipv6 address fe80::1 link-local</span>
+<span class="prompt">R1(config-if)#</span> <span class="hl">no shutdown</span>
+<span class="prompt">R1(config-if)#</span> <span class="cmd">exit</span>
+<span class="prompt">R1(config)#</span> <span class="cmd">interface g0/0/0</span>
+<span class="prompt">R1(config-if)#</span> <span class="cmd">description Link to R2 G0/0/0</span>
+<span class="prompt">R1(config-if)#</span> <span class="cmd">ip address 10.0.0.1 255.255.255.252</span>
+<span class="prompt">R1(config-if)#</span> <span class="cmd">ipv6 address 2001:db8:acad:ff01::1/64</span>
+<span class="prompt">R1(config-if)#</span> <span class="cmd">ipv6 address fe80::1 link-local</span>
+<span class="prompt">R1(config-if)#</span> <span class="hl">no shutdown</span>
+<span class="prompt">R1(config-if)#</span> <span class="cmd">exit</span>
+<span class="comment">! ---- Step 4.5 PROVIDED: CCNA 2 preview (SRWE 15) ----</span>
+<span class="comment">! Type exactly. You'll learn to design these in CCNA 2.</span>
+<span class="prompt">R1(config)#</span> <span class="cmd">ip route 192.168.20.0 255.255.255.0 10.0.0.2</span>
+<span class="prompt">R1(config)#</span> <span class="cmd">ipv6 route 2001:db8:acad:2::/64 2001:db8:acad:ff01::2</span>
+<span class="comment">! ---- Part 5: SSH ----</span>
+<span class="comment">! Keys need a non-default hostname and a domain name first</span>
+<span class="prompt">R1(config)#</span> <span class="hl">ip domain-name it131.example</span>
+<span class="prompt">R1(config)#</span> <span class="hl">crypto key generate rsa general-keys modulus 1024</span>
+<span class="out">The name for the keys will be: R1.it131.example
+% The key modulus size is 1024 bits
+% Generating 1024 bit RSA keys, keys will be non-exportable...[OK]</span>
+<span class="prompt">R1(config)#</span> <span class="hl">username admin secret Adm1n!2026</span>
+<span class="prompt">R1(config)#</span> <span class="cmd">line vty 0 4</span>
+<span class="prompt">R1(config-line)#</span> <span class="hl">transport input ssh</span>
+<span class="prompt">R1(config-line)#</span> <span class="hl">login local</span>
+<span class="prompt">R1(config-line)#</span> <span class="cmd">exec-timeout 5 0</span>
+<span class="prompt">R1(config-line)#</span> <span class="cmd">exit</span>
+<span class="prompt">R1(config)#</span> <span class="hl">ip ssh version 2</span>
+<span class="prompt">R1(config)#</span> <span class="cmd">end</span>
+<span class="comment">! ---- Part 8: save ----</span>
+<span class="prompt">R1#</span> <span class="hl">copy running-config startup-config</span>
+<span class="out">Destination filename [startup-config]?
+Building configuration...
+[OK]</span></div>
+    </div>
+    <p style="font-size:.88rem;">Packet Tracer may also print link-up messages after <code>no shutdown</code>, and its key-generation messages can differ slightly from real gear.</p>
+    </div></details>
+    <details class="solution"><summary>S1: the full configuration, in typed order</summary><div class="solbody">
+    <div class="terminal">
+      <div class="terminal-header"><span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span><span class="terminal-title">S1</span></div>
+      <div class="terminal-body"><span class="prompt">Switch&gt;</span> <span class="cmd">enable</span>
+<span class="prompt">Switch#</span> <span class="cmd">configure terminal</span>
+<span class="prompt">Switch(config)#</span> <span class="hl">hostname S1</span>
+<span class="prompt">S1(config)#</span> <span class="cmd">no ip domain-lookup</span>
+<span class="prompt">S1(config)#</span> <span class="hl">enable secret En@ble2026</span>
+<span class="prompt">S1(config)#</span> <span class="cmd">line console 0</span>
+<span class="prompt">S1(config-line)#</span> <span class="cmd">password C0ns0le!26</span>
+<span class="prompt">S1(config-line)#</span> <span class="cmd">login</span>
+<span class="prompt">S1(config-line)#</span> <span class="cmd">exec-timeout 5 0</span>
+<span class="prompt">S1(config-line)#</span> <span class="cmd">exit</span>
+<span class="prompt">S1(config)#</span> <span class="hl">service password-encryption</span>
+<span class="prompt">S1(config)#</span> <span class="cmd">banner motd #</span>
+<span class="out">Enter TEXT message.  End with the character '#'.</span>
+<span class="cmd">Authorized access only. All activity is monitored.#</span>
+<span class="comment">! Optional on S1: security passwords min-length 8 and</span>
+<span class="comment">! login block-for (graded on R1 only)</span>
+<span class="prompt">S1(config)#</span> <span class="cmd">interface f0/1</span>
+<span class="prompt">S1(config-if)#</span> <span class="cmd">description PC-A</span>
+<span class="prompt">S1(config-if)#</span> <span class="cmd">interface g0/1</span>
+<span class="prompt">S1(config-if)#</span> <span class="cmd">description Uplink to R1 G0/0/1</span>
+<span class="prompt">S1(config-if)#</span> <span class="cmd">exit</span>
+<span class="comment">! The SVI is the switch's own address, for management only</span>
+<span class="prompt">S1(config)#</span> <span class="hl">interface vlan 1</span>
+<span class="prompt">S1(config-if)#</span> <span class="hl">ip address 192.168.10.2 255.255.255.0</span>
+<span class="prompt">S1(config-if)#</span> <span class="hl">no shutdown</span>
+<span class="prompt">S1(config-if)#</span> <span class="cmd">exit</span>
+<span class="comment">! Lets S1 reply to SSH from other subnets</span>
+<span class="prompt">S1(config)#</span> <span class="hl">ip default-gateway 192.168.10.1</span>
+<span class="prompt">S1(config)#</span> <span class="hl">ip domain-name it131.example</span>
+<span class="prompt">S1(config)#</span> <span class="hl">crypto key generate rsa general-keys modulus 1024</span>
+<span class="out">The name for the keys will be: S1.it131.example
+% The key modulus size is 1024 bits
+% Generating 1024 bit RSA keys, keys will be non-exportable...[OK]</span>
+<span class="prompt">S1(config)#</span> <span class="hl">username admin secret Adm1n!2026</span>
+<span class="prompt">S1(config)#</span> <span class="cmd">line vty 0 15</span>
+<span class="prompt">S1(config-line)#</span> <span class="hl">transport input ssh</span>
+<span class="prompt">S1(config-line)#</span> <span class="hl">login local</span>
+<span class="prompt">S1(config-line)#</span> <span class="cmd">exec-timeout 5 0</span>
+<span class="prompt">S1(config-line)#</span> <span class="cmd">exit</span>
+<span class="prompt">S1(config)#</span> <span class="hl">ip ssh version 2</span>
+<span class="prompt">S1(config)#</span> <span class="cmd">end</span>
+<span class="prompt">S1#</span> <span class="hl">copy running-config startup-config</span>
+<span class="out">Destination filename [startup-config]?
+Building configuration...
+[OK]</span></div>
+    </div>
+    </div></details>
+    <details class="solution"><summary>PC-A: IP configuration</summary><div class="solbody">
+    <table class="spec" style="margin:0;">
+      <thead><tr><th>Field (Desktop → IP Configuration)</th><th>Value</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;">IPv4 address</td><td class="mono">192.168.10.10</td></tr>
+        <tr><td style="font-weight:600;">Subnet mask</td><td class="mono">255.255.255.0</td></tr>
+        <tr><td style="font-weight:600;">Default gateway</td><td class="mono">192.168.10.1</td></tr>
+        <tr><td style="font-weight:600;">DNS server</td><td class="mono">192.168.20.100</td></tr>
+        <tr><td style="font-weight:600;">IPv6 (static)</td><td class="mono">2001:db8:acad:1::10 / 64</td></tr>
+        <tr><td style="font-weight:600;">IPv6 gateway</td><td class="mono">FE80::1</td></tr>
+      </tbody>
+    </table>
+    </div></details>
+  </section>
+
+  <!-- POINT-LOSERS -->
+  <section id="pointlosers">
+    <div class="section-head">
+      <p class="kicker">Watch for this</p>
+      <h2>Common lab point-losers</h2>
+      <p>The ways people lose points on the skills exam, every semester.</p>
+    </div>
+    <ul class="obj-list">
+      <li>Forgetting <code>no shutdown</code> on router interfaces. Router ports start administratively down. Switch ports don't, but the switch's VLAN 1 interface does.</li>
+      <li>A straight-through cable between R1 and R2, or a console cable where an Ethernet cable belongs.</li>
+      <li>A wrong or missing gateway on PC-A, or the wrong mask. (Session 11's <code>.254</code> scenario is exactly this.)</li>
+      <li>Adding IPv6 addresses without <code>ipv6 unicast-routing</code>. The interfaces get addresses, but R1 won't route IPv6.</li>
+      <li>Setting PC-A's IPv6 gateway to R1's global address instead of <code>FE80::1</code>, or leaving it blank. ITN and the skills exam use the link-local address.</li>
+      <li>SSH keys that won't generate: the hostname is still <code>Router</code>/<code>Switch</code>, or the domain name is missing. A typo like <code>it131.exmaple</code> still generates keys, but loses the step.</li>
+      <li>Typing <code>security passwords min-length 8</code> <em>after</em> the passwords. It doesn't re-check existing passwords.</li>
+      <li>Using <code>login</code> instead of <code>login local</code> on the vty lines, or forgetting <code>transport input ssh</code>, which leaves Telnet open.</li>
+      <li>An incomplete S1 management setup: no <code>no shutdown</code> on VLAN 1, or no <code>ip default-gateway</code>. Without <code>no shutdown</code>, S1 has no reachable address at all. Without <code>ip default-gateway</code>, it answers on its own LAN but not from other subnets.</li>
+      <li>A banner that isn't exact, or a delimiter character inside the message. A <code>#</code> in the text ends the banner early.</li>
+      <li>No DNS server on PC-A: ping by IP works, ping by name fails. <code>nslookup</code> tells them apart.</li>
+      <li>Not saving. If it isn't in startup-config, a reload wipes it.</li>
+    </ul>
+  </section>
+
+  <!-- SKILLS -->
+  <section id="skills">
+    <div class="section-head">
+      <p class="kicker">Before the final</p>
+      <h2>Skills checklist</h2>
+      <p>Be honest. Every "not yet" is a page to revisit before next week. Ticks are saved in this browser.</p>
+    </div>
+    <div class="toolbar">
+      <span id="skillProgress" style="font-family:var(--mono);font-size:.85rem;opacity:.8;"></span>
+    </div>
+    <div id="skillList"></div>
+    <div class="teach-note">
+      <span class="label">Next week: the final</span>
+      The final covers Modules 1–17. The <a href="IT131_PracticeFinal.html">Practice Final</a> matches its blueprint (55 questions, 70% to pass), and the <a href="IT131_Session13.html">Session 13 review</a> links every module back to its session page.
+    </div>
+  </section>
+
+  <!-- FLASHCARDS -->
+  <section id="flashcards">
+    <div class="section-head">
+      <p class="kicker">Study</p>
+      <h2>Flashcards</h2>
+      <p>Click to flip. Double-click to mark as known.</p>
+    </div>
+    <div class="toolbar">
+      <button class="btn" id="shuffleBtn">Shuffle</button>
+      <button class="btn" id="resetKnownBtn">Reset progress</button>
+      <span id="cardProgress"></span>
+    </div>
+    <div class="card-grid" id="cardGrid"></div>
+  </section>
+
+  <!-- QUIZ -->
+  <section id="quiz">
+    <div class="section-head">
+      <p class="kicker">Check yourself</p>
+      <h2>Sample questions</h2>
+      <p>Lab-skills questions in the module-quiz style.</p>
+    </div>
+    <div id="quizScore"></div>
+    <div id="quizList"></div>
+    <button class="btn" id="resetQuizBtn">Reset quiz</button>
+  </section>
+
+  <!-- GLOSSARY -->
+  <section id="glossary">
+    <div class="section-head">
+      <p class="kicker">Reference</p>
+      <h2>Glossary &amp; index</h2>
+      <p>Every term from this session, searchable and indexed A–Z.</p>
+    </div>
+    <input type="text" id="glossarySearch" placeholder="Search terms…" aria-label="Search glossary">
+    <div class="alpha-nav" id="alphaNav"></div>
+    <dl class="glossary" id="glossaryList"></dl>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>IT131 · CCNA: Introduction to Networks · Session 12 reference.</p>
+  </div>
+</footer>
+
+<button id="backToTop" class="back-to-top" aria-label="Back to top" title="Back to top">↑</button>
+
+<script>
+  /* ---- saved ticks (this browser only; the page works without storage) ---- */
+  const store = {
+    get(k){ try { return JSON.parse(localStorage.getItem(k) || '{}'); } catch(e){ return {}; } },
+    set(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} }
+  };
+  function checklist(listId, progressId, key, groups, label){
+    const list = document.getElementById(listId), prog = document.getElementById(progressId);
+    let saved = store.get(key);
+    let total = 0;
+    groups.forEach((g, gi) => {
+      const h = document.createElement('h3'); h.className = 'sub'; h.innerHTML = g.title; list.appendChild(h);
+      if (g.scope){ const s = document.createElement('p'); s.className = 'scope'; s.innerHTML = g.scope; list.appendChild(s); }
+      const ul = document.createElement('ul'); ul.className = 'checks'; list.appendChild(ul);
+      g.items.forEach((t, ii) => {
+        const id = gi + '.' + ii; total++;
+        const li = document.createElement('li');
+        li.innerHTML = `<label><input type="checkbox" data-id="${id}"><span>${t}</span></label>`;
+        const cb = li.querySelector('input'); cb.checked = !!saved[id];
+        li.classList.toggle('done', cb.checked);
+        cb.addEventListener('change', () => { saved[id] = cb.checked; li.classList.toggle('done', cb.checked); store.set(key, saved); update(); });
+        ul.appendChild(li);
+      });
+    });
+    function update(){ const n = list.querySelectorAll('input:checked').length; prog.textContent = `${n} / ${total} ${label}`; }
+    update();
+    return () => { saved = {}; store.set(key, saved); list.querySelectorAll('input').forEach(cb => { cb.checked = false; cb.closest('li').classList.remove('done'); }); update(); };
+  }
+
+  const TASKS = [
+    {title:'Part 1 · Build and cable', scope:'ITN 2 (console), ITN 4 (cabling)', items:[
+      '1.1 Add PC-A, a 2960 named S1, and an ISR4321 named R1. Set the display names exactly as shown.',
+      '1.2 Cable PC-A Fa0 → S1 F0/1 and S1 G0/1 → R1 G0/0/1 with <strong>copper straight-through</strong> (unlike devices).',
+      '1.3 Cable R1 G0/0/0 → R2 G0/0/0 with <strong>copper crossover</strong> (two routers are like devices). Real gear with auto-MDIX may link with either; use the ITN rule here.',
+      '1.4 Cable PC-A RS-232 → R1 Console with a <strong>console</strong> cable. For S1, move the cable or use S1\'s CLI tab.',
+    ]},
+    {title:'Part 2 · Subnetting and addressing', scope:'ITN 11 (VLSM), ITN 12 (IPv6)', items:[
+      '2.1 Complete the four LAN-C rows in the <a href="#worksheet">subnet worksheet</a>: network, prefix/mask, first, last, broadcast.',
+      '2.2 Choose LAN-C\'s IPv6 /64 and its router address.',
+      '2.3 Fill the three blanks in the addressing table: R1 G0/0/0\'s mask, the usable hosts on that /30, and PC-A\'s IPv6 gateway.',
+    ]},
+    {title:'Part 3 · Basic configuration on R1 and S1', scope:'ITN 2, ITN 16', items:[
+      '3.1 Hostnames <code>R1</code> and <code>S1</code>.',
+      '3.2 <code>no ip domain-lookup</code> on both.',
+      '3.3 R1: <code>security passwords min-length 8</code>, typed <strong>before</strong> any password. (Optional on S1.)',
+      '3.4 <code>enable secret En@ble2026</code> on both.',
+      '3.5 Console line on both: password <code>C0ns0le!26</code>, <code>login</code>, <code>exec-timeout 5 0</code>.',
+      '3.6 <code>service password-encryption</code> on both.',
+      '3.7 MOTD banner on both, exactly: <code>Authorized access only. All activity is monitored.</code>',
+      '3.8 R1: <code>login block-for 120 attempts 3 within 60</code>. (Optional on S1.)',
+    ]},
+    {title:'Part 4 · Interfaces', scope:'ITN 10, ITN 12. Step 4.5 is a CCNA 2 preview (SRWE 15).', items:[
+      '4.1 R1: <code>ipv6 unicast-routing</code>.',
+      '4.2 R1 G0/0/1: description, IPv4, IPv6 GUA, <code>fe80::1 link-local</code>, <code>no shutdown</code>.',
+      '4.3 R1 G0/0/0: the same.',
+      '4.4 S1: VLAN 1 address, <code>no shutdown</code>, <code>ip default-gateway 192.168.10.1</code>, and descriptions on F0/1 and G0/1.',
+      '4.5 <strong>Provided:</strong> type these exactly: <code>ip route 192.168.20.0 255.255.255.0 10.0.0.2</code> and <code>ipv6 route 2001:db8:acad:2::/64 2001:db8:acad:ff01::2</code>.',
+    ]},
+    {title:'Part 5 · SSH on R1 and S1', scope:'ITN 16', items:[
+      '5.1 <code>ip domain-name it131.example</code>.',
+      '5.2 <code>crypto key generate rsa general-keys modulus 1024</code>.',
+      '5.3 <code>username admin secret Adm1n!2026</code>.',
+      '5.4 vty lines (R1 <code>0 4</code>, S1 <code>0 15</code>): <code>transport input ssh</code>, <code>login local</code>, <code>exec-timeout 5 0</code>.',
+      '5.5 <code>ip ssh version 2</code>.',
+    ]},
+    {title:'Part 6 · Host addressing', scope:'ITN 2, ITN 12, ITN 15 (DNS)', items:[
+      '6.1 PC-A static IPv4 address, mask, and gateway.',
+      '6.2 PC-A DNS server <code>192.168.20.100</code>.',
+      '6.3 PC-A static IPv6 address, prefix /64, and gateway <code>FE80::1</code>.',
+    ]},
+    {title:'Part 7 · Verification', scope:'ITN 8 (routing table), ITN 15, ITN 17', items:[
+      '7.1 R1 <code>show ip interface brief</code> and <code>show ipv6 interface brief</code>: G0/0/0 and G0/0/1 up/up with the right addresses.',
+      '7.2 R1 <code>show ip route</code>: two C routes, two L routes, one S route.',
+      '7.3 R1 <code>show cdp neighbors</code>: S1 and R2 on the right local interfaces.',
+      '7.4 PC-A pings S1 (<code>192.168.10.2</code>) and its gateway (<code>192.168.10.1</code>).',
+      '7.5 PC-A <code>ping www.it131.example</code> succeeds.',
+      '7.6 PC-A <code>ping 2001:db8:acad:2::100</code> succeeds (end-to-end IPv6).',
+      '7.7 PC-A <code>tracert www.it131.example</code> shows 3 hops: 192.168.10.1, 10.0.0.2, 192.168.20.100.',
+      '7.8 PC-A <code>nslookup www.it131.example</code> returns 192.168.20.100, and the browser loads <code>http://www.it131.example</code>.',
+      '7.9 PC-A <code>ssh -l admin 192.168.10.1</code> and <code>ssh -l admin 192.168.10.2</code> both log in and show the banner.',
+    ]},
+    {title:'Part 8 · Save', scope:'ITN 2', items:[
+      '8.1 <code>copy running-config startup-config</code> on R1 and S1.',
+      '8.2 <code>show running-config</code>: the enable secret is hashed, the console password shows as <code>password 7 …</code>, and the banner, routes, and vty settings are there.',
+    ]},
+  ];
+  const clearTasks = checklist('taskList', 'taskProgress', 'it131-s12-tasks', TASKS, 'tasks done');
+  document.getElementById('taskReset').addEventListener('click', clearTasks);
+
+  const SKILLS = [
+    {title:'I can…', items:[
+      'choose straight-through, crossover, and console cables, and explain why. <em>(ITN 2, 4)</em>',
+      'move between user EXEC, privileged EXEC, global, interface, and line configuration modes. <em>(ITN 2)</em>',
+      'set a hostname, an enable secret, a console password, and a MOTD banner. <em>(ITN 2)</em>',
+      'save the running config to startup, and explain the difference. <em>(ITN 2)</em>',
+      'give a switch a management address and a default gateway, and explain why it needs one. <em>(ITN 2, 10)</em>',
+      'address a router interface with IPv4, an IPv6 GUA, and a static link-local address, and bring it up. <em>(ITN 10, 12)</em>',
+      'explain why <code>ipv6 unicast-routing</code> is needed. <em>(ITN 10, 12)</em>',
+      'subnet a /24 with VLSM, largest subnet first. <em>(ITN 11)</em>',
+      'pick the next IPv6 /64 from a /48. <em>(ITN 12)</em>',
+      'statically address a host with IPv4, IPv6, and DNS. <em>(ITN 2, 12, 15)</em>',
+      'harden a device with <code>service password-encryption</code>, <code>min-length</code>, <code>login block-for</code>, and <code>exec-timeout</code>. <em>(ITN 16)</em>',
+      'configure SSH-only remote access with a local user, and test it from a PC. <em>(ITN 16)</em>',
+      'read C and L routes in <code>show ip route</code>, and say what S means. <em>(ITN 8; S is an SRWE preview)</em>',
+      'verify interfaces with <code>show ip interface brief</code>, <code>show ipv6 interface brief</code>, and <code>show cdp neighbors</code>. <em>(ITN 17)</em>',
+      'test end to end with ping and tracert, and use the last hop that answered to locate a fault. <em>(ITN 17)</em>',
+      'use <code>nslookup</code> to tell a DNS failure from a connectivity failure. <em>(ITN 15, 17)</em>',
+    ]},
+  ];
+  checklist('skillList', 'skillProgress', 'it131-s12-skills', SKILLS, 'skills ready');
+
+  /* ---- subnet worksheet ---- */
+  (function(){
+    const ROWS = [
+      {need:'50 users', net:'192.168.30.0', pre:'26', first:'192.168.30.1', last:'192.168.30.62', bc:'192.168.30.63'},
+      {need:'20 printers/phones', net:'192.168.30.64', pre:'27', first:'192.168.30.65', last:'192.168.30.94', bc:'192.168.30.95'},
+      {need:'10 switch mgmt', net:'192.168.30.96', pre:'28', first:'192.168.30.97', last:'192.168.30.110', bc:'192.168.30.111'},
+      {need:'2 router link', net:'192.168.30.112', pre:'30', first:'192.168.30.113', last:'192.168.30.114', bc:'192.168.30.115'},
+    ];
+    const COLS = [['net','Network'],['pre','Prefix (/n or mask)'],['first','First usable'],['last','Last usable'],['bc','Broadcast']];
+    const grid = document.getElementById('wsGrid');
+    let html = '<div style="overflow-x:auto"><table class="spec ws" style="margin:0;"><thead><tr><th>Need</th>' + COLS.map(c => `<th>${c[1]}</th>`).join('') + '</tr></thead><tbody>';
+    ROWS.forEach((r, i) => {
+      html += `<tr><td style="font-weight:600;">${r.need}</td>` + COLS.map(c => `<td><input class="txt ws-in" data-r="${i}" data-c="${c[0]}" spellcheck="false" autocomplete="off" aria-label="${r.need}: ${c[1]}"></td>`).join('') + '</tr>';
+    });
+    grid.innerHTML = html + '</tbody></table></div>';
+    const ins = [...grid.querySelectorAll('input')];
+    const norm = (c, v) => { v = v.trim().replace(/\s+/g, ''); if (c === 'pre') v = v.replace(/^\//, ''); return v; };
+    const score = document.getElementById('wsScore');
+    document.getElementById('wsCheck').addEventListener('click', () => {
+      let ok = 0;
+      ins.forEach(el => {
+        const want = ROWS[el.dataset.r][el.dataset.c], got = norm(el.dataset.c, el.value);
+        const MASK = {'26':'255.255.255.192','27':'255.255.255.224','28':'255.255.255.240','30':'255.255.255.252'};
+        const good = got === want || (el.dataset.c === 'pre' && got === MASK[want]);
+        el.classList.toggle('right', good); el.classList.toggle('wrong', !good && got !== '');
+        if (good) ok++;
+      });
+      score.textContent = `${ok} / ${ins.length} correct`;
+    });
+    document.getElementById('wsShow').addEventListener('click', () => {
+      ins.forEach(el => { const v = ROWS[el.dataset.r][el.dataset.c]; el.value = el.dataset.c === 'pre' ? '/' + v : v; el.classList.remove('wrong'); el.classList.add('right'); });
+      score.textContent = 'Answers shown';
+    });
+    document.getElementById('wsClear').addEventListener('click', () => {
+      ins.forEach(el => { el.value = ''; el.classList.remove('right', 'wrong'); }); score.textContent = '';
+    });
+  })();
+
+  const TERMS = [
+    {t:"Answer key", d:"The finished configuration for a lab. Use it to check your work, not to copy from."},
+    {t:"Console cable", d:"Connects a PC's serial (RS-232) port to a device's RJ-45 console port for out-of-band setup. Also called a rollover cable. Newer devices also have a separate USB console port."},
+    {t:"Crossover cable", d:"Copper Ethernet cable for connecting like devices, such as router to router or switch to switch. Auto-MDIX on modern gear often makes it unnecessary, but ITN still tests the rule."},
+    {t:"exec-timeout", d:"Line command that logs out an idle session. exec-timeout 5 0 means 5 minutes, 0 seconds."},
+    {t:"GUA (global unicast address)", d:"A routable IPv6 address, like 2001:db8:acad:1::1/64. The IPv6 equivalent of a public IPv4 address."},
+    {t:"ip default-gateway", d:"Global command that gives a Layer 2 switch a gateway for its own management traffic, so it can be reached from other subnets."},
+    {t:"ipv6 unicast-routing", d:"Global command that turns on IPv6 routing on a Cisco router. Without it, the router has IPv6 addresses but won't forward IPv6 packets or send router advertisements."},
+    {t:"Link-local address", d:"An fe80::/10 IPv6 address used only on one link. Hosts use the router's link-local address as their IPv6 default gateway."},
+    {t:"login local", d:"Line command that checks logins against the device's local username list. Required for SSH with a local user."},
+    {t:"Management SVI", d:"A switch virtual interface (usually VLAN 1 in ITN) that gives a switch an IP address for remote management. It doesn't affect frame forwarding."},
+    {t:"no ip domain-lookup", d:"Stops the device from treating a mistyped command as a host name and trying to look it up in DNS."},
+    {t:"no shutdown", d:"Interface command that enables an interface. Router interfaces are shut down by default."},
+    {t:"Packet Tracer", d:"Cisco's network simulator, used for NetAcad labs and the skills exams."},
+    {t:"Packet Tracer Skills Assessment (PTSA)", d:"NetAcad's hands-on Packet Tracer exam: configure devices from a topology, addressing table, and requirements list."},
+    {t:"Startup configuration", d:"The saved configuration in NVRAM, loaded at boot. copy running-config startup-config saves to it."},
+    {t:"Static route", d:"A route typed in by an administrator, shown with code S. A CCNA 2 (SRWE 15) topic; given to you in this lab."},
+    {t:"Straight-through cable", d:"Copper Ethernet cable for connecting unlike devices, such as a PC to a switch or a switch to a router."},
+    {t:"transport input ssh", d:"vty line command that allows SSH and refuses Telnet."},
+    {t:"VLSM", d:"Variable-length subnet masking: giving each subnet a mask sized to its needs, assigning the largest first."},
+  ];
+
+  const QUIZ = [
+    { q:"Which cable connects R1's G0/0/0 directly to R2's G0/0/0 in the ITN cabling rules?",
+      choices:["Straight-through","Crossover","Console","Coaxial"], correct:1,
+      explain:"Two routers are like devices, so ITN uses a crossover cable. (Auto-MDIX on real gear often works with either.)" },
+    { q:"A student configures IPv6 addresses on both R1 interfaces, but PCs on LAN-A can't reach LAN-B over IPv6. IPv4 works. Which command is most likely missing?",
+      choices:["ipv6 enable","no shutdown","ipv6 unicast-routing","ip routing"], correct:2,
+      explain:"Without ipv6 unicast-routing, the router has IPv6 addresses but won't forward IPv6 packets." },
+    { q:"What should PC-A use as its IPv6 default gateway in this lab?",
+      choices:["FE80::1","2001:db8:acad:1::1","2001:db8:acad:1::10","::1"], correct:0,
+      explain:"Hosts use the router's link-local address as the IPv6 gateway. R1's is FE80::1." },
+    { q:"S1 can be reached by SSH from PC-A on the same LAN, but not from PC-B on LAN-B. What is the most likely cause?",
+      choices:["S1 has no RSA keys","S1 has no ip default-gateway","S1's vty lines use login local","PC-B has no DNS server"], correct:1,
+      explain:"Without ip default-gateway, S1 can't send replies to other subnets. Its own LAN still works." },
+    { q:"How many usable host addresses does a /27 subnet provide?",
+      choices:["32","62","14","30"], correct:3,
+      explain:"A /27 has 5 host bits: 2^5 − 2 = 30 usable addresses." },
+    { q:"Using VLSM on 192.168.30.0/24, the first subnet is a /26 for 50 hosts. What is the network address of the next subnet?",
+      choices:["192.168.30.64","192.168.30.63","192.168.30.65","192.168.30.32"], correct:0,
+      explain:"A /26 is a block of 64: .0–.63. The next subnet starts at .64." },
+    { q:"Why should security passwords min-length 8 be typed before the other passwords?",
+      choices:["It encrypts the passwords that come after it","It only checks passwords that are set after it","It deletes any shorter passwords","It must be the first command in global configuration"], correct:1,
+      explain:"The command doesn't re-check existing passwords, only new ones." },
+    { q:"After crypto key generate rsa, the router replies with an error asking for a domain name. What does the student need to do first?",
+      choices:["Set ip domain-name","Set ip ssh version 2","Create a local username","Configure the vty lines"], correct:0,
+      explain:"The RSA key is named hostname.domain, so the router needs a non-default hostname and a domain name before it can generate keys." },
+    { q:"Which line in show ip route shows a network that R1 learned because an administrator typed it in?",
+      choices:["C 192.168.10.0/24","L 192.168.10.1/32","S 192.168.20.0/24","C 10.0.0.0/30"], correct:2,
+      explain:"S marks a static route. C is directly connected and L is the router's own interface address." },
+    { q:"PC-A can ping 192.168.20.100 but not www.it131.example. Which setting on PC-A should you check first?",
+      choices:["Default gateway","Subnet mask","IPv6 address","DNS server"], correct:3,
+      explain:"The IP path works, so only the name lookup is failing. Check the DNS server (192.168.20.100) and use nslookup." },
+    { q:"Which command saves R1's configuration so it survives a reload?",
+      choices:["write erase","copy startup-config running-config","copy running-config startup-config","reload"], correct:2,
+      explain:"copy running-config startup-config writes the running config to NVRAM." },
+    { q:"Which vty configuration allows only SSH, using the device's local usernames?",
+      choices:["transport input ssh and login local","transport input telnet and login","transport input all and login local","login and password on the vty lines"], correct:0,
+      explain:"transport input ssh refuses Telnet, and login local checks the local username list." },
+  ];
+
+  const grid = document.getElementById('cardGrid');
+  TERMS.forEach((item, i) => {
+    const card = document.createElement('button');
+    card.className = 'flashcard';
+    card.setAttribute('aria-label', 'Flashcard: ' + item.t + '. Press to flip.');
+    card.dataset.i = i;
+    card.innerHTML = `
+      <div class="flashcard-inner">
+        <div class="flashcard-face front"><div class="lbl">Term</div><div class="term">${item.t}</div></div>
+        <div class="flashcard-face back"><div class="lbl">Definition</div><div class="def">${item.d}</div></div>
+      </div>`;
+    card.addEventListener('click', () => card.classList.toggle('flipped'));
+    card.addEventListener('dblclick', () => { card.classList.toggle('known'); updateProgress(); });
+    grid.appendChild(card);
+  });
+  function updateProgress(){
+    const known = document.querySelectorAll('.flashcard.known').length;
+    document.getElementById('cardProgress').textContent = `${known} / ${TERMS.length} marked known (double-click a card to mark it)`;
+  }
+  updateProgress();
+  document.getElementById('shuffleBtn').addEventListener('click', () => {
+    const cards = Array.from(grid.children);
+    cards.sort(() => Math.random() - 0.5);
+    cards.forEach(c => { c.classList.remove('flipped'); grid.appendChild(c); });
+  });
+  document.getElementById('resetKnownBtn').addEventListener('click', () => {
+    document.querySelectorAll('.flashcard.known').forEach(c => c.classList.remove('known'));
+    updateProgress();
+  });
+
+  const quizList = document.getElementById('quizList');
+  let score = 0, answered = 0;
+  function renderQuiz(){
+    quizList.innerHTML = ''; score = 0; answered = 0;
+    QUIZ.forEach((item, qi) => {
+      const box = document.createElement('div');
+      box.className = 'quiz-q';
+      box.innerHTML = `<p class="qtext"><span class="qnum">Q${qi+1}.</span>${item.q}</p><div class="choices"></div><p class="explain"></p>`;
+      const choicesEl = box.querySelector('.choices');
+      item.choices.forEach((c, ci) => {
+        const b = document.createElement('button');
+        b.className = 'choice'; b.textContent = c;
+        b.addEventListener('click', () => {
+          if (box.dataset.done) return;
+          box.dataset.done = '1'; answered++;
+          if (ci === item.correct) score++;
+          Array.from(choicesEl.children).forEach((el, ei) => {
+            el.disabled = true;
+            if (ei === item.correct) el.classList.add('correct');
+            else if (ei === ci) el.classList.add('incorrect');
+          });
+          box.querySelector('.explain').textContent = item.explain;
+          box.querySelector('.explain').classList.add('show');
+          updateScore();
+        });
+        choicesEl.appendChild(b);
+      });
+      quizList.appendChild(box);
+    });
+    updateScore();
+  }
+  function updateScore(){
+    document.getElementById('quizScore').textContent =
+      answered === 0 ? `${QUIZ.length} questions — click an answer to check yourself` : `Score: ${score} / ${answered} answered`;
+  }
+  renderQuiz();
+  document.getElementById('resetQuizBtn').addEventListener('click', renderQuiz);
+
+  const glossaryList = document.getElementById('glossaryList');
+  const alphaNav = document.getElementById('alphaNav');
+  const letters = [...new Set(TERMS.map(t => t.t[0].toUpperCase()))];
+  'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').forEach(L => {
+    const a = document.createElement('a');
+    a.textContent = L;
+    if (letters.includes(L)) { a.href = '#g-' + L; a.className = 'has'; }
+    else { a.href = 'javascript:void(0)'; }
+    alphaNav.appendChild(a);
+  });
+  let currentLetter = '';
+  TERMS.forEach(item => {
+    const L = item.t[0].toUpperCase();
+    if (L !== currentLetter) {
+      currentLetter = L;
+      const h = document.createElement('div');
+      h.className = 'glossary-letter'; h.id = 'g-' + L; h.textContent = L;
+      glossaryList.appendChild(h);
+    }
+    const wrap = document.createElement('div');
+    wrap.className = 'gitem';
+    wrap.innerHTML = `<dt>${item.t}</dt><dd>${item.d}</dd>`;
+    wrap.dataset.search = (item.t + ' ' + item.d).toLowerCase();
+    glossaryList.appendChild(wrap);
+  });
+  document.getElementById('glossarySearch').addEventListener('input', (e) => {
+    const q = e.target.value.toLowerCase().trim();
+    document.querySelectorAll('.gitem').forEach(el => {
+      el.classList.toggle('hidden', q && !el.dataset.search.includes(q));
+    });
+  });
+
+  const backToTop = document.getElementById('backToTop');
+  function toggleBackToTop(){ backToTop.classList.toggle('show', window.scrollY > 480); }
+  window.addEventListener('scroll', toggleBackToTop, {passive:true});
+  toggleBackToTop();
+  backToTop.addEventListener('click', () => window.scrollTo({top:0, behavior:'smooth'}));
+</script>
