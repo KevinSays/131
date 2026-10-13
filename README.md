@@ -12,3 +12,10 @@ Student-facing session review pages for IT131: lecture recaps, flashcards, sampl
 **Site:** start at `index.html` — it links out to every session and reference page.
 
 Built with plain HTML/CSS/JS, no build step. To preview locally, just open `index.html` in a browser, or serve the folder with any static file server.
+
+## License
+
+- **Content** (text, questions, stories, diagrams, handouts): © 2026 Zan Dick, under [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/). See [`LICENSE-CONTENT.md`](LICENSE-CONTENT.md) for what's covered and how to credit it.
+- **Code** (the JavaScript and CSS): [MIT](LICENSE).
+
+Instructors are welcome to teach with it and adapt it. Credit "Zan Dick (GitHub: KevinSays), Mountwest Community & Technical College", keep it non-commercial, and share your version the same way. Questions or permissions: [Dick16@mctc.edu](mailto:Dick16@mctc.edu). Cisco, NetAcad, CCNA and Packet Tracer are trademarks of Cisco Systems, Inc.; this site isn't affiliated with or endorsed by Cisco.
