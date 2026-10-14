@@ -23,7 +23,7 @@ These pages follow **Cisco NetAcad CCNAv7: Introduction to Networks** (v7.02). A
 
 ## For instructors
 
-This site started as one instructor's course pages, and other instructors asked to use it in their own classes. You're welcome to do the same. It follows the NetAcad module order, and the license below lets you adapt it.
+This site started as my own course pages, others have asked to use it in their own classes. You're welcome to do the same. It follows the NetAcad module order, and the license below lets you adapt it. Be sure to credit me and my page so that others who want to do so can also find this material.
 
 - **Use it as-is:** send students to the site, or link single pages from your LMS.
 - **Adapt it:** fork the repo and change what you need. The pages are plain HTML, so no build tools are required.
