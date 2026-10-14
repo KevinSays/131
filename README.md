@@ -13,6 +13,10 @@ Student-facing session review pages for IT131: lecture recaps, flashcards, sampl
 
 Built with plain HTML/CSS/JS, no build step. To preview locally, just open `index.html` in a browser, or serve the folder with any static file server.
 
+## Moving in December 2026
+
+This repo will be renamed **`osi-company-networking`** in December 2026, and the site will move to `https://kevinsays.github.io/osi-company-networking/`. Old `/131/` links will forward to the new address, but please update bookmarks, LMS links and forks once the move happens. GitHub forwards links to the repo itself automatically.
+
 ## Curriculum version
 
 These pages follow **Cisco NetAcad CCNAv7: Introduction to Networks** (v7.02). As soon as CCNAv8 material is available, I'll be moving the pages over to version 8. Until then, module numbers, topics and terms match v7.
