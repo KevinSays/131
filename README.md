@@ -13,6 +13,10 @@ Student-facing session review pages for IT131: lecture recaps, flashcards, sampl
 
 Built with plain HTML/CSS/JS, no build step. To preview locally, just open `index.html` in a browser, or serve the folder with any static file server.
 
+## Curriculum version
+
+These pages follow **Cisco NetAcad CCNAv7: Introduction to Networks** (v7.02). As soon as CCNAv8 material is available, I'll be moving the pages over to version 8. Until then, module numbers, topics and terms match v7.
+
 ## License
 
 - **Content** (text, questions, stories, diagrams, handouts): © 2026 Zan Dick, under [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/). See [`LICENSE-CONTENT.md`](LICENSE-CONTENT.md) for what's covered and how to credit it.
