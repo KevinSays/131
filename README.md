@@ -21,6 +21,15 @@ This repo will be renamed **`osi-company-networking`** in December 2026, and the
 
 These pages follow **Cisco NetAcad CCNAv7: Introduction to Networks** (v7.02). As soon as CCNAv8 material is available, I'll be moving the pages over to version 8. Until then, module numbers, topics and terms match v7.
 
+## For instructors
+
+This site started as one instructor's course pages, and other instructors asked to use it in their own classes. You're welcome to do the same. It follows the NetAcad module order, and the license below lets you adapt it.
+
+- **Use it as-is:** send students to the site, or link single pages from your LMS.
+- **Adapt it:** fork the repo and change what you need. The pages are plain HTML, so no build tools are required.
+- **Tell me you're using it:** [open an issue](https://github.com/KevinSays/131/issues/new) or email me. It helps to know which courses use it, and your corrections make it better for everyone.
+- **Help others find it:** if it's useful to you, a ⭐ on the repo makes it easier for other instructors to find.
+
 ## License
 
 - **Content** (text, questions, stories, diagrams, handouts): © 2026 Zan Dick, under [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/). See [`LICENSE-CONTENT.md`](LICENSE-CONTENT.md) for what's covered and how to credit it.
