@@ -211,6 +211,21 @@
   }
   /* Phones: wide tables scroll inside their own box instead of widening the page */
   @media (max-width:640px){ main table{ display:block; overflow-x:auto; } main code{ overflow-wrap:anywhere; } main{ overflow-wrap:break-word; } }
+  /* EUI-64: bit boxes, flip partners, drill */
+  .bitrow{ display:grid; grid-template-columns:repeat(8, minmax(0,1fr)); gap:4px; max-width:30em; margin:14px 0; }
+  .bitrow .bit{ background:var(--ticket); border:1.5px solid var(--ink); text-align:center; font-family:var(--mono); font-weight:600; font-size:1.05rem; padding:4px 0; }
+  .bitrow .bit small{ display:block; font-size:.62rem; font-weight:400; opacity:.75; }
+  .bit.seven{ background:var(--red-soft); border-color:var(--red); border-width:2.5px; color:var(--red); }
+  .bitrow .bit.trap{ border-style:dashed; opacity:.6; }
+  .minibits{ display:inline-flex; gap:2px; vertical-align:middle; }
+  .minibits .bit{ font-family:var(--mono); font-size:.78rem; border:1px solid rgba(31,36,33,.4); padding:0 3px; background:var(--ticket); }
+  .minibits .bit.seven{ border-width:1.5px; }
+  .minibits .bit.flipped{ background:var(--red); color:var(--paper); }
+  .partners{ display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:8px; margin:14px 0; max-width:34em; }
+  .partners span{ background:var(--paper); border:1.5px solid var(--ink); box-shadow:3px 3px 0 rgba(31,36,33,.14); text-align:center; font-family:var(--mono); font-size:1.05rem; padding:6px 0; }
+  .partners b{ color:var(--red); margin:0 .35em; }
+  .drill-ask{ margin:0 0 10px; font-size:.95rem; }
+  #euiDrill button.btn[aria-pressed="true"]{ background:var(--blue-soft); border-color:var(--blue); color:var(--blue); }
 </style>
 <script>
   /* Top bar: keep Contents and the pinned links (data-pin on the nav) in the bar, put the rest in a
@@ -539,27 +554,88 @@ L   FF00::/8 [0/0]
     <div class="section-head">
       <p class="kicker">Module 12 · 12.5 – 12.6</p>
       <h2>EUI-64: an interface ID from a MAC address</h2>
-      <p>A MAC address is 48 bits, and an interface ID needs 64. EUI-64 stretches the MAC and flips one bit.</p>
+      <p>A device needs a 64-bit interface ID that nobody else on its link is using. It already has a 48-bit ID that's meant to be unique worldwide: its MAC address. EUI-64 stretches the MAC to 64 bits and flips one bit. It comes down to three moves: <strong>split, stuff, flip</strong>.</p>
     </div>
+
+    <h3 class="sub">Step 0: read the MAC</h3>
+    <p>The same MAC can be written three ways. Ignore the punctuation and the capitals: it's always 12 hex digits.</p>
+    <table class="spec">
+      <thead><tr><th>Written as</th><th>Example</th><th>Where you'll see it</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;">Colons</td><td class="mono">fc:99:47:75:ce:e0</td><td>Linux, macOS, most textbooks</td></tr>
+        <tr><td style="font-weight:600;">Hyphens</td><td class="mono">FC-99-47-75-CE-E0</td><td>Windows (<code>ipconfig /all</code>)</td></tr>
+        <tr><td style="font-weight:600;">Dots, groups of four</td><td class="mono">fc99.4775.cee0</td><td>Cisco IOS</td></tr>
+      </tbody>
+    </table>
+    <p>All three are <code>fc9947</code> + <code>75cee0</code>. On a burned-in MAC, the first half is the <strong>OUI</strong>, the manufacturer's ID. The second half is a number the manufacturer assigns to that one device. EUI-64 splits exactly there.</p>
+
+    <h3 class="sub">The three moves</h3>
     <table class="spec">
       <thead><tr><th>Step</th><th>Do this</th><th>MAC fc:99:47:75:ce:e0</th></tr></thead>
       <tbody>
-        <tr><td class="mono">1</td><td>Split the MAC in half</td><td class="mono">fc:99:47 | 75:ce:e0</td></tr>
-        <tr><td class="mono">2</td><td>Insert <code>ff:fe</code> in the middle, making 64 bits</td><td class="mono">fc:99:47:<strong>ff:fe</strong>:75:ce:e0</td></tr>
-        <tr><td class="mono">3</td><td>Flip the <strong>7th bit</strong> of the first byte</td><td class="mono">fc = 1111 11<strong>0</strong>0 → 1111 11<strong>1</strong>0 = <strong>fe</strong></td></tr>
-        <tr><td class="mono">4</td><td>Group into hextets: that's the interface ID</td><td class="mono">fe99:47ff:fe75:cee0</td></tr>
-        <tr><td class="mono">5</td><td>Add a prefix</td><td class="mono">fe80::fe99:47ff:fe75:cee0<br>2001:db8:acad:1:fe99:47ff:fe75:cee0</td></tr>
+        <tr><td class="mono">1</td><td><strong>Split</strong> the MAC in half (OUI | device)</td><td class="mono">fc:99:47 | 75:ce:e0</td></tr>
+        <tr><td class="mono">2</td><td><strong>Stuff</strong> <code>ff:fe</code> into the middle. 48 + 16 = 64 bits.</td><td class="mono">fc:99:47:<strong>ff:fe</strong>:75:ce:e0</td></tr>
+        <tr><td class="mono">3</td><td><strong>Flip</strong> the 7th bit of the first byte (below)</td><td class="mono"><strong>fc</strong> → <strong>fe</strong></td></tr>
+        <tr><td class="mono">4</td><td>Regroup into four hextets: that's the interface ID</td><td class="mono">fe99:47ff:fe75:cee0</td></tr>
+        <tr><td class="mono">5</td><td>Put a 64-bit prefix in front</td><td class="mono">fe80::fe99:47ff:fe75:cee0<br>2001:db8:acad:1:fe99:47ff:fe75:cee0</td></tr>
       </tbody>
     </table>
+    <p style="font-size:.88rem;">Watch step 4: <code>ff</code> lands at the end of the second hextet and <code>fe</code> at the start of the third (<code>47<strong>ff</strong>:<strong>fe</strong>75</code>). They're never a hextet of their own.</p>
+
+    <h3 class="sub">Which bit is the 7th?</h3>
+    <p>Only the first byte is touched. Write it in binary and number the bits <strong>from the left, starting at 1</strong>:</p>
+    <div class="bitrow" aria-label="The byte fc in binary, bits numbered 1 to 8 from the left; bit 7 is the one flipped">
+      <div class="bit"><small>bit 1</small>1<small>128</small></div>
+      <div class="bit"><small>bit 2</small>1<small>64</small></div>
+      <div class="bit"><small>bit 3</small>1<small>32</small></div>
+      <div class="bit"><small>bit 4</small>1<small>16</small></div>
+      <div class="bit"><small>bit 5</small>1<small>8</small></div>
+      <div class="bit"><small>bit 6</small>1<small>4</small></div>
+      <div class="bit seven"><small>bit 7</small>0<small>2</small></div>
+      <div class="bit trap"><small>bit 8</small>0<small>1</small></div>
+    </div>
+    <p><code>fc</code> = <code>1111 1100</code>. Bit 7 is the <strong>2s place</strong>. Flip it and you get <code>1111 1110</code> = <code>fe</code>. Because it's the 2s place, flipping it always adds 2 or takes 2 away. Two things follow:</p>
+    <ul class="obj-list">
+      <li><strong>Only the second hex digit changes.</strong> The first digit of the byte is never touched. <code>fc</code> → <code>fe</code>, <code>00</code> → <code>02</code>, <code>70</code> → <code>72</code>.</li>
+      <li><strong>Bit 8 is the trap.</strong> It's the 1s place. Flipping it gives <code>fc</code> → <code>fd</code>, which is wrong. If your answer is off by 1, you probably numbered the bits from 0. Start at 1 on the left.</li>
+    </ul>
+
+    <h3 class="sub">Flip partners: skip the binary</h3>
+    <p>Every hex digit has exactly one partner, two away from it. Find the second digit of the first byte and swap it for its partner.</p>
+    <div class="partners">
+      <span><b>0</b>↔<b>2</b></span><span><b>1</b>↔<b>3</b></span><span><b>4</b>↔<b>6</b></span><span><b>5</b>↔<b>7</b></span>
+      <span><b>8</b>↔<b>a</b></span><span><b>9</b>↔<b>b</b></span><span><b>c</b>↔<b>e</b></span><span><b>d</b>↔<b>f</b></span>
+    </div>
+    <p style="font-size:.88rem;">The pattern: split the 16 digits into rows of four (<code>0123</code>, <code>4567</code>, <code>89ab</code>, <code>cdef</code>). In each row, the 1st swaps with the 3rd and the 2nd with the 4th.</p>
+    <div class="teach-note warn">
+      <span class="label">Flip means flip, not "set to 1"</span>
+      Most burned-in MACs have bit 7 = 0, so the flip turns it on. But if it's already 1, the flip turns it <em>off</em>. MAC <code>06:1a:2b:3c:4d:5e</code> (a locally set MAC, the kind phones randomize): <code>06</code> = <code>0000 0110</code> → <code>0000 0100</code> = <code>04</code>. The interface ID is <code>041a:2bff:fe3c:4d5e</code>, and the link-local is <code>fe80::41a:2bff:fe3c:4d5e</code>. With partners: 6 ↔ 4.
+    </div>
+
+    <div class="teach-note preview">
+      <span class="label">Why ff:fe, and why flip? (beyond this course)</span>
+      <strong>ff:fe</strong> is a fixed filler. It pads 48 bits out to 64, and because it's always the same, it's how you spot an EUI-64 address. <strong>The flip</strong> is about bit 7 of a MAC, the universal/local (U/L) bit. In a MAC, 0 means "burned in by the manufacturer, globally unique," and 1 means set locally, such as a randomized or virtual-machine MAC. IPv6 reverses that meaning: in an interface ID, 1 means "universal, built from a unique MAC" and 0 means "local." The reason: hand-typed IDs like the <code>::1</code> in <code>2001:db8:acad:1::1</code> already have that bit at 0, which correctly says "not from a MAC." Without the reversal you'd have to type <code>::200:0:0:1</code> instead. This version is sometimes called <em>modified</em> EUI-64.
+    </div>
     <div class="teach-note">
-      <span class="label">Shortcut for the flip</span>
-      Flipping the 7th bit means adding or subtracting 2 in the first hex byte. In practice, change only the <em>second</em> hex digit: <code>0→2</code>, <code>2→0</code>, <code>4→6</code>, <code>c→e</code>, <code>e→c</code>, and so on. So <code>fc→fe</code>, <code>00→02</code>, and <code>70→72</code>. NetAcad's router example checks out: MAC <code>7079.b392.3640</code> gives <code>FE80::7279:B3FF:FE92:3640</code>.
+      <span class="label">It checks out on Cisco gear</span>
+      NetAcad's router example uses MAC <code>7079.b392.3640</code>: split, stuff, and flip <code>70</code> → <code>72</code> to get <code>FE80::7279:B3FF:FE92:3640</code>.
     </div>
     <div class="teach-note warn">
       <span class="label">Heads up: one NetAcad slide gets this wrong</span>
-      NetAcad's Windows EUI-64 <code>ipconfig</code> example shows <code>fe80::<strong>fc</strong>99:47ff:fe75:cee0</code>, which skips the flip. Its own EUI-64 process slide, using the same MAC, correctly gives <code>fe99…</code>. Trust the process. The correct answer is <code>fe99:47ff:fe75:cee0</code>. Also, the bit is <em>flipped</em>, not "set to 1": a MAC that already has it set goes from 1 to 0.
+      NetAcad's Windows EUI-64 <code>ipconfig</code> example shows <code>fe80::<strong>fc</strong>99:47ff:fe75:cee0</code>, which skips the flip. Its own EUI-64 process slide, using the same MAC, correctly gives <code>fe99…</code>. Trust the process. The correct answer is <code>fe99:47ff:fe75:cee0</code>.
     </div>
-    <p><strong>Spotting EUI-64:</strong> an EUI-64 interface ID always has <code>ff:fe</code> in the middle, so you can read the MAC back out of the address. That's the privacy problem: the device can be tracked across networks. It's why Windows uses <strong>random</strong> interface IDs instead.</p>
+
+    <h3 class="sub">Run it backward: address → MAC</h3>
+    <p>An EUI-64 interface ID always has <code>ff</code> and <code>fe</code> in the middle (<code>xxff:fexx</code>), so you can read the MAC back out. Take <code>fe80::21b:2cff:fe3d:4e5f</code>:</p>
+    <table class="spec">
+      <thead><tr><th>Step</th><th>Do this</th><th>Result</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">1</td><td>Write the address out in full (undo <code>::</code> and put back dropped leading zeros), then take the last four hextets.</td><td class="mono">021b:2cff:fe3d:4e5f</td></tr>
+        <tr><td class="mono">2</td><td>Find the <code>ff:fe</code> in the middle and take it out</td><td class="mono">02:1b:2c | 3d:4e:5f</td></tr>
+        <tr><td class="mono">3</td><td>Flip bit 7 back (partners: 2 ↔ 0)</td><td class="mono">00:1b:2c:3d:4e:5f</td></tr>
+      </tbody>
+    </table>
+    <p><strong>That's the privacy problem.</strong> The MAC goes with the device everywhere, so an EUI-64 GUA carries the same interface ID onto every network and into every packet sent to the internet. The device can be tracked from network to network. It's why Windows uses <strong>random</strong> interface IDs instead.</p>
 
     <div class="tool">
       <p class="tool-title">Try it: MAC → EUI-64 → addresses</p>
@@ -568,6 +644,25 @@ L   FF00::/8 [0/0]
         <input class="txt" id="pfxIn" value="2001:db8:acad:1" spellcheck="false" autocomplete="off" aria-label="64-bit prefix" style="max-width:14em;">
       </div>
       <div id="euiOut" class="tool-out"></div>
+    </div>
+
+    <div class="tool" id="euiDrill">
+      <p class="tool-title">Drill: EUI-64 both ways</p>
+      <div class="toolbar" style="margin-bottom:12px;">
+        <button class="btn" id="drFwd" aria-pressed="true">MAC → interface ID</button>
+        <button class="btn" id="drRev" aria-pressed="false">Address → MAC</button>
+        <span id="drScore" style="font-family:var(--mono);font-size:.85rem;opacity:.8;"></span>
+      </div>
+      <p id="drAsk" class="drill-ask"></p>
+      <div class="tool-in">
+        <input class="txt" id="drIn" spellcheck="false" autocomplete="off" aria-label="Your answer">
+      </div>
+      <div class="toolbar" style="margin-bottom:8px;">
+        <button class="btn" id="drCheck">Check</button>
+        <button class="btn" id="drShow">Show answer</button>
+        <button class="btn" id="drNext">New one</button>
+      </div>
+      <div id="drOut" class="tool-out" aria-live="polite"></div>
     </div>
   </section>
 
@@ -808,7 +903,7 @@ Trace complete.</span></div>
       <li>Thinking the gateway must be the router's global address. The router's LLA is normal and is best practice.</li>
       <li>Treating the <code>%12</code> zone ID as part of the address.</li>
       <li>Thinking DHCPv6 provides the default gateway. The gateway always comes from the RA.</li>
-      <li>EUI-64: forgetting the 7th-bit flip, flipping the wrong bit (<code>fc→fd</code>), or putting <code>fffe</code> in the wrong place.</li>
+      <li>EUI-64: forgetting the 7th-bit flip, numbering bits from 0 and flipping bit 8, the 1s place (<code>fc→fd</code>), counting from the right and flipping the 64s place (<code>fc→bc</code>), treating the flip as "set to 1" (<code>06</code> becomes <code>04</code>, not <code>06</code>), or putting <code>ff:fe</code> in the wrong place.</li>
       <li>Solicited-node: using the last 32 bits instead of 24, or building it from the sender's address instead of the target's.</li>
       <li>Thinking a loopback ping tests the NIC or cable. It only tests the local stack.</li>
       <li>Reading "Destination host unreachable … 0% loss" as a success.</li>
@@ -998,24 +1093,138 @@ Trace complete.</span></div>
 
   (function(){
     const mac = document.getElementById('macIn'), pfx = document.getElementById('pfxIn'), out = document.getElementById('euiOut');
+    const bin = x => parseInt(x, 16).toString(2).padStart(8, '0');
+    const strip = (byte, hi) => bin(byte).split('').map((d, i) =>
+      `<span class="bit${i === 6 ? ' seven' : ''}${i === 6 && hi ? ' flipped' : ''}">${d}</span>`).join('');
     function render(){
       const e = eui64(mac.value);
       if (!e){ out.innerHTML = '<p class="bad">Enter a 48-bit MAC, like fc:99:47:75:ce:e0, fc-99-47-75-ce-e0, or fc99.4775.cee0.</p>'; return; }
-      const bin = x => parseInt(x, 16).toString(2).padStart(8, '0');
       const lla = expand6('fe80::' + e.iid.join(':'));
       let gua = null;
-      const pp = pfx.value.trim().replace(/::?$/, '');
+      const pp = pfx.value.trim().replace(/\/\d+$/, '').replace(/::?$/, '');
       const pparts = pp.split(':');
       if (pparts.length === 4 && pparts.every(h => /^[0-9a-f]{1,4}$/i.test(h))) gua = expand6(pp + ':' + e.iid.join(':'));
-      out.innerHTML = `<div class="row"><b>1 · Split</b><code>${e.b.slice(0, 3).join(':')} | ${e.b.slice(3).join(':')}</code></div>
-        <div class="row"><b>2 · Insert ff:fe</b><code>${e.b.slice(0, 3).join(':')}:ff:fe:${e.b.slice(3).join(':')}</code></div>
-        <div class="row"><b>3 · Flip bit 7</b><code>${e.b[0]} = ${bin(e.b[0]).slice(0, 4)} ${bin(e.b[0]).slice(4)} → ${bin(e.flipped).slice(0, 4)} ${bin(e.flipped).slice(4)} = ${e.flipped}</code></div>
+      out.innerHTML = `<div class="row"><b>0 · Read it</b><code>${e.b.slice(0, 3).join('')} + ${e.b.slice(3).join('')}</code></div>
+        <div class="row"><b>1 · Split</b><code>${e.b.slice(0, 3).join(':')} | ${e.b.slice(3).join(':')}</code></div>
+        <div class="row"><b>2 · Stuff ff:fe</b><code>${e.b.slice(0, 3).join(':')}:ff:fe:${e.b.slice(3).join(':')}</code></div>
+        <div class="row"><b>3 · Flip bit 7</b><span><code>${e.b[0]} → ${e.flipped}</code> <span class="minibits">${strip(e.b[0], false)}</span> → <span class="minibits">${strip(e.flipped, true)}</span><br><small>Partners: ${e.b[0][1]} ↔ ${e.flipped[1]}. Bit 7 was ${bin(e.b[0])[6]}, now ${bin(e.flipped)[6]}.</small></span></div>
         <div class="row"><b>4 · Interface ID</b><code>${e.iid.join(':')}</code></div>
         <div class="row"><b>Link-local</b><code>${compress6(lla)}</code></div>
         ${gua ? `<div class="row"><b>GUA</b><code>${compress6(gua)}</code></div>` : '<div class="row"><b>GUA</b><span class="bad">Enter a 64-bit prefix (4 hextets), like 2001:db8:acad:1</span></div>'}
         <div class="row"><b>Solicited-node</b><code>${solicited(lla)}</code></div>`;
     }
     mac.addEventListener('input', render); pfx.addEventListener('input', render); render();
+  })();
+
+  /* ---- EUI-64 drill: forward (MAC → interface ID) and reverse (address → MAC) ---- */
+  (function(){
+    const $ = id => document.getElementById(id);
+    const ask = $('drAsk'), inp = $('drIn'), out = $('drOut'), score = $('drScore');
+    let mode = 'fwd', cur = null, right = 0, tries = 0, done = false, counted = false;
+    const hx = n => n.toString(16).padStart(2, '0');
+    const groups = h => h.match(/.{4}/g).join(':');
+    function makeMac(){
+      const b = Array.from({length:6}, () => Math.floor(Math.random() * 256));
+      b[0] &= 0xfc;                               /* unicast, U/L = 0 ... */
+      if (Math.random() < 0.25) b[0] |= 0x02;     /* ... but sometimes U/L = 1, so the flip goes 1 → 0 */
+      return b.map(hx);
+    }
+    function showMac(b){
+      const f = Math.floor(Math.random() * 3);
+      if (f === 0) return b.join(':');
+      if (f === 1) return b.join('-').toUpperCase();
+      return [b[0] + b[1], b[2] + b[3], b[4] + b[5]].join('.');
+    }
+    const flip = (byte, m) => hx(parseInt(byte, 16) ^ m);
+    function iidHex(b, m, mid, where){
+      const f = flip(b[0], m) + b.slice(1).join('');
+      if (where === 'end') return f + mid;
+      if (where === 'start') return mid + f;
+      return f.slice(0, 6) + mid + f.slice(6);
+    }
+    function newOne(focus){
+      const b = makeMac();
+      const iid = iidHex(b, 2, 'fffe');
+      cur = { b, iid, macText: showMac(b) };
+      done = false; counted = false; inp.value = ''; out.innerHTML = '';
+      if (mode === 'fwd'){
+        ask.innerHTML = `MAC <code>${cur.macText}</code>. What's the EUI-64 interface ID? Type all four hextets.`;
+        inp.placeholder = 'xxxx:xxxx:xxxx:xxxx';
+      } else {
+        const lla = compress6(expand6('fe80::' + groups(iid)));
+        ask.innerHTML = `Link-local <code>${lla}</code>. What MAC was it built from?`;
+        inp.placeholder = 'xx:xx:xx:xx:xx:xx';
+      }
+      if (focus) inp.focus({preventScroll:true});
+    }
+    function parseIid(s){
+      s = s.trim().toLowerCase();
+      if (s.includes('::')) return { err:'Write all four hextets of the interface ID, without <code>::</code>.' };
+      const p = s.split(':');
+      if (p.length !== 4 || !p.every(h => /^[0-9a-f]{1,4}$/.test(h))) return { err:'Type four hextets separated by colons, like <code>fe99:47ff:fe75:cee0</code>.' };
+      return { hex: p.map(h => h.padStart(4, '0')).join('') };
+    }
+    function diagnoseFwd(hex){
+      const b = cur.b;
+      if ((parseInt(b[0], 16) & 2) && hex === iidHex(b, 0, 'fffe')) return 'Bit 7 was already 1, so the flip turns it <em>off</em>. Flip means flip, not "set to 1."';
+      if (hex === iidHex(b, 0x42, 'fffe')) return 'You changed the first hex digit. Bit 7 counts from the <em>left</em>; only the second digit should change.';
+      if (hex === iidHex(b, 0, 'fffe')) return 'You split and stuffed correctly but skipped the flip. Find the second digit of the first byte and swap it for its partner.';
+      if (hex === iidHex(b, 1, 'fffe')) return 'You flipped bit 8, the 1s place. Number the bits 1 to 8 starting from the left: bit 7 is the 2s place, so the digit changes by 2, not 1.';
+      if (hex === iidHex(b, 2, 'feff') || hex === iidHex(b, 0, 'feff')) return 'The filler is <code>ff</code> then <code>fe</code>, in that order.';
+      for (const m of [0, 2]) for (const w of ['end', 'start'])
+        if (hex === iidHex(b, m, 'fffe', w)) return '<code>ff:fe</code> goes in the <em>middle</em>, between the first three bytes and the last three.';
+      if (hex.slice(2) === cur.iid.slice(2)) return 'Everything is right except the first byte. Check the flip.';
+      return 'Not quite. Split the MAC after the third byte, stuff <code>ff:fe</code> in the middle, then flip bit 7.';
+    }
+    function diagnoseRev(hex){
+      const b = cur.b, unflipped = flip(b[0], 2) + b.slice(1).join('');
+      if (hex.length === 16) return 'Take the <code>ff:fe</code> out. A MAC is only 12 hex digits.';
+      if (hex.length === 11) return 'One digit short. Did you put back the leading zero of the first hextet (e.g. <code>21b</code> → <code>021b</code>)?';
+      if (hex.length !== 12) return 'A MAC is 12 hex digits. Any format works: colons, hyphens, or dots.';
+      if (!(parseInt(b[0], 16) & 2) && hex === unflipped) return 'Bit 7 in the interface ID is 1, so flipping it back turns it <em>off</em>.';
+      if (hex === flip(b[0], 0x42) + b.slice(1).join('')) return 'You changed the first hex digit. Bit 7 counts from the <em>left</em>; only the second digit should change.';
+      if (hex === unflipped) return 'You took out <code>ff:fe</code>, but you still need to flip bit 7 back.';
+      if (hex === flip(b[0], 3) + b.slice(1).join('')) return 'Wrong bit: flip bit 7 (the 2s place), not bit 8.';
+      return 'Not quite. Put back any dropped leading zeros, take out <code>ff:fe</code>, then flip bit 7 back.';
+    }
+    function tally(){ score.textContent = tries ? `${right} / ${tries} right on the first try` : ''; }
+    function check(){
+      if (!cur) return;
+      let ok, msg;
+      if (mode === 'fwd'){
+        const r = parseIid(inp.value);
+        if (r.err){ out.innerHTML = `<p class="bad">${r.err}</p>`; return; }
+        ok = r.hex === cur.iid; msg = ok ? '' : diagnoseFwd(r.hex);
+      } else {
+        const hex = inp.value.toLowerCase().replace(/[^0-9a-f]/g, '');
+        if (!hex){ out.innerHTML = '<p class="bad">Type a MAC address.</p>'; return; }
+        ok = hex === cur.b.join(''); msg = ok ? '' : diagnoseRev(hex);
+      }
+      if (!counted){ counted = true; tries++; if (ok) right++; tally(); }
+      if (ok){ done = true; out.innerHTML = `<div class="row"><b>Right</b><span>Press <strong>New one</strong> for another.</span></div>`; }
+      else out.innerHTML = `<div class="row"><b>Not yet</b><span>${msg}</span></div>`;
+    }
+    function show(){
+      if (!cur) return;
+      if (!counted){ counted = true; tries++; tally(); }
+      done = true;
+      const b = cur.b, f = flip(b[0], 2);
+      out.innerHTML = mode === 'fwd'
+        ? `<div class="row"><b>Answer</b><span><code>${groups(cur.iid)}</code><br><small>${b.slice(0, 3).join(':')} | ${b.slice(3).join(':')} → stuff ff:fe → flip ${b[0]} → ${f} (${b[0][1]} ↔ ${f[1]})</small></span></div>`
+        : `<div class="row"><b>Answer</b><span><code>${b.join(':')}</code><br><small>${groups(cur.iid)} → take out ff:fe → flip ${f} → ${b[0]} (${f[1]} ↔ ${b[0][1]})</small></span></div>`;
+    }
+    function setMode(m){
+      mode = m;
+      $('drFwd').setAttribute('aria-pressed', m === 'fwd'); $('drRev').setAttribute('aria-pressed', m === 'rev');
+      newOne(true);
+    }
+    $('drFwd').addEventListener('click', () => setMode('fwd'));
+    $('drRev').addEventListener('click', () => setMode('rev'));
+    $('drCheck').addEventListener('click', check);
+    $('drShow').addEventListener('click', show);
+    $('drNext').addEventListener('click', () => newOne(true));
+    inp.addEventListener('keydown', e => { if (e.key === 'Enter') check(); });
+    newOne(false);
   })();
 
   const TERMS = [
@@ -1034,6 +1243,7 @@ Trace complete.</span></div>
     {t:"Link-local address (LLA)", d:"An fe80::/10 address valid only on one link and never routed. Every IPv6 interface has one, and a host's default gateway is usually the router's LLA."},
     {t:"Neighbor Advertisement (NA)", d:"The ICMPv6 reply to a Neighbor Solicitation, carrying the device's MAC address. Also used to signal that an address is taken during DAD."},
     {t:"Neighbor Solicitation (NS)", d:"ICMPv6 message asking for a neighbor's MAC address (the IPv6 version of an ARP request), sent to the target's solicited-node group. Also used for DAD."},
+    {t:"OUI (Organizationally Unique Identifier)", d:"The first half (first 6 hex digits) of a MAC address, identifying the manufacturer. EUI-64 splits the MAC right after it."},
     {t:"Ping", d:"Tests reachability with ICMP Echo Request/Reply. Windows sends 4 echoes, IOS sends 5. IOS symbols: ! reply, . timeout, U unreachable."},
     {t:"Router Advertisement (RA)", d:"ICMPv6 message from a router with the prefix, prefix length, and addressing method. Its source (the router's LLA) becomes the host's default gateway. Sent every 200 seconds and in reply to an RS."},
     {t:"Router Solicitation (RS)", d:"ICMPv6 message a host sends to ff02::2 asking routers to send an RA right away."},
@@ -1045,6 +1255,7 @@ Trace complete.</span></div>
     {t:"Traceroute (tracert)", d:"Maps the path to a destination by sending probes with TTL 1, 2, 3… and recording which router returns Time Exceeded at each step."},
     {t:"Translation (NAT64)", d:"A coexistence method that translates between IPv6 and IPv4, so IPv6-only devices can reach IPv4-only ones."},
     {t:"Tunneling", d:"A coexistence method that carries IPv6 packets inside IPv4 packets across an IPv4-only network."},
+    {t:"U/L bit", d:"Bit 7 of a MAC's first byte (the 2s place), the universal/local bit. EUI-64 flips it: fc becomes fe, 00 becomes 02, 06 becomes 04."},
     {t:"Unique local address (ULA)", d:"fc00::/7. For internal use, somewhat like RFC 1918 private addresses, but not meant to be hidden behind NAT."},
     {t:"Zone ID", d:"The %n after a link-local address in Windows output (e.g., fe80::1%12). The host's local interface number, not part of the address."},
   ];
@@ -1068,6 +1279,12 @@ Trace complete.</span></div>
     { q:"What is the EUI-64 interface ID for MAC fc:99:47:75:ce:e0?",
       choices:["fc99:47ff:fe75:cee0","fe99:47ff:fe75:cee0","fc99:47fe:ff75:cee0","fd99:47ff:fe75:cee0"], correct:1,
       explain:"Insert ff:fe in the middle, then flip the 7th bit of the first byte: fc (1111 1100) becomes fe (1111 1110)." },
+    { q:"What is the EUI-64 interface ID for MAC 06:1a:2b:3c:4d:5e?",
+      choices:["061a:2bff:fe3c:4d5e","071a:2bff:fe3c:4d5e","041a:2bfe:ff3c:4d5e","041a:2bff:fe3c:4d5e"], correct:3,
+      explain:"06 is 0000 0110. Bit 7 is already 1, so the flip turns it off: 0000 0100 = 04. Flip means flip, not set to 1. Partners: 6 ↔ 4." },
+    { q:"Which MAC address was the link-local address fe80::21b:2cff:fe3d:4e5f built from?",
+      choices:["02:1b:2c:3d:4e:5f","21:b2:cf:3d:4e:5f","00:1b:2c:3d:4e:5f","00:1b:2c:ff:fe:3d"], correct:2,
+      explain:"Put back the leading zero (021b:2cff:fe3d:4e5f), take out ff:fe (02:1b:2c:3d:4e:5f), then flip bit 7 back: 02 becomes 00." },
     { q:"What is the solicited-node multicast address for 2001:db8:acad:1::10?",
       choices:["ff02::1:ff00:10","ff02::1:10","ff02::2:ff00:10","ff02::1:ffac:10"], correct:0,
       explain:"ff02::1:ff plus the last 24 bits of the address (00:0010) gives ff02::1:ff00:10." },
