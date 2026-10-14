@@ -381,18 +381,18 @@
     <details class="solution">
       <summary>For instructors: building the starting .pkt</summary>
       <div class="solbody">
-        <p>Build the whole topology, configure the right side as below, and leave R1, S1, and PC-A as factory-default devices (or leave them out and have students add them, per step 1.1). Cabling on LAN-B: S2 F0/1 → PC-B, S2 F0/2 → SRV1, S2 G0/1 → R2 G0/0/1. On SRV1, turn on HTTP and DNS, with an A record <code>www.it131.example</code> → <code>192.168.20.100</code>. Consider an enable secret on R2 that students don't know, so nobody "fixes" the far side. If you build the finished network in Packet Tracer's Activity Wizard from the answer key, you get automatic scoring.</p>
+        <p>Build the whole topology, configure the right side as below, and leave R1, S1, and PC-A as factory-default devices (or leave them out and have students add them, per step 1.1). Cabling on LAN-B: S2 F0/1 → PC-B, S2 F0/2 → SRV1, S2 G0/1 → R2 G0/1. On SRV1, turn on HTTP and DNS, with an A record <code>www.it131.example</code> → <code>192.168.20.100</code>. Consider an enable secret on R2 that students don't know, so nobody "fixes" the far side. If you build the finished network in Packet Tracer's Activity Wizard from the answer key, you get automatic scoring.</p>
         <div class="terminal">
           <div class="terminal-header"><span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span><span class="terminal-title">R2 and S2 · instructor only</span></div>
           <div class="terminal-body"><span class="comment">! R2: pre-built. Students don't type this.</span>
 <span class="prompt">Router(config)#</span> <span class="cmd">hostname R2</span>
 <span class="prompt">R2(config)#</span> <span class="cmd">ipv6 unicast-routing</span>
-<span class="prompt">R2(config)#</span> <span class="cmd">interface g0/0/0</span>
+<span class="prompt">R2(config)#</span> <span class="cmd">interface g0/0</span>
 <span class="prompt">R2(config-if)#</span> <span class="cmd">ip address 10.0.0.2 255.255.255.252</span>
 <span class="prompt">R2(config-if)#</span> <span class="cmd">ipv6 address 2001:db8:acad:ff01::2/64</span>
 <span class="prompt">R2(config-if)#</span> <span class="cmd">ipv6 address fe80::2 link-local</span>
 <span class="prompt">R2(config-if)#</span> <span class="cmd">no shutdown</span>
-<span class="prompt">R2(config-if)#</span> <span class="cmd">interface g0/0/1</span>
+<span class="prompt">R2(config-if)#</span> <span class="cmd">interface g0/1</span>
 <span class="prompt">R2(config-if)#</span> <span class="cmd">ip address 192.168.20.1 255.255.255.0</span>
 <span class="prompt">R2(config-if)#</span> <span class="cmd">ipv6 address 2001:db8:acad:2::1/64</span>
 <span class="prompt">R2(config-if)#</span> <span class="cmd">ipv6 address fe80::2 link-local</span>
@@ -418,12 +418,12 @@
     <table class="spec">
       <thead><tr><th>Device</th><th>Interface</th><th>IPv4 / mask</th><th>IPv6 / prefix</th><th>Default gateway</th></tr></thead>
       <tbody>
-        <tr><td style="font-weight:600;">R1</td><td class="mono">G0/0/1</td><td class="mono">192.168.10.1 / 255.255.255.0</td><td class="mono">2001:db8:acad:1::1/64<br>fe80::1 link-local</td><td>n/a</td></tr>
-        <tr><td style="font-weight:600;">R1</td><td class="mono">G0/0/0</td><td class="mono">10.0.0.1 / <strong>fill</strong></td><td class="mono">2001:db8:acad:ff01::1/64<br>fe80::1 link-local</td><td>n/a</td></tr>
+        <tr><td style="font-weight:600;">R1</td><td class="mono">G0/1</td><td class="mono">192.168.10.1 / 255.255.255.0</td><td class="mono">2001:db8:acad:1::1/64<br>fe80::1 link-local</td><td>n/a</td></tr>
+        <tr><td style="font-weight:600;">R1</td><td class="mono">G0/0</td><td class="mono">10.0.0.1 / <strong>fill</strong></td><td class="mono">2001:db8:acad:ff01::1/64<br>fe80::1 link-local</td><td>n/a</td></tr>
         <tr><td style="font-weight:600;">S1</td><td class="mono">VLAN 1</td><td class="mono">192.168.10.2 / 255.255.255.0</td><td>n/a</td><td class="mono">192.168.10.1</td></tr>
         <tr><td style="font-weight:600;">PC-A</td><td class="mono">NIC</td><td class="mono">192.168.10.10 / 255.255.255.0</td><td class="mono">2001:db8:acad:1::10/64</td><td class="mono">192.168.10.1<br><strong>fill</strong> (IPv6)</td></tr>
-        <tr style="opacity:.6;"><td style="font-weight:600;">R2</td><td class="mono">G0/0/0</td><td class="mono">10.0.0.2 / 255.255.255.252</td><td class="mono">2001:db8:acad:ff01::2/64<br>fe80::2 link-local</td><td>n/a</td></tr>
-        <tr style="opacity:.6;"><td style="font-weight:600;">R2</td><td class="mono">G0/0/1</td><td class="mono">192.168.20.1 / 255.255.255.0</td><td class="mono">2001:db8:acad:2::1/64<br>fe80::2 link-local</td><td>n/a</td></tr>
+        <tr style="opacity:.6;"><td style="font-weight:600;">R2</td><td class="mono">G0/0</td><td class="mono">10.0.0.2 / 255.255.255.252</td><td class="mono">2001:db8:acad:ff01::2/64<br>fe80::2 link-local</td><td>n/a</td></tr>
+        <tr style="opacity:.6;"><td style="font-weight:600;">R2</td><td class="mono">G0/1</td><td class="mono">192.168.20.1 / 255.255.255.0</td><td class="mono">2001:db8:acad:2::1/64<br>fe80::2 link-local</td><td>n/a</td></tr>
         <tr style="opacity:.6;"><td style="font-weight:600;">S2</td><td class="mono">VLAN 1</td><td class="mono">192.168.20.2 / 255.255.255.0</td><td>n/a</td><td class="mono">192.168.20.1</td></tr>
         <tr style="opacity:.6;"><td style="font-weight:600;">PC-B</td><td class="mono">NIC</td><td class="mono">192.168.20.10 / 255.255.255.0</td><td class="mono">2001:db8:acad:2::10/64</td><td class="mono">192.168.20.1 · fe80::2</td></tr>
         <tr style="opacity:.6;"><td style="font-weight:600;">SRV1</td><td class="mono">NIC</td><td class="mono">192.168.20.100 / 255.255.255.0</td><td class="mono">2001:db8:acad:2::100/64</td><td class="mono">192.168.20.1 · fe80::2</td></tr>
@@ -499,7 +499,7 @@
         </tbody>
       </table>
       <p>Block sizes 64, 32, 16, 4. The next free address is <code>192.168.30.116</code>, leaving .116–.255 for growth. The router takes the first usable address in each subnet, as everywhere else on this site. For IPv6, the site uses <code>2001:db8:acad::/48</code> and subnet IDs 1, 2, and ff01 are taken, so LAN-C gets the next one: <code>2001:db8:acad:3::/64</code>, with the router at <code>2001:db8:acad:3::1/64</code>.</p>
-      <p><strong>The three fill-ins in the build:</strong> R1 G0/0/0's mask is <code>255.255.255.252</code> (a /30). A /30 has <strong>2</strong> usable hosts. PC-A's IPv6 default gateway is R1's link-local address, <code>FE80::1</code>.</p>
+      <p><strong>The three fill-ins in the build:</strong> R1 G0/0's mask is <code>255.255.255.252</code> (a /30). A /30 has <strong>2</strong> usable hosts. PC-A's IPv6 default gateway is R1's link-local address, <code>FE80::1</code>.</p>
     </div></details>
   </section>
 
@@ -515,20 +515,23 @@
       <div class="terminal-header"><span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span><span class="terminal-title">R1 · show ip interface brief</span></div>
       <div class="terminal-body"><span class="prompt">R1#</span> <span class="hl">show ip interface brief</span>
 <span class="out">Interface              IP-Address      OK? Method Status                Protocol</span>
-<span class="hl">GigabitEthernet0/0/0   10.0.0.1        YES manual up                    up
-GigabitEthernet0/0/1   192.168.10.1    YES manual up                    up</span>
-<span class="out">Vlan1                  unassigned      YES unset  administratively down down</span></div>
+<span class="hl">GigabitEthernet0/0     10.0.0.1        YES manual up                    up
+GigabitEthernet0/1     192.168.10.1    YES manual up                    up</span>
+<span class="out">GigabitEthernet0/2     unassigned      YES unset  administratively down down
+Vlan1                  unassigned      YES unset  administratively down down</span></div>
     </div>
-    <p style="font-size:.88rem;">This is how Packet Tracer's ISR 4321 looks with no modules installed. A real 4321 lists a <code>GigabitEthernet0</code> management port (and any module interfaces) instead of <code>Vlan1</code> (see <a href="IT131_Session11.html#commands">Session 11</a>).</p>
+    <p style="font-size:.88rem;">This is how Packet Tracer's 2911 looks with no modules installed: G0/2 is unused. A real 2911 lists any module interfaces instead of <code>Vlan1</code> (see <a href="IT131_Session11.html#commands">Session 11</a>).</p>
     <div class="terminal">
       <div class="terminal-header"><span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span><span class="terminal-title">R1 · show ipv6 interface brief</span></div>
       <div class="terminal-body"><span class="prompt">R1#</span> <span class="hl">show ipv6 interface brief</span>
-<span class="out">GigabitEthernet0/0/0   [up/up]
+<span class="out">GigabitEthernet0/0     [up/up]
     FE80::1
     2001:DB8:ACAD:FF01::1
-GigabitEthernet0/0/1   [up/up]
+GigabitEthernet0/1     [up/up]
     FE80::1
     2001:DB8:ACAD:1::1
+GigabitEthernet0/2     [administratively down/down]
+    unassigned
 Vlan1                  [administratively down/down]
     unassigned</span></div>
     </div>
@@ -542,11 +545,11 @@ Vlan1                  [administratively down/down]
 Gateway of last resort is not set
 
       10.0.0.0/8 is variably subnetted, 2 subnets, 2 masks
-C        10.0.0.0/30 is directly connected, GigabitEthernet0/0/0
-L        10.0.0.1/32 is directly connected, GigabitEthernet0/0/0
+C        10.0.0.0/30 is directly connected, GigabitEthernet0/0
+L        10.0.0.1/32 is directly connected, GigabitEthernet0/0
       192.168.10.0/24 is variably subnetted, 2 subnets, 2 masks
-C        192.168.10.0/24 is directly connected, GigabitEthernet0/0/1
-L        192.168.10.1/32 is directly connected, GigabitEthernet0/0/1</span>
+C        192.168.10.0/24 is directly connected, GigabitEthernet0/1
+L        192.168.10.1/32 is directly connected, GigabitEthernet0/1</span>
 <span class="hl">S     192.168.20.0/24 [1/0] via 10.0.0.2</span>
 <span class="comment">! S = static route: CCNA 2 preview (SRWE 15)</span></div>
     </div>
@@ -643,15 +646,15 @@ Authorized access only. All activity is monitored.
 <span class="comment">! ---- Part 4: interfaces ----</span>
 <span class="comment">! Off by default; without it R1 won't route IPv6</span>
 <span class="prompt">R1(config)#</span> <span class="hl">ipv6 unicast-routing</span>
-<span class="prompt">R1(config)#</span> <span class="cmd">interface g0/0/1</span>
+<span class="prompt">R1(config)#</span> <span class="cmd">interface g0/1</span>
 <span class="prompt">R1(config-if)#</span> <span class="cmd">description LAN-A to S1 G0/1</span>
 <span class="prompt">R1(config-if)#</span> <span class="cmd">ip address 192.168.10.1 255.255.255.0</span>
 <span class="prompt">R1(config-if)#</span> <span class="cmd">ipv6 address 2001:db8:acad:1::1/64</span>
 <span class="prompt">R1(config-if)#</span> <span class="cmd">ipv6 address fe80::1 link-local</span>
 <span class="prompt">R1(config-if)#</span> <span class="hl">no shutdown</span>
 <span class="prompt">R1(config-if)#</span> <span class="cmd">exit</span>
-<span class="prompt">R1(config)#</span> <span class="cmd">interface g0/0/0</span>
-<span class="prompt">R1(config-if)#</span> <span class="cmd">description Link to R2 G0/0/0</span>
+<span class="prompt">R1(config)#</span> <span class="cmd">interface g0/0</span>
+<span class="prompt">R1(config-if)#</span> <span class="cmd">description Link to R2 G0/0</span>
 <span class="prompt">R1(config-if)#</span> <span class="cmd">ip address 10.0.0.1 255.255.255.252</span>
 <span class="prompt">R1(config-if)#</span> <span class="cmd">ipv6 address 2001:db8:acad:ff01::1/64</span>
 <span class="prompt">R1(config-if)#</span> <span class="cmd">ipv6 address fe80::1 link-local</span>
@@ -706,7 +709,7 @@ Building configuration...
 <span class="prompt">S1(config)#</span> <span class="cmd">interface f0/1</span>
 <span class="prompt">S1(config-if)#</span> <span class="cmd">description PC-A</span>
 <span class="prompt">S1(config-if)#</span> <span class="cmd">interface g0/1</span>
-<span class="prompt">S1(config-if)#</span> <span class="cmd">description Uplink to R1 G0/0/1</span>
+<span class="prompt">S1(config-if)#</span> <span class="cmd">description Uplink to R1 G0/1</span>
 <span class="prompt">S1(config-if)#</span> <span class="cmd">exit</span>
 <span class="comment">! The SVI is the switch's own address, for management only</span>
 <span class="prompt">S1(config)#</span> <span class="hl">interface vlan 1</span>
@@ -870,15 +873,15 @@ Building configuration...
 
   const TASKS = [
     {title:'Part 1 · Build and cable', scope:'Module 2 (console), Module 4 (cabling)', items:[
-      '1.1 Add PC-A, a 2960 named S1, and an ISR4321 named R1. Set the display names exactly as shown.',
-      '1.2 Cable PC-A Fa0 → S1 F0/1 and S1 G0/1 → R1 G0/0/1 with <strong>copper straight-through</strong> (unlike devices).',
-      '1.3 Cable R1 G0/0/0 → R2 G0/0/0 with <strong>copper crossover</strong> (two routers are like devices). Real gear with auto-MDIX may link with either; use the NetAcad rule here.',
+      '1.1 Add PC-A, a 2960 named S1, and a 2911 named R1. Set the display names exactly as shown.',
+      '1.2 Cable PC-A Fa0 → S1 F0/1 and S1 G0/1 → R1 G0/1 with <strong>copper straight-through</strong> (unlike devices).',
+      '1.3 Cable R1 G0/0 → R2 G0/0 with <strong>copper crossover</strong> (two routers are like devices). Real gear with auto-MDIX may link with either; use the NetAcad rule here.',
       '1.4 Cable PC-A RS-232 → R1 Console with a <strong>console</strong> cable. For S1, move the cable or use S1\'s CLI tab.',
     ]},
     {title:'Part 2 · Subnetting and addressing', scope:'Module 11 (VLSM), Module 12 (IPv6)', items:[
       '2.1 Complete the four LAN-C rows in the <a href="#worksheet">subnet worksheet</a>: network, prefix/mask, first, last, broadcast.',
       '2.2 Choose LAN-C\'s IPv6 /64 and its router address.',
-      '2.3 Fill the three blanks in the addressing table: R1 G0/0/0\'s mask, the usable hosts on that /30, and PC-A\'s IPv6 gateway.',
+      '2.3 Fill the three blanks in the addressing table: R1 G0/0\'s mask, the usable hosts on that /30, and PC-A\'s IPv6 gateway.',
     ]},
     {title:'Part 3 · Basic configuration on R1 and S1', scope:'Modules 2, 16', items:[
       '3.1 Hostnames <code>R1</code> and <code>S1</code>.',
@@ -892,8 +895,8 @@ Building configuration...
     ]},
     {title:'Part 4 · Interfaces', scope:'Modules 10, 12. Step 4.5 is a CCNA 2 preview (SRWE 15).', items:[
       '4.1 R1: <code>ipv6 unicast-routing</code>.',
-      '4.2 R1 G0/0/1: description, IPv4, IPv6 GUA, <code>fe80::1 link-local</code>, <code>no shutdown</code>.',
-      '4.3 R1 G0/0/0: the same.',
+      '4.2 R1 G0/1: description, IPv4, IPv6 GUA, <code>fe80::1 link-local</code>, <code>no shutdown</code>.',
+      '4.3 R1 G0/0: the same.',
       '4.4 S1: VLAN 1 address, <code>no shutdown</code>, <code>ip default-gateway 192.168.10.1</code>, and descriptions on F0/1 and G0/1.',
       '4.5 <strong>Provided:</strong> type these exactly: <code>ip route 192.168.20.0 255.255.255.0 10.0.0.2</code> and <code>ipv6 route 2001:db8:acad:2::/64 2001:db8:acad:ff01::2</code>.',
     ]},
@@ -910,7 +913,7 @@ Building configuration...
       '6.3 PC-A static IPv6 address, prefix /64, and gateway <code>FE80::1</code>.',
     ]},
     {title:'Part 7 · Verification', scope:'Module 8 (routing table), Modules 15, 17', items:[
-      '7.1 R1 <code>show ip interface brief</code> and <code>show ipv6 interface brief</code>: G0/0/0 and G0/0/1 up/up with the right addresses.',
+      '7.1 R1 <code>show ip interface brief</code> and <code>show ipv6 interface brief</code>: G0/0 and G0/1 up/up with the right addresses.',
       '7.2 R1 <code>show ip route</code>: two C routes, two L routes, one S route.',
       '7.3 R1 <code>show cdp neighbors</code>: S1 and R2 on the right local interfaces.',
       '7.4 PC-A pings S1 (<code>192.168.10.2</code>) and its gateway (<code>192.168.10.1</code>).',
@@ -1011,7 +1014,7 @@ Building configuration...
   ];
 
   const QUIZ = [
-    { q:"Which cable connects R1's G0/0/0 directly to R2's G0/0/0 in the NetAcad cabling rules?",
+    { q:"Which cable connects R1's G0/0 directly to R2's G0/0 in the NetAcad cabling rules?",
       choices:["Straight-through","Crossover","Console","Coaxial"], correct:1,
       explain:"Two routers are like devices, so NetAcad uses a crossover cable. (Auto-MDIX on real gear often works with either.)" },
     { q:"A student configures IPv6 addresses on both R1 interfaces, but PCs on LAN-A can't reach LAN-B over IPv6. IPv4 works. Which command is most likely missing?",

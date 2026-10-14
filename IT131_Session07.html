@@ -368,12 +368,12 @@
 <span class="comment">! The delimiter (#) must not appear anywhere inside the message text.</span>
 
 <span class="comment">! === Step 8: Configure the LAN-facing interface ===</span>
-<span class="prompt">R1(config)#</span> <span class="cmd">interface gigabitethernet 0/0/1</span>
+<span class="prompt">R1(config)#</span> <span class="cmd">interface gigabitethernet 0/1</span>
 <span class="prompt">R1(config-if)#</span> <span class="cmd">description LAN-A -- Building 1 users</span>
 <span class="prompt">R1(config-if)#</span> <span class="hl">ip address 192.168.10.1 255.255.255.0</span>
 <span class="prompt">R1(config-if)#</span> <span class="hl">no shutdown</span>
-<span class="out">%LINK-5-CHANGED: Interface GigabitEthernet0/0/1, changed state to up
-%LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet0/0/1,
+<span class="out">%LINK-5-CHANGED: Interface GigabitEthernet0/1, changed state to up
+%LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet0/1,
 changed state to up</span>
 <span class="prompt">R1(config-if)#</span> <span class="cmd">exit</span>
 
@@ -400,7 +400,7 @@ Building configuration...
       <p>Most of Session 2 carries straight over — <code>enable secret</code>, console/vty security, the whole SSH block, banners, saving. This table is only the parts that don't.</p>
     </div>
     <table class="spec">
-      <thead><tr><th></th><th>Switch (2960 / C1000)</th><th>Router (ISR 4321 / 4221)</th></tr></thead>
+      <thead><tr><th></th><th>Switch (2960 / C1000)</th><th>Router (2911 / ISR 4221)</th></tr></thead>
       <tbody>
         <tr><td style="font-weight:600;">Physical port, default state</td><td>Enabled</td><td>Administratively down</td></tr>
         <tr><td style="font-weight:600;">IP address lives on</td><td>One SVI (<code>interface vlan 1</code>) — a management IP only</td><td>Every routed interface, one per subnet</td></tr>
@@ -418,7 +418,7 @@ Building configuration...
 
     <div class="teach-note warn">
       <span class="label">Two more silent-ish failures worth knowing</span>
-      <strong>Overlapping subnets on two interfaces:</strong> <code>% 192.168.10.0 overlaps with GigabitEthernet0/0/1</code> — the address is rejected and <strong>not applied</strong>. <strong>Network/broadcast address assigned to an interface</strong> (e.g. <code>192.168.10.0</code> or <code>.255</code> with a /24): also rejected, also not applied, with a "bad mask" style error. Both are easy to skip past in a wall of terminal output, and both leave the interface with no IP at all — students then spend twenty minutes debugging a dead interface that was never actually misconfigured, just unconfigured.
+      <strong>Overlapping subnets on two interfaces:</strong> <code>% 192.168.10.0 overlaps with GigabitEthernet0/1</code> — the address is rejected and <strong>not applied</strong>. <strong>Network/broadcast address assigned to an interface</strong> (e.g. <code>192.168.10.0</code> or <code>.255</code> with a /24): also rejected, also not applied, with a "bad mask" style error. Both are easy to skip past in a wall of terminal output, and both leave the interface with no IP at all — students then spend twenty minutes debugging a dead interface that was never actually misconfigured, just unconfigured.
     </div>
   </section>
 
@@ -434,10 +434,10 @@ Building configuration...
     <table class="spec">
       <thead><tr><th>Router</th><th>Interface</th><th>Address</th><th>Role</th></tr></thead>
       <tbody>
-        <tr><td class="mono">R1</td><td class="mono">G0/0/1</td><td class="mono">192.168.10.1/24</td><td>LAN-A default gateway</td></tr>
-        <tr><td class="mono">R1</td><td class="mono">G0/0/0</td><td class="mono">10.0.0.1/30</td><td>link to R2</td></tr>
-        <tr><td class="mono">R2</td><td class="mono">G0/0/0</td><td class="mono">10.0.0.2/30</td><td>link to R1</td></tr>
-        <tr><td class="mono">R2</td><td class="mono">G0/0/1</td><td class="mono">192.168.20.1/24</td><td>LAN-B default gateway</td></tr>
+        <tr><td class="mono">R1</td><td class="mono">G0/1</td><td class="mono">192.168.10.1/24</td><td>LAN-A default gateway</td></tr>
+        <tr><td class="mono">R1</td><td class="mono">G0/0</td><td class="mono">10.0.0.1/30</td><td>link to R2</td></tr>
+        <tr><td class="mono">R2</td><td class="mono">G0/0</td><td class="mono">10.0.0.2/30</td><td>link to R1</td></tr>
+        <tr><td class="mono">R2</td><td class="mono">G0/1</td><td class="mono">192.168.20.1/24</td><td>LAN-B default gateway</td></tr>
       </tbody>
     </table>
     <p style="font-size:.88rem;opacity:.8;">R1's LAN interface here is the exact one configured in the walkthrough above — the two sections chain together.</p>
@@ -478,11 +478,11 @@ Building configuration...
 <span class="out">Gateway of last resort is not set
 
       10.0.0.0/8 is variably subnetted, 2 subnets, 2 masks
-C        10.0.0.0/30 is directly connected, GigabitEthernet0/0/0
-L        10.0.0.1/32 is directly connected, GigabitEthernet0/0/0
+C        10.0.0.0/30 is directly connected, GigabitEthernet0/0
+L        10.0.0.1/32 is directly connected, GigabitEthernet0/0
       192.168.10.0/24 is variably subnetted, 2 subnets, 2 masks
-C        192.168.10.0/24 is directly connected, GigabitEthernet0/0/1
-L        192.168.10.1/32 is directly connected, GigabitEthernet0/0/1
+C        192.168.10.0/24 is directly connected, GigabitEthernet0/1
+L        192.168.10.1/32 is directly connected, GigabitEthernet0/1
 S     192.168.20.0/24 [1/0] via 10.0.0.2</span>
       </div>
     </div>
@@ -496,11 +496,11 @@ S     192.168.20.0/24 [1/0] via 10.0.0.2</span>
 
 S*    0.0.0.0/0 [1/0] via 10.0.0.1
       10.0.0.0/8 is variably subnetted, 2 subnets, 2 masks
-C        10.0.0.0/30 is directly connected, GigabitEthernet0/0/0
-L        10.0.0.2/32 is directly connected, GigabitEthernet0/0/0
+C        10.0.0.0/30 is directly connected, GigabitEthernet0/0
+L        10.0.0.2/32 is directly connected, GigabitEthernet0/0
       192.168.20.0/24 is variably subnetted, 2 subnets, 2 masks
-C        192.168.20.0/24 is directly connected, GigabitEthernet0/0/1
-L        192.168.20.1/32 is directly connected, GigabitEthernet0/0/1</span>
+C        192.168.20.0/24 is directly connected, GigabitEthernet0/1
+L        192.168.20.1/32 is directly connected, GigabitEthernet0/1</span>
       </div>
     </div>
 
@@ -545,8 +545,10 @@ L        192.168.20.1/32 is directly connected, GigabitEthernet0/0/1</span>
       <div class="terminal-body">
 <span class="prompt">Router#</span> <span class="cmd">show ip interface brief</span>
 <span class="out">Interface              IP-Address      OK? Method Status                Protocol
-GigabitEthernet0/0/0   unassigned      YES unset  administratively down down
-GigabitEthernet0/0/1   unassigned      YES unset  administratively down down</span>
+GigabitEthernet0/0     unassigned      YES unset  administratively down down
+GigabitEthernet0/1     unassigned      YES unset  administratively down down
+GigabitEthernet0/2     unassigned      YES unset  administratively down down
+Vlan1                  unassigned      YES unset  administratively down down</span>
       </div>
     </div>
     <div class="terminal">
@@ -557,8 +559,10 @@ GigabitEthernet0/0/1   unassigned      YES unset  administratively down down</sp
       <div class="terminal-body">
 <span class="prompt">R1#</span> <span class="cmd">show ip interface brief</span>
 <span class="out">Interface              IP-Address      OK? Method Status                Protocol
-GigabitEthernet0/0/0   10.0.0.1        YES manual up                    up
-GigabitEthernet0/0/1   192.168.10.1    YES manual up                    up</span>
+GigabitEthernet0/0     10.0.0.1        YES manual up                    up
+GigabitEthernet0/1     192.168.10.1    YES manual up                    up
+GigabitEthernet0/2     unassigned      YES unset  administratively down down
+Vlan1                  unassigned      YES unset  administratively down down</span>
       </div>
     </div>
 
@@ -645,7 +649,7 @@ GigabitEthernet0/0/1   192.168.10.1    YES manual up                    up</span
     <div class="example">
       <span class="tag">Router boot</span>
       <h3>Why won't it ping?</h3>
-      <p>A fresh router has <code>ip address 192.168.1.1 255.255.255.0</code> configured on G0/0/1. A PC plugged into that LAN can't ping the router at all. <code>show ip interface brief</code> shows the interface as <code>administratively down / down</code>. What's the single missing command?</p>
+      <p>A fresh router has <code>ip address 192.168.1.1 255.255.255.0</code> configured on G0/1. A PC plugged into that LAN can't ping the router at all. <code>show ip interface brief</code> shows the interface as <code>administratively down / down</code>. What's the single missing command?</p>
       <details class="solution">
         <summary>Show answer</summary>
         <div class="solbody">
@@ -681,7 +685,7 @@ GigabitEthernet0/0/1   192.168.10.1    YES manual up                    up</span
     <div class="example">
       <span class="tag">Reading the table</span>
       <h3>C, L, or S?</h3>
-      <p><code>show ip route</code> on a router shows: <code>C 10.0.0.0/30 is directly connected, GigabitEthernet0/0/0</code>, <code>L 10.0.0.1/32 is directly connected, GigabitEthernet0/0/0</code>, and <code>S 192.168.20.0/24 [1/0] via 10.0.0.2</code>. In one sentence each, what produced every line?</p>
+      <p><code>show ip route</code> on a router shows: <code>C 10.0.0.0/30 is directly connected, GigabitEthernet0/0</code>, <code>L 10.0.0.1/32 is directly connected, GigabitEthernet0/0</code>, and <code>S 192.168.20.0/24 [1/0] via 10.0.0.2</code>. In one sentence each, what produced every line?</p>
       <details class="solution">
         <summary>Show answer</summary>
         <div class="solbody">

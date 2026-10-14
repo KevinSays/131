@@ -400,10 +400,10 @@
     <table class="spec">
       <thead><tr><th>Router</th><th>Interface</th><th>IPv4</th><th>IPv6 GUA</th><th>Link-local</th></tr></thead>
       <tbody>
-        <tr><td class="mono">R1</td><td class="mono">G0/0/1 (LAN-A)</td><td class="mono">192.168.10.1/24</td><td class="mono">2001:db8:acad:1::1/64</td><td class="mono">fe80::1</td></tr>
-        <tr><td class="mono">R1</td><td class="mono">G0/0/0 (to R2)</td><td class="mono">10.0.0.1/30</td><td class="mono">2001:db8:acad:ff01::1/64</td><td class="mono">fe80::1</td></tr>
-        <tr><td class="mono">R2</td><td class="mono">G0/0/0 (to R1)</td><td class="mono">10.0.0.2/30</td><td class="mono">2001:db8:acad:ff01::2/64</td><td class="mono">fe80::2</td></tr>
-        <tr><td class="mono">R2</td><td class="mono">G0/0/1 (LAN-B)</td><td class="mono">192.168.20.1/24</td><td class="mono">2001:db8:acad:2::1/64</td><td class="mono">fe80::2</td></tr>
+        <tr><td class="mono">R1</td><td class="mono">G0/1 (LAN-A)</td><td class="mono">192.168.10.1/24</td><td class="mono">2001:db8:acad:1::1/64</td><td class="mono">fe80::1</td></tr>
+        <tr><td class="mono">R1</td><td class="mono">G0/0 (to R2)</td><td class="mono">10.0.0.1/30</td><td class="mono">2001:db8:acad:ff01::1/64</td><td class="mono">fe80::1</td></tr>
+        <tr><td class="mono">R2</td><td class="mono">G0/0 (to R1)</td><td class="mono">10.0.0.2/30</td><td class="mono">2001:db8:acad:ff01::2/64</td><td class="mono">fe80::2</td></tr>
+        <tr><td class="mono">R2</td><td class="mono">G0/1 (LAN-B)</td><td class="mono">192.168.20.1/24</td><td class="mono">2001:db8:acad:2::1/64</td><td class="mono">fe80::2</td></tr>
       </tbody>
     </table>
     <div class="terminal">
@@ -411,12 +411,12 @@
       <div class="terminal-body"><span class="prompt">R1(config)#</span> <span class="hl">ipv6 unicast-routing</span>
 <span class="comment">! GLOBAL config. Makes R1 an IPv6 router: it forwards IPv6 between
 ! interfaces, sends Router Advertisements, and joins ff02::2.</span>
-<span class="prompt">R1(config)#</span> <span class="cmd">interface gigabitethernet 0/0/1</span>
+<span class="prompt">R1(config)#</span> <span class="cmd">interface gigabitethernet 0/1</span>
 <span class="prompt">R1(config-if)#</span> <span class="hl">ipv6 address 2001:db8:acad:1::1/64</span>
 <span class="prompt">R1(config-if)#</span> <span class="hl">ipv6 address fe80::1 link-local</span>
 <span class="prompt">R1(config-if)#</span> <span class="cmd">no shutdown</span>
 <span class="prompt">R1(config-if)#</span> <span class="cmd">exit</span>
-<span class="prompt">R1(config)#</span> <span class="cmd">interface gigabitethernet 0/0/0</span>
+<span class="prompt">R1(config)#</span> <span class="cmd">interface gigabitethernet 0/0</span>
 <span class="prompt">R1(config-if)#</span> <span class="hl">ipv6 address 2001:db8:acad:ff01::1/64</span>
 <span class="prompt">R1(config-if)#</span> <span class="hl">ipv6 address fe80::1 link-local</span>
 <span class="prompt">R1(config-if)#</span> <span class="cmd">no shutdown</span>
@@ -439,10 +439,10 @@
     <div class="terminal">
       <div class="terminal-header"><span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span><span class="terminal-title">R1# show ipv6 interface brief</span></div>
       <div class="terminal-body"><span class="prompt">R1#</span> <span class="cmd">show ipv6 interface brief</span>
-<span class="out">GigabitEthernet0/0/0   [up/up]
+<span class="out">GigabitEthernet0/0     [up/up]
     FE80::1
     2001:DB8:ACAD:FF01::1
-GigabitEthernet0/0/1   [up/up]
+GigabitEthernet0/1     [up/up]
     FE80::1
     2001:DB8:ACAD:1::1</span></div>
     </div>
@@ -453,13 +453,13 @@ GigabitEthernet0/0/1   [up/up]
 <span class="out">IPv6 Routing Table - default - 5 entries
 Codes: C - Connected, L - Local, S - Static, ...
 C   2001:DB8:ACAD:1::/64 [0/0]
-     via GigabitEthernet0/0/1, directly connected
+     via GigabitEthernet0/1, directly connected
 L   2001:DB8:ACAD:1::1/128 [0/0]
-     via GigabitEthernet0/0/1, receive
+     via GigabitEthernet0/1, receive
 C   2001:DB8:ACAD:FF01::/64 [0/0]
-     via GigabitEthernet0/0/0, directly connected
+     via GigabitEthernet0/0, directly connected
 L   2001:DB8:ACAD:FF01::1/128 [0/0]
-     via GigabitEthernet0/0/0, receive
+     via GigabitEthernet0/0, receive
 L   FF00::/8 [0/0]
      via Null0, receive</span></div>
     </div>
@@ -889,7 +889,7 @@ Trace complete.</span></div>
     <div class="example">
       <span class="tag">SLAAC</span>
       <h3>No global address on the PCs</h3>
-      <p>R1's G0/0/1 has <code>2001:db8:acad:1::1/64</code> and is up/up. PCs on that LAN are set to get IPv6 automatically, but <code>ipconfig</code> shows only an <code>fe80::</code> address and no IPv6 default gateway. What's missing?</p>
+      <p>R1's G0/1 has <code>2001:db8:acad:1::1/64</code> and is up/up. PCs on that LAN are set to get IPv6 automatically, but <code>ipconfig</code> shows only an <code>fe80::</code> address and no IPv6 default gateway. What's missing?</p>
       <details class="solution"><summary>Show answer</summary><div class="solbody">
         <p><code>ipv6 unicast-routing</code> in global config. Without it, R1 doesn't send Router Advertisements, so the PCs never learn the prefix or the gateway. They only have the link-local address they create for themselves.</p>
       </div></details>

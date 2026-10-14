@@ -327,7 +327,7 @@
     </ul>
     <div class="teach-note">
       <span class="label">Topology used on this page</span>
-      The same network as Session 10. R1's LAN is <code>192.168.10.0/24</code> (PC-A <code>192.168.10.10</code>, gateway <code>192.168.10.1</code>). The R1–R2 link is <code>10.0.0.0/30</code>. R2's LAN is <code>192.168.20.0/24</code> (PC-B <code>192.168.20.10</code>, and SRV1 <code>192.168.20.100</code>, the web and DNS server for <code>it131.example</code>). New this week: switches <strong>S1</strong> on R1's LAN and <strong>S2</strong> on R2's LAN, both Catalyst 2960s. The routers are ISR 4321s.
+      The same network as Session 10. R1's LAN is <code>192.168.10.0/24</code> (PC-A <code>192.168.10.10</code>, gateway <code>192.168.10.1</code>). The R1–R2 link is <code>10.0.0.0/30</code>. R2's LAN is <code>192.168.20.0/24</code> (PC-B <code>192.168.20.10</code>, and SRV1 <code>192.168.20.100</code>, the web and DNS server for <code>it131.example</code>). New this week: switches <strong>S1</strong> on R1's LAN and <strong>S2</strong> on R2's LAN, both Catalyst 2960s. The routers are Cisco 2911s.
     </div>
   </section>
 
@@ -633,12 +633,12 @@ How many bits in the modulus [512]: </span><span class="hl">1024</span>
       </tbody>
     </table>
     <div class="teach-note preview">
-      <span class="label">Enrichment: SSH from a current PC</span>
-      <code>show ip ssh</code> is from CCNA 2 (SRWE 1). One lab gotcha: IOS-XE 16.9 only offers older SHA-1 methods, for both the key exchange and the <code>ssh-rsa</code> host key signature. Current OpenSSH clients (up-to-date Windows 11, macOS, Linux) turn those off by default, so you'll see <code>no matching key exchange method found</code> or <code>no matching host key type found. Their offer: ssh-rsa</code>. A bigger RSA key doesn't fix it. Either use a newer IOS-XE release that supports SHA-2 methods, or allow the old ones for this one connection:<br><code>ssh -o KexAlgorithms=+diffie-hellman-group14-sha1 -o HostKeyAlgorithms=+ssh-rsa admin@192.168.10.1</code><br>On IOS-XE the running config shows the domain command as <code>ip domain name</code> (no hyphen); both forms are accepted.
+      <span class="label">Enrichment: real ISR 4000-series routers (IOS-XE)</span>
+      <code>show ip ssh</code> is from CCNA 2 (SRWE 1). Packet Tracer's 2911 doesn't model any of the following, but a real ISR 4000-series router on IOS-XE 16.9 does. Its SSH server only offers older SHA-1 methods (key exchange and the <code>ssh-rsa</code> host key), which current OpenSSH clients refuse with <code>no matching key exchange method found</code> or <code>no matching host key type found. Their offer: ssh-rsa</code>. A bigger RSA key doesn't fix it; a newer IOS-XE release does, or allow the old methods for this one connection:<br><code>ssh -o KexAlgorithms=+diffie-hellman-group14-sha1 -o HostKeyAlgorithms=+ssh-rsa admin@192.168.10.1</code><br>These routers also ship with the web interface on (HTTP 80 and HTTPS 443), list open ports with <code>show control-plane host open-ports</code>, and show the domain command as <code>ip domain name</code> (no hyphen); both forms are accepted.
     </div>
 
     <h3 class="sub">Disable unused services</h3>
-    <p>Every service that's running is something that can be attacked. Turn off what you don't use. IOS-XE routers ship with the web interface on (HTTP 80 and HTTPS 443):</p>
+    <p>Every service that's running is something that can be attacked. Turn off what you don't use. The web interface (HTTP 80 and HTTPS 443) is a common one, and <code>no ip http server</code> is still good practice on IOS 15. Packet Tracer's 2911 doesn't model the web server or these commands, so this output is from real gear:</p>
     <div class="terminal">
       <div class="terminal-header"><span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span><span class="terminal-title">R1 · find the open ports, close the web server</span></div>
       <div class="terminal-body"><span class="prompt">R1#</span> <span class="hl">show ip ports all</span>
@@ -657,7 +657,7 @@ TCP   0.0.0.0:22       0.0.0.0:0        LISTEN  [IOS]SSH-Process</span></div>
     </div>
     <div class="teach-note preview">
       <span class="label">Your output may look different</span>
-      The column layout of <code>show ip ports all</code> varies between IOS versions, so read it for the idea: each line is a port the router is listening on. Port 22 stays, because we just turned SSH on. On IOS-XE the documented equivalent is <code>show control-plane host open-ports</code> (beyond this course).
+      The column layout of <code>show ip ports all</code> varies between IOS versions, so read it for the idea: each line is a port the router is listening on. Port 22 stays, because we just turned SSH on.
     </div>
   </section>
 
@@ -780,7 +780,7 @@ Datagram size [100]:
 Timeout in seconds [2]:
 Extended commands [n]: </span><span class="hl">y</span>
 <span class="out">Ingress ping [n]:
-Source address or interface: </span><span class="hl">g0/0/1</span>
+Source address or interface: </span><span class="hl">g0/1</span>
 <span class="out">DSCP Value [0]:
 Type of service [0]:
 Set DF bit in IP header? [no]:
@@ -794,7 +794,7 @@ Sending 5, 100-byte ICMP Echos to 192.168.20.10, timeout is 2 seconds:</span>
 <span class="out">!!!!!
 Success rate is 100 percent (5/5), round-trip min/avg/max = 1/1/2 ms</span></div>
     </div>
-    <p style="font-size:.88rem;">Press Enter to accept any <code>[default]</code>. You can type the interface name or its address. Prompts like <code>Ingress ping</code> and <code>DSCP Value</code> depend on the IOS version; the ones that matter are Target, Repeat count, Extended commands, and Source. The one-line form is <code>ping 192.168.20.10 source g0/0/1</code>.</p>
+    <p style="font-size:.88rem;">Press Enter to accept any <code>[default]</code>. You can type the interface name or its address. Prompts like <code>Ingress ping</code> and <code>DSCP Value</code> depend on the IOS version; the ones that matter are Target, Repeat count, Extended commands, and Source. The one-line form is <code>ping 192.168.20.10 source g0/1</code>.</p>
     <h3 class="sub">Traceroute</h3>
     <p>Traceroute sends probes with TTL 1, 2, 3, and so on. Each router that drops a probe when its TTL runs out sends back an ICMP Time Exceeded, which reveals that hop. Windows calls it <code>tracert</code>; IOS and Linux call it <code>traceroute</code>.</p>
     <div class="terminal">
@@ -956,7 +956,7 @@ Interface: 192.168.10.10 --- 0xc
   239.255.255.250       01-00-5e-7f-ff-fa     static
   255.255.255.255       ff-ff-ff-ff-ff-ff     static</span></div>
     </div>
-    <p>Only addresses on PC-A's own subnet appear. PC-B and SRV1 never show up, because frames to them go to the gateway's MAC (<code>70-ea-1a-5c-3e-81</code>, R1's G0/0/1). <strong>Dynamic</strong> entries were learned by ARP and age out. The <strong>static</strong> entries are broadcast and multicast mappings Windows builds itself. <code>arp -d *</code> clears the cache (from an administrator prompt).</p>
+    <p>Only addresses on PC-A's own subnet appear. PC-B and SRV1 never show up, because frames to them go to the gateway's MAC (<code>70-ea-1a-5c-3e-81</code>, R1's G0/1). <strong>Dynamic</strong> entries were learned by ARP and age out. The <strong>static</strong> entries are broadcast and multicast mappings Windows builds itself. <code>arp -d *</code> clears the cache (from an administrator prompt).</p>
     <h3 class="sub">Common show commands</h3>
     <table class="spec">
       <thead><tr><th>Command</th><th>Shows</th></tr></thead>
@@ -976,29 +976,29 @@ Interface: 192.168.10.10 --- 0xc
       <div class="terminal-header"><span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span><span class="terminal-title">R1 · show ip interface brief</span></div>
       <div class="terminal-body"><span class="prompt">R1#</span> <span class="hl">show ip interface brief</span>
 <span class="out">Interface              IP-Address      OK? Method Status                Protocol</span>
-<span class="hl">GigabitEthernet0/0/0   10.0.0.1        YES manual up                    up
-GigabitEthernet0/0/1   192.168.10.1    YES manual up                    up</span>
-<span class="out">Serial0/1/0            unassigned      YES NVRAM  administratively down down
-Serial0/1/1            unassigned      YES NVRAM  administratively down down
-GigabitEthernet0       unassigned      YES NVRAM  administratively down down</span></div>
+<span class="hl">GigabitEthernet0/0     10.0.0.1        YES manual up                    up
+GigabitEthernet0/1     192.168.10.1    YES manual up                    up</span>
+<span class="out">GigabitEthernet0/2     unassigned      YES unset  administratively down down
+Serial0/0/0            unassigned      YES unset  administratively down down
+Serial0/0/1            unassigned      YES unset  administratively down down
+Vlan1                  unassigned      YES unset  administratively down down</span></div>
     </div>
-    <p style="font-size:.88rem;"><strong>up / up</strong> means Layer 1 (Status) and Layer 2 (Protocol) are both working. <strong>administratively down</strong> means the interface is shut down: either <code>no shutdown</code> was never entered, or someone entered <code>shutdown</code>. The serial ports only appear if the router has a serial card. In Packet Tracer, an ISR 4321 with no modules lists only G0/0/0, G0/0/1, and a <code>Vlan1</code> line, so don't worry if yours is shorter. <code>GigabitEthernet0</code> is a separate management port that doesn't route user traffic.</p>
+    <p style="font-size:.88rem;"><strong>up / up</strong> means Layer 1 (Status) and Layer 2 (Protocol) are both working. <strong>administratively down</strong> means the interface is shut down: either <code>no shutdown</code> was never entered, or someone entered <code>shutdown</code>. The serial ports only appear if the router has a serial card. In Packet Tracer, a 2911 with no modules lists only G0/0, G0/1, G0/2, and a <code>Vlan1</code> line, so don't worry if yours is shorter.</p>
     <div class="terminal">
       <div class="terminal-header"><span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span><span class="terminal-title">R1 · show version (trimmed)</span></div>
       <div class="terminal-body"><span class="prompt">R1#</span> <span class="hl">show version</span>
-<span class="hl">Cisco IOS XE Software, Version 16.09.04</span>
-<span class="out">Cisco IOS Software [Fuji], ISR Software (X86_64_LINUX_IOSD-UNIVERSALK9-M), Version 16.9.4, RELEASE SOFTWARE (fc2)
-...</span>
+<span class="hl">Cisco IOS Software, C2900 Software (C2900-UNIVERSALK9-M), Version 15.1(4)M4, RELEASE SOFTWARE (fc2)</span>
+<span class="out">...</span>
 <span class="hl">R1 uptime is 2 hours, 14 minutes</span>
 <span class="out">System returned to ROM by Reload Command</span>
-<span class="hl">System image file is "bootflash:isr4300-universalk9.16.09.04.SPA.bin"</span>
+<span class="hl">System image file is "flash0:c2900-universalk9-mz.SPA.151-4.M4.bin"</span>
 <span class="out">...
-cisco ISR4321/K9 (1RU) processor with 1795999K/6147K bytes of memory.
+Cisco CISCO2911/K9 (revision 1.0) with 491520K/32768K bytes of memory.
 ...
-2 Gigabit Ethernet interfaces
-32768K bytes of non-volatile configuration memory.
-4194304K bytes of physical memory.
-3223551K bytes of flash memory at bootflash:.
+3 Gigabit Ethernet interfaces
+DRAM configuration is 64 bits wide with parity disabled.
+255K bytes of non-volatile configuration memory.
+249856K bytes of ATA System CompactFlash 0 (Read/Write)
 ...</span>
 <span class="hl">Configuration register is 0x2102</span></div>
     </div>
@@ -1012,8 +1012,8 @@ cisco ISR4321/K9 (1RU) processor with 1795999K/6147K bytes of memory.
                   D - Remote, C - CVTA, M - Two-port Mac Relay
 
 Device ID        Local Intrfce     Holdtme    Capability  Platform  Port ID</span>
-<span class="hl">S1               Gig 0/0/1         163             S I    WS-C2960- Gig 0/1
-R2               Gig 0/0/0         151          R B S I   ISR4321/K Gig 0/0/0</span>
+<span class="hl">S1               Gig 0/1           163             S I    WS-C2960- Gig 0/1
+R2               Gig 0/0           151          R B S I   C2900     Gig 0/0</span>
 <span class="out">
 Total cdp entries displayed : 2</span>
 <span class="prompt">R1#</span> <span class="cmd">show cdp neighbors detail</span>
@@ -1021,12 +1021,12 @@ Total cdp entries displayed : 2</span>
 Device ID: R2
 Entry address(es): </span>
 <span class="hl">  IP address: 10.0.0.2</span>
-<span class="out">Platform: cisco ISR4321/K9,  Capabilities: Router Source-Route-Bridge Switch IGMP
-Interface: GigabitEthernet0/0/0,  Port ID (outgoing port): GigabitEthernet0/0/0
+<span class="out">Platform: cisco C2900,  Capabilities: Router Source-Route-Bridge Switch IGMP
+Interface: GigabitEthernet0/0,  Port ID (outgoing port): GigabitEthernet0/0
 Holdtime : 151 sec
 
 Version :</span>
-<span class="hl">Cisco IOS Software [Fuji], ISR Software (X86_64_LINUX_IOSD-UNIVERSALK9-M), Version 16.9.4, RELEASE SOFTWARE (fc2)</span>
+<span class="hl">Cisco IOS Software, C2900 Software (C2900-UNIVERSALK9-M), Version 15.1(4)M4, RELEASE SOFTWARE (fc2)</span>
 <span class="out">...</span></div>
     </div>
     <p><strong>Local Intrfce</strong> is R1's own port. <strong>Port ID</strong> is the neighbor's port. CDP runs at Layer 2, so it works even if IP isn't configured, which makes it great for drawing a map of a network you didn't build. <code>detail</code> adds each neighbor's IP address and IOS version.</p>
@@ -1094,16 +1094,16 @@ Version :</span>
     <p>If one end of a link runs full duplex and the other half duplex, the link stays <strong>up/up</strong>. Nothing alarms. It just gets slow and racks up errors, which is why this one is hard to spot. It usually happens when one end is hard-set and the other is left on auto: the auto end can't negotiate and falls back to half duplex. To force it in a lab on Gigabit copper, set both ends to 100 Mbps and only one to half:</p>
     <div class="terminal">
       <div class="terminal-header"><span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span><span class="terminal-title">S1 and R1 · duplex mismatch</span></div>
-      <div class="terminal-body"><span class="comment">! R1 G0/0/1 forced to speed 100 / duplex half
-! S1 G0/1   forced to speed 100 / duplex full
+      <div class="terminal-body"><span class="comment">! R1 G0/1 forced to speed 100 / duplex half
+! S1 G0/1 forced to speed 100 / duplex full
 ! Console log on S1:</span>
-<span class="hl">*Mar  1 00:41:17.204: %CDP-4-DUPLEX_MISMATCH: duplex mismatch discovered on GigabitEthernet0/1 (not half duplex), with R1 GigabitEthernet0/0/1 (half duplex).</span>
-<span class="prompt">R1#</span> <span class="cmd">show interfaces g0/0/1</span>
-<span class="out">GigabitEthernet0/0/1 is up, line protocol is up
-  Hardware is ISR4321-2x1GE, address is 70ea.1a5c.3e81 (bia 70ea.1a5c.3e81)
+<span class="hl">*Mar  1 00:41:17.204: %CDP-4-DUPLEX_MISMATCH: duplex mismatch discovered on GigabitEthernet0/1 (not half duplex), with R1 GigabitEthernet0/1 (half duplex).</span>
+<span class="prompt">R1#</span> <span class="cmd">show interfaces g0/1</span>
+<span class="out">GigabitEthernet0/1 is up, line protocol is up
+  Hardware is CN Gigabit Ethernet, address is 70ea.1a5c.3e81 (bia 70ea.1a5c.3e81)
   Internet address is 192.168.10.1/24
   ...</span>
-<span class="hl">  Half Duplex, 100Mbps, link type is force-up, media type is RJ45</span>
+<span class="hl">  Half-duplex, 100Mb/s, media type is RJ45</span>
 <span class="out">  ...
      0 output errors, 1832 collisions, 0 interface resets
      ...</span>
@@ -1303,7 +1303,7 @@ DNS request timed out.
     <div class="example">
       <span class="tag">AAA</span>
       <h3>Which A?</h3>
-      <p>(1) A help-desk tech can run <code>show</code> commands on R1 but not <code>configure terminal</code>. (2) R1 asks for a username and password at login. (3) A log shows that user <code>admin</code> changed the G0/0/1 address at 14:02.</p>
+      <p>(1) A help-desk tech can run <code>show</code> commands on R1 but not <code>configure terminal</code>. (2) R1 asks for a username and password at login. (3) A log shows that user <code>admin</code> changed the G0/1 address at 14:02.</p>
       <details class="solution"><summary>Show answer</summary><div class="solbody">
         <p>(1) <strong>Authorization</strong>: what you may do. (2) <strong>Authentication</strong>: who you are. (3) <strong>Accounting</strong>: a record of what you did.</p>
       </div></details>
@@ -1449,7 +1449,7 @@ DNS request timed out.
       {s:"Ping by IP works, ping by name fails", cause:"DNS: the PC has the wrong DNS server, or the server can't resolve that name.", layer:"L7", check:"<code>ipconfig /all</code> for the DNS server, then <code>nslookup</code> the name.", fix:"Point the PC at the right DNS server (SRV1, 192.168.20.100), or fix the record."},
       {s:"Link is up but slow, with late collisions", cause:"Duplex mismatch: one side full duplex, the other half.", layer:"L2", check:"<code>show interfaces</code> on both ends; look for a CDP duplex-mismatch log message.", fix:"Set both ends to auto, or hard-set both to the same speed and duplex."},
       {s:"Interface shows down/down", cause:"Physical: no cable, bad cable, wrong port, or the device at the other end is off.", layer:"L1", check:"<code>show ip interface brief</code>; look at the link lights; check the cable.", fix:"Reseat or replace the cable, or power on the far device."},
-      {s:"Router interface shows administratively down", cause:"Router interfaces are shut down by default, and nobody typed <code>no shutdown</code>.", layer:"L1/L2 (config)", check:"<code>show ip interface brief</code>: Status says administratively down.", fix:"<code>interface g0/0/1</code> then <code>no shutdown</code>."},
+      {s:"Router interface shows administratively down", cause:"Router interfaces are shut down by default, and nobody typed <code>no shutdown</code>.", layer:"L1/L2 (config)", check:"<code>show ip interface brief</code>: Status says administratively down.", fix:"<code>interface g0/1</code> then <code>no shutdown</code>."},
       {s:"Can't SSH to the router, but can ping it", cause:"SSH isn't fully configured: missing domain name or RSA keys, no local user with <code>login local</code>, or <code>transport input</code> doesn't allow SSH.", layer:"L7 (device config)", check:"<code>show ip ssh</code>; <code>show running-config | section line vty</code>.", fix:"Finish the SSH steps in 16.4."},
     ];
     const sel = document.getElementById('symIn'), out = document.getElementById('symOut');
