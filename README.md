@@ -15,7 +15,7 @@ Built with plain HTML/CSS/JS, no build step. To preview locally, just open `inde
 
 ## Moving in December 2026
 
-This repo will be renamed **`osi-company-networking`** in December 2026, and the site will move to `https://kevinsays.github.io/osi-company-networking/`. Old `/131/` links will forward to the new address, but please update bookmarks, LMS links and forks once the move happens. GitHub forwards links to the repo itself automatically.
+This repo will be renamed **`osi-company-networking`** in December 2026, and the site will move to `https://kevinsays.github.io/osi-company-networking/`. Old `/131/` links will forward to the new address, but please update bookmarks, shared links and forks once the move happens. GitHub forwards links to the repo itself automatically.
 
 ## Curriculum version
 
@@ -25,7 +25,7 @@ These pages follow **Cisco NetAcad CCNAv7: Introduction to Networks** (v7.02). A
 
 This site started as my own course pages, others have asked to use it in their own classes. You're welcome to do the same. It follows the NetAcad module order, and the license below lets you adapt it. Be sure to credit me and my page so that others who want to do so can also find this material.
 
-- **Use it as-is:** send students to the site, or link single pages from your LMS.
+- **Use it as-is:** send students the link to the site, or to a single session page.
 - **Adapt it:** fork the repo and change what you need. The pages are plain HTML, so no build tools are required.
 - **Tell me you're using it:** [open an issue](https://github.com/KevinSays/131/issues/new) or email me. It helps to know which courses use it, and your corrections make it better for everyone.
 - **Help others find it:** if it's useful to you, a ⭐ on the repo makes it easier for other instructors to find.
